@@ -1,0 +1,82 @@
+---
+kind: pipeline
+name: default-linux-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build  
+  image: plugins/docker
+  settings:
+    repo: cnrancher/edge-ui
+    target: build
+    dry_run: true
+  when:
+    event:
+    - pull_request
+- name: release  
+  image: plugins/docker
+  settings:
+    repo: cnrancher/edge-ui
+    auto_tag: true
+    auto_tag_suffix: linux-amd64
+    target: production
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+---
+kind: pipeline
+name: default-linux-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build  
+  image: plugins/docker
+  settings:
+    repo: cnrancher/edge-ui
+    target: build
+    dry_run: true
+  when:
+    event:
+    - pull_request
+- name: release  
+  image: plugins/docker
+  settings:
+    repo: cnrancher/edge-ui
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    target: production
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+---
+kind: pipeline
+name: manifest
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    username:
+      from_secret: docker_username
+    spec: docker/manifest.tmpl
+    

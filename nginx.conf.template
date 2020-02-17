@@ -1,0 +1,32 @@
+events { worker_connections 1024; }
+http {
+  default_type application/octet-stream;
+
+  server {
+    gzip on;
+    gzip_min_length 1k;
+    gzip_comp_level 2;
+    gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png image/svg+xml;
+    gzip_vary on;
+    gzip_disable "MSIE [1-6]\.";
+    include /etc/nginx/mime.types;
+
+    listen 80;
+
+    location /api/ {
+      proxy_pass ${SERVER_URL}/;
+    }
+
+    location / {
+      root   /usr/share/nginx/html;
+      index  index.html index.htm;
+      add_header Cache-Control "max-age=0";
+      try_files $uri $uri/ /index.html =404;
+    }
+  }
+}
+
+
+
+
+

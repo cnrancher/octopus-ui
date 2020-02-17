@@ -31,6 +31,9 @@ steps:
     event:
     - push
     - tag
+
+node:
+  instance: agent-amd64
 ---
 kind: pipeline
 name: default-linux-arm64
@@ -64,6 +67,9 @@ steps:
     event:
     - push
     - tag
+
+node:
+  instance: agent-arm64
 ---
 kind: pipeline
 name: manifest
@@ -78,5 +84,11 @@ steps:
       from_secret: docker_password
     username:
       from_secret: docker_username
-    spec: docker/manifest.tmpl
-    
+    spec: manifest.tmpl
+
+node:
+  instance: agent-amd64
+
+depends_on:
+- default-linux-amd64
+- default-linux-arm64

@@ -1,4 +1,4 @@
-# edge
+# Edge UI
 
 ## Project setup
 ```

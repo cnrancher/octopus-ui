@@ -10,6 +10,11 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component
 export default class HelloWorld extends Vue {
   @Prop() private msg!: string;
+
+  mounted() {
+    this.$http
+      .get('https://api.coindesk.com/v1/bpi/currentprice.json');
+  }
 }
 </script>
 

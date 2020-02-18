@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="@/assets/images/logo.svg">
     <HelloWorld msg="Welcome to Rancher Edge"/>
   </div>
 </template>

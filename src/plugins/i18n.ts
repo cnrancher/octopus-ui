@@ -4,7 +4,7 @@ import VueI18n, { LocaleMessages } from 'vue-i18n';
 Vue.use(VueI18n);
 
 function loadLocaleMessages(): LocaleMessages {
-  const locales = require.context('@/locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
+  const locales = require.context('@/locales', false, /[A-Za-z0-9-_,\s]+\.json$/i);
   const messages: LocaleMessages = {};
   locales.keys().forEach((key) => {
     const matched = key.match(/([A-Za-z0-9-_]+)\./i);
@@ -17,7 +17,7 @@ function loadLocaleMessages(): LocaleMessages {
 }
 
 export default new VueI18n({
-  locale: process.env.VUE_APP_I18N_LOCALE || 'en',
+  locale: localStorage.getItem('lang') || process.env.VUE_APP_I18N_LOCALE || 'en',
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
   messages: loadLocaleMessages(),
 });

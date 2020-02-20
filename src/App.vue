@@ -1,37 +1,56 @@
 <template>
   <div id="app">
-    <img src="@/assets/images/logo.svg" height="200" />
-    <div>
-      <div>
-        <el-button>默认按钮</el-button>
-        <el-button type="primary">主要按钮</el-button>
-        <el-button type="success">成功按钮</el-button>
-        <el-button type="info">信息按钮</el-button>
-        <el-button type="warning">警告按钮</el-button>
-        <el-button type="danger">危险按钮</el-button>
-      </div>
-    </div>
-    <HelloWorld msg="message" />
+    <el-row type="flex" align="middle" id="header">
+      <el-col :span="2">
+        <img src="@/assets/images/logo.svg" class="logo" />
+      </el-col>
+      <el-col :span="2" :push="20">
+        <Language />
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :span="2">
+        <Nav />
+      </el-col>
+    </el-row>
+    <router-view />
   </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue';
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
+import Language from '@/components/Language.vue';
+import Nav from '@/components/Nav.vue';
 
-export default {
-  name: 'app',
+@Component({
   components: {
-    HelloWorld,
+    Language,
+    Nav,
   },
-};
+})
+export default class App extends Vue {}
 </script>
-<style scoped>
+
+<style scoped lang="scss">
+body {
+  margin: 0px;
+  padding: 0px;
+}
 #app {
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+
+  #header {
+    background-color: $app-header;
+
+    .logo {
+      width: 55px;
+      height: 28px;
+    }
   }
+
+}
 </style>

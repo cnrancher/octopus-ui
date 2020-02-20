@@ -29,7 +29,6 @@ export default class Nav extends Vue {
     zh: '中文',
   }
 
-  @Emit()
   handleSelect(lang: string): void {
     localStorage.setItem('lang', lang);
     this.$i18n.locale = lang;

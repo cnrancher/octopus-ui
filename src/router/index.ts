@@ -7,6 +7,10 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
+    redirect: '/setting',
+  },
+  {
+    path: '/setting',
     name: 'Setting',
     component: Setting,
   },

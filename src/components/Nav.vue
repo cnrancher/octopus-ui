@@ -2,11 +2,10 @@
   <div id="nav">
     <el-menu
       router
-      default-active="/"
+      :default-active="currentPath"
       class="el-menu-vertical-demo"
-      background-color="#d3dce6"
     >
-      <el-menu-item index="/">
+      <el-menu-item index="/setting">
         <i class="el-icon-setting"></i>
         <span>Setting</span>
       </el-menu-item>
@@ -18,11 +17,40 @@
   </div>
 </template>
 
+<script lang="ts" >
+import { Route } from 'vue-router';
+import {
+  Component,
+  Vue,
+  Watch,
+} from 'vue-property-decorator';
+
+@Component
+export default class Nav extends Vue {
+  private currentPath = '';
+
+  @Watch('$route')
+  public onRouteChanged(to: Route): void {
+    this.currentPath = to.path;
+  }
+
+  mounted(): void {
+    this.currentPath = this.$route.path;
+  }
+}
+</script>
+
 <style lang="scss" scoped>
+@import "@/assets/styles/common/var.scss";
+
 #nav {
+  .el-menu-vertical-demo {
+    background-color: $app-menu-bg;
+  }
+
   .el-menu-item.is-active {
-    color: #0075A8;
-    background-color: yellow !important;
+    color: $menu-active;
+    background-color: $app-menu-active-bg !important;
   }
 
   a {

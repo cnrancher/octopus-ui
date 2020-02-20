@@ -14,32 +14,25 @@
         <Nav />
       </el-col>
     </el-row>
-    <HelloWorld msg="message" />
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue';
 import Language from '@/components/Language.vue';
 import Nav from '@/components/Nav.vue';
 
 @Component({
   components: {
-    HelloWorld,
     Language,
     Nav,
   },
 })
-export default class App extends Vue {
-
-}
+export default class App extends Vue {}
 </script>
 
 <style scoped lang="scss">
-@import url("./scss/index.scss");
-
 body {
   margin: 0px;
   padding: 0px;
@@ -49,10 +42,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 
   #header {
-    background-color: #d3dce6;
+    background-color: $app-header;
 
     .logo {
       width: 55px;

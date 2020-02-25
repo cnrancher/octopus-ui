@@ -1,7 +1,8 @@
 @import "./common/var.scss";
 @import "./global/button";
 
-body {
+html, body {
   margin: 0px;
   padding: 0px;
+  height: 100%;
 }

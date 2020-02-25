@@ -1,23 +1,44 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Setting from '../views/Setting.vue';
+import VueRouter, { RouteConfig } from 'vue-router';
+import Login from '@/views/login.vue';
+import Setting from '@/views/setting.vue';
+import Layout from '@/layout/index.vue';
 
 Vue.use(VueRouter);
 
-const routes = [
+const routes: RouteConfig[] = [
   {
     path: '/',
+    redirect: '/login',
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/',
+    component: Layout,
     redirect: '/setting',
+    children: [
+      {
+        path: 'setting',
+        component: Setting,
+        name: 'Setting',
+      },
+    ],
   },
   {
-    path: '/setting',
-    name: 'Setting',
-    component: Setting,
-  },
-  {
-    path: '/device',
-    name: 'Device',
-    component: () => import('../views/Device.vue'),
+    path: '/',
+    component: Layout,
+    redirect: '/device',
+    children: [
+      {
+        path: 'device',
+        component: () => import('@/views/device.vue'),
+        name: 'Device',
+      },
+    ],
   },
 ];
 

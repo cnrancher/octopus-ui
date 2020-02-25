@@ -17,7 +17,6 @@
 import {
   Component,
   Vue,
-  Emit,
 } from 'vue-property-decorator';
 
 @Component
@@ -35,7 +34,7 @@ export default class Nav extends Vue {
     this.choose = lang;
   }
 
-  mounted() {
+  mounted(): void {
     this.choose = this.$i18n.locale;
   }
 }

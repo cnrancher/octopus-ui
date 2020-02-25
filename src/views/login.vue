@@ -4,26 +4,24 @@
       <div class="grid-content bg-purple">
         <el-container>
           <el-header>
-            <div>Rancher Edge 仪表盘</div>
+            <div>{{ $t('login.title') }}</div>
           </el-header>
           <el-main>
-            <el-form ref="form" label-position="left" :model="form">
+            <el-form ref="form" label-position="left" :model="loginForm">
               <el-form-item>
-                <el-radio-group v-model="form.resource">
+                <el-radio-group v-model="loginForm.resource">
                   <el-radio label="Kubeconfig" size="medium"></el-radio>
                   <div class="kubeconfigInfo">
-                    请选择您创建的kubeconfig文件以配置对集群的访问权限。 要了解有关如何配置和使用kubeconfig文件的更多信息，
-                    请参阅Configure Access to Multiple Clusters 部分.
+                    {{ $t('login.kubeconfigTip') }}
                   </div>
                   <el-radio label="Token" size="medium"></el-radio>
-                  <div class="kubeconfigInfo">
-                    每个 Service Account 都有一个 valid Bearer Token ，可用于登录 Dashboard 。
-                    要了解有关如何配置和使用 Bearer Tokens 的更多信息，请参阅 Authentication 部分.
+                  <div class="tokenInfo">
+                    {{ $t('login.tokenTip') }}
                   </div>
                 </el-radio-group>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">登录</el-button>
+                <el-button type="primary" @click="onSubmit">{{ $t('login.logIn') }}</el-button>
               </el-form-item>
             </el-form>
           </el-main>
@@ -38,12 +36,11 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class Login extends Vue {
-  private form: object = {
+  private loginForm = {
     resource: 'Kubeconfig',
   }
 
   onSubmit(): void {
-    console.log('login success', this.form);
     this.$router.push('/setting');
   }
 }
@@ -70,7 +67,7 @@ export default class Login extends Vue {
   width: 100%;
 }
 
-.kubeconfigInfo {
+.kubeconfigInfo, .tokenInfo {
   padding: 10px 0px 20px 20px;
   line-height: 28px;
   font-size: 14px;

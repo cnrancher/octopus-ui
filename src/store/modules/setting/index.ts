@@ -1,17 +1,17 @@
 import { Module } from 'vuex';
 import { RootState } from '@/store/types';
-import { settingState } from './types';
+import { IsettingState } from './types';
 import getters from './getters';
 import actions from './actions';
 import mutations from './mutations';
 
-const state: settingState = {
+const state: IsettingState = {
   count: 0,
   list: [],
 };
 
 const namespaced = true;
-export const setting: Module<settingState, RootState> = {
+export const setting: Module<IsettingState, RootState> = {
   namespaced,
   state,
   getters,

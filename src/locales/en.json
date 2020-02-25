@@ -1,3 +1,9 @@
 {
-  "message": "Welcome to Rancher Edge"
+  "message": "Welcome to Rancher Edge",
+  "login": {
+    "logIn": "Sign in",
+    "title": "Rancher Edge Dashboard",
+    "kubeconfigTip": "Please select the kubeconfig file that you have created to configure access to the cluster. To find out more about how to configure and use kubeconfig file, please refer to the Configure Access to Multiple Clusters section.",
+    "tokenTip": "Every Service Account has a Secret with valid Bearer Token that can be used to log in to Dashboard. To find out more about how to configure and use Bearer Tokens, please refer to the Authentication section."
+  }
 }

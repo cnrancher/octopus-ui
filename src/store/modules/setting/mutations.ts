@@ -1,11 +1,11 @@
 import { MutationTree } from 'vuex';
-import { settingState } from './types';
+import { IsettingState } from './types';
 
-const mutations: MutationTree<settingState> = {
+const mutations: MutationTree<IsettingState> = {
   changeCount(state) {
     state.count += 1;
   },
-  getList(state, list) {
+  getList(state, list: object[]) {
     state.list = list;
   },
 };

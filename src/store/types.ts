@@ -1,5 +1,5 @@
-import { settingState } from '@/store/modules/setting/types';
+import { IsettingState } from '@/store/modules/setting/types';
 
 export interface RootState {
-  settingStore: settingState;
+  settingStore: IsettingState;
 }

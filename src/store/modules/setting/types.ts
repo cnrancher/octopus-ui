@@ -1,4 +1,4 @@
-export interface settingState {
-  count: number,
-  list: object[]
-};
+export interface IsettingState {
+  count: number;
+  list: object[];
+}

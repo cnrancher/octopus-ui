@@ -1,3 +1,9 @@
 {
-  "message": "欢迎来到Rancher Edge"
+  "message": "欢迎来到Rancher Edge",
+  "login": {
+    "logIn": "登录",
+    "title": "Rancher Edge 仪表盘",
+    "kubeconfigTip": "请选择您创建的kubeconfig文件以配置对集群的访问权限。  要了解有关如何配置和使用kubeconfig文件的更多信息， 请参阅 Configure Access to Multiple Clusters 部分.",
+    "tokenTip": "每个 Service Account 都有一个 valid Bearer Token ，可用于登录 Dashboard 。 要了解有关如何配置和使用 Bearer Tokens 的更多信息，请参阅 Authentication 部分."
+  }
 }

@@ -35,7 +35,7 @@ const routes: RouteConfig[] = [
     children: [
       {
         path: 'device',
-        component: () => import('../views/device.vue'),
+        component: () => import('@/views/device.vue'),
         name: 'Device',
       },
     ],

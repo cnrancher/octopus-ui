@@ -1,94 +1,183 @@
 ---
 kind: pipeline
-name: default-linux-amd64
+name: test
+
+trigger:
+  event:
+  - push
+  - pull_request
+  - tag
 
 platform:
   os: linux
   arch: amd64
 
 steps:
-- name: build  
-  image: plugins/docker
-  settings:
-    repo: cnrancher/edge-ui
-    target: build
-    dry_run: true
-  when:
-    event:
-    - pull_request
-- name: release  
-  image: plugins/docker
-  settings:
-    repo: cnrancher/edge-ui
-    auto_tag: true
-    auto_tag_suffix: linux-amd64
-    target: production
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-  when:
-    event:
-    - push
-    - tag
+- name: test
+  pull: default
+  image: node:10
+  commands:
+  - scripts/ci
 
-node:
-  instance: agent-amd64
 ---
 kind: pipeline
-name: default-linux-arm64
+name: docker-branch
+
+depends_on:
+- test
+
+trigger:
+  ref:
+  - "refs/heads/master"
+  - "refs/heads/*-dev"
+  event:
+  - push
 
 platform:
   os: linux
-  arch: arm64
+  arch: amd64
 
 steps:
-- name: build  
+- name: docker-image
   image: plugins/docker
   settings:
-    repo: cnrancher/edge-ui
-    target: build
-    dry_run: true
-  when:
-    event:
-    - pull_request
-- name: release  
-  image: plugins/docker
-  settings:
-    repo: cnrancher/edge-ui
-    auto_tag: true
-    auto_tag_suffix: linux-arm64
-    target: production
+    dockerfile: Dockerfile
+    tag: ${DRONE_BRANCH}
+    repo: rancherlabs/dashboard
     username:
       from_secret: docker_username
     password:
       from_secret: docker_password
-  when:
-    event:
-    - push
-    - tag
 
-node:
-  instance: agent-arm64
 ---
 kind: pipeline
-name: manifest
-
-steps:
-- name: manifest
-  image: plugins/manifest
-  settings:
-    auto_tag: true
-    ignore_missing: true
-    password:
-      from_secret: docker_password
-    username:
-      from_secret: docker_username
-    spec: manifest.tmpl
-
-node:
-  instance: agent-amd64
+name: docker-tag
 
 depends_on:
-- default-linux-amd64
-- default-linux-arm64
+- test
+
+trigger:
+  event:
+  - tag
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: docker-image
+  image: plugins/docker
+  settings:
+    dockerfile: Dockerfile
+    tag: ${DRONE_TAG}
+    repo: rancherlabs/dashboard
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+---
+kind: pipeline
+name: hosted-master
+
+depends_on:
+- test
+
+trigger:
+  ref:
+  - "refs/heads/master"
+  event:
+  - push
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: default
+  image: node:10
+  commands:
+  - ./scripts/build-hosted
+
+- name: upload
+  pull: default
+  image: plugins/gcs
+  settings:
+    acl:
+    - allUsers:READER
+    cache_control: "no-cache,must-revalidate"
+    source: dist/latest
+    target: releases.rancher.com/dashboard/latest
+    token:
+      from_secret: google_auth_key
+
+---
+kind: pipeline
+name: hosted-branch
+
+depends_on:
+- test
+
+trigger:
+  ref:
+  - "refs/heads/*-dev"
+  event:
+  - push
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: default
+  image: node:10
+  commands:
+  - ./scripts/build-hosted
+
+- name: upload
+  pull: default
+  image: plugins/gcs
+  settings:
+    acl:
+    - allUsers:READER
+    cache_control: "no-cache,must-revalidate"
+    source: dist/${DRONE_BRANCH}
+    target: releases.rancher.com/dashboard/${DRONE_BRANCH}
+    token:
+      from_secret: google_auth_key
+
+---
+kind: pipeline
+name: hosted-tag
+
+depends_on:
+- test
+
+trigger:
+  event:
+  - tag
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: default
+  image: node:10
+  commands:
+  - ./scripts/build-hosted
+
+- name: upload
+  pull: default
+  image: plugins/gcs
+  settings:
+    acl:
+    - allUsers:READER
+    cache_control: "no-cache,must-revalidate"
+    source: dist/${DRONE_TAG}
+    target: releases.rancher.com/dashboard/${DRONE_TAG}
+    token:
+      from_secret: google_auth_key

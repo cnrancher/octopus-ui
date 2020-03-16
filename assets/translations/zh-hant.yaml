@@ -1,0 +1,19 @@
+locale:
+  none: (None)
+  zh-hant: 中文
+
+header:
+  backToRancher: Back to Rancher
+
+nav:
+  show:
+    basic: Basic
+    used: In-Use
+    all: All
+
+footer:
+  docs: 文档
+  forums: 论坛
+  slack: Slack
+  issue: File an Issue
+  download: 下载 CLI

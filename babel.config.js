@@ -1,14 +1,19 @@
 module.exports = {
-  presets: [
-    '@vue/cli-plugin-babel/preset',
-  ],
-  plugins: [
-    [
-      'component',
-      {
-        libraryName: 'element-ui',
-        styleLibraryName: 'theme-chalk',
-      },
-    ],
-  ],
+  env: {
+    test: {
+      plugins: [
+        [
+          'module-resolver',
+          {
+            root:  ['.'],
+            alias: {
+              '@': '.',
+              '~': '.',
+            },
+          },
+        ],
+      ],
+      presets: [['@babel/env', { targets: { node: 'current' } }]],
+    },
+  },
 };

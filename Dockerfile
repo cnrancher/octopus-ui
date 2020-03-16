@@ -1,17 +1,17 @@
-FROM node:10.16.0 as build
+FROM node:10-alpine
 
-COPY package.json /tmp/package.json
-RUN cd /tmp && yarn install
-RUN mkdir -p /app && cp -a /tmp/node_modules /app
-COPY . /app
-WORKDIR /app
-RUN yarn lint:nofix
-RUN yarn test:unit
+RUN mkdir /src
+WORKDIR /src
+
+RUN apk update && apk upgrade
+
+COPY package.json /src/
+COPY yarn.lock /src/
+RUN yarn --pure-lockfile install
+
+COPY . /src
 RUN yarn build
 
-FROM nginx:alpine as production
-RUN rm -rf /etc/nginx/nginx.conf
-ADD nginx.conf.template  /etc/nginx/nginx.conf.template
-COPY --from=build /app/dist /usr/share/nginx/html/
 EXPOSE 80
-CMD ["/bin/sh", "-c", "envsubst '$SERVER_URL' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"]
+ENTRYPOINT ["yarn"]
+CMD ["start"]

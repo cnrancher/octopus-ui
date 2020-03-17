@@ -15,7 +15,7 @@ export const NAME = {
   label:     'Name',
   value:     'nameDisplay',
   sort:      ['nameSort'],
-  formatter: 'LinkDetail',
+  formatter: 'LinkModel',
   width:     200
 };
 

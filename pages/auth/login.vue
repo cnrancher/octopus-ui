@@ -1,6 +1,7 @@
 <script>
+/* eslint-disable */
+import { mapGetters } from 'vuex';
 import { USERNAME } from '@/config/cookies';
-import LabeledInput from '@/components/form/LabeledInput';
 import AsyncButton from '@/components/AsyncButton';
 import { LOCAL, LOGGED_OUT, TIMED_OUT, _FLAGGED } from '@/config/query-params';
 import Checkbox from '@/components/form/Checkbox';
@@ -9,7 +10,7 @@ export default {
   name:       'Login',
   layout:     'unauthenticated',
   components: {
-    LabeledInput, AsyncButton, Checkbox
+    AsyncButton, Checkbox
   },
 
   data({ $cookies }) {
@@ -25,12 +26,21 @@ export default {
       err:       this.$route.query.err,
     };
   },
+  computed: {
+    ...mapGetters('i18n', ['selectedLocaleLabel', 'availableLocales']),
 
+    options() {
+      return options();
+    }
+  },
   mounted() {
     this.focusSomething();
   },
 
   methods: {
+    switchLocale(locale) {
+      this.$store.dispatch('i18n/switchTo', locale);
+    },
     toggleLocal() {
       this.showLocal = true;
       this.$router.applyQuery({ [LOCAL]: _FLAGGED });
@@ -84,62 +94,53 @@ export default {
 </script>
 
 <template>
-  <main class="login">
-    <div class="row">
-      <div class="col span-6">
-        <h1 class="text-center">
-          Welcome to Edge
-        </h1>
-        <h4 v-if="err" class="text-error text-center">
-          An error occurred logging in.  Please try again.
-        </h4>
-        <h4 v-else-if="loggedOut" class="text-success text-center">
-          You have been logged out.
-        </h4>
-        <h4 v-else-if="timedOut" class="text-error text-center">
-          Log in again to continue.
-        </h4>
+  <main class="login landscape">
+    <div class="login-box">
+      <h1 class="title">您好 <br/>欢迎您使用Octopus</h1>
+      <div class="language">
+        <v-popover
+          placement="bottom"
+        >
+          <div class="hand select">
+            <img src='~assets/images/earth.svg' class="earth" />
+            <span>{{ selectedLocaleLabel }}</span>
+            <img src='~assets/images/up.svg' class="up" />
+          </div>
 
-        <form class="mt-50">
-          <div class="row">
-            <div class="col span-4 offset-4">
-              <LabeledInput
-                ref="username"
-                v-model="username"
-                label="Username"
-                autocomplete="username"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col span-4 offset-4">
-              <LabeledInput
-                ref="password"
-                v-model="password"
-                type="password"
-                label="Password"
-                autocomplete="password"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col span-4 offset-4 text-center">
-              <AsyncButton
-                type="submit"
-                action-label="Log In with Local User"
-                waiting-label="Logging In..."
-                success-label="Logged In"
-                error-label="Error"
-                @click="loginLocal"
-              />
-              <div>
-                <Checkbox v-model="remember" label="Remember Username" type="checkbox" />
-              </div>
-            </div>
-          </div>
-        </form>
+          <template slot="popover">
+            <ul class="list-unstyled dropdown" style="margin: -1px;">
+              <li
+                v-for="(value, name) in availableLocales"
+                :key="name"
+                class="p-10 hand"
+                v-close-popover
+                @click="switchLocale(name)"
+              >
+                {{ value }}
+              </li>
+            </ul>
+          </template>
+        </v-popover>
       </div>
-      <div class="col span-6 landscape"></div>
+      <form>
+        <div class="username">
+          <span>用户名</span>
+          <span>记住<el-checkbox size="medium" v-model="remember"  class="remember"></el-checkbox></span>
+        </div>
+        <el-input v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
+        <div class="password">
+          <div class="label">密码</div>
+          <el-input size="medium" v-model="password" placeholder="请输入密码" autocomplete="password" />
+        </div>
+        <AsyncButton
+          type="submit"
+          action-label="登录"
+          waiting-label="Logging In..."
+          success-label="Logged In"
+          error-label="Error"
+          @click="loginLocal"
+        />
+      </form>
     </div>
   </main>
 </template>
@@ -147,17 +148,82 @@ export default {
 <style lang="scss" scoped>
   .login {
     overflow: hidden;
+    width: 100vw;
+    background-image: url('~assets/images/login-landscape.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    height: 100vh;
 
-    .row {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content: center;
+
+    .login-box {
+      width: 30vw;
+      height: 60vh;
+      background-color: #fff;
       align-items: center;
-    }
+      padding-top: 6vh;
+      
 
-    .landscape {
-      background-image: url('~assets/images/login-landscape.svg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center center;
-      height: 100vh;
+      .title {
+        text-align: center;
+        font-size: 34px;
+        line-height: 36px;
+      }
+
+      .language {
+        margin-top: 4vh;
+        margin-bottom: 6vh;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .select {
+          display: flex;
+          justify-content: center;
+
+          span {
+            margin: 0 10px;
+          }
+
+          .earth, .up {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+
+      form {
+        width: 36vh;
+        margin: 0 auto;
+        color: #acb4b7;
+        font-size: 18px;
+        display: flex;
+        flex-direction: column;
+
+        .username {
+          margin-bottom: 1vh;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .remember {
+            margin: 0 9px;
+          }
+        }
+
+        .password {
+          margin-bottom: 4.5vh;
+          .label {
+            margin-top: 3vh;
+            margin-bottom: 1.5vh;
+          }
+        }
+      }
     }
   }
 </style>

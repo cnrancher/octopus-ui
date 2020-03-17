@@ -19,7 +19,7 @@ export default {
 </script>
 
 <template>
-  <span @click="row.goToClone">
+  <span @click="row.goToEdit">
     <a>
       {{ value }}
     </a>

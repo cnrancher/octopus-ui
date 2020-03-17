@@ -242,6 +242,7 @@ export function hasCustomDetail(rawType) {
 export function hasCustomEdit(rawType) {
   const type = _normalizeType(rawType);
   const cache = _cache.edit;
+  
   if ( cache[type] !== undefined ) {
     return cache[type];
   }

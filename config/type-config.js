@@ -1,4 +1,4 @@
-/* eslint-lint */
+/* eslint-disable */
 import {
   ignoreType,
   basicType,

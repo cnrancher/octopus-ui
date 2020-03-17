@@ -1,11 +1,12 @@
 <script>
+/* eslint-disable */
 import { mapState } from 'vuex';
 import { addObject, removeObject } from '@/utils/array';
 import { THEME } from '@/store/prefs';
 import applyTypeConfigs from '@/config/type-config';
 import PromptRemove from '@/components/PromptRemove';
-import Footer from '@/components/nav/Footer';
 import ActionMenu from '@/components/ActionMenu';
+import Menu from '@/components/nav/Menu';
 import { NORMAN, RANCHER } from '@/config/types';
 
 applyTypeConfigs();
@@ -13,7 +14,7 @@ applyTypeConfigs();
 export default {
   components: {
     PromptRemove,
-    Footer,
+    Menu,
     ActionMenu,
   },
 
@@ -46,52 +47,17 @@ export default {
 
 <template>
   <div class="dashboard-root">
-    <div class="cluster">
+    <div class="top">
       <div class="logo" alt="Logo" />
-    </div>
-
-    <div class="top"></div>
-
-    <div class="user">
-      设置
+      <div class="system-name">OCTOPUS</div>
     </div>
 
     <nav>
-      <el-menu
-        default-active="2"
-        class="el-menu-vertical-demo"
-      >
-        <el-submenu index="1">
-          <template slot="title">
-            Device Model
-          </template>
-          <el-menu-item index="2-1">
-            <nuxt-link to="/device-model">
-              <a>
-                <span slot="title">dummy device</span>
-              </a>
-            </nuxt-link>
-          </el-menu-item>
-        </el-submenu>
-        
-        <el-menu-item index="2">
-          <nuxt-link to="/device/edge.cattle.io.v1alpha1.devicelink">
-            <a>
-              <span slot="title">Device Link</span>
-            </a>
-          </nuxt-link>
-        </el-menu-item>
-        <el-menu-item index="2">
-          <nuxt-link to="/setting">
-            <a><span slot="title">Setting</span></a>
-          </nuxt-link>
-        </el-menu-item>
-      </el-menu>
+      <Menu />
     </nav>
 
     <main>
       <nuxt class="outlet" />
-      <Footer />
     </main>
 
     <div class="wm">
@@ -103,15 +69,15 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .dashboard-root {
     display: grid;
     height: 100vh;
 
     grid-template-areas:
-      "cluster  top   back user"
+      "top      top   top  top"
       "nav      main  main main"
-      "switcher main  main main"
+      "nav      main  main main"
       "wm       wm    wm   wm";
 
     grid-template-columns: var(--nav-width)     auto 0px                  var(--header-height);
@@ -121,50 +87,32 @@ export default {
       grid-template-columns: var(--nav-width) auto 150px var(--header-height);
     }
 
-    > .cluster {
-      grid-area: cluster;
-      background-color: var(--header-bg);
-      position: relative;
-
-      .logo {
-        background-color: var(--header-logo);
-        mask: url("~assets/images/logo.svg") no-repeat center;
-        height: 30px;
-        width: 64px;
-        position: absolute;
-        top: 9px;
-        left: -30px;
-        z-index: 2;
-      }
-    }
-
     > .top {
       grid-area: top;
       background-color: var(--header-bg);
-      padding-top: 8px;
+      display: flex;
+      align-items: center;
 
-      .filter {
-        margin-left: 10px;
+      .logo {
+        background-color: var(--header-logo);
+        mask: url("~assets/images/logo.png") no-repeat center;
+        height: 44px;
+        width: 44px;
+        margin-left: 20px;
+      }
 
-        .vs__dropdown-toggle {
-          background: var(--header-dropdown);
-          border-radius: var(--border-radius);
-          border: none;
-        }
+      .system-name {
+        margin: 0 44px 0 16px;
+        font-size: 24px;
+        line-height: 36px;
+        color: #fff;
       }
     }
+
 
     > .back {
       grid-area: back;
       background-color: var(--header-bg);
-
-      A {
-        line-height: var(--header-height);
-        display: block;
-        color: var(--body-text);
-        padding: 0 5px;
-        text-align: right;
-      }
     }
 
     > .user {
@@ -176,22 +124,11 @@ export default {
     NAV {
       grid-area: nav;
       position: relative;
-      background-color: var(--nav-bg);
-      padding: 0 10px;
+      background-color: var(--header-bg);
       overflow-y: auto;
-
-      .package:not(:first-child) {
-        margin-top: 20px;
-      }
 
       .header {
         background: transparent;
-      }
-
-      H6 {
-        margin: 0;
-        letter-spacing: 0.1em;
-        line-height: initial;
       }
     }
 

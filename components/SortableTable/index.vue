@@ -257,6 +257,10 @@ export default {
             return '(JSON Path err)';
           }
         } else {
+          if ( col.combine ) {
+            return `${get(row, expr)} / ${get(row, col.combine)}`;
+          }
+
           return get(row, expr);
         }
       } else {
@@ -375,7 +379,8 @@ export default {
                 >
                   <td :key="col.name" :data-title="dt[col.name]" :align="col.align || 'left'" :class="{['col-'+dasherize(col.formatter||'')]: !!col.formatter}">
                     <slot :name="'cell:' + col.name" :row="row" :col="col">
-                      <component :is="col.formatter" v-if="col.formatter" :value="valueFor(row,col)" :row="row" :col="col" />
+                      <component :is="col.formatter" v-if="col.formatter && col.combine" :value="valueFor(row,col)" :row="row" :col="col" />
+                      <component :is="col.formatter" v-else-if="col.formatter" :value="valueFor(row,col)" :row="row" :col="col" />
                       <template v-else>
                         {{ valueFor(row,col) }}
                       </template>

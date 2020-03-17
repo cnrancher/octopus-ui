@@ -4,14 +4,9 @@ import omit from 'lodash/omit';
 import { get } from '@/utils/object';
 
 import createEditView from '@/mixins/create-edit-view';
-import LabeledInput from '@/components/form/LabeledInput';
-import Footer from '@/components/form/Footer';
 import { DESCRIPTION } from '@/config/labels-annotations';
 
 export default {
-  components: {
-    LabeledInput, Footer,
-  },
   mixins:     [createEditView],
   data() {
     return { };

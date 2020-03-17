@@ -279,6 +279,10 @@ export function importEdit(rawType) {
   return () => import(`@/edit/${ type }`);
 }
 
+export function importDevice() {
+  return () => import(`@/device/dummyDevice`);
+}
+
 // ----------------------------------------------------------------------------
 // 3) Changing info
 // ----------------------------------------------------------------------------

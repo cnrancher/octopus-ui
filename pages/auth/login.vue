@@ -4,13 +4,12 @@ import { mapGetters } from 'vuex';
 import { USERNAME } from '@/config/cookies';
 import AsyncButton from '@/components/AsyncButton';
 import { LOCAL, LOGGED_OUT, TIMED_OUT, _FLAGGED } from '@/config/query-params';
-import Checkbox from '@/components/form/Checkbox';
 
 export default {
   name:       'Login',
   layout:     'unauthenticated',
   components: {
-    AsyncButton, Checkbox
+    AsyncButton
   },
 
   data({ $cookies }) {
@@ -94,8 +93,8 @@ export default {
 </script>
 
 <template>
-  <main class="login landscape">
-    <div class="login-box">
+  <el-row type="flex" class="login" justify="center" align="middle">
+    <el-col :span="8" class="login-box">
       <h1 class="title">您好 <br/>欢迎您使用Octopus</h1>
       <div class="language">
         <v-popover
@@ -104,7 +103,7 @@ export default {
           <div class="hand select">
             <img src='~assets/images/earth.svg' class="earth" />
             <span>{{ selectedLocaleLabel }}</span>
-            <img src='~assets/images/up.svg' class="up" />
+            <i class="el-icon-arrow-down"></i>
           </div>
 
           <template slot="popover">
@@ -122,27 +121,29 @@ export default {
           </template>
         </v-popover>
       </div>
-      <form>
-        <div class="username">
-          <span>用户名</span>
-          <span>记住<el-checkbox size="medium" v-model="remember"  class="remember"></el-checkbox></span>
-        </div>
-        <el-input v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
-        <div class="password">
-          <div class="label">密码</div>
-          <el-input size="medium" v-model="password" placeholder="请输入密码" autocomplete="password" />
-        </div>
-        <AsyncButton
-          type="submit"
-          action-label="登录"
-          waiting-label="Logging In..."
-          success-label="Logged In"
-          error-label="Error"
-          @click="loginLocal"
-        />
-      </form>
-    </div>
-  </main>
+      <el-col :span="14" push="5">
+        <form>
+          <div class="username">
+            <span>用户名</span>
+            <span>记住<el-checkbox size="medium" v-model="remember"  class="remember"></el-checkbox></span>
+          </div>
+          <el-input v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
+          <div class="password">
+            <div class="label">密码</div>
+            <el-input size="medium" v-model="password" placeholder="请输入密码" autocomplete="password" />
+          </div>
+          <AsyncButton
+            type="submit"
+            action-label="登录"
+            waiting-label="Logging In..."
+            success-label="Logged In"
+            error-label="Error"
+            @click="loginLocal"
+          />
+        </form>
+      </el-col>
+    </el-col>
+  </el-row>
 </template>
 
 <style lang="scss" scoped>
@@ -155,17 +156,11 @@ export default {
     background-position: center center;
     height: 100vh;
 
-    display: flex;
-    flex-direction: column;
-    align-items:center;
-    justify-content: center;
-
     .login-box {
-      width: 30vw;
-      height: 60vh;
       background-color: #fff;
       align-items: center;
       padding-top: 6vh;
+      padding-bottom: 4vh;
       
 
       .title {
@@ -185,6 +180,7 @@ export default {
         .select {
           display: flex;
           justify-content: center;
+          color: #2088ce;
 
           span {
             margin: 0 10px;
@@ -198,7 +194,7 @@ export default {
       }
 
       form {
-        width: 36vh;
+        width: 100%;
         margin: 0 auto;
         color: #acb4b7;
         font-size: 18px;

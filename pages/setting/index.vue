@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div>
+  <h1>
     Setting page
-  </div>
+  </h1>
 </template>

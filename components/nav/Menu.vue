@@ -4,9 +4,7 @@ export default { name: 'Menu' };
 
 <template>
   <div class="menu">
-    <el-menu
-      default-active="1"
-    >
+    <el-menu default-active="/device/edge.cattle.io.v1alpha1.devicelink">
       <nuxt-link to="/setting">
         <el-menu-item index="1">
           <span>全局概览</span>

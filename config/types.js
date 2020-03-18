@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Steve
 export const API_GROUP = 'apiGroups';
 export const CONFIG_MAP = 'core.v1.configmap';

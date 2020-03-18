@@ -2,6 +2,9 @@
 import { DUMMY_DEVICE, SCHEMA } from '../../config/types';
 import ResourceTable from '@/components/ResourceTable';
 import { headersFor } from '@/utils/customized';
+import {
+  STATE, NAME, NAMESPACE, KIND, AGE
+} from '@/config/table-headers';
 export default {
   components: { ResourceTable },
 
@@ -15,7 +18,7 @@ export default {
       return this.$store.getters['dummyDevice/schemaFor'](SCHEMA);
     },
     headers() {
-      return headersFor(this.schema);
+      return [STATE, NAME, NAMESPACE,KIND, AGE];
     },
   },
 
@@ -34,6 +37,3 @@ export default {
     <ResourceTable :schema="schema" :rows="rows" :headers="headers" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-</style>

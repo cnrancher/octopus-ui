@@ -1,4 +1,4 @@
-/* eslint-lint */
+/* eslint-disable */
 import {
   ignoreType,
   basicType,
@@ -25,7 +25,7 @@ import {
   NODE_NAME, ROLES,
   VERSION, CPU,
   RAM, PODS,
-  BUILT_IN, CLUSTER_CREATOR_DEFAULT, INGRESS_TARGET,
+  BINGRESS_TARGET,
   TYPE,
   NAMESPACE,
 } from '@/config/table-headers';
@@ -57,9 +57,9 @@ export default function() {
     return out;
   }, 99, true);
 
-  mapType(/.*/, (typeStr, match, schema) => {
-    return schema.attributes.kind;
-  }, 1);
+  // mapType(/.*/, (typeStr, match, schema) => {
+  //   return schema.attributes.kind;
+  // }, 1);
 
   weightGroup('Cluster', 99);
   weightGroup('Core', 98);
@@ -103,27 +103,11 @@ export default function() {
     },
     AGE
   ]);
-  headers(INGRESS, [STATE, NAME, INGRESS_TARGET, AGE]);
 
   headers(SCHEMA, [
     STATE,
     NAME,
     NAMESPACE,
-    AGE
-  ]);
-  
-  headers(RBAC.ROLE, [
-    STATE,
-    NAME,
-    BUILT_IN,
-    AGE
-  ]);
-
-  headers(RBAC.CLUSTER_ROLE, [
-    STATE,
-    NAME,
-    BUILT_IN,
-    CLUSTER_CREATOR_DEFAULT,
     AGE
   ]);
 

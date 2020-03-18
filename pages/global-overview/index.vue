@@ -1,8 +1,5 @@
-<script>
-</script>
-
 <template>
   <h1>
-    Setting page
+    Hello world
   </h1>
 </template>

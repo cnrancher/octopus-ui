@@ -1,8 +1,6 @@
-// Note: 'id' is always the last sort, so you don't have to specify it here.
-
 export const STATE = {
   name:      'state',
-  label:     'State',
+  label:     'status',
   sort:      ['stateSort', 'nameSort'],
   value:     'stateDisplay',
   width:     75,
@@ -15,7 +13,7 @@ export const NAME = {
   label:     'Name',
   value:     'nameDisplay',
   sort:      ['nameSort'],
-  formatter: 'LinkDetail',
+  formatter: 'LinkModel',
   width:     200
 };
 
@@ -26,19 +24,35 @@ export const NAME_UNLINKED = {
   sort:      ['nameSort'],
 };
 
-export const DEIVCE_MODEL = {
-  name:       'model',
-  label:      'Model',
-  value:      'spec.model.kind',
+export const KIND = {
+  name:       'kind',
+  label:      'kind',
+  value:      'kind',
   sort:       ['nameSort'],
-  formatter:  'LinkModel',
   width:       200,
 }
+
+export const KIND_APIVERSION = {
+  name:       'kind',
+  label:      'kind',
+  value:      'spec.model.kind',
+  sort:       ['nameSort'],
+  formatter:  'LinkDevice',
+  combine:     'spec.model.apiVersion',
+  width:       400,
+}
+
+export const NAMESPACE = {
+  name:   'namespace',
+  label:  'Namespace',
+  value:  'metadata.namespace',
+  sort:   ['metadata.namespace', 'nameSort'],
+};
 
 export const DEIVCE_API_VERSION = {
   name:       'apiVersion',
   label:      'apiVersion',
-  value:      'spec.model.apiVersion',
+  value:      'apiVersion',
   width:       200,
 }
 
@@ -71,13 +85,6 @@ export const NAME_IMAGE = {
   value:     'nameDisplay',
   sort:      ['nameSort'],
   formatter: 'LinkDetailImage',
-};
-
-export const NAMESPACE = {
-  name:   'namespace',
-  label:  'Namespace',
-  value:  'metadata.namespace',
-  sort:   ['metadata.namespace', 'nameSort'],
 };
 
 export const NODE = {
@@ -150,13 +157,6 @@ export const IMAGE = {
   label: 'Image',
   value: 'image',
   sort:  ['image', 'nameSort'],
-};
-
-export const RIO_IMAGE = {
-  name:  'image',
-  label: 'Image',
-  value: 'imageDisplay',
-  sort:  ['imageDisplay', 'nameSort'],
 };
 
 export const POD_IMAGES = {
@@ -291,12 +291,14 @@ export const TYPE = {
   value: 'type',
   sort:  ['type']
 };
+
 export const STATUS = {
   name:  'status',
   label: 'Status',
   value: 'status',
   sort:  ['status']
 };
+
 export const LAST_HEARTBEAT_TIME = {
   name:      'lastHeartbeatTime',
   label:     'Last update',
@@ -304,6 +306,7 @@ export const LAST_HEARTBEAT_TIME = {
   sort:      ['lastHeartbeatTime'],
   formatter:  'LiveDate',
 };
+
 export const REASON = {
   name:  'reason',
   label: 'Reason',
@@ -329,76 +332,6 @@ export const VALUE = {
   sort:      ['value'],
   formatter: 'ClickExpand'
 };
-
-export const BUILT_IN = {
-  name:      'builtIn',
-  label:     'Built In',
-  value:     'builtIn',
-  sort:      ['builtIn'],
-  align:     'center',
-  formatter: 'IconIsDefault'
-};
-
-export const CLUSTER_CREATOR_DEFAULT = {
-  name:      'default',
-  label:     'Cluster Creator Default',
-  value:     'default',
-  sort:      ['Default'],
-  align:     'center',
-  formatter:  'IconIsDefault'
-};
-
-export const RBAC_HEADERS = [
-  {
-    name:      'create',
-    label:     'Create',
-    value:     'create',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'delete',
-    label:     'Delete',
-    value:     'delete',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'get',
-    label:     'Get',
-    value:     'get',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'list',
-    label:     'List',
-    value:     'list',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'patch',
-    label:     'Patch',
-    value:     'patch',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'update',
-    label:     'Update',
-    value:     'update',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  },
-  {
-    name:      'watch',
-    label:     'Watch',
-    value:     'watch',
-    align:     'center',
-    formatter: 'IconIsDefault',
-  }
-];
 
 export const RESOURCE = {
   name:  'resource',

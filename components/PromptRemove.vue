@@ -1,7 +1,6 @@
 <script>
 import { mapState } from 'vuex';
 import { get } from '@/utils/object';
-import { NAMESPACE, RIO } from '@/config/types';
 import Card from '@/components/Card';
 import { singularLabelFor, pluralLabelFor } from '@/utils/customized';
 
@@ -41,7 +40,6 @@ export default {
       if ( !first ) {
         return false;
       }
-      const type = first.type;
       return this.toRemove.length === 1;
     },
 

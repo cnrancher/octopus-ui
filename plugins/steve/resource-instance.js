@@ -4,7 +4,8 @@ import { ucFirst } from '@/utils/string';
 import { eachLimit } from '@/utils/promise';
 import {
   MODE, _EDIT, _CLONE,
-  EDIT_YAML, _FLAGGED
+  EDIT_YAML, _FLAGGED,
+  _VIEW
 } from '@/config/query-params';
 import { hasCustomEdit, pluralLabelFor } from '@/utils/customized';
 import { findBy } from '@/utils/array';
@@ -619,6 +620,13 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
+      this.currentRouter().push({ path: url });
+    };
+  },
+
+  goToView() {
+    return (moreQuery = {}) => {
+      const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
       this.currentRouter().push({ path: url });
     };
   },

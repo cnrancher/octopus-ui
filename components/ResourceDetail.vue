@@ -231,6 +231,13 @@ export default {
           </nuxt-link>{{ originalModel.nameDisplay }}
         </h1>
         <div v-if="isView" class="actions">
+          <button
+            type="button"
+            class="btn bg-primary"
+            @click="goBack"
+          >
+            返回上一级
+          </button>
           <button ref="actions" type="button" class="btn btn-sm role-multi-action actions" @click="showActions">
             <i class="icon icon-actions" />
           </button>

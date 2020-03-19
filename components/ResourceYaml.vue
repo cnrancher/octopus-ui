@@ -9,7 +9,7 @@ import {
   _VIEW,
   _EDIT,
   _PREVIEW,
-  EDIT_YAML
+  EDIT_YAML,
 } from '@/config/query-params';
 
 import { mapPref, DIFF } from '@/store/prefs';
@@ -275,6 +275,10 @@ export default {
       this.done();
     },
 
+    goBack() {
+      this.$router.go(-1);
+    },
+
     done() {
       if ( !this.doneRoute ) {
         return;
@@ -297,6 +301,13 @@ export default {
         <span v-else>{{ schema.attributes.kind }}: {{ obj.id }}</span>
       </h1>
       <div class="actions">
+        <button
+          type="button"
+          class="btn bg-primary"
+          @click="goBack"
+        >
+          返回上一级
+        </button>
         <AsyncButton
           v-if="canDelete && isView"
           key="delete"
@@ -305,14 +316,14 @@ export default {
           waiting-color="bg-error"
           @click="remove"
         />
-        <button
+        <!-- <button
           v-if="canEdit && (isView || isPreview)"
           type="button"
           class="btn bg-primary"
-          @click="edit"
+          @click="navigateToEditAsYaml"
         >
           Edit
-        </button>
+        </button> -->
         <span v-if="showEditAsForm">
           <button class="btn bg-primary" @click="navigateToEditAsForm">Edit as form</button>
         </span>
@@ -380,6 +391,10 @@ export default {
   top: 95px;
   right: 21px;
   z-index: z-index("overContent");
+}
+
+header .actions {
+  margin-bottom: 30px;
 }
 
 footer .actions {

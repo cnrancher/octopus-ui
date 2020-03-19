@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import ResourceYaml from '@/components/ResourceYaml';
 import { createYaml } from '@/utils/create-yaml';
 import { SCHEMA } from '@/config/types';
@@ -60,5 +61,5 @@ export default {
       :value="model"
     />
   </div>
-  <ResourceYaml v-else :obj="model" :value="yaml" :done-route="doneRoute" :for-create="true" />
+  <!-- <ResourceYaml v-else :obj="model" :value="yaml" :done-route="doneRoute" :for-create="true" /> -->
 </template>

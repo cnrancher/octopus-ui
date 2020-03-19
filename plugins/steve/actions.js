@@ -153,8 +153,9 @@ export default {
     }
 
     opt = opt || {};
+    console.log('遇见你', type);
     opt.url = getters.urlFor(type, id, opt);
-
+    console.log('遇见你opt.url', opt.url);
     const res = await dispatch('request', opt);
     if ( !getters.hasType(type) ) {
       commit('registerType', type);

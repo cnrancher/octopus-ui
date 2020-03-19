@@ -1,4 +1,3 @@
-
 <script>
 import { THEME } from '@/store/prefs';
 

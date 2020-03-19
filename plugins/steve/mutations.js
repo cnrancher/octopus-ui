@@ -33,6 +33,7 @@ export default {
     if (!data) {
       return;
     }
+
     const cache = state.types[type];
     const keyField = KEY_FIELD_FOR[type] || KEY_FIELD_FOR['default'];
 

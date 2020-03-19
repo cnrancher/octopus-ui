@@ -17,13 +17,14 @@ export default {
   },
   computed: {
     status() {
-      let label = '';
+      let label = 'Active';
 
-      this.row.status.conditions.forEach(condition => {
+      for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
+        const condition = this.row.status.conditions[i]
         if (condition.status === 'False') {
-          label = `${condition.type}(${condition.status})`;
+          label = `${condition.type}:${condition.status}`;
         }
-      });
+      }
       return label;
     }
   }
@@ -58,7 +59,6 @@ export default {
     position: relative;
     padding: 1px 10px 1px 0;
     font-size: 1em;
-    max-width: 110px;
     font-size: .85em;
     vertical-align: middle;
   }

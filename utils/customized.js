@@ -280,7 +280,7 @@ export function importEdit(rawType) {
 }
 
 export function importDevice() {
-  return () => import(`@/device/dummyDevice`);
+  return () => import(`@/device/dummydevice`);
 }
 
 // ----------------------------------------------------------------------------

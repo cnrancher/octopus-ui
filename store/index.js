@@ -4,7 +4,7 @@ export const strict = false;
 
 export const plugins = [
   Steve({ namespace: 'deviceLink', baseUrl: '/v1' }),
-  Steve({ namespace: 'dummyDevice', baseUrl: '/v1' }),
+  Steve({ namespace: 'dummydevice', baseUrl: '/v1' }),
 ];
 
 export const state = () => {
@@ -31,8 +31,9 @@ export const actions = {
     dispatch('deviceLink/subscribe');
     await dispatch('deviceLink/loadSchemas');
 
-    dispatch('dummyDevice/subscribe');
-    await dispatch('dummyDevice/loadSchemas');
+    dispatch('dummydevice/subscribe');
+    await dispatch('dummydevice/loadSchemas');
+
     commit('clusterChanged', true);
   },
 

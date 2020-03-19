@@ -26,7 +26,7 @@ export const NAME_UNLINKED = {
 
 export const KIND = {
   name:       'kind',
-  label:      'kind',
+  label:      'Devicekind',
   value:      'kind',
   sort:       ['nameSort'],
   width:       200,
@@ -34,12 +34,11 @@ export const KIND = {
 
 export const KIND_APIVERSION = {
   name:       'kind',
-  label:      'kind',
+  label:      'Devicekind',
   value:      'spec.model.kind',
   sort:       ['nameSort'],
   formatter:  'LinkDevice',
-  combine:     'spec.model.apiVersion',
-  width:       400,
+  width:       200,
 }
 
 export const NAMESPACE = {

@@ -18,8 +18,9 @@ export const PVC = 'core.v1.persistentvolumeclaim';
 export const TLS_CERT = 'kubernetes.io/tls';
 
 export const HELM = 'helm.cattle.io.v1.helmchart';
-export const DEVICE_LINK='edge.cattle.io.devicelinks';
-export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevices';
+export const DEVICE_LINK='edge.cattle.io.devicelink';
+export const PREFIX_DEVICE = 'devices.edge.cattle.io.';
+export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevice';
 
 export const RBAC = {
   ROLE:                 'rbac.authorization.k8s.io.v1.role',
@@ -51,5 +52,4 @@ export const RIO = {
   SERVICE:          'rio.cattle.io.v1.service',
 
   SYSTEM_NAMESPACE: 'rio-system',
-
 };

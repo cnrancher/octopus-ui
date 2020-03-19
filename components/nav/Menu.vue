@@ -1,5 +1,7 @@
 <script>
-export default { name: 'Menu' };
+export default { 
+  name: 'Menu'
+};
 </script>
 
 <template>
@@ -31,10 +33,24 @@ export default { name: 'Menu' };
         </template>
         <el-submenu index="3-1">
           <template slot="title">设备模版</template>
-          <nuxt-link to="/device-model">
+          <nuxt-link to="/device-model/dummydevice">
             <el-menu-item index="3-1-1">
                 <a>
-                  <span slot="title">dummy device</span>
+                  <span slot="title">DummyDevice</span>
+                </a>
+            </el-menu-item>
+          </nuxt-link>
+          <nuxt-link to="/device-model/bluetoolthdevice">
+            <el-menu-item index="3-1-2">
+                <a>
+                  <span slot="title">BluetoothDevice</span>
+                </a>
+            </el-menu-item>
+          </nuxt-link>
+          <nuxt-link to="/device-model/modbusdevice">
+            <el-menu-item index="3-1-3">
+                <a>
+                  <span slot="title">ModbusDevice</span>
                 </a>
             </el-menu-item>
           </nuxt-link>

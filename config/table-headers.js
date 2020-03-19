@@ -3,7 +3,7 @@ export const STATE = {
   label:     'status',
   sort:      ['stateSort', 'nameSort'],
   value:     'stateDisplay',
-  width:     75,
+  width:     150,
   default:   'unknown',
   formatter: 'BadgeState',
 };

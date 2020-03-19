@@ -19,7 +19,6 @@ import {
 export async function asyncData(ctx) {
   const { store, params, route } = ctx;
   const { resource, namespace, id } = params;
-  console.log(resource, namespace, id);
   const hasCustomDetail = _hasCustomDetail(resource);
   // const hasCustomEdit = _hasCustomEdit(resource);
   const hasCustomEdit = true;
@@ -35,7 +34,6 @@ export async function asyncData(ctx) {
   }
 
   const obj = await store.dispatch('deviceLink/find', { type: resource, id: fqid });
-  console.log(resource, fqid, obj, 'obj');
   const forNew = realMode === _CLONE || realMode === _STAGE;
   const model = await store.dispatch('deviceLink/clone', { resource: obj });
 

@@ -87,7 +87,7 @@ $selected: rgba($primary, .5);
   --dropdown-border            : #{$medium};
   --dropdown-divider           : #{$medium};
   --dropdown-text              : #{$link};
-  --dropdown-hover-text        : var(--primary-text);
+  --dropdown-hover-text        : rgba(42,148,255,0.75);
   --dropdown-hover-bg          : var(--primary-bg);
   --dropdown-active-text       : var(--active-text);
   --dropdown-active-bg         : var(--active-bg);

@@ -15,12 +15,24 @@ export default {
       default: () => {}
     },
   },
+  computed: {
+    status() {
+      let label = '';
+
+      this.row.status.conditions.forEach(condition => {
+        if (condition.status === 'False') {
+          label = `${condition.type}(${condition.status})`;
+        }
+      });
+      return label;
+    }
+  }
 };
 </script>
 
 <template>
-  <span :class="{'badge-state': true, [row.stateBackground]: true}">
-    {{ row.stateDisplay }}
+  <span :class="{'badge-state': true, [row.statusColor]: true}">
+    {{ status }}
   </span>
 </template>
 

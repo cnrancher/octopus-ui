@@ -4,15 +4,15 @@ export default { name: 'Menu' };
 
 <template>
   <div class="menu">
-    <el-menu default-active="/device/edge.cattle.io.v1alpha1.devicelink">
+    <el-menu default-active="/device/edge.cattle.io.devicelink">
       <nuxt-link to="/global-overview">
         <el-menu-item index="global-overview">
-          <span>全局概览</span>
+          <img src="~/assets/images/global-resource.png"><span>全局概览</span>
         </el-menu-item>
       </nuxt-link>
       <el-submenu index="infrastructure">
         <template slot="title">
-          <span>基础设施</span>
+          <img src="~/assets/images/infrastructure.png"><span>基础设施</span>
         </template>
         <nuxt-link to="/infrastructure">
           <el-menu-item index="infrastructure">
@@ -20,9 +20,14 @@ export default { name: 'Menu' };
           </el-menu-item>
         </nuxt-link>
       </el-submenu>
+      <nuxt-link to="/workload">
+        <el-menu-item index="workload">
+          <img src="~/assets/images/workload.png"><span>工作负载</span>
+        </el-menu-item>
+      </nuxt-link>
       <el-submenu index="3">
         <template slot="title">
-          <span>loT管理</span>
+          <img src="~/assets/images/iot-management.png"><span>loT管理</span>
         </template>
         <el-submenu index="3-1">
           <template slot="title">设备模版</template>
@@ -34,7 +39,7 @@ export default { name: 'Menu' };
             </el-menu-item>
           </nuxt-link>
         </el-submenu>
-        <nuxt-link to="/device/edge.cattle.io.v1alpha1.devicelink">
+        <nuxt-link to="/device/edge.cattle.io.devicelink">
           <el-menu-item index="3-2">
               <a>
                 <span slot="title">设备列表</span>
@@ -44,12 +49,12 @@ export default { name: 'Menu' };
       </el-submenu>
       <nuxt-link to="/edge-ai">
         <el-menu-item index="4">
-            <span>边缘AI</span>
+          <img src="~/assets/images/edge-ai.png"><span>边缘AI</span>
         </el-menu-item>
       </nuxt-link>
       <el-submenu index="5">
         <template slot="title">
-          <span>MQTT管理</span>
+          <img src="~/assets/images/mqtt.png"><span>MQTT管理</span>
         </template>
         <nuxt-link to="/mqtt-management">
           <el-menu-item index="5-1">
@@ -61,7 +66,7 @@ export default { name: 'Menu' };
       </el-submenu>
       <el-submenu index="6">
         <template slot="title">
-          <span>系统管理</span>
+          <img src="~/assets/images/setting.png"><span>系统管理</span>
         </template>
         <nuxt-link to="/setting">
           <el-menu-item index="setting">
@@ -76,6 +81,10 @@ export default { name: 'Menu' };
 </template>
 
 <style lang="scss" scoped>
+  img {
+    margin-right: 10px;
+    margin-top: -2px;
+  }
   .menu {
     .el-menu {
       background-color: var(--header-bg);

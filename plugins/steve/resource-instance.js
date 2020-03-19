@@ -170,6 +170,25 @@ export default {
     return this.stateColor.replace('text-', 'bg-');
   },
 
+  statusColor() {
+    let color = 'warning';
+    const conditions = this.status?.conditions || [];
+    
+    conditions.forEach((condition) => {
+      if (condition.status === 'False') {
+        color = 'error';
+        return;
+      }
+      color = 'success';
+    });
+
+    return `text-${ color }`;
+  },
+
+  statusBackground() {
+    return this.statusColor.replace('text-', 'bg-');
+  },
+
   stateIcon() {
     let trans = false;
     let error = false;
@@ -447,7 +466,7 @@ export default {
       if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
-
+      console.log('yarm的参数', opt);
       return this.$dispatch('request', opt);
     };
   },
@@ -628,6 +647,13 @@ export default {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
       this.currentRouter().push({ path: url });
+    };
+  },
+
+  goToModel() {
+    return (moreQuery = {}) => {
+      // const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
+      // this.currentRouter().push({ path: url });
     };
   },
 

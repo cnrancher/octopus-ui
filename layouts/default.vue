@@ -60,10 +60,6 @@ export default {
       <nuxt class="outlet" />
     </main>
 
-    <div class="wm">
-      <!-- <WindowManager /> -->
-    </div>
-
     <ActionMenu />
     <PromptRemove />
   </div>
@@ -75,17 +71,11 @@ export default {
     height: 100vh;
 
     grid-template-areas:
-      "top      top   top  top"
-      "nav      main  main main"
-      "nav      main  main main"
-      "wm       wm    wm   wm";
+      "top      top"
+      "nav      main";
 
-    grid-template-columns: var(--nav-width)     auto 0px                  var(--header-height);
-    grid-template-rows:    var(--header-height) auto var(--footer-height) var(--wm-height, 0px);
-
-    &.back-to-rancher {
-      grid-template-columns: var(--nav-width) auto 150px var(--header-height);
-    }
+    grid-template-columns: var(--nav-width)     auto;
+    grid-template-rows:    var(--header-height) auto;
 
     > .top {
       grid-area: top;
@@ -107,18 +97,6 @@ export default {
         line-height: 36px;
         color: #fff;
       }
-    }
-
-
-    > .back {
-      grid-area: back;
-      background-color: var(--header-bg);
-    }
-
-    > .user {
-      grid-area: user;
-      background-color: var(--header-bg);
-      padding: 5px;
     }
 
     NAV {
@@ -176,9 +154,5 @@ export default {
       }
     }
 
-  }
-
-  .wm {
-    grid-area: wm;
   }
 </style>

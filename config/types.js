@@ -18,8 +18,8 @@ export const PVC = 'core.v1.persistentvolumeclaim';
 export const TLS_CERT = 'kubernetes.io/tls';
 
 export const HELM = 'helm.cattle.io.v1.helmchart';
-export const DEVICE_LINK='edge.cattle.io.v1alpha1.devicelinks';
-export const DUMMY_DEVICE = 'devices.edge.cattle.io.v1alpha1.dummydevices';
+export const DEVICE_LINK='edge.cattle.io.devicelinks';
+export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevices';
 
 export const RBAC = {
   ROLE:                 'rbac.authorization.k8s.io.v1.role',

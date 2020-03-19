@@ -40,6 +40,7 @@ export default {
       if ( !first ) {
         return false;
       }
+
       return this.toRemove.length === 1;
     },
 

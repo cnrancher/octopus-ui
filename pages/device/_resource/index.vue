@@ -45,7 +45,6 @@ export default {
           Create
         </nuxt-link>
       </div>
-      <nuxt-link to="create">测试</nuxt-link>
     </header>
     <ResourceTable :schema="schema" :rows="rows" :headers="headers" />
   </div>

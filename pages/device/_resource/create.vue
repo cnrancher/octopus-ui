@@ -33,7 +33,6 @@ export default {
     const schemas = ctx.store.getters['deviceLink/all'](SCHEMA);
     const schema = ctx.store.getters['deviceLink/schemaFor'](resource);
     const data = { type: resource };
-
     if ( schema.attributes.namespaced ) {
       data.metadata = { namespace };
     }

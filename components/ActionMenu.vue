@@ -82,7 +82,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="showing">
+  <div v-if="showing" class="root">
     <div class="background" @click="hide" @contextmenu.prevent></div>
     <ul class="list-unstyled menu" :style="style">
       <li v-for="opt in options" :key="opt.action" :class="{divider: opt.divider}" @click="execute(opt)">
@@ -100,15 +100,16 @@ export default {
 
   .root {
     position: absolute;
+    // background-color: var(--header-bg);
   }
 
   .menu {
-    position: absolute;
+    // position: absolute;
     visibility: hidden;
     top: 0;
     left: 0;
     z-index: z-index('dropdownContent');
-
+    width: 150px;
     color: var(--dropdown-text);
     background-color: var(--dropdown-bg);
     border: 1px solid var(--dropdown-border);

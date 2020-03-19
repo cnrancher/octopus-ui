@@ -1,5 +1,4 @@
 <script>
-
 export default {
   props: {
     value: {
@@ -15,13 +14,27 @@ export default {
       required: true
     },
   },
+  data() {
+    return { url: '' };
+  },
+  mounted() {
+    this.findUrl(this.value);
+  },
+  methods: {
+    findUrl() {
+      const apiVersion = this.row.spec.model.apiVersion;
+      const type = this.row.spec.model.kind.toLowerCase();
+      const url = apiVersion.replace(/\/[\d\D]*$/, `.${type}/${encodeURIComponent(this.row.id)}`);
+      this.url = `/device/${url}`;
+    }
+  }
 };
 </script>
 
 <template>
-  <span @click="row.goToView">
-    <a>
+  <span>
+    <nuxt-link :to="url">
       {{ value }}
-    </a>
+    </nuxt-link>
   </span>
 </template>

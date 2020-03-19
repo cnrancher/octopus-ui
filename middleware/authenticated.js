@@ -8,7 +8,7 @@ import { ClusterNotFoundError } from '@/utils/error';
 export default async function({
   route, app, store, redirect, req, isDev
 }) {
-  // await Promise.all([
-  //   store.dispatch('loadCluster'),
-  // ]);
+  await Promise.all([
+    store.dispatch('loadCluster'),
+  ]);
 }

@@ -652,7 +652,6 @@ export default {
 
   goToModel() {
     return (moreQuery = {}) => {
-      console.log(this.detailUrl, this.resource, '哈哈哈😄');
       // const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
       // this.currentRouter().push({ path: url });
     };

@@ -275,7 +275,6 @@ export function importEdit(rawType) {
   const type = _normalizeType(rawType);
 
   console.log('boom', type);
-
   return () => import(`@/edit/${ type }`);
 }
 

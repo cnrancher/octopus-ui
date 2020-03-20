@@ -36,11 +36,11 @@ export default {
     },
   },
 
-   asyncData(ctx) {
+  asyncData(ctx) {
     const deviceModel = ctx.route.params.id;
     const type = `${PREFIX_DEVICE}${deviceModel}`;
     const url = `${PREFIX_DEVICE}${deviceModel}s`;
-    
+    console.log('添加的设备', deviceModel);
     return ctx.store.dispatch(`${deviceModel}/findAll`, { type, opt: { url } }).then((rows) => {
       return {
         rows

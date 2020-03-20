@@ -61,5 +61,5 @@ export default {
       :value="model"
     />
   </div>
-  <!-- <ResourceYaml v-else :obj="model" :value="yaml" :done-route="doneRoute" :for-create="true" /> -->
+  <ResourceYaml v-else :obj="model" :value="yaml" :done-route="doneRoute" :for-create="true" />
 </template>

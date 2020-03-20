@@ -466,7 +466,6 @@ export default {
       if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
-      console.log('yarm的参数', opt);
       return this.$dispatch('request', opt);
     };
   },
@@ -621,7 +620,7 @@ export default {
       params,
       query
     }).href;
-    console.log(url, '我是url', params);
+    
     return url;
   },
 

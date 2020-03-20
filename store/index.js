@@ -5,6 +5,8 @@ export const strict = false;
 export const plugins = [
   Steve({ namespace: 'deviceLink', baseUrl: '/v1' }),
   Steve({ namespace: 'dummydevice', baseUrl: '/v1' }),
+  Steve({ namespace: 'modbusdevice', baseUrl: '/v1' }),
+  Steve({ namespace: 'bluetoothdevice', baseUrl: '/v1' }),
 ];
 
 export const state = () => {
@@ -33,6 +35,12 @@ export const actions = {
 
     dispatch('dummydevice/subscribe');
     await dispatch('dummydevice/loadSchemas');
+
+    dispatch('modbusdevice/subscribe');
+    await dispatch('modbusdevice/loadSchemas');
+
+    dispatch('bluetoothdevice/subscribe');
+    await dispatch('bluetoothdevice/loadSchemas');
 
     commit('clusterChanged', true);
   },

@@ -40,7 +40,7 @@ export default {
                 </a>
             </el-menu-item>
           </nuxt-link>
-          <nuxt-link to="/device-model/bluetoolthdevice">
+          <nuxt-link to="/device-model/bluetoothdevice">
             <el-menu-item index="3-1-2">
                 <a>
                   <span slot="title">BluetoothDevice</span>

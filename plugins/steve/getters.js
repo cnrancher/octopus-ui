@@ -84,10 +84,10 @@ export default {
     opt = opt || {};
     type = getters.normalizeType(type);
     let url = opt.url;
-    console.log('谁说', type);
+
     if ( !url ) {
       const schema = getters.schemaFor(type);
-      console.log('谁de 大大', schema);
+
       if ( !schema ) {
         throw new Error(`Unknown schema for type: ${ type }`);
       }

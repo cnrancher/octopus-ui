@@ -85,7 +85,6 @@ export default {
     let type = normalizeType(obj.type);
     const keyField = KEY_FIELD_FOR[type] || KEY_FIELD_FOR['default'];
     const id = obj[keyField];
-    console.log('我咋横在删除', type, id, keyField);
 
     let entry = state.types[type];
 

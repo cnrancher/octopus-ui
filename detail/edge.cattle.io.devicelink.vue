@@ -73,23 +73,95 @@ export default {
           </div>
         </div>
         <div class="col span-6">
-          <div class="title">template</div>
-          <div class="ltr">
-            <div class="ltr span-6">
-              <div class="label">设备名称</div>
-              <div class="value">{{this.value.spec.template.metadata.labels.device}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col span-6">
           <div class="title">status</div>
           <div class="ltr">
             <div class="ltr span-6" v-for="item  in this.value.status.conditions" :key="item.type">
               <div class="label">{{ item.type }}</div>
               <div class="value">{{ item.status }}</div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col span-6">
+          <div class="title">template</div>
+          <div class="ltr">
+            <div class="ltr span-6">
+              <div class="label">设备名称</div>
+              <div class="value">{{this.value.spec.template.metadata.labels.device}}</div>
+            </div>
+            <template v-if="this.value.spec.model.kind === 'BluetoothDevice'">
+              <div class="ltr span-6">
+                <div class="label">Name</div>
+                <div class="value">{{this.value.spec.template.spec.name}}</div>
+              </div>
+              <div class="ltr span-12">
+                <div class="value properties">属性:{{this.value.spec.template.spec.properties[0].name}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Description</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].description}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">name</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].name}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">accessMode</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].type.int.accessMode}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Maximum</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].type.int.maximum}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Unit</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].type.int.unit}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">characteristicUUID</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].visitor.characteristicUUID}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">operationType</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationType}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">operationValue</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationValue}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">operationValue</div>
+                <div class="value">{{this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationValue}}</div>
+              </div>
+              <div class="ltr span-12">
+                <div class="value properties">属性:{{this.value.spec.template.spec.properties[1].name}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Description</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].description}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">name</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].name}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">accessMode</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].type.int.accessMode}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Maximum</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].type.int.maximum}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">Unit</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].type.int.unit}}</div>
+              </div>
+              <div class="ltr span-6">
+                <div class="label">characteristicUUID</div>
+                <div class="value">{{this.value.spec.template.spec.properties[1].visitor.characteristicUUID}}</div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -108,6 +180,10 @@ export default {
   line-height: 20px;
   color: #373d41;
   height: 32px;
+}
+.properties {
+  font-weight: bold;
+  font-size: 16px;
 }
 .ltr {
   display: flex;

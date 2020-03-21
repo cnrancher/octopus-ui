@@ -268,7 +268,7 @@ export default {
         buttonDone(false);
       }
     },
-    
+
     async remove(buttonDone) {
       await this.obj.remove();
       buttonDone(true);

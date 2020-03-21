@@ -1,12 +1,3 @@
-import { parse as setCookieParser } from 'set-cookie-parser';
-import { randomStr } from '@/utils/string';
-import { parse as parseUrl, addParam, addParams } from '@/utils/url';
-import { findBy, addObjects } from '@/utils/array';
-import { BACK_TO, SPA, AUTH_TEST, _FLAGGED } from '@/config/query-params';
-
-const KEY = 'rc_nonce';
-
-const ERR_NONCE = 'nonce';
 const ERR_CLIENT = 'client';
 const ERR_SERVER = 'server';
 
@@ -40,7 +31,8 @@ export const mutations = {
 export const actions = {
   login({ dispatch }, { body }) {
     try {
-      console.log('username: password', `${body.username}: ${body.password}`);
+      console.log('username: password', `${ body.username }: ${ body.password }`);
+
       return true;
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {

@@ -30,6 +30,7 @@ export default {
         });
         */
       }
+
       return responseObject(res);
     }).catch((err) => {
       if ( !err || !err.response ) {
@@ -37,7 +38,7 @@ export default {
       }
 
       const res = err.response;
-     
+
       // Go to the logout page for 401s, unless redirectUnauthorized specifically disables (for the login page)
       if ( opt.redirectUnauthorized !== false && process.client && res.status === 401 ) {
         return dispatch('auth/logout', opt.logoutOnError, { root: true });
@@ -155,7 +156,7 @@ export default {
     opt = opt || {};
     opt.url = getters.urlFor(type, id, opt);
     const res = await dispatch('request', opt);
-    
+
     if ( !getters.hasType(type) ) {
       commit('registerType', type);
     }
@@ -164,6 +165,7 @@ export default {
 
     out = getters.byId(type, id);
     console.log(out, 'find out');
+
     return out;
   },
 

@@ -30,7 +30,7 @@ export const KIND = {
   value:      'kind',
   sort:       ['nameSort'],
   width:       200,
-}
+};
 
 export const KIND_APIVERSION = {
   name:       'kind',
@@ -39,7 +39,7 @@ export const KIND_APIVERSION = {
   sort:       ['nameSort'],
   formatter:  'LinkDevice',
   width:       200,
-}
+};
 
 export const NAMESPACE = {
   name:   'namespace',
@@ -53,7 +53,7 @@ export const DEIVCE_API_VERSION = {
   label:      'apiVersion',
   value:      'apiVersion',
   width:       200,
-}
+};
 
 export const NAMESPACE_NAME_UNLINKED = {
   name:      'namespace-name',

@@ -85,8 +85,8 @@ export default {
 
 <template>
   <el-row type="flex" class="login" justify="center" align="middle">
-    <el-col :span="8" class="login-box">
-      <h1 class="title">
+    <el-col :span="8" class="login-module">
+      <h1 class="welcome">
         您好
         <br />
         欢迎您使用Octopus
@@ -96,7 +96,7 @@ export default {
           placement="bottom"
         >
           <div class="hand select">
-            <img src="~assets/images/earth.svg" class="earth" />
+            <i class="edge-icon-earth"></i>
             <span>{{ selectedLocaleLabel }}</span>
             <i class="el-icon-arrow-down"></i>
           </div>
@@ -150,14 +150,16 @@ export default {
     background-size: cover;
     background-position: center center;
     height: 100vh;
+    min-width: 700px;
 
-    .login-box {
+    .login-module {
       background-color: #fff;
+      border-radius: 4px;
       align-items: center;
       padding-top: 6vh;
       padding-bottom: 4vh;
 
-      .title {
+      .welcome {
         text-align: center;
         font-size: 34px;
         line-height: 36px;

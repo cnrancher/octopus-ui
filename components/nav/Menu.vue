@@ -1,7 +1,5 @@
 <script>
-export default { 
-  name: 'Menu'
-};
+export default { name: 'Menu' };
 </script>
 
 <template>
@@ -18,7 +16,7 @@ export default {
         </template>
         <nuxt-link to="/infrastructure">
           <el-menu-item index="infrastructure">
-              <span>基础设施1</span>
+            <span>基础设施1</span>
           </el-menu-item>
         </nuxt-link>
       </el-submenu>
@@ -32,34 +30,36 @@ export default {
           <img src="~/assets/images/iot-management.png"><span>loT管理</span>
         </template>
         <el-submenu index="3-1">
-          <template slot="title">设备模版</template>
+          <template slot="title">
+            设备模版
+          </template>
           <nuxt-link to="/device-model/dummydevice">
             <el-menu-item index="3-1-1">
-                <a>
-                  <span slot="title">DummyDevice</span>
-                </a>
+              <a>
+                <span slot="title">DummyDevice</span>
+              </a>
             </el-menu-item>
           </nuxt-link>
           <nuxt-link to="/device-model/bluetoothdevice">
             <el-menu-item index="3-1-2">
-                <a>
-                  <span slot="title">BluetoothDevice</span>
-                </a>
+              <a>
+                <span slot="title">BluetoothDevice</span>
+              </a>
             </el-menu-item>
           </nuxt-link>
           <nuxt-link to="/device-model/modbusdevice">
             <el-menu-item index="3-1-3">
-                <a>
-                  <span slot="title">ModbusDevice</span>
-                </a>
+              <a>
+                <span slot="title">ModbusDevice</span>
+              </a>
             </el-menu-item>
           </nuxt-link>
         </el-submenu>
         <nuxt-link to="/device/edge.cattle.io.devicelink">
           <el-menu-item index="3-2">
-              <a>
-                <span slot="title">设备列表</span>
-              </a>
+            <a>
+              <span slot="title">设备列表</span>
+            </a>
           </el-menu-item>
         </nuxt-link>
       </el-submenu>
@@ -74,9 +74,9 @@ export default {
         </template>
         <nuxt-link to="/mqtt-management">
           <el-menu-item index="5-1">
-              <a>
-                <span slot="title">MQTT管理1</span>
-              </a>
+            <a>
+              <span slot="title">MQTT管理1</span>
+            </a>
           </el-menu-item>
         </nuxt-link>
       </el-submenu>
@@ -86,9 +86,9 @@ export default {
         </template>
         <nuxt-link to="/setting">
           <el-menu-item index="setting">
-              <a>
-                <span slot="title">系统管理1</span>
-              </a>
+            <a>
+              <span slot="title">系统管理1</span>
+            </a>
           </el-menu-item>
         </nuxt-link>
       </el-submenu>
@@ -131,11 +131,11 @@ export default {
       }
     }
   }
-  
+
 </style>
 
 <style lang="scss">
- 
+
   .el-submenu {
     background-color: var(--header-bg);
     .el-menu-item {

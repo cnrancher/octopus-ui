@@ -16,6 +16,7 @@ export default {
   byId: (state, getters) => (type, id) => {
     type = getters.normalizeType(type);
     const entry = state.types[type];
+
     if ( entry ) {
       return entry.map.get(id);
     }
@@ -39,6 +40,7 @@ export default {
   // Fuzzy is only for plugins/lookup, do not use in real code
   schemaFor: (state, getters) => (type, fuzzy = false) => {
     const schemas = state.types[SCHEMA];
+
     console.log('fucksecherm', schemas, type);
     type = normalizeType(type);
 

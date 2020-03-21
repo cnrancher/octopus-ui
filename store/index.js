@@ -10,7 +10,7 @@ export const plugins = [
 ];
 
 export const state = () => {
-  return { clusterReady:    false };
+  return { clusterReady: false };
 };
 
 export const getters = {};

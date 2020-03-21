@@ -19,7 +19,8 @@ export default {
   methods: {
     findUrl() {
       const type = this.row.spec.model.kind.toLowerCase();
-      this.url = `/device-model/${type}`;
+
+      this.url = `/device-model/${ type }`;
     }
   }
 };

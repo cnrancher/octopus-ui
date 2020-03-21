@@ -20,8 +20,7 @@ export async function asyncData(ctx) {
   const { store, params, route } = ctx;
   const { resource, namespace, id } = params;
   const hasCustomDetail = _hasCustomDetail(resource);
-  // const hasCustomEdit = _hasCustomEdit(resource);
-  const hasCustomEdit = true;
+  const hasCustomEdit = _hasCustomEdit(resource);
   // There are 5 "real" modes: view, create, edit, stage, clone
   // which later map to 3 logical/page modes: view, create, edit (stage and clone are "create")
   const realMode = route.query.mode || _VIEW;

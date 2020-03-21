@@ -9,7 +9,7 @@ export default async function({
   // Make sure you're actually logged in
   // if (!store.getters['auth/loggedIn'] ) {
   //   try {
-      
+
   //   } catch (e) {
   //     const status = e?._status;
 

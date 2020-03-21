@@ -173,10 +173,11 @@ export default {
   statusColor() {
     let color = 'warning';
     const conditions = this.status?.conditions || [];
-    
+
     conditions.forEach((condition) => {
       if (condition.status === 'False') {
         color = 'error';
+
         return;
       }
       color = 'success';
@@ -466,6 +467,7 @@ export default {
       if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
+
       return this.$dispatch('request', opt);
     };
   },
@@ -572,6 +574,7 @@ export default {
 
       opt.method = 'delete';
       console.log('remove', opt);
+
       return this.$dispatch('request', opt);
     };
   },
@@ -620,7 +623,7 @@ export default {
       params,
       query
     }).href;
-    
+
     return url;
   },
 
@@ -638,6 +641,7 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
+
       this.currentRouter().push({ path: url });
     };
   },
@@ -645,6 +649,7 @@ export default {
   goToView() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
+
       this.currentRouter().push({ path: url });
     };
   },

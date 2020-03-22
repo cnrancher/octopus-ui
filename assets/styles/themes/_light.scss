@@ -63,7 +63,14 @@ $selected: rgba($primary, .5);
   --scrollbar-thumb-dropdown   : #{$lighter};
   --scrollbar-track            : transparent;
 
-  --header-bg                  : #01041e;
+  --header-bg                  : #000;
+  --menu-bg                    : #12152d;
+  --menu-second-bg             : #181a36;
+  --menu-second-shadow         : #151732;
+  --menu-text                  : #f6f7fb;
+  --menu-action-text           : #04139c;
+  --menu-hover-bg              : #fff;
+
   --header-logo                : #{$lightest};
   --header-dropdown            : #{rgba($darkest, 0.2)};
   --header-height              : 62px;

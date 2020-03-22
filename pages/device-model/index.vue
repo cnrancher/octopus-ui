@@ -13,7 +13,7 @@ export default {
 
   computed: {
     schema() {
-      return this.$store.getters['dummydevice/schemaFor'](SCHEMA);
+      return this.$store.getters['deviceModel/schemaFor'](SCHEMA);
     },
     headers() {
       return [STATE, NAME, NAMESPACE, KIND, AGE];
@@ -21,7 +21,7 @@ export default {
   },
 
   asyncData(ctx) {
-    return ctx.store.dispatch('dummydevice/findAll', { type: DUMMY_DEVICE, opt: { url: 'devices.edge.cattle.io.dummydevices' } }).then((rows) => {
+    return ctx.store.dispatch('deviceModel/findAll', { type: DUMMY_DEVICE, opt: { url: 'devices.edge.cattle.io.dummydevices' } }).then((rows) => {
       return { rows };
     });
   },

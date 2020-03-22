@@ -13,9 +13,7 @@ export default {
 
   computed: {
     schema() {
-      const deviceModel = this.$route.params.id;
-
-      return this.$store.getters[`${ deviceModel }/schemaFor`](SCHEMA);
+      return this.$store.getters['deviceModel/schemaFor'](SCHEMA);
     },
     headers() {
       const headerAttr = [];
@@ -39,9 +37,7 @@ export default {
     const type = `${ PREFIX_DEVICE }${ deviceModel }`;
     const url = `${ PREFIX_DEVICE }${ deviceModel }s`;
 
-    console.log('添加的设备', deviceModel);
-
-    return ctx.store.dispatch(`${ deviceModel }/findAll`, { type, opt: { url } }).then((rows) => {
+    return ctx.store.dispatch('deviceModel/findAll', { type, opt: { url } }).then((rows) => {
       return { rows };
     });
   },

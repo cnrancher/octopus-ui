@@ -122,7 +122,7 @@ export default {
     nav {
       grid-area: nav;
       position: relative;
-      background-color: var(--header-bg);
+      background-color: var(--menu-bg);
       overflow-y: auto;
 
       .header {

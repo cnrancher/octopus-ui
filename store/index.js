@@ -4,9 +4,7 @@ export const strict = false;
 
 export const plugins = [
   Steve({ namespace: 'deviceLink', baseUrl: '/v1' }),
-  Steve({ namespace: 'dummydevice', baseUrl: '/v1' }),
-  Steve({ namespace: 'modbusdevice', baseUrl: '/v1' }),
-  Steve({ namespace: 'bluetoothdevice', baseUrl: '/v1' }),
+  Steve({ namespace: 'deviceModel', baseUrl: '/v1' }),
 ];
 
 export const state = () => {
@@ -29,18 +27,27 @@ export const actions = {
       // Do nothing, we're already connected to this cluster
       return;
     }
+    //
+    dispatch('deviceModel/find', {
+      type: 'deviceModelMenu',
+      id:   'addons.k3s.cattle.io',
+      opt:  {
+        url: 'apiextensions.k8s.io.customresourcedefinitions',
+        // filters: {
+        //   label: [{"modifier": "eq", "value":"app.kubernetes.io/name"}],
+        // }
+      }
+    }).then((rows) => {
+      console.log('腹肌的rows', rows);
+
+      return { rows };
+    });
 
     dispatch('deviceLink/subscribe');
     await dispatch('deviceLink/loadSchemas');
 
-    dispatch('dummydevice/subscribe');
-    await dispatch('dummydevice/loadSchemas');
-
-    dispatch('modbusdevice/subscribe');
-    await dispatch('modbusdevice/loadSchemas');
-
-    dispatch('bluetoothdevice/subscribe');
-    await dispatch('bluetoothdevice/loadSchemas');
+    dispatch('deviceModel/subscribe');
+    await dispatch('deviceModel/loadSchemas');
 
     commit('clusterChanged', true);
   },

@@ -25,14 +25,15 @@ const properties = {
   },
   visitor: {
     characteristicUUID: '',
+    defaultValue: 'OFF',
     dataConverter: {
       startIndex: '',
       endIndex: '',
       shiftRight: '',
     },
     dataWrite: {
-      ON: '',
-      OFF: ''
+      ON: '1',
+      OFF: '0'
     }
   }
 }
@@ -53,13 +54,16 @@ export default {
         'visitor.characteristicUUID': [
           { required: true, message: '请输入UUID', trigger: 'blur' },
         ]
-      }
+      },
     }
   },
   computed: {
     showModel() {
       return this.visible
     },
+    dataWrite() {
+      return Object.entries(this.newProperties.visitor.dataWrite)
+    }
   },
   methods: {
     add(formName) {
@@ -134,9 +138,22 @@ export default {
         </el-form-item>
       </template>
 
+      <el-form-item label="defaultValue" prop='visitor.defaultValue'>
+        <el-input v-model="newProperties.visitor.defaultValue"></el-input>
+      </el-form-item>
+
       <template v-if="newProperties.accessMode === 'ReadWrite'">
-        <el-form-item v-for="(item,key) in newProperties.visitor.dataWrite" :label="key" :key="key">
-          <el-input v-model="newProperties.visitor.dataWrite[key]"></el-input>
+        <el-form-item label="dataWrite">
+          <template v-for="(item,key) in dataWrite">
+            <el-row :key="key" class="pb-10">
+              <el-col :span='5'>
+                <el-input v-model="item[0]"></el-input>
+              </el-col>
+              <el-col :span='5'>
+                <el-input v-model="item[1]"></el-input>
+              </el-col>
+            </el-row>
+          </template>
         </el-form-item>
       </template>
     </el-form>

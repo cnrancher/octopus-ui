@@ -135,9 +135,17 @@ export default {
       </template>
 
       <template v-if="newProperties.accessMode === 'ReadWrite'">
-        <el-form-item v-for="(item,key) in newProperties.visitor.dataWrite" :label="key" :key="key">
+        <!-- <el-form-item v-for="(item,key) in newProperties.visitor.dataWrite" :label="key" :key="key">
           <el-input type="textarea" v-model="newProperties.visitor.dataWrite[key]"></el-input>
-        </el-form-item>
+        </el-form-item> -->
+        <template v-for="(item,keys) in newProperties.visitor.dataWrite">
+          <el-col :span='5' :key="keys">
+            <el-input type="textarea" value="keys"></el-input>
+          </el-col>
+          <el-col :span='5' :key="keys">
+            <el-input type="textarea" v-model="newProperties.visitor.dataWrite[key]"></el-input>
+          </el-col>
+        </template>
       </template>
     </el-form>
     <span slot="footer" class="dialog-footer">

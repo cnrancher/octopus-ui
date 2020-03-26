@@ -277,12 +277,6 @@ export function importEdit(rawType) {
   return () => import(`@/edit/${ type }`);
 }
 
-export function importDevice(rawType) {
-  const type = _normalizeType(rawType);
-  
-  return () => import(`@/device/dummydevice`);
-}
-
 // ----------------------------------------------------------------------------
 // 3) Changing info
 // ----------------------------------------------------------------------------

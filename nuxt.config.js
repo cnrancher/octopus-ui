@@ -12,7 +12,7 @@ const version = process.env.VERSION ||
   require('./package.json').version;
 
 const dev = (process.env.NODE_ENV !== 'production');
-const api = process.env.API || 'http://localhost:8989';
+const api = process.env.API || 'https://localhost:8989';
 const pl = process.env.PL || STANDARD;
 
 let routerBasePath = '/';
@@ -65,8 +65,7 @@ module.exports = {
 
   mode:    'spa',
   // mode: 'universal',
-  // loading: '~/components/Loading.vue',
-  loading: false,
+  loading: '~/components/Loading.vue',
 
   // Axios: https://axios.nuxtjs.org/options
   axios: {

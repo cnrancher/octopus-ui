@@ -3,7 +3,7 @@
 import { SCHEMA, DEVICE_LINK } from '../../../config/types';
 import ResourceTable from '@/components/ResourceTable';
 import {
-  STATE, NAME, NAMESPACE, KIND_APIVERSION, DEIVCE_API_VERSION, AGE
+  STATE, NAME, NAMESPACE, KIND_APIVERSION, AGE
 } from '@/config/table-headers';
 import { importList, pluralLabelFor, headersFor } from '@/utils/customized';
 
@@ -20,7 +20,7 @@ export default {
       return this.$store.getters['deviceLink/schemaFor'](SCHEMA);
     },
     headers() {
-      return [STATE, NAME, NAMESPACE, KIND_APIVERSION, DEIVCE_API_VERSION, AGE];
+      return [STATE, NAME, NAMESPACE, KIND_APIVERSION, AGE];
     },
     typeDisplay() {
       return pluralLabelFor(this.schema);
@@ -28,7 +28,7 @@ export default {
   },
 
   asyncData(ctx) {
-    return ctx.store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: DEVICE_LINK } }).then((rows) => {
+    return ctx.store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: 'edge.cattle.io.devicelinks' } }).then((rows) => {
       return {
         rows
       };
@@ -45,7 +45,6 @@ export default {
           Create
         </nuxt-link>
       </div>
-      <nuxt-link to="create">测试</nuxt-link>
     </header>
     <ResourceTable :schema="schema" :rows="rows" :headers="headers" />
   </div>

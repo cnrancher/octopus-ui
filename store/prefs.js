@@ -30,13 +30,14 @@ export const mapPref = function(name) {
 // --------------------
 const parseJSON = true; // Shortcut for setting it below
 
-export const CLUSTER = create('cluster', 'local'); // @TODO remember last cluster, handle if missing, combine with namespacess
+export const THEME = create('theme', 'light', { options: ['light', 'dark'] });
+
 export const NAMESPACES = create('ns', [], { parseJSON });
+export const CLUSTER = create('cluster', 'local'); // @TODO remember last cluster, handle if missing, combine with namespacess
 export const EXPANDED_GROUPS = create('open_groups', ['rio'], { parseJSON });
 export const GROUP_RESOURCES = create('group_by', 'namespace');
 export const NAV_SHOW = create('nav', 'basic', { options: ['basic', 'used', 'all'] });
 export const DIFF = create('diff', 'unified', { options: ['unified', 'split'] });
-export const THEME = create('theme', 'light', { options: ['light', 'dark'] });
 export const KEYMAP = create('keymap', 'sublime', { options: ['sublime', 'emacs', 'vim'] });
 export const ROWS_PER_PAGE = create('per_page', 100);
 export const DATE_FORMAT = create('date_format', 'ddd, MMM D YYYY');

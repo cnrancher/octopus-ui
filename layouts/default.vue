@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable */
 import { mapState } from 'vuex';
 import { addObject, removeObject } from '@/utils/array';
 import { THEME } from '@/store/prefs';
@@ -7,6 +6,7 @@ import applyTypeConfigs from '@/config/type-config';
 import PromptRemove from '@/components/PromptRemove';
 import ActionMenu from '@/components/ActionMenu';
 import Menu from '@/components/nav/Menu';
+import Logout from '@/components/nav/logout';
 import { NORMAN, RANCHER } from '@/config/types';
 
 applyTypeConfigs();
@@ -16,6 +16,7 @@ export default {
     PromptRemove,
     Menu,
     ActionMenu,
+    Logout
   },
 
   middleware: ['authenticated'],
@@ -30,18 +31,12 @@ export default {
   },
 
   data() {
-    return { packages: [] };
+    return {};
   },
 
-  computed: {
-    
-  },
+  computed: {},
 
-  methods: {
-    toggleNoneLocale() {
-      this.$store.dispatch('i18n/toggleNone');
-    }
-  }
+  methods: {}
 };
 </script>
 
@@ -50,6 +45,7 @@ export default {
     <div class="top">
       <div class="logo" alt="Logo" />
       <div class="system-name">OCTOPUS</div>
+      <Logout />
     </div>
 
     <nav>
@@ -59,10 +55,6 @@ export default {
     <main>
       <nuxt class="outlet" />
     </main>
-
-    <div class="wm">
-      <!-- <WindowManager /> -->
-    </div>
 
     <ActionMenu />
     <PromptRemove />
@@ -75,110 +67,51 @@ export default {
     height: 100vh;
 
     grid-template-areas:
-      "top      top   top  top"
-      "nav      main  main main"
-      "nav      main  main main"
-      "wm       wm    wm   wm";
+      "top      top"
+      "nav      main";
 
-    grid-template-columns: var(--nav-width)     auto 0px                  var(--header-height);
-    grid-template-rows:    var(--header-height) auto var(--footer-height) var(--wm-height, 0px);
+    grid-template-columns: 208px auto;
+    grid-template-rows:    60px auto;
 
-    &.back-to-rancher {
-      grid-template-columns: var(--nav-width) auto 150px var(--header-height);
-    }
-
-    > .top {
+    .top {
       grid-area: top;
-      background-color: var(--header-bg);
+      background-color: var(--header-bg-no);
+      background-image: var(--header-bg);
       display: flex;
       align-items: center;
 
       .logo {
         background-color: var(--header-logo);
         mask: url("~assets/images/logo.png") no-repeat center;
-        height: 44px;
-        width: 44px;
+        height: 48px;
+        width: 48px;
         margin-left: 20px;
       }
 
       .system-name {
         margin: 0 44px 0 16px;
         font-size: 24px;
-        line-height: 36px;
         color: #fff;
+        flex: 1;
       }
     }
 
-
-    > .back {
-      grid-area: back;
-      background-color: var(--header-bg);
-    }
-
-    > .user {
-      grid-area: user;
-      background-color: var(--header-bg);
-      padding: 5px;
-    }
-
-    NAV {
+    nav {
       grid-area: nav;
-      position: relative;
-      background-color: var(--header-bg);
+      background-color: var(--menu-bg);
       overflow-y: auto;
+    }
 
-      .header {
-        background: transparent;
+    main {
+      grid-area: main;
+      overflow: auto;
+
+      .outlet {
+        padding: 20px 20px 70px 20px;
+        min-height: 100%;
+        margin-bottom: -51px;
       }
     }
-
-    > .switcher {
-      margin: 10px 0 0 0;
-      text-align: center;
-    }
   }
-
-  MAIN {
-    grid-area: main;
-    overflow: auto;
-
-    .outlet {
-      padding: 20px 20px 70px 20px;
-      min-height: 100%;
-      margin-bottom: -51px;
-    }
-
-    FOOTER {
-      background-color: var(--nav-bg);
-      height: var(--footer-height);
-    }
-
-    HEADER {
-      display: grid;
-      grid-template-areas: "title actions";
-      grid-template-columns: "auto min-content";
-      margin-bottom: 20px;
-
-      H1 {
-        grid-area: title;
-        margin: 0;
-        padding-top: 4px;
-
-        .nuxt-link-active {
-          padding-right: 10px;
-        }
-      }
-
-      .actions {
-        grid-area: actions;
-        text-align: right;
-        padding-top: 10px;
-      }
-    }
-
-  }
-
-  .wm {
-    grid-area: wm;
-  }
+  
 </style>

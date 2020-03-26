@@ -155,8 +155,8 @@ export default {
 
     opt = opt || {};
     opt.url = getters.urlFor(type, id, opt);
-
     const res = await dispatch('request', opt);
+
     if ( !getters.hasType(type) ) {
       commit('registerType', type);
     }
@@ -165,6 +165,7 @@ export default {
 
     out = getters.byId(type, id);
     console.log(out, 'find out');
+
     return out;
   },
 

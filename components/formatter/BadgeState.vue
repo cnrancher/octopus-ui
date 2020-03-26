@@ -15,12 +15,27 @@ export default {
       default: () => {}
     },
   },
+  computed: {
+    status() {
+      let label = 'Active';
+
+      for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
+        const condition = this.row.status.conditions[i];
+
+        if (condition.status === 'False') {
+          label = `${ condition.type }:${ condition.status }`;
+        }
+      }
+
+      return label;
+    }
+  }
 };
 </script>
 
 <template>
-  <span :class="{'badge-state': true, [row.stateBackground]: true}">
-    {{ row.stateDisplay }}
+  <span :class="{'badge-state': true, [row.statusColor]: true}">
+    {{ status }}
   </span>
 </template>
 
@@ -46,7 +61,6 @@ export default {
     position: relative;
     padding: 1px 10px 1px 0;
     font-size: 1em;
-    max-width: 110px;
     font-size: .85em;
     vertical-align: middle;
   }

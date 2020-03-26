@@ -170,6 +170,26 @@ export default {
     return this.stateColor.replace('text-', 'bg-');
   },
 
+  statusColor() {
+    let color = 'warning';
+    const conditions = this.status?.conditions || [];
+
+    conditions.forEach((condition) => {
+      if (condition.status === 'False') {
+        color = 'error';
+
+        return;
+      }
+      color = 'success';
+    });
+
+    return `text-${ color }`;
+  },
+
+  statusBackground() {
+    return this.statusColor.replace('text-', 'bg-');
+  },
+
   stateIcon() {
     let trans = false;
     let error = false;
@@ -554,6 +574,7 @@ export default {
 
       opt.method = 'delete';
       console.log('remove', opt);
+
       return this.$dispatch('request', opt);
     };
   },
@@ -597,12 +618,12 @@ export default {
       namespace: this.metadata && this.metadata.namespace,
       id:        this.id
     };
-    
     const url = router.resolve({
       name:   route,
       params,
       query
     }).href;
+
     return url;
   },
 
@@ -620,6 +641,7 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
+
       this.currentRouter().push({ path: url });
     };
   },
@@ -627,7 +649,15 @@ export default {
   goToView() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
+
       this.currentRouter().push({ path: url });
+    };
+  },
+
+  goToModel() {
+    return (moreQuery = {}) => {
+      // const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
+      // this.currentRouter().push({ path: url });
     };
   },
 

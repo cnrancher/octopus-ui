@@ -3,7 +3,7 @@ export const STATE = {
   label:     'status',
   sort:      ['stateSort', 'nameSort'],
   value:     'stateDisplay',
-  width:     75,
+  width:     150,
   default:   'unknown',
   formatter: 'BadgeState',
 };
@@ -26,21 +26,20 @@ export const NAME_UNLINKED = {
 
 export const KIND = {
   name:       'kind',
-  label:      'kind',
+  label:      'Devicekind',
   value:      'kind',
   sort:       ['nameSort'],
   width:       200,
-}
+};
 
 export const KIND_APIVERSION = {
   name:       'kind',
-  label:      'kind',
+  label:      'Devicekind',
   value:      'spec.model.kind',
   sort:       ['nameSort'],
   formatter:  'LinkDevice',
-  combine:     'spec.model.apiVersion',
-  width:       400,
-}
+  width:       200,
+};
 
 export const NAMESPACE = {
   name:   'namespace',
@@ -54,7 +53,7 @@ export const DEIVCE_API_VERSION = {
   label:      'apiVersion',
   value:      'apiVersion',
   width:       200,
-}
+};
 
 export const NAMESPACE_NAME_UNLINKED = {
   name:      'namespace-name',

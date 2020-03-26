@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import { mapState } from 'vuex';
 import { get } from '@/utils/object';
 import Card from '@/components/Card';
@@ -40,6 +41,7 @@ export default {
       if ( !first ) {
         return false;
       }
+
       return this.toRemove.length === 1;
     },
 
@@ -79,6 +81,7 @@ export default {
     name="promptRemove"
     :width="350"
     :height="260"
+    class="promptRemove"
   >
     <Card :style="{border:'none'}">
       <span slot="title" class="text-default-text">Are you sure?</span>
@@ -106,6 +109,10 @@ export default {
 <style lang="scss">
     .v--modal {
       background-color: var(--box-bg);
+      position: absolute;
+    }
+
+    .promptRemove {
       position: absolute;
     }
 

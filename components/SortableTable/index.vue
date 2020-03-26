@@ -258,7 +258,9 @@ export default {
           }
         } else {
           if ( col.combine ) {
-            return `${get(row, expr)} / ${get(row, col.combine)}`;
+            return `${ get(row, expr) } / ${ get(row, col.combine) }`;
+          } else if (col.isObject) {
+            return '我是一个对象';
           }
 
           return get(row, expr);

@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable */
 import { SCHEMA, DEVICE_LINK } from '../../../config/types';
+import { EDIT_YAML, _FLAGGED } from '@/config/query-params';
 import ResourceTable from '@/components/ResourceTable';
 import {
   STATE, NAME, NAMESPACE, KIND_APIVERSION, AGE
@@ -11,8 +12,31 @@ export default {
   components: { ResourceTable },
 
   data() {
-    return {
+    let listComponent;
+
+    if ( this.hasListComponent ) {
+      listComponent = this.$store.getters['type-map/importList'](this.resource);
     }
+
+    const params = { ...this.$route.params };
+
+    const formRoute = this.$router.resolve({ name: `${ this.$route.name }-create`, params }).href;
+
+    const query = { [EDIT_YAML]: _FLAGGED };
+
+    const yamlRoute = this.$router.resolve({
+      name: `${ this.$route.name }-create`,
+      params,
+      query
+    }).href;
+
+    return {
+      formRoute,
+      yamlRoute,
+      listComponent,
+      EDIT_YAML,
+      FLAGGED:       _FLAGGED
+    };
   },
 
   computed: {
@@ -41,6 +65,14 @@ export default {
   <div>
     <header>
       <div class="actions">
+        <nuxt-link
+          :to="{path: yamlRoute}"
+          tag="button"
+          type="button"
+          class="btn bg-primary"
+        >
+          Create as Yaml
+        </nuxt-link>
         <nuxt-link to="create" append tag="button" type="button" class="btn bg-primary">
           Create
         </nuxt-link>

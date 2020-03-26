@@ -65,7 +65,8 @@ module.exports = {
 
   mode:    'spa',
   // mode: 'universal',
-  loading: '~/components/Loading.vue',
+  // loading: '~/components/Loading.vue',
+  loading: false,
 
   // Axios: https://axios.nuxtjs.org/options
   axios: {

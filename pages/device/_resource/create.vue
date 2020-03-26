@@ -56,7 +56,7 @@ export default {
     const model = await ctx.store.dispatch('deviceLink/create', data);
     const yaml = createYaml(schemas, resource, data);
     const asYaml = (route.query[EDIT_YAML] === _FLAGGED) || !hasCustomEdit;
-    console.log(yaml)
+    
     return {
       resource, model, yaml, schema, asYaml
     };

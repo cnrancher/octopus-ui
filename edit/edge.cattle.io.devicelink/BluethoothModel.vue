@@ -128,7 +128,7 @@ export default {
         <el-input v-model="newProperties.visitor.characteristicUUID"></el-input>
       </el-form-item>
 
-      <template v-if="newProperties.accessMode === 'ReadOnly'">
+      <template v-if="newProperties.accessMode === 'ReadOnly'  || newProperties.accessMode === 'ReadWrite'">
         <el-form-item v-for="(item,key) in newProperties.visitor.dataConverter" :label="key" :key="key">
           <el-input v-model="newProperties.visitor.dataConverter[key]"></el-input>
         </el-form-item>

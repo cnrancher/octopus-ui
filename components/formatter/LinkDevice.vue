@@ -9,10 +9,6 @@ export default {
       type:     Object,
       required: true
     },
-    col: {
-      type:     Object,
-      required: true
-    },
   },
   data() {
     return { url: '' };
@@ -22,11 +18,9 @@ export default {
   },
   methods: {
     findUrl() {
-      const apiVersion = this.row.spec.model.apiVersion;
       const type = this.row.spec.model.kind.toLowerCase();
-      // /${encodeURIComponent(this.row.id)}
-      // const url = apiVersion.replace(/\/[\d\D]*$/, `.${type}`);
-      this.url = `/device-model`;
+
+      this.url = `/device-model/${ type }`;
     }
   }
 };

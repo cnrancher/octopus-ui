@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import ResourceYaml from '@/components/ResourceYaml';
 import { createYaml } from '@/utils/create-yaml';
 import { SCHEMA } from '@/config/types';

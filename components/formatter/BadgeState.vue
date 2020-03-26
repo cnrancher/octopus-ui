@@ -20,11 +20,13 @@ export default {
       let label = 'Active';
 
       for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
-        const condition = this.row.status.conditions[i]
+        const condition = this.row.status.conditions[i];
+
         if (condition.status === 'False') {
-          label = `${condition.type}:${condition.status}`;
+          label = `${ condition.type }:${ condition.status }`;
         }
       }
+
       return label;
     }
   }

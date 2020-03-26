@@ -20,8 +20,7 @@ export async function asyncData(ctx) {
   const { store, params, route } = ctx;
   const { resource, namespace, id } = params;
   const hasCustomDetail = _hasCustomDetail(resource);
-  // const hasCustomEdit = _hasCustomEdit(resource);
-  const hasCustomEdit = true;
+  const hasCustomEdit = _hasCustomEdit(resource);
   // There are 5 "real" modes: view, create, edit, stage, clone
   // which later map to 3 logical/page modes: view, create, edit (stage and clone are "create")
   const realMode = route.query.mode || _VIEW;
@@ -231,6 +230,13 @@ export default {
           </nuxt-link>{{ originalModel.nameDisplay }}
         </h1>
         <div v-if="isView" class="actions">
+          <button
+            type="button"
+            class="btn bg-primary"
+            @click="goBack"
+          >
+            返回上一级
+          </button>
           <button ref="actions" type="button" class="btn btn-sm role-multi-action actions" @click="showActions">
             <i class="icon icon-actions" />
           </button>

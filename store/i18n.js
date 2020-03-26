@@ -46,6 +46,7 @@ export const getters = {
         out[locale] = get(state.translations[locale], key);
       }
     }
+
     return out;
   },
 

@@ -1,16 +1,13 @@
 <script>
-/* eslint-disable */
 import { mapGetters } from 'vuex';
 import { USERNAME } from '@/config/cookies';
 import AsyncButton from '@/components/AsyncButton';
-import { LOCAL, LOGGED_OUT, TIMED_OUT, _FLAGGED } from '@/config/query-params';
+import { LOGGED_OUT, TIMED_OUT, _FLAGGED } from '@/config/query-params';
 
 export default {
   name:       'Login',
   layout:     'unauthenticated',
-  components: {
-    AsyncButton
-  },
+  components: { AsyncButton },
 
   data({ $cookies }) {
     const username = $cookies.get(USERNAME, { parseJSON: false }) || '';
@@ -25,13 +22,9 @@ export default {
       err:       this.$route.query.err,
     };
   },
-  computed: {
-    ...mapGetters('i18n', ['selectedLocaleLabel', 'availableLocales']),
 
-    options() {
-      return options();
-    }
-  },
+  computed: { ...mapGetters('i18n', ['selectedLocaleLabel', 'availableLocales']) },
+
   mounted() {
     this.focusSomething();
   },
@@ -39,14 +32,6 @@ export default {
   methods: {
     switchLocale(locale) {
       this.$store.dispatch('i18n/switchTo', locale);
-    },
-    toggleLocal() {
-      this.showLocal = true;
-      this.$router.applyQuery({ [LOCAL]: _FLAGGED });
-
-      this.$nextTick(() => {
-        this.focusSomething();
-      });
     },
 
     focusSomething() {
@@ -67,9 +52,15 @@ export default {
       }
     },
 
-    loginLocal(buttonCb) {
+    async login(buttonCb) {
       try {
         this.err = null;
+        await this.$store.dispatch('auth/login', {
+          body: {
+            username: this.username,
+            password: this.password
+          }
+        });
 
         if ( this.remember ) {
           this.$cookies.set(USERNAME, this.username, {
@@ -94,14 +85,18 @@ export default {
 
 <template>
   <el-row type="flex" class="login" justify="center" align="middle">
-    <el-col :span="8" class="login-box">
-      <h1 class="title">您好 <br/>欢迎您使用Octopus</h1>
+    <el-col :span="8" class="login-module">
+      <h1 class="welcome">
+        您好
+        <br />
+        欢迎您使用Octopus
+      </h1>
       <div class="language">
         <v-popover
           placement="bottom"
         >
           <div class="hand select">
-            <img src='~assets/images/earth.svg' class="earth" />
+            <i class="edge-icon-earth"></i>
             <span>{{ selectedLocaleLabel }}</span>
             <i class="el-icon-arrow-down"></i>
           </div>
@@ -111,8 +106,8 @@ export default {
               <li
                 v-for="(value, name) in availableLocales"
                 :key="name"
-                class="p-10 hand"
                 v-close-popover
+                class="p-10 hand"
                 @click="switchLocale(name)"
               >
                 {{ value }}
@@ -121,16 +116,16 @@ export default {
           </template>
         </v-popover>
       </div>
-      <el-col :span="14" push="5">
+      <el-col :span="14" :push="5">
         <form>
           <div class="username">
             <span>用户名</span>
-            <span>记住<el-checkbox size="medium" v-model="remember"  class="remember"></el-checkbox></span>
+            <span>记住<el-checkbox v-model="remember" size="medium" class="remember"></el-checkbox></span>
           </div>
-          <el-input v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
+          <el-input ref="username" v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
           <div class="password">
-            <div class="label">密码</div>
-            <el-input size="medium" v-model="password" placeholder="请输入密码" autocomplete="password" />
+            <span class="label">密码</span>
+            <el-input ref="password" v-model="password" size="medium" placeholder="请输入密码" autocomplete="password" />
           </div>
           <AsyncButton
             type="submit"
@@ -138,7 +133,7 @@ export default {
             waiting-label="Logging In..."
             success-label="Logged In"
             error-label="Error"
-            @click="loginLocal"
+            @click="login"
           />
         </form>
       </el-col>
@@ -155,15 +150,16 @@ export default {
     background-size: cover;
     background-position: center center;
     height: 100vh;
+    min-width: 700px;
 
-    .login-box {
+    .login-module {
       background-color: #fff;
+      border-radius: 4px;
       align-items: center;
       padding-top: 6vh;
       padding-bottom: 4vh;
-      
 
-      .title {
+      .welcome {
         text-align: center;
         font-size: 34px;
         line-height: 36px;
@@ -215,6 +211,7 @@ export default {
         .password {
           margin-bottom: 4.5vh;
           .label {
+            display: inline-block;
             margin-top: 3vh;
             margin-bottom: 1.5vh;
           }

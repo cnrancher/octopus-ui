@@ -12,7 +12,7 @@ const version = process.env.VERSION ||
   require('./package.json').version;
 
 const dev = (process.env.NODE_ENV !== 'production');
-const api = process.env.API || 'http://localhost:8989';
+const api = process.env.API || 'https://localhost:8989';
 const pl = process.env.PL || STANDARD;
 
 let routerBasePath = '/';
@@ -76,8 +76,9 @@ module.exports = {
   },
 
   router: {
-    base:       routerBasePath,
-    middleware: ['i18n'],
+    base:                 routerBasePath,
+    middleware:           ['i18n'],
+    linkExactActiveClass: 'nuxt-link-exact-active',
   },
 
   build: {

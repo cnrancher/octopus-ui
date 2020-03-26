@@ -1,5 +1,4 @@
 <script>
-
 import $ from 'jquery';
 import { THEME, KEYMAP } from '@/store/prefs';
 

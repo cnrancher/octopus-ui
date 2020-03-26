@@ -185,9 +185,11 @@ export default {
   font-weight: bold;
   font-size: 16px;
 }
+
 .ltr {
   display: flex;
   flex-wrap: wrap;
+
   .label {
     width: 140px;
     background-color: #fbfbfc;

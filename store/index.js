@@ -8,7 +8,10 @@ export const plugins = [
 ];
 
 export const state = () => {
-  return { clusterReady: false };
+  return {
+    clusterReady: false,
+    dynamicMenu:  [],
+  };
 };
 
 export const getters = {};
@@ -17,6 +20,13 @@ export const mutations = {
   clusterChanged(state, ready) {
     state.clusterReady = ready;
   },
+  setDynamicMenu(state, customresources) {
+    const menus = customresources.filter((element) => {
+      return element.id.includes('.devices.edge.cattle.io');
+    });
+
+    state.dynamicMenu = menus;
+  }
 };
 
 export const actions = {
@@ -27,21 +37,6 @@ export const actions = {
       // Do nothing, we're already connected to this cluster
       return;
     }
-    //
-    dispatch('deviceModel/find', {
-      type: 'deviceModelMenu',
-      id:   'addons.k3s.cattle.io',
-      opt:  {
-        url: 'apiextensions.k8s.io.customresourcedefinitions',
-        // filters: {
-        //   label: [{"modifier": "eq", "value":"app.kubernetes.io/name"}],
-        // }
-      }
-    }).then((rows) => {
-      console.log('腹肌的rows', rows);
-
-      return { rows };
-    });
 
     dispatch('deviceLink/subscribe');
     await dispatch('deviceLink/loadSchemas');
@@ -49,6 +44,12 @@ export const actions = {
     dispatch('deviceModel/subscribe');
     await dispatch('deviceModel/loadSchemas');
 
+    const customresource = await dispatch('deviceModel/findAll', {
+      type: 'apiextensions.k8s.io.customresourcedefinitions',
+      opt:  { url: 'apiextensions.k8s.io.customresourcedefinitions' }
+    });
+
+    commit('setDynamicMenu', customresource);
     commit('clusterChanged', true);
   },
 

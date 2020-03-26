@@ -15,8 +15,20 @@ export const MENUS = [
     },
     children: [
       {
-        path: '/infrastructure',
-        meta: { title: '基础设施1' }
+        path: '/infrastructure/node-management',
+        meta: { title: '节点管理' }
+      },
+      {
+        path: '/infrastructure/system-services',
+        meta: { title: '系统服务' }
+      },
+      {
+        path: '/infrastructure/namespace',
+        meta: { title: '命名空间' }
+      },
+      {
+        path: '/infrastructure/store-category',
+        meta: { title: '存储类别' }
       }
     ]
   },
@@ -27,7 +39,21 @@ export const MENUS = [
       title:      '工作负载',
       icon:       require('~/assets/images/workload.png'),
       alwaysShow: true
-    }
+    },
+    children: [
+      {
+        path: '/workload',
+        meta: { title: '工作负载' }
+      },
+      {
+        path: '/workload/secret-management',
+        meta: { title: '秘文管理' }
+      },
+      {
+        path: '/workload/configure-map',
+        meta: { title: '配置映射' }
+      }
+    ]
   },
   {
     name: 'lot-management',
@@ -40,23 +66,10 @@ export const MENUS = [
       {
         name:     'device-model',
         meta:     { title: '设备模版' },
-        children: [
-          {
-            path: '/device-model/dummydevice',
-            meta: { title: 'DummyDevice' }
-          },
-          {
-            path: '/device-model/bluetoothdevice',
-            meta: { title: 'BluetoothDevice' }
-          },
-          {
-            path: '/device-model/modbusdevice',
-            meta: { title: 'ModbusDevice' }
-          }
-        ]
+        children: []
       },
       {
-        path: '/device',
+        path: '/device/edge.cattle.io.devicelink',
         meta: { title: '设备列表' }
       }
     ]
@@ -83,15 +96,19 @@ export const MENUS = [
     ]
   },
   {
-    name: 'setting',
+    name: 'system-management',
     meta: {
       title: '系统管理',
       icon:  require('~/assets/images/setting.png'),
     },
     children: [
       {
-        path: '/setting',
-        meta: { title: '系统管理1' }
+        path: '/system-management/setting',
+        meta: { title: '系统设置' }
+      },
+      {
+        path: '/system-management/data-backup',
+        meta: { title: '数据备份' }
       }
     ]
   },

@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import * as d3 from 'd3';
 import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';

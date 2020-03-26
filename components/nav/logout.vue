@@ -1,9 +1,7 @@
 <script>
 export default {
   data() {
-    return {
-      visible: false,
-    }
+    return { visible: false };
   },
   methods: {
     setting() {
@@ -15,12 +13,12 @@ export default {
       this.visible = false;
     }
   }
-}
+};
 </script>
 
 <template>
   <el-popover v-model="visible">
-    <div class="login-info" slot="reference">
+    <div slot="reference" class="login-info">
       <img src="~/assets/images/people.png" class="people" alt="people">
       <span class="name">jian@rancher</span>
       <i class="el-icon-caret-bottom"></i>
@@ -47,7 +45,7 @@ export default {
   align-items: center;
   margin: 0 24px 0 0;
   cursor: pointer;
-  
+
   .people {
     width: 48px;
     height: 48px;

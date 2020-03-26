@@ -171,7 +171,6 @@ export default {
       } else if ( !this.isView && this.hasCustomEdit ) {
         return importEdit(this.resource);
       }
-
       return null;
     },
 

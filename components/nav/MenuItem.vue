@@ -1,15 +1,7 @@
 <script>
 export default {
   name:   'MenuItem',
-  props:  ['menu', 'fisrtLayer'],
-  method: {
-    enter() {
-      console.log('enter');
-    },
-    leave() {
-      console.log('leave');
-    }
-  }
+  props:  ['menu', 'fisrtLayer']
 };
 </script>
 <template>
@@ -106,7 +98,7 @@ export default {
     }
   }
 
-  .nuxt-link-active {
+  .nuxt-link-exact-active {
     .el-menu-item {
       background-color: var(--menu-hover-bg) !important;
       .img {

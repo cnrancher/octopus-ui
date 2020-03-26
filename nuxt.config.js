@@ -76,8 +76,9 @@ module.exports = {
   },
 
   router: {
-    base:       routerBasePath,
-    middleware: ['i18n'],
+    base:                 routerBasePath,
+    middleware:           ['i18n'],
+    linkExactActiveClass: 'nuxt-link-exact-active',
   },
 
   build: {

@@ -44,7 +44,9 @@ export default {
   <div class="dashboard-root">
     <div class="top">
       <div class="logo" alt="Logo" />
-      <div class="system-name">OCTOPUS</div>
+      <div class="system-name">
+        OCTOPUS
+      </div>
       <Logout />
     </div>
 
@@ -113,5 +115,5 @@ export default {
       }
     }
   }
-  
+
 </style>

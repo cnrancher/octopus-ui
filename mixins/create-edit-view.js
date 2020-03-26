@@ -60,10 +60,10 @@ export default {
 
     schema() {
       if (this.type) {
-        return this.$store.getters['cluster/schemaFor'](this.type);
+        return this.$store.getters['deviceLink/schemaFor'](this.type);
       }
 
-      return this.$store.getters['cluster/schemaFor'](this.value.type);
+      return this.$store.getters['deviceLink/schemaFor'](this.value.type);
     },
   },
 

@@ -41,7 +41,6 @@ export default {
   schemaFor: (state, getters) => (type, fuzzy = false) => {
     const schemas = state.types[SCHEMA];
 
-    console.log('fucksecherm', schemas, type);
     type = normalizeType(type);
 
     if ( !schemas ) {

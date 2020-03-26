@@ -67,7 +67,7 @@ FORM {
   LABEL {
     color: var(--input-label);
     display: inline-block;
-    margin: $spacing 0 $spacing 0;
+    // margin: $spacing 0 $spacing 0;
     font-size: 12px;
 
     &.radio, &.checkbox {

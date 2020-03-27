@@ -2,40 +2,40 @@
 import _ from 'lodash';
 
 const accessMode = [{
-  value: "NotifyOnly",
-  label: "NotifyOnly"
+  value: 'NotifyOnly',
+  label: 'NotifyOnly'
 }, {
-  value: "ReadOnly",
-  label: "ReadOnly"
+  value: 'ReadOnly',
+  label: 'ReadOnly'
 }, {
-  value: "ReadWrite",
-  label: "ReadWrite"
+  value: 'ReadWrite',
+  label: 'ReadWrite'
 }];
 
 const properties = {
-  name: '',
+  name:        '',
   description: '',
-  accessMode: 'NotifyOnly',
-  type: {
+  accessMode:  'NotifyOnly',
+  type:        {
     int: {
       accessMode: 'Read',
-      maximun: 100,
-      unit: 'degree celsius'
+      maximun:    100,
+      unit:       'degree celsius'
     }
   },
   visitor: {
     characteristicUUID: '',
-    dataConverter: {
+    dataConverter:      {
       startIndex: '',
-      endIndex: '',
+      endIndex:   '',
       shiftRight: '',
     },
     dataWrite: {
-      ON: '',
+      ON:  '',
       OFF: ''
     }
   }
-}
+};
 
 export default {
   props: ['visible', 'editRow'],
@@ -43,23 +43,41 @@ export default {
     return {
       accessMode,
       newProperties: properties,
-      rules: {
+      rules:         {
         name: [
-          { required: true, message: '请输入属性名', trigger: 'blur' },
+          {
+            required: true, message:  '请输入属性名', trigger:  'blur'
+          },
         ],
         'newProperties.description': [
-          { required: true, message: '请输入描述', trigger: 'blur' }
+          {
+            required: true, message:  '请输入描述', trigger:  'blur'
+          }
         ],
         'visitor.characteristicUUID': [
-          { required: true, message: '请输入UUID', trigger: 'blur' },
+          {
+            required: true, message:  '请输入UUID', trigger:  'blur'
+          },
         ]
       }
-    }
+    };
   },
   computed: {
     showModel() {
-      return this.visible
+      return this.visible;
     },
+  },
+  watch: {
+    editRow: {
+      handler(newval, oldVal) {
+        if (newval.data) {
+          this.newProperties = _.cloneDeep(newval.data);
+        } else {
+          this.newProperties = properties;
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     add(formName) {
@@ -68,7 +86,7 @@ export default {
           this.$emit('addProperties', _.cloneDeep(this.newProperties));
           this.$nextTick(() => {
             this.$refs[formName].resetFields();
-          })
+          });
           this.$emit('hideDialog', false);
         } else {
           return false;
@@ -77,24 +95,12 @@ export default {
     },
     hide(formName) {
       if (this.$refs[formName] !== undefined) {
-        this.$refs[formName].resetFields()
+        this.$refs[formName].resetFields();
       }
       this.$emit('hideDialog', false);
     }
-  },
-  watch: {
-    editRow:{
-      handler: function (newval, oldVal) {
-        if(newval.data) {
-          this.newProperties = _.cloneDeep(newval.data);
-        } else {
-          this.newProperties = properties
-        }
-      },
-      deep: true
-    }
-  } 
-}
+  }
+};
 </script>
 <template>
   <el-dialog
@@ -110,7 +116,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="描述" prop="description">
-        <el-input type="textarea" v-model="newProperties.description" ></el-input>
+        <el-input v-model="newProperties.description" type="textarea"></el-input>
       </el-form-item>
 
       <el-form-item label="accessMode">
@@ -119,18 +125,19 @@ export default {
             v-for="item in accessMode"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
+            :value="item.value"
+          >
           </el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="UUID" prop='visitor.characteristicUUID'>
-        <el-input type="textarea" v-model="newProperties.visitor.characteristicUUID"></el-input>
+      <el-form-item label="UUID" prop="visitor.characteristicUUID">
+        <el-input v-model="newProperties.visitor.characteristicUUID" type="textarea"></el-input>
       </el-form-item>
 
       <template v-if="newProperties.accessMode === 'ReadOnly'">
-        <el-form-item v-for="(item,key) in newProperties.visitor.dataConverter" :label="key" :key="key">
-          <el-input type="textarea" v-model="newProperties.visitor.dataConverter[key]"></el-input>
+        <el-form-item v-for="(item,key) in newProperties.visitor.dataConverter" :key="key" :label="key">
+          <el-input v-model="newProperties.visitor.dataConverter[key]" type="textarea"></el-input>
         </el-form-item>
       </template>
 
@@ -139,11 +146,11 @@ export default {
           <el-input type="textarea" v-model="newProperties.visitor.dataWrite[key]"></el-input>
         </el-form-item> -->
         <template v-for="(item,keys) in newProperties.visitor.dataWrite">
-          <el-col :span='5' :key="keys">
+          <el-col :key="keys" :span="5">
             <el-input type="textarea" value="keys"></el-input>
           </el-col>
-          <el-col :span='5' :key="keys">
-            <el-input type="textarea" v-model="newProperties.visitor.dataWrite[key]"></el-input>
+          <el-col :key="keys" :span="5">
+            <el-input v-model="newProperties.visitor.dataWrite[key]" type="textarea"></el-input>
           </el-col>
         </template>
       </template>

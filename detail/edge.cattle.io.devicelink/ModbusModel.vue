@@ -3,24 +3,24 @@ import _ from 'lodash';
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 
 const properties = {
-  name: 'temperature',
+  name:        'temperature',
   description: 'enable data',
-  value: 'true',
-  dataType: 'boolean',
-  readOnly: 'true',
-  visitor: {
+  value:       'true',
+  dataType:    'boolean',
+  readOnly:    'true',
+  visitor:     {
     register: 'CoilRegister',
-    offset: 2,
+    offset:   2,
     quantity: 1,
   }
-}
+};
 
 export default {
   props: ['visible', 'editRow'],
   data() {
     return {
       newProperties: properties,
-      typeOption: [{
+      typeOption:    [{
         value: 'string',
         label: 'string'
       }, {
@@ -34,36 +34,52 @@ export default {
         label: 'boolean'
       }],
       register: [{
-        value: 'CoilRegister',
-        label: '线圈寄存器',
-        readOnly: "false",
-      },{
-        value: 'DiscreteInputRegister',
-        label: '离散输入寄存器',
-        readOnly: "true"
-      },{
-        value: 'HoldingRegister',
-        label: '保持寄存器',
-        readOnly: "false"
-      },{
-        value: 'InputRegister',
-        label: '输入寄存器',
-        readOnly: "true"
+        value:    'CoilRegister',
+        label:    '线圈寄存器',
+        readOnly: 'false',
+      }, {
+        value:    'DiscreteInputRegister',
+        label:    '离散输入寄存器',
+        readOnly: 'true'
+      }, {
+        value:    'HoldingRegister',
+        label:    '保持寄存器',
+        readOnly: 'false'
+      }, {
+        value:    'InputRegister',
+        label:    '输入寄存器',
+        readOnly: 'true'
       }],
       rules: {
         name: [
-          { required: true, message: '请输入属性名', trigger: 'blur' },
+          {
+            required: true, message:  '请输入属性名', trigger:  'blur'
+          },
         ],
         'newProperties.description': [
-          { required: true, message: '请输入描述', trigger: 'blur' }
+          {
+            required: true, message:  '请输入描述', trigger:  'blur'
+          }
         ],
       }
-    }
+    };
   },
   computed: {
     showModel() {
-      return this.visible
+      return this.visible;
     },
+  },
+  watch: {
+    editRow: {
+      handler(newval, oldVal) {
+        if (newval.data) {
+          this.newProperties = _.cloneDeep(newval.data);
+        } else {
+          this.newProperties = properties;
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     add(formName) {
@@ -72,7 +88,7 @@ export default {
           this.$emit('addProperties', _.cloneDeep(this.newProperties));
           this.$nextTick(() => {
             this.$refs[formName].resetFields();
-          })
+          });
           this.$emit('hideDialog', false);
         } else {
           return false;
@@ -84,26 +100,14 @@ export default {
       this.$emit('hideDialog', false);
     },
     changeRegister(value) {
-      this.register.forEach(item => {
-        if(item.value === value) {
+      this.register.forEach((item) => {
+        if (item.value === value) {
           this.newProperties.readOnly = item.readOnly;
         }
-      })
+      });
     }
-  },
-  watch: {
-    editRow:{
-      handler: function (newval, oldVal) {
-        if(newval.data) {
-          this.newProperties = _.cloneDeep(newval.data);
-        } else {
-          this.newProperties = properties
-        }
-      },
-      deep: true
-    }
-  } 
-}
+  }
+};
 </script>
 <template>
   <el-dialog
@@ -119,32 +123,35 @@ export default {
       </el-form-item>
 
       <el-form-item label="描述" prop="description">
-        <el-input type="textarea" v-model="newProperties.description" ></el-input>
+        <el-input v-model="newProperties.description" type="textarea"></el-input>
       </el-form-item>
 
       <el-row>
-        <el-col :span='8'>
+        <el-col :span="8">
           <el-form-item label="类型">
             <el-select v-model="newProperties.dataType" placeholder="请选择">
               <el-option
                 v-for="item in typeOption"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+              >
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span='16'>
-          <el-form-item prop='visitor.value'>
+        <el-col :span="16">
+          <el-form-item prop="visitor.value">
             <el-input v-model="newProperties.value"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-form-item label="寄存器类型">
-        <el-radio-group size="small" v-model="newProperties.visitor.register" @change="changeRegister">
-          <el-radio-button :label="item.value" v-for="(item, key) in register" :key="key">{{ item.label }}</el-radio-button>
+        <el-radio-group v-model="newProperties.visitor.register" size="small" @change="changeRegister">
+          <el-radio-button v-for="(item, key) in register" :key="key" :label="item.value">
+            {{ item.label }}
+          </el-radio-button>
         </el-radio-group>
       </el-form-item>
 
@@ -156,11 +163,11 @@ export default {
       </el-form-item>
 
       <el-form-item label="寄存器偏移地址 ">
-        <el-input v-model="newProperties.visitor.offset" ></el-input>
+        <el-input v-model="newProperties.visitor.offset"></el-input>
       </el-form-item>
 
       <el-form-item label="寄存器的个数 ">
-        <el-input v-model="newProperties.visitor.quantity" ></el-input>
+        <el-input v-model="newProperties.visitor.quantity"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

@@ -5,20 +5,20 @@ export default {
   data() {
     return {
       accessMode: [{
-        value: "NotifyOnly",
-        label: "NotifyOnly"
+        value: 'NotifyOnly',
+        label: 'NotifyOnly'
       }, {
-        value: "ReadOnly",
-        label: "ReadOnly"
+        value: 'ReadOnly',
+        label: 'ReadOnly'
       }, {
-        value: "ReadWrite",
-        label: "ReadWrite"
+        value: 'ReadWrite',
+        label: 'ReadWrite'
       }]
     };
   },
   computed: {
     showModel() {
-      return this.visible
+      return this.visible;
     },
   },
   methods: {

@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     showModel() {
-      return this.visible
+      return this.visible;
     }
   },
   methods: {

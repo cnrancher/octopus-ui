@@ -210,509 +210,518 @@ export default {
 </script>
 <template>
   <div class="wrapper">
-    <header>
-      <h3><i class="header-position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
-    </header>
-    <div class="content">
-      <div class="content-usage clearfix">
-        <h3 class="content-title">
-          <i class="content-title-icon dashboard-source"></i>
-          资源使用
-        </h3>
-        <div class="content-usage-list">
-          <div class="content-usage-item">
-            <h4>每个节点CPU使用率</h4>
-            <div class="hexbin-container">
-              <svg ref="hexbindemo1"></svg>
-            </div>
-            <h4>集群整体CPU使用率</h4>
-            <div class="pie-container">
-              <div ref="ec1"></div>
+    <el-row type="flex">
+      <el-col :span="24">
+        <header>
+          <h3><i class="header-position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
+        </header>
+      </el-col>
+    </el-row>
+    <el-row type="flex">
+      <el-col :span="17">
+        <div class="content">
+          <div class="content-usage clearfix">
+            <h3 class="content-title">
+              <i class="content-title-icon dashboard-source"></i>
+              资源使用
+            </h3>
+            <div class="content-usage-list">
+              <div class="content-usage-item">
+                <h4>每个节点CPU使用率</h4>
+                <div class="hexbin-container">
+                  <svg ref="hexbindemo1"></svg>
+                </div>
+                <h4>集群整体CPU使用率</h4>
+                <div class="pie-container">
+                  <div ref="ec1"></div>
+                </div>
+              </div>
+              <div class="content-usage-item">
+                <h4>每个节点CPU使用率</h4>
+                <div class="hexbin-container">
+                  <svg ref="hexbindemo2"></svg>
+                </div>
+                <h4>集群整体CPU使用率</h4>
+                <div class="pie-container">
+                  <div ref="ec2"></div>
+                </div>
+              </div>
+              <div class="content-usage-item">
+                <h4>每个节点CPU使用率</h4>
+                <div class="hexbin-container">
+                  <svg ref="hexbindemo3"></svg>
+                </div>
+                <h4>集群整体CPU使用率</h4>
+                <div class="pie-container">
+                  <div ref="ec3"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="content-usage-item">
-            <h4>每个节点CPU使用率</h4>
-            <div class="hexbin-container">
-              <svg ref="hexbindemo2"></svg>
-            </div>
-            <h4>集群整体CPU使用率</h4>
-            <div class="pie-container">
-              <div ref="ec2"></div>
-            </div>
+          <div class="content-service">
+            <h3 class="content-title">
+              <i class="content-title-icon dashboard-system"></i>
+              系统服务
+            </h3>
+            <ul class="clearfix">
+              <li class="dashboard-icon-tick">
+                <i>&radic;</i>
+                <span>Datastore</span>
+              </li>
+              <li class="dashboard-icon-error">
+                <i>X</i>
+                <span>System Controllers</span>
+              </li>
+              <li class="dashboard-icon-tick">
+                <i>&radic;</i>
+                <span>Networking</span>
+              </li>
+              <li class="dashboard-icon-question">
+                <i>?</i>
+                <span>Nodes</span>
+              </li>
+            </ul>
           </div>
-          <div class="content-usage-item">
-            <h4>每个节点CPU使用率</h4>
-            <div class="hexbin-container">
-              <svg ref="hexbindemo3"></svg>
+          <div class="content-event">
+            <h3 class="content-title">
+              <i class="content-title-icon dashboard-set"></i>
+              集群事件
+            </h3>
+            <table class="content-event-table">
+              <thead>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+                <th>名称</th>
+              </thead>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+            <!-- <el-table
+              :data="tableData"
+              :header-row-class-name="content-event-table"
+            >
+              <el-table-column
+                prop="id"
+                label="ID"
+              />
+              <el-table-column
+                prop="name"
+                label="姓名"
+              />
+              <el-table-column
+                prop="name1"
+                label="姓名"
+              />
+              <el-table-column
+                prop="name2"
+                label="姓名"
+              />
+              <el-table-column
+                prop="name3"
+                label="姓名"
+              />
+              <el-table-column
+                prop="name4"
+                label="姓名"
+              />
+              <el-table-column
+                prop="name5"
+                label="姓名"
+              />
+            </el-table> -->
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="7">
+        <div class="side">
+          <div class="side-iot">
+            <h3 class="content-title">
+              <i class="content-title-icon dashboard-iot"></i>
+              IoT设备
+            </h3>
+            <div class="side-iot-pie clearfix">
+              <div class="side-iot-pie-item">
+                <div class="side-iot-pie-item-content">
+                  <el-progress :percentage="25" :width="200" type="circle"></el-progress>
+                </div>
+                <p>在线数量</p>
+              </div>
+              <div class="side-iot-pie-item">
+                <div class="side-iot-pie-item-content">
+                  <el-progress :percentage="75" :width="200" type="circle"></el-progress>
+                </div>
+                <p>离线数量</p>
+              </div>
             </div>
-            <h4>集群整体CPU使用率</h4>
-            <div class="pie-container">
-              <div ref="ec3"></div>
+            <ul class="side-iot-count clearfix">
+              <li>
+                <span>设备总数：</span>
+                <span>100</span>
+              </li>
+              <li>
+                <span>在线数量：</span>
+                <span>10</span>
+              </li>
+              <li>
+                <span>离线数量：</span>
+                <span>10</span>
+              </li>
+            </ul>
+          </div>
+          <div class="side-balance">
+            <h3 class="content-title">
+              <i class="content-title-icon dashboard-balance"></i>
+              工作负载
+            </h3>
+            <div class="side-balance-item">
+              <p class="side-balance-item-title">
+                <span>CPU密集型Pod TOP10</span>
+                <span>单位：分钟</span>
+              </p>
+              <ul class="balance-bar-container">
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 10%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    10
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 20%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    20
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 30%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    30
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 40%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    40
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 50%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    50
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 60%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    60
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 70%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    70
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 80%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    80
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 90%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    90
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 100%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    100
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="side-balance-item">
+              <p class="side-balance-item-title">
+                <span>CPU密集型Pod TOP10</span>
+                <span>单位：分钟</span>
+              </p>
+              <ul class="balance-bar-container">
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 10%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    10
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 20%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    20
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 30%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    30
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 40%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    40
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 50%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    50
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 60%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    60
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 70%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    70
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 80%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    80
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 90%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    90
+                  </div>
+                </li>
+                <li>
+                  <div class="bar-container"></div>
+                  <div class="progress-bar" style="width: 100%"></div>
+                  <div class="progress-bar-text">
+                    kube-system/fluenttd-cloud-logging-kubernetes-minion-group
+                  </div>
+                  <div class="bar-text">
+                    100
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-      </div>
-      <div class="content-service">
-        <h3 class="content-title">
-          <i class="content-title-icon dashboard-system"></i>
-          系统服务
-        </h3>
-        <ul class="clearfix">
-          <li class="dashboard-icon-tick">
-            <i>&radic;</i>
-            <span>Datastore</span>
-          </li>
-          <li class="dashboard-icon-error">
-            <i>X</i>
-            <span>System Controllers</span>
-          </li>
-          <li class="dashboard-icon-tick">
-            <i>&radic;</i>
-            <span>Networking</span>
-          </li>
-          <li class="dashboard-icon-question">
-            <i>?</i>
-            <span>Nodes</span>
-          </li>
-        </ul>
-      </div>
-      <div class="content-event">
-        <h3 class="content-title">
-          <i class="content-title-icon dashboard-set"></i>
-          集群事件
-        </h3>
-        <table class="content-event-table">
-          <thead>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-            <th>名称</th>
-          </thead>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-        </table>
-        <!-- <el-table
-          :data="tableData"
-          :header-row-class-name="content-event-table"
-        >
-          <el-table-column
-            prop="id"
-            label="ID"
-          />
-          <el-table-column
-            prop="name"
-            label="姓名"
-          />
-          <el-table-column
-            prop="name1"
-            label="姓名"
-          />
-          <el-table-column
-            prop="name2"
-            label="姓名"
-          />
-          <el-table-column
-            prop="name3"
-            label="姓名"
-          />
-          <el-table-column
-            prop="name4"
-            label="姓名"
-          />
-          <el-table-column
-            prop="name5"
-            label="姓名"
-          />
-        </el-table> -->
-      </div>
-    </div>
-    <div class="side">
-      <div class="side-iot">
-        <h3 class="content-title">
-          <i class="content-title-icon dashboard-iot"></i>
-          IoT设备
-        </h3>
-        <div class="side-iot-pie clearfix">
-          <div class="side-iot-pie-item">
-            <div class="side-iot-pie-item-content">
-              <el-progress :percentage="25" :width="200" type="circle"></el-progress>
-            </div>
-            <p>在线数量</p>
-          </div>
-          <div class="side-iot-pie-item">
-            <div class="side-iot-pie-item-content">
-              <el-progress :percentage="75" :width="200" type="circle"></el-progress>
-            </div>
-            <p>离线数量</p>
-          </div>
-        </div>
-        <ul class="side-iot-count clearfix">
-          <li>
-            <span>设备总数：</span>
-            <span>100</span>
-          </li>
-          <li>
-            <span>在线数量：</span>
-            <span>10</span>
-          </li>
-          <li>
-            <span>离线数量：</span>
-            <span>10</span>
-          </li>
-        </ul>
-      </div>
-      <div class="side-balance">
-        <h3 class="content-title">
-          <i class="content-title-icon dashboard-balance"></i>
-          工作负载
-        </h3>
-        <div class="side-balance-item">
-          <p class="side-balance-item-title">
-            <span>CPU密集型Pod TOP10</span>
-            <span>单位：分钟</span>
-          </p>
-          <ul class="balance-bar-container">
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 10%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                10
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 20%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                20
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 30%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                30
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 40%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                40
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 50%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                50
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 60%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                60
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 70%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                70
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 80%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                80
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 90%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                90
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 100%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                100
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="side-balance-item">
-          <p class="side-balance-item-title">
-            <span>CPU密集型Pod TOP10</span>
-            <span>单位：分钟</span>
-          </p>
-          <ul class="balance-bar-container">
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 10%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                10
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 20%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                20
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 30%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                30
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 40%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                40
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 50%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                50
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 60%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                60
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 70%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                70
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 80%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                80
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 90%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                90
-              </div>
-            </li>
-            <li>
-              <div class="bar-container"></div>
-              <div class="progress-bar" style="width: 100%"></div>
-              <div class="progress-bar-text">
-                kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-              </div>
-              <div class="bar-text">
-                100
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      </el-col>
+    </el-row>
+    
+    
   </div>
 </template>
 
 <style lang="scss">
-  .wrapper {
-    min-width: 1600px;
-  }
   .wrapper:after {
     clear: both;
   }
@@ -736,7 +745,6 @@ export default {
   }
   .content {
     float: left;
-    min-width: 1192px;
     min-height: 800px;
   }
   .side {

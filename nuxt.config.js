@@ -120,7 +120,8 @@ module.exports = {
           ]
         ];
       }
-    }
+    },
+    vendor: ['axios', 'element-ui']
   },
 
   render: {

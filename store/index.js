@@ -43,10 +43,10 @@ export const actions = {
 
     dispatch('deviceModel/subscribe');
     await dispatch('deviceModel/loadSchemas');
-
+    
     const customresource = await dispatch('deviceModel/findAll', {
-      type: 'apiextensions.k8s.io.customresourcedefinitions',
-      opt:  { url: 'apiextensions.k8s.io.customresourcedefinitions' }
+      type: 'apiextensions.k8s.io.v1.customresourcedefinitions',
+      opt:  { url: 'apiextensions.k8s.io.v1.customresourcedefinitions' }
     });
 
     commit('setDynamicMenu', customresource);

@@ -372,13 +372,6 @@ export default {
         icon:    'icon icon-fw icon-edit',
         enabled:  !!links.update,
       });
-
-      all.push({
-        action:  'goToClone',
-        label:   'Clone as Form',
-        icon:    'icon icon-fw icon-copy',
-        enabled:  !!links.update,
-      });
     }
 
     all.push({ divider: true });

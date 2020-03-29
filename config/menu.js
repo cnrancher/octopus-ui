@@ -38,7 +38,6 @@ export const MENUS = [
     meta: {
       title:      '工作负载',
       icon:       require('~/assets/images/workload.png'),
-      alwaysShow: true
     },
     children: [
       {

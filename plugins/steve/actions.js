@@ -16,7 +16,7 @@ export default {
       if ( res.status === 204 ) {
         return;
       }
-
+      console.log(res, 'resres')
       if ( opt.depaginate ) {
         // @TODO
         /*
@@ -91,6 +91,7 @@ export default {
 
   async findAll(ctx, { type, opt }) {
     const { getters, commit, dispatch } = ctx;
+    console.log(opt, 'opt****')
 
     opt = opt || {};
 

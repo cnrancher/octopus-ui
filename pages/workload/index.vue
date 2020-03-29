@@ -1,3 +1,3 @@
 <template>
-  <h1>worklaod</h1>
+  <h1>工作负载</h1>
 </template>

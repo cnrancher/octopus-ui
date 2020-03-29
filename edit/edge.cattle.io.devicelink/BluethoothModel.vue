@@ -159,6 +159,9 @@ export default {
               <el-col :span="5">
                 <el-input v-model="item[1]"></el-input>
               </el-col>
+              <el-col :span="5">
+                <el-button type="warning">Remove</el-button>
+              </el-col>
             </el-row>
           </template>
         </el-form-item>

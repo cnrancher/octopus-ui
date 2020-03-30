@@ -1,4 +1,5 @@
 import Steve from '@/plugins/steve';
+import { CUSTOM } from '@/config/types'
 
 export const strict = false;
 
@@ -45,8 +46,8 @@ export const actions = {
     await dispatch('deviceModel/loadSchemas');
     
     const customresource = await dispatch('deviceModel/findAll', {
-      type: 'apiextensions.k8s.io.v1.customresourcedefinitions',
-      opt:  { url: 'apiextensions.k8s.io.v1.customresourcedefinitions' }
+      type: CUSTOM,
+      opt:  { url: CUSTOM }
     });
 
     commit('setDynamicMenu', customresource);

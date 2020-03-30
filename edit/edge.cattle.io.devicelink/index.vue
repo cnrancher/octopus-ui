@@ -12,6 +12,7 @@ import { NODE } from '@/config/types';
 import { get } from '@/utils/object';
 import { DESCRIPTION } from '@/config/labels-annotations';
 import { BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP } from './defaultYaml'
+import { parity, dataBits } from '@/config/map'
 
 import createEditView from '@/mixins/create-edit-view';
 
@@ -34,7 +35,6 @@ export default {
     }
 
     const validateAccessConfig = (rule, value, callback) => {
-      console.log('自定义验证');
       if (this.value.spec.template.spec.macAddress && this.value.spec.template.spec.namespace) {
         callback(new Error('name 或 macAddress不能同时为空'));
       } else {
@@ -43,12 +43,11 @@ export default {
     };
 
     return {
+      parity,
+      dataBits,
       activeNames: [],
       dialogVisible: false,
-      editRow: {
-        index: null,
-        data: null
-      },
+      editRowIndex: -1,
       transferMode: 'rtu',
       allNodes: [],
       rules: {
@@ -96,22 +95,16 @@ export default {
     },
     hideDialog() {
       this.dialogVisible = false;
-      this.editRow.index = null;
-      this.editRow.data = null;
+      // this.editRow.index = null;
+      // this.editRow.data = null;
     },
     addProperties(row) {
-      if(this.editRow.data) {
-        const index = this.editRow.index;
-        this.value.spec.template.spec.properties.splice(index, 1, row)
-      } else {
-        this.value.spec.template.spec.properties.push(row)
-      }
-      this.editRow.index = null;
-      this.editRow.data = null;
+      this.value.spec.template.spec.properties.length = 0;
+      this.value.spec.template.spec.properties.push(...row);
+      this.editRowIndex = -1;
     },
     edit(index) {
-      this.editRow.index = index;
-      this.editRow.data = this.value.spec.template.spec.properties[index]
+      this.editRowIndex = index;
       this.dialogVisible = true
     },
     deleteRow(index) {
@@ -131,9 +124,6 @@ export default {
       } else {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP))
       }
-    },
-    handleCollapse(val) {
-      console.log(val);
     }
   },
   computed: {
@@ -234,7 +224,7 @@ export default {
             </el-col>
 
             <el-col :span='24'>
-              <el-collapse v-model="activeNames" @change="handleCollapse">
+              <el-collapse v-model="activeNames">
                 <el-collapse-item title="可选rtu配置" name="3" class="optional">
                   <el-col :span='12'>
                     <el-form-item label="baudRate">
@@ -245,10 +235,11 @@ export default {
                   <el-col :span="11" :push="1">
                     <el-form-item label="dataBits">
                       <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits">
-                        <el-option label="5" value="5"></el-option>
-                        <el-option label="6" value="6"></el-option>
-                        <el-option label="7" value="7"></el-option>
-                        <el-option label="8" value="8"></el-option>
+                        <el-option 
+                          v-for="item in dataBits" :key="item.value" 
+                          :label="item.label"      :value="item.value"
+                        >
+                        </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -256,16 +247,18 @@ export default {
                   <el-col :span='12'>
                     <el-form-item label="parity">
                       <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity">
-                        <el-option label="None" value="N"></el-option>
-                        <el-option label="Even" value="E"></el-option>
-                        <el-option label="Odd" value="O"></el-option>
+                        <el-option 
+                          v-for="item in parity" :key="item.value"
+                          :label="item.label" :value="item.value"
+                        >
+                        </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="stopBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity">
+                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].stopBits">
                         <el-option label="1" value="1"></el-option>
                         <el-option label="2" value="2"></el-option>
                       </el-select>
@@ -307,11 +300,11 @@ export default {
               v-if="value.spec.model.kind === 'BluetoothDevice'"
               :properties="value.spec.template.spec.properties" 
               :visible='dialogVisible'
-              @editRow="edit($event)"
-              @deleteRow="deleteRow($event)"
+              @editRow='edit($event)'
+              @deleteRow='deleteRow($event)'
             />
 
-            <AddModbusTable 
+            <AddModbusTable
               v-if="value.spec.model.kind === 'ModbusDevice'"
               :properties="value.spec.template.spec.properties" 
               :visible='dialogVisible'
@@ -339,16 +332,17 @@ export default {
       v-if="value.spec.model.kind === 'BluetoothDevice'"
       @addProperties = "addProperties($event)" 
       @hideDialog = "hideDialog($event)"
-      :editRow = "editRow"
-      :visible = 'dialogVisible' 
+      :editRowIndex = "editRowIndex"
+      :device= "value"
+      :visible = 'dialogVisible'
     />
-    <ModbusModel 
+    <!-- <ModbusModel
       v-if="value.spec.model.kind === 'ModbusDevice'"
       @addProperties = "addProperties($event)" 
       @hideDialog = "hideDialog($event)"
       :editRow = "editRow"
       :visible = 'dialogVisible' 
-    />
+    /> -->
   </div>
 </template>
 

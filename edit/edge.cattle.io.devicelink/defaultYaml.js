@@ -8,23 +8,15 @@ export const BLUE_THOOTH_DEVICE = {
     kind:       'BluetoothDevice'
   },
   template: {
-    metadata: { labels: {} },
+    metadata: { 
+      labels: {
+        device: 'xiaomi-temp-rs2200'
+      }
+    },
     spec:     {
       name:       '',
       macAddress: '',
-      properties: [{
-        name:        'temperature',
-        description: 'Temperature in degree celsius',
-        accessMode:  'NotifyOnly',
-        type:        {
-          int: {
-            accessMode: 'Read',
-            maximun:    100,
-            unit:       'degree celsius'
-          }
-        },
-        visitor: { characteristicUUID: 'UUid' }
-      }]
+      properties: []
     }
   }
 };

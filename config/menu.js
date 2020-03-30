@@ -68,7 +68,7 @@ export const MENUS = [
         children: []
       },
       {
-        path: '/device/edge.cattle.io.devicelink',
+        path: '/device/edge.cattle.io.v1alpha1.devicelink',
         meta: { title: '设备列表' }
       }
     ]

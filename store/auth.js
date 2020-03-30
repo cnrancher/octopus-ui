@@ -36,7 +36,7 @@ export const actions = {
         opt:  { 
           url: `/v1`,
           method: 'get',
-          auth: body
+          // auth: body
         }
       }, { root: true });
       return true;

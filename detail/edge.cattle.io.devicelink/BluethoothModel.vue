@@ -1,28 +1,11 @@
 <script>
 import _ from 'lodash';
-
-const accessMode = [{
-  value: 'NotifyOnly',
-  label: 'NotifyOnly'
-}, {
-  value: 'ReadOnly',
-  label: 'ReadOnly'
-}, {
-  value: 'ReadWrite',
-  label: 'ReadWrite'
-}];
+import { accessMode } from '@/config/map';
 
 const properties = {
   name:        '',
   description: '',
   accessMode:  'NotifyOnly',
-  type:        {
-    int: {
-      accessMode: 'Read',
-      maximun:    100,
-      unit:       'degree celsius'
-    }
-  },
   visitor: {
     characteristicUUID: '',
     dataConverter:      {
@@ -43,13 +26,13 @@ export default {
     return {
       accessMode,
       newProperties: properties,
-      rules:         {
+      rules: {
         name: [
           {
             required: true, message:  '请输入属性名', trigger:  'blur'
           },
         ],
-        'newProperties.description': [
+        description: [
           {
             required: true, message:  '请输入描述', trigger:  'blur'
           }
@@ -69,9 +52,9 @@ export default {
   },
   watch: {
     editRow: {
-      handler(newval, oldVal) {
-        if (newval.data) {
-          this.newProperties = _.cloneDeep(newval.data);
+      handler(newVal, oldVal) {
+        if (newVal.data) {
+          this.newProperties = _.cloneDeep(newVal.data);
         } else {
           this.newProperties = properties;
         }
@@ -116,7 +99,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="描述" prop="description">
-        <el-input v-model="newProperties.description" type="textarea"></el-input>
+        <el-input v-model="newProperties.description"></el-input>
       </el-form-item>
 
       <el-form-item label="accessMode">
@@ -142,12 +125,9 @@ export default {
       </template>
 
       <template v-if="newProperties.accessMode === 'ReadWrite'">
-        <!-- <el-form-item v-for="(item,key) in newProperties.visitor.dataWrite" :label="key" :key="key">
-          <el-input type="textarea" v-model="newProperties.visitor.dataWrite[key]"></el-input>
-        </el-form-item> -->
         <template v-for="(item,keys) in newProperties.visitor.dataWrite">
           <el-col :key="keys" :span="5">
-            <el-input type="textarea" value="keys"></el-input>
+            <el-input value="keys"></el-input>
           </el-col>
           <el-col :key="keys" :span="5">
             <el-input v-model="newProperties.visitor.dataWrite[key]" type="textarea"></el-input>

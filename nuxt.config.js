@@ -12,7 +12,7 @@ const version = process.env.VERSION ||
   require('./package.json').version;
 
 const dev = (process.env.NODE_ENV !== 'production');
-const api = process.env.API || 'https://localhost:8989';
+const api = process.env.API || 'https://localhost:9443';
 const pl = process.env.PL || STANDARD;
 
 let routerBasePath = '/';
@@ -238,6 +238,7 @@ function proxyWsOpts(target) {
     ...proxyOpts(target),
     ws:           true,
     changeOrigin: true,
+    secure:       false
   };
 }
 

@@ -479,7 +479,7 @@ export default {
             <ul class="side-iot-count clearfix">
               <li>
                 <span>设备总数：</span>
-                <span>100</span>
+                <span>10</span>
               </li>
               <li>
                 <span>在线数量：</span>
@@ -746,6 +746,7 @@ export default {
   .content {
     float: left;
     min-height: 800px;
+    width: 100%;
   }
   .side {
     float: left;
@@ -793,9 +794,10 @@ export default {
   .content-service li {
     float: left;
     list-style: none;
-    margin-right: 60px;
+    margin-right: 4%;
     min-height: 40px;
-    min-width: 224px;
+    max-width: 224px;
+    width: 22%;
     background-color: #ddd;
     line-height: 1;
     color: #454545;
@@ -865,7 +867,7 @@ export default {
   }
   .content-usage-item {
     float: left;
-    width: 374px;
+    width: 32%;
     border: 1px solid #eee;
     padding: 10px 20px 0;
     margin-right: 10px;
@@ -889,10 +891,11 @@ export default {
   }
   .side-iot-count li {
     list-style: none;
+    width: 32%;
     float: left;
     border-right: 1px solid #ddd;
-    margin-right: 8px;
-    padding-right: 10px;
+    margin-right: 5px;
+    padding-right: 5px;
   }
   .side-iot-count li:last-child {
     list-style: none;
@@ -961,6 +964,7 @@ export default {
   .progress-bar-text {
     height: 100%;
     width: 100%;
+    padding-left: 5px;
     position: absolute;
     top: 0;
     left: 0;

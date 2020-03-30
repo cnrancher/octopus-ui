@@ -479,7 +479,7 @@ export default {
             <ul class="side-iot-count clearfix">
               <li>
                 <span>设备总数：</span>
-                <span>100</span>
+                <span>10</span>
               </li>
               <li>
                 <span>在线数量：</span>
@@ -891,10 +891,11 @@ export default {
   }
   .side-iot-count li {
     list-style: none;
+    width: 32%;
     float: left;
     border-right: 1px solid #ddd;
-    margin-right: 8px;
-    padding-right: 10px;
+    margin-right: 5px;
+    padding-right: 5px;
   }
   .side-iot-count li:last-child {
     list-style: none;

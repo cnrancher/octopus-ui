@@ -1,4 +1,5 @@
-FROM node:10-alpine
+# build stage
+FROM node:10-alpine as build-stage
 
 RUN mkdir /src
 WORKDIR /src
@@ -11,6 +12,14 @@ RUN yarn --pure-lockfile install
 
 COPY . /src
 RUN yarn build
+
+## production stage
+FROM node:10-alpine as production-stage
+
+RUN mkdir /src
+WORKDIR /src
+
+COPY --from=build-stage /src /src
 
 EXPOSE 80
 ENTRYPOINT ["yarn"]

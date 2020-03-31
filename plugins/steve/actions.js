@@ -91,7 +91,6 @@ export default {
 
   async findAll(ctx, { type, opt }) {
     const { getters, commit, dispatch } = ctx;
-    console.log(opt, 'opt****')
 
     opt = opt || {};
 

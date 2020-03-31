@@ -1,8 +1,8 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import { accessMode } from '@/config/map';
+import SelectKeyValue from '@/components/SelectKeyValue'
 
 const properties = {
   name:        '',
@@ -22,6 +22,10 @@ const properties = {
       startIndex: '',
       endIndex:   '',
       shiftRight: '',
+      orderOfOperations: [{
+        operationType: 'Multiply',
+        operationValue: "0.03125"
+      }]
     },
     dataWrite: {
       ON:  '1',
@@ -45,30 +49,14 @@ export default {
     }
   },
   components: {
-    KeyValue
+    KeyValue,
+    SelectKeyValue
   },
   data() {
     return {
       accessMode,
       localDevice: _.cloneDeep(this.device),
       newProperties: properties,
-      rules: {
-        name: [
-          {
-            required: true, message:  '请输入属性名', trigger:  'blur'
-          },
-        ],
-        description: [
-          {
-            required: true, message:  '请输入描述', trigger:  'blur'
-          }
-        ],
-        'visitor.characteristicUUID': [
-          {
-            required: true, message:  '请输入UUID', trigger:  'blur'
-          },
-        ]
-      },
     };
   },
   computed: {
@@ -77,9 +65,9 @@ export default {
     },
     index() {
       if (this.editRowIndex < 0) {
-        const index = this.device.spec.template.spec.properties.length;
-        this.localDevice.spec.template.spec.properties.push(properties);
-        return index
+        this.localDevice.spec.template.spec.properties.push(this.newProperties);
+        const length = this.device.spec.template.spec.properties.length;
+        return length
       }
       return this.editRowIndex
     }
@@ -124,12 +112,24 @@ export default {
     width="60%"
     :before-close="hide"
   >
-    <el-form ref="form" label-width="130px" :rules="rules" :model="localDevice">
-      <el-form-item label="属性名">
+    <el-form ref="form" label-width="130px" :model="localDevice">
+      <el-form-item
+        label="属性名"
+        :prop="'spec.template.spec.properties.' + index + '.name'"
+        :rules="[
+          { required: true, message: '请输入属性名', trigger: 'blur' },
+        ]"
+      >
         <el-input v-model="localDevice.spec.template.spec.properties[index].name"></el-input>
       </el-form-item>
 
-      <el-form-item label="描述">
+      <el-form-item 
+        label="描述"
+        :prop="'spec.template.spec.properties.' + index + '.description'"
+        :rules="[
+          { required: true, message: '请输入描述', trigger: 'blur' },
+        ]"
+      >
         <el-input v-model="localDevice.spec.template.spec.properties[index].description" type="textarea"></el-input>
       </el-form-item>
 
@@ -145,7 +145,13 @@ export default {
         </el-select>
       </el-form-item>
 
-      <el-form-item label="UUID">
+      <el-form-item 
+        label="UUID"
+        :prop="'spec.template.spec.properties.' + index + '.visitor.characteristicUUID'"
+        :rules="[
+          { required: true, message: '请输入UUID', trigger: 'blur' },
+        ]"
+      >
         <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.characteristicUUID"></el-input>
       </el-form-item>
 
@@ -173,6 +179,14 @@ export default {
           />
         </el-form-item>
       </template>
+
+      <!-- <template>
+        <el-form-item label="orderOfOperations">
+          <SelectKeyValue 
+            :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"
+          />
+        </el-form-item>
+      </template> -->
 
       <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
         <el-form-item label="dataWrite">

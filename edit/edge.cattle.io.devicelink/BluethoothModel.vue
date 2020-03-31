@@ -1,4 +1,5 @@
 <script>
+/* elsint-disable */
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import { accessMode } from '@/config/map';

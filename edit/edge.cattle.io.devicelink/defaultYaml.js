@@ -8,23 +8,11 @@ export const BLUE_THOOTH_DEVICE = {
     kind:       'BluetoothDevice'
   },
   template: {
-    metadata: { labels: {} },
+    metadata: { labels: { } },
     spec:     {
       name:       '',
       macAddress: '',
-      properties: [{
-        name:        'temperature',
-        description: 'Temperature in degree celsius',
-        accessMode:  'NotifyOnly',
-        type:        {
-          int: {
-            accessMode: 'Read',
-            maximun:    100,
-            unit:       'degree celsius'
-          }
-        },
-        visitor: { characteristicUUID: 'UUid' }
-      }]
+      properties: []
     }
   }
 };
@@ -43,26 +31,15 @@ export const MODBUS_DEVICE_RTU = {
     spec:     {
       protocolConfig: {
         rtu: {
-          slaveID:    10,
-          serialPort: '/dev/ttys008',
-          baudRate:   19200,
-          dataBits:   8,
-          parity:     'E',
-          stopBits:   1
+          slaveID:    '',
+          serialPort: '',
+          baudRate:   '',
+          dataBits:   '',
+          parity:     '',
+          stopBits:   ''
         }
       },
-      properties: [{
-        name:        'temperature-enable',
-        description: 'enable data collection of temperature sensor',
-        value:       'true',
-        dataType:    'boolean',
-        readOnly:    'true',
-        visitor:     {
-          register: 'CoilRegister',
-          offset:   2,
-          quantity: 1,
-        }
-      }]
+      properties: []
     }
   }
 };
@@ -81,24 +58,13 @@ export const MODBUS_DEVICE_TCP = {
     spec:     {
       protocolConfig: {
         tcp: {
-          slaveID:    1,
-          serialPort: '/dev/ttys008',
-          ip:         '192.168.1.3',
-          port:       '502'
+          slaveID:    '',
+          serialPort: '',
+          ip:         '',
+          port:       ''
         }
       },
-      properties: [{
-        name:        'temperature-enable',
-        description: 'enable data collection of temperature sensor',
-        value:       'true',
-        dataType:    'boolean',
-        readOnly:    'true',
-        visitor:     {
-          register: 'CoilRegister',
-          offset:   2,
-          quantity: 1,
-        }
-      }]
+      properties: []
     }
   }
 };

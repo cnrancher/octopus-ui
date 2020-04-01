@@ -52,7 +52,7 @@ export default {
   },
 
   asyncData(ctx) {
-    return ctx.store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: 'edge.cattle.io.devicelinks' } }).then((rows) => {
+    return ctx.store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
       return {
         rows
       };

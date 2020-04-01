@@ -107,6 +107,7 @@ export default {
     main {
       grid-area: main;
       overflow: auto;
+      background-color: var(--main-bg);
 
       .outlet {
         padding: 20px 20px 70px 20px;

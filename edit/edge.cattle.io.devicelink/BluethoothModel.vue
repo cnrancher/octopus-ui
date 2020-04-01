@@ -1,97 +1,93 @@
 <script>
+/* eslint-disable */
 import _ from 'lodash';
-
-const accessMode = [{
-  value: 'NotifyOnly',
-  label: 'NotifyOnly'
-}, {
-  value: 'ReadOnly',
-  label: 'ReadOnly'
-}, {
-  value: 'ReadWrite',
-  label: 'ReadWrite'
-}];
+import KeyValue from '@/components/form/KeyValue';
+import SelectKeyValue from '@/components/SelectKeyValue';
+import { accessMode } from '@/config/map';
 
 const properties = {
   name:        '',
   description: '',
   accessMode:  'NotifyOnly',
-  type:        {
-    int: {
-      accessMode: 'Read',
-      maximun:    100,
-      unit:       'degree celsius'
-    }
-  },
   visitor: {
     characteristicUUID: '',
-    defaultValue:       'OFF',
+    defaultValue:       '',
     dataConverter:      {
-      startIndex: '',
-      endIndex:   '',
-      shiftRight: '',
+      startIndex:        '',
+      endIndex:          '',
+      shiftRight:        '',
+      orderOfOperations: [{
+        operationType:  '',
+        operationValue: ''
+      }]
     },
-    dataWrite: {
-      ON:  '1',
-      OFF: '0'
-    }
+    dataWrite: {}
   }
 };
 
 export default {
-  props: ['visible', 'editRow'],
+  components: {
+    KeyValue,
+    SelectKeyValue
+  },
+
+  props: {
+    device: {
+      type:    Object,
+      default: () => {}
+    },
+    visible: {
+      type:    Boolean,
+      default: false
+    },
+    editRowIndex: { type: Number }
+  },
+
   data() {
+    const localDevice = _.cloneDeep(this.device);
+
     return {
       accessMode,
-      newProperties: properties,
-      rules:         {
-        name: [
-          {
-            required: true, message:  '请输入属性名', trigger:  'blur'
-          },
-        ],
-        'newProperties.description': [
-          {
-            required: true, message:  '请输入描述', trigger:  'blur'
-          }
-        ],
-        'visitor.characteristicUUID': [
-          {
-            required: true, message:  '请输入UUID', trigger:  'blur'
-          },
-        ]
-      },
+      localDevice,
+      index: 0
     };
   },
   computed: {
-    showModel() {
-      return this.visible;
-    },
-    dataWrite() {
-      return Object.entries(this.newProperties.visitor.dataWrite);
-    }
+    
   },
   watch: {
-    editRow: {
-      handler(newval, oldVal) {
-        if (newval.data) {
-          this.newProperties = _.cloneDeep(newval.data);
+    device: {
+      handler(newVal, oldVal) {
+        const length = this.device.spec.template.spec.properties.length;
+        this.localDevice = _.cloneDeep(this.device)
+      },
+      deep: true,
+      immediate:true
+    },
+    editRowIndex: {
+      handler(newVal, oldVal) {
+        if (this.editRowIndex < 0) {
+          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+          const length = this.localDevice.spec.template.spec.properties.length;
+          this.index =  length - 1;
         } else {
-          this.newProperties = properties;
+          this.index = this.editRowIndex;
         }
       },
-      deep: true
+      immediate:true
     }
   },
   methods: {
     add(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$emit('addProperties', _.cloneDeep(this.newProperties));
+          const properties = this.localDevice.spec.template.spec.properties;
+
+          this.$emit('addProperties', _.cloneDeep(properties));
           this.$nextTick(() => {
             this.$refs[formName].resetFields();
+            this.$emit('hideDialog', false);
           });
-          this.$emit('hideDialog', false);
         } else {
           return false;
         }
@@ -109,22 +105,35 @@ export default {
 <template>
   <el-dialog
     title="添加新属性"
-    :visible.sync="showModel"
+    :visible.sync="this.visible"
     :close-on-click-modal="false"
     width="60%"
     :before-close="hide"
+    v-if="localDevice.spec.template.spec.properties.length"
   >
-    <el-form ref="form" label-width="130px" :rules="rules" :model="newProperties">
-      <el-form-item label="属性名" prop="name">
-        <el-input v-model="newProperties.name"></el-input>
+    <el-form ref="form" label-width="130px" :model="localDevice">
+      <el-form-item
+        label="属性名"
+        :prop="'spec.template.spec.properties.' + index + '.name'"
+        :rules="[
+          { required: true, message: '请输入属性名', trigger: 'blur' },
+        ]"
+      >
+        <el-input v-model="localDevice.spec.template.spec.properties[index].name"></el-input>
       </el-form-item>
 
-      <el-form-item label="描述" prop="description">
-        <el-input v-model="newProperties.description" type="textarea"></el-input>
+      <el-form-item
+        label="描述"
+        :prop="'spec.template.spec.properties.' + index + '.description'"
+        :rules="[
+          { required: true, message: '请输入描述', trigger: 'blur' },
+        ]"
+      >
+        <el-input v-model="localDevice.spec.template.spec.properties[index].description" type="textarea"></el-input>
       </el-form-item>
 
       <el-form-item label="accessMode">
-        <el-select v-model="newProperties.accessMode" placeholder="请选择">
+        <el-select v-model="localDevice.spec.template.spec.properties[index].accessMode" placeholder="请选择">
           <el-option
             v-for="item in accessMode"
             :key="item.value"
@@ -135,32 +144,61 @@ export default {
         </el-select>
       </el-form-item>
 
-      <el-form-item label="UUID" prop="visitor.characteristicUUID">
-        <el-input v-model="newProperties.visitor.characteristicUUID"></el-input>
+      <el-form-item
+        label="UUID"
+        :prop="'spec.template.spec.properties.' + index + '.visitor.characteristicUUID'"
+        :rules="[
+          { required: true, message: '请输入UUID', trigger: 'blur' },
+        ]"
+      >
+        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.characteristicUUID"></el-input>
       </el-form-item>
 
-      <template v-if="newProperties.accessMode === 'ReadOnly' || newProperties.accessMode === 'ReadWrite'">
-        <el-form-item v-for="(item,key) in newProperties.visitor.dataConverter" :key="key" :label="key">
-          <el-input v-model="newProperties.visitor.dataConverter[key]"></el-input>
+      <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadOnly' || localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
+        <el-form-item v-for="(item,key) in localDevice.spec.template.spec.properties[index].visitor.dataConverter" :key="key" :label="key">
+          <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter[key]"></el-input>
         </el-form-item>
       </template>
 
-      <el-form-item label="defaultValue" prop="visitor.defaultValue">
-        <el-input v-model="newProperties.visitor.defaultValue"></el-input>
+      <el-form-item label="defaultValue">
+        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue"></el-input>
       </el-form-item>
 
-      <template v-if="newProperties.accessMode === 'ReadWrite'">
+      <template>
+        <el-form-item label="设备标签">
+          <KeyValue
+            key="labels"
+            v-model="localDevice.spec.template.metadata.labels"
+            :value-multiline="false"
+            :pad-left="false"
+            :as-map="true"
+            :read-allowed="false"
+            add-label="添加设备标签"
+            :protip="false"
+          />
+        </el-form-item>
+      </template>
+
+      <template>
+        <el-form-item label="Operations">
+          <SelectKeyValue
+            :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"
+          />
+        </el-form-item>
+      </template>
+
+      <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
         <el-form-item label="dataWrite">
-          <template v-for="(item,key) in dataWrite">
-            <el-row :key="key" class="pb-10">
-              <el-col :span="5">
-                <el-input v-model="item[0]"></el-input>
-              </el-col>
-              <el-col :span="5">
-                <el-input v-model="item[1]"></el-input>
-              </el-col>
-            </el-row>
-          </template>
+          <KeyValue
+            key="labels"
+            v-model="localDevice.spec.template.spec.properties[index].visitor.dataWrite"
+            :value-multiline="false"
+            :pad-left="false"
+            :as-map="true"
+            :read-allowed="false"
+            add-label="Add DataWrite"
+            :protip="false"
+          />
         </el-form-item>
       </template>
     </el-form>

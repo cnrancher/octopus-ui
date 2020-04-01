@@ -3,12 +3,29 @@ import pkg from '../package.json';
 import { TIMED_OUT } from '@/config/query-params';
 
 export default function({
-  $axios, isDev, route, redirect, req
+  $axios, isDev, route, redirect, req, app
 }) {
+  const token = app.$cookies.get('token');
+
   $axios.defaults.headers.common['Accept'] = 'application/json';
   $axios.defaults.xsrfCookieName = 'CSRF';
+  $axios.defaults.AccessControlAllowOrigin = '*';
   $axios.defaults.xsrfHeaderName = 'X-Api-Csrf';
   $axios.defaults.withCredentials = true;
+
+  if (token) {
+    $axios.defaults.headers.Authorization = `${ token }`;
+  }
+
+  $axios.interceptors.response.use((response) => {
+    if (!token) {
+      app.$cookies.set('token', response.config.headers.Authorization);
+    }
+
+    return response;
+  }, (error) => {
+    return Promise.reject(error);
+  });
 
   if ( process.server ) {
     $axios.defaults.headers.common['user-agent'] = `Dashboard v${ pkg.version }`;

@@ -29,9 +29,15 @@ export const mutations = {
 };
 
 export const actions = {
-  login({ dispatch }, { body }) {
+  async login({ dispatch }, { body }) {
     try {
-      console.log('username: password', `${ body.username }: ${ body.password }`);
+      await dispatch('deviceLink/findAll', {
+        opt:  {
+          url:    `/v1`,
+          method: 'get',
+          // auth: body
+        }
+      }, { root: true });
 
       return true;
     } catch (err) {
@@ -48,6 +54,7 @@ export const actions = {
       try {
         console.log('To simulate the exit...');
       } catch (e) {
+
       }
     }
 

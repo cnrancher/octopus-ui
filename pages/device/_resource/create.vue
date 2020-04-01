@@ -48,7 +48,7 @@ export default {
   async asyncData(ctx) {
     const { route, store } = ctx;
     const resource = 'edge.cattle.io.devicelink';
-    console.log(resource, 'resource');
+    
     const schemas = ctx.store.getters['deviceLink/all'](SCHEMA);
     const schema = ctx.store.getters['deviceLink/schemaFor'](resource);
     const data = { type: resource };

@@ -37,6 +37,7 @@ export default {
 <template>
   <el-table
     :data="properties"
+    empty-text=" "
     style="width: 100%"
   >
     <el-table-column

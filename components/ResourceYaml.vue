@@ -386,6 +386,10 @@ export default {
 @import "~assets/styles/base/_functions.scss";
 @import "~assets/styles/base/_mixins.scss";
 
+h1 span {
+  font-size: 20px !important;
+}
+
 .diff-mode {
   position: absolute;
   top: 95px;

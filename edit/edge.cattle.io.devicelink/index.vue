@@ -12,6 +12,7 @@ import { NODE } from '@/config/types';
 import { get } from '@/utils/object';
 import { DESCRIPTION } from '@/config/labels-annotations';
 import { BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP } from './defaultYaml'
+import { parity, dataBits } from '@/config/map'
 
 import createEditView from '@/mixins/create-edit-view';
 
@@ -34,7 +35,6 @@ export default {
     }
 
     const validateAccessConfig = (rule, value, callback) => {
-      console.log('自定义验证');
       if (this.value.spec.template.spec.macAddress && this.value.spec.template.spec.namespace) {
         callback(new Error('name 或 macAddress不能同时为空'));
       } else {
@@ -43,12 +43,11 @@ export default {
     };
 
     return {
+      parity,
+      dataBits,
       activeNames: [],
       dialogVisible: false,
-      editRow: {
-        index: null,
-        data: null
-      },
+      editRowIndex: -1,
       transferMode: 'rtu',
       allNodes: [],
       rules: {
@@ -59,7 +58,7 @@ export default {
           { required: true, message: '请输入命名空间' }
         ],
         'spec.adaptor.node': [
-          { required: true, message: '请选择节点' }
+          { required: true, message: '请选择节点', trigger: 'change' }
         ],
         'spec.template.spec.name': [
           { required: true, message: '请输入设备名称' }
@@ -75,7 +74,6 @@ export default {
   },
   methods: {
     enable(buttonCb) {
-      console.log(this)
       this.save(buttonCb);
     },
     async loadDeps() {
@@ -92,26 +90,18 @@ export default {
     },
     addAttribute() {
       this.dialogVisible = true;
-
     },
     hideDialog() {
       this.dialogVisible = false;
-      this.editRow.index = null;
-      this.editRow.data = null;
+      this.editRowIndex = -1;
     },
     addProperties(row) {
-      if(this.editRow.data) {
-        const index = this.editRow.index;
-        this.value.spec.template.spec.properties.splice(index, 1, row)
-      } else {
-        this.value.spec.template.spec.properties.push(row)
-      }
-      this.editRow.index = null;
-      this.editRow.data = null;
+      this.value.spec.template.spec.properties.length = 0;
+      this.value.spec.template.spec.properties.push(...row);
+      this.editRowIndex = -1;
     },
     edit(index) {
-      this.editRow.index = index;
-      this.editRow.data = this.value.spec.template.spec.properties[index]
+      this.editRowIndex = index;
       this.dialogVisible = true
     },
     deleteRow(index) {
@@ -132,8 +122,13 @@ export default {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP))
       }
     },
-    handleCollapse(val) {
-      console.log(val);
+    validatorMacAddress(ule, value, callback) {
+      let regex = "(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})";
+      let regexp = new RegExp(regex);
+      if (!regexp.test(value)) {
+        return false;
+      }
+      return true;
     }
   },
   computed: {
@@ -234,7 +229,7 @@ export default {
             </el-col>
 
             <el-col :span='24'>
-              <el-collapse v-model="activeNames" @change="handleCollapse">
+              <el-collapse v-model="activeNames">
                 <el-collapse-item title="可选rtu配置" name="3" class="optional">
                   <el-col :span='12'>
                     <el-form-item label="baudRate">
@@ -245,10 +240,11 @@ export default {
                   <el-col :span="11" :push="1">
                     <el-form-item label="dataBits">
                       <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits">
-                        <el-option label="5" value="5"></el-option>
-                        <el-option label="6" value="6"></el-option>
-                        <el-option label="7" value="7"></el-option>
-                        <el-option label="8" value="8"></el-option>
+                        <el-option 
+                          v-for="item in dataBits" :key="item.value" 
+                          :label="item.label"      :value="item.value"
+                        >
+                        </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -256,16 +252,18 @@ export default {
                   <el-col :span='12'>
                     <el-form-item label="parity">
                       <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity">
-                        <el-option label="None" value="N"></el-option>
-                        <el-option label="Even" value="E"></el-option>
-                        <el-option label="Odd" value="O"></el-option>
+                        <el-option 
+                          v-for="item in parity" :key="item.value"
+                          :label="item.label" :value="item.value"
+                        >
+                        </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="stopBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity">
+                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].stopBits">
                         <el-option label="1" value="1"></el-option>
                         <el-option label="2" value="2"></el-option>
                       </el-select>
@@ -307,11 +305,11 @@ export default {
               v-if="value.spec.model.kind === 'BluetoothDevice'"
               :properties="value.spec.template.spec.properties" 
               :visible='dialogVisible'
-              @editRow="edit($event)"
-              @deleteRow="deleteRow($event)"
+              @editRow='edit($event)'
+              @deleteRow='deleteRow($event)'
             />
 
-            <AddModbusTable 
+            <AddModbusTable
               v-if="value.spec.model.kind === 'ModbusDevice'"
               :properties="value.spec.template.spec.properties" 
               :visible='dialogVisible'
@@ -330,25 +328,29 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <Footer :mode="mode" :errors="errors" @save="enable" @done="done" :disabled="true" />
+          <Footer :mode="mode" :errors="errors" @save="enable" @done="done" />
         </el-col>
       </el-row>
     </el-form>
-
-    <BluethoothModel
-      v-if="value.spec.model.kind === 'BluetoothDevice'"
-      @addProperties = "addProperties($event)" 
-      @hideDialog = "hideDialog($event)"
-      :editRow = "editRow"
-      :visible = 'dialogVisible' 
-    />
-    <ModbusModel 
-      v-if="value.spec.model.kind === 'ModbusDevice'"
-      @addProperties = "addProperties($event)" 
-      @hideDialog = "hideDialog($event)"
-      :editRow = "editRow"
-      :visible = 'dialogVisible' 
-    />
+    
+    <template v-if="dialogVisible">
+      <BluethoothModel
+        v-if="value.spec.model.kind === 'BluetoothDevice'"
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+        :visible = 'dialogVisible'
+      />
+      <ModbusModel
+        v-if="value.spec.model.kind === 'ModbusDevice'"
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :visible = 'dialogVisible'
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+      />
+    </template>
   </div>
 </template>
 

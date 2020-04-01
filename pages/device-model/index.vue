@@ -21,7 +21,7 @@ export default {
   },
 
   asyncData(ctx) {
-    return ctx.store.dispatch('deviceModel/findAll', { type: DUMMY_DEVICE, opt: { url: 'devices.edge.cattle.io.dummydevices' } }).then((rows) => {
+    return ctx.store.dispatch('deviceModel/findAll', { type: DUMMY_DEVICE, opt: { url: 'devices.edge.cattle.io.v1alpha1.dummydevices' } }).then((rows) => {
       return { rows };
     });
   },

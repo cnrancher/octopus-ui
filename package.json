@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "version": "master",
-  "description": "Rancher Dashboard",
+  "description": "Octopus Dashboard",
   "repository": "https://github.com/rancherlabs/dashboard",
   "license": "Apache-2.0",
   "author": "Rancher Labs, Inc.",

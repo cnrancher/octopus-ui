@@ -30,15 +30,15 @@ export const mutations = {
 
 export const actions = {
   async login({ dispatch }, { body }) {
-    
     try {
       await dispatch('deviceLink/findAll', {
-        opt:  { 
-          url: `/v1`,
+        opt:  {
+          url:    `/v1`,
           method: 'get',
           // auth: body
         }
       }, { root: true });
+
       return true;
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {

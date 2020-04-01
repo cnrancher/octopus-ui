@@ -61,7 +61,7 @@ export default {
             password: '0ecb73d28591aec03838e362bb62a78b'
           }
         });
-        
+
         if ( this.remember ) {
           this.$cookies.set(USERNAME, this.username, {
             encode: x => x,

@@ -14,15 +14,16 @@ export default function({
   $axios.defaults.withCredentials = true;
 
   if (token) {
-    $axios.defaults.headers.Authorization = `${token}`
+    $axios.defaults.headers.Authorization = `${ token }`;
   }
 
-  $axios.interceptors.response.use(function (response) {
+  $axios.interceptors.response.use((response) => {
     if (!token) {
-      app.$cookies.set('token', response.config.headers.Authorization)
+      app.$cookies.set('token', response.config.headers.Authorization);
     }
+
     return response;
-  }, function (error) {
+  }, (error) => {
     return Promise.reject(error);
   });
 

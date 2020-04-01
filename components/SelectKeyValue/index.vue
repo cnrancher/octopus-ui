@@ -12,45 +12,63 @@ const options = [{
 }, {
   label: 'Divide',
   value: 'Divide'
-}]
+}];
+
 export default {
   name: 'SelectKeyValue',
 
   props: {
     value: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
 
   data() {
+    const rows = this.value || [];
+
     return {
       options,
-      rows: this.value || []
-    }
+      rows
+    };
   },
-}
+
+  methods: {
+    add() {
+      this.rows.push({
+        operationType:   '',
+        operationValue:  '',
+      });
+    }
+  }
+};
 </script>
 
 <template>
   <div>
     <template v-for="(row, idx) in rows">
-      <el-row :span='24' :key="idx">
-        <el-col :span='6'>
+      <el-row :key="idx" :span="24">
+        <el-col :span="3" class="mb-20 mr-20">
           <el-select v-model="row.operationType" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span='8'>
+        <el-col :span="8">
           <el-input v-model="row.operationValue" placeholder="e.g. 0"></el-input>
         </el-col>
       </el-row>
     </template>
+    <el-button type="primary" @click="add">
+      添加OrderOfOperation
+    </el-button>
   </div>
 </template>
 

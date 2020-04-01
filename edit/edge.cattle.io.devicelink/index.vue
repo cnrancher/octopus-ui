@@ -58,7 +58,7 @@ export default {
           { required: true, message: '请输入命名空间' }
         ],
         'spec.adaptor.node': [
-          { required: true, message: '请选择节点' }
+          { required: true, message: '请选择节点', trigger: 'change' }
         ],
         'spec.template.spec.name': [
           { required: true, message: '请输入设备名称' }
@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     enable(buttonCb) {
-      console.log(this)
       this.save(buttonCb);
     },
     async loadDeps() {
@@ -91,12 +90,10 @@ export default {
     },
     addAttribute() {
       this.dialogVisible = true;
-
     },
     hideDialog() {
       this.dialogVisible = false;
-      // this.editRow.index = null;
-      // this.editRow.data = null;
+      this.editRowIndex = -1;
     },
     addProperties(row) {
       this.value.spec.template.spec.properties.length = 0;
@@ -124,6 +121,14 @@ export default {
       } else {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP))
       }
+    },
+    validatorMacAddress(ule, value, callback) {
+      let regex = "(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})";
+      let regexp = new RegExp(regex);
+      if (!regexp.test(value)) {
+        return false;
+      }
+      return true;
     }
   },
   computed: {
@@ -323,26 +328,29 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <Footer :mode="mode" :errors="errors" @save="enable" @done="done" :disabled="true" />
+          <Footer :mode="mode" :errors="errors" @save="enable" @done="done" />
         </el-col>
       </el-row>
     </el-form>
-
-    <BluethoothModel
-      v-if="value.spec.model.kind === 'BluetoothDevice'"
-      @addProperties = "addProperties($event)" 
-      @hideDialog = "hideDialog($event)"
-      :editRowIndex = "editRowIndex"
-      :device= "value"
-      :visible = 'dialogVisible'
-    />
-    <!-- <ModbusModel
-      v-if="value.spec.model.kind === 'ModbusDevice'"
-      @addProperties = "addProperties($event)" 
-      @hideDialog = "hideDialog($event)"
-      :editRow = "editRow"
-      :visible = 'dialogVisible' 
-    /> -->
+    
+    <template v-if="dialogVisible">
+      <BluethoothModel
+        v-if="value.spec.model.kind === 'BluetoothDevice'"
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+        :visible = 'dialogVisible'
+      />
+      <ModbusModel
+        v-if="value.spec.model.kind === 'ModbusDevice'"
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :visible = 'dialogVisible'
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+      />
+    </template>
   </div>
 </template>
 

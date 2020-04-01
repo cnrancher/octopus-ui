@@ -1,84 +1,80 @@
 <script>
-/* elsint-disable */
+/* eslint-disable */
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
+import SelectKeyValue from '@/components/SelectKeyValue';
 import { accessMode } from '@/config/map';
-import SelectKeyValue from '@/components/SelectKeyValue'
 
 const properties = {
   name:        '',
   description: '',
   accessMode:  'NotifyOnly',
-  type:        {
-    int: {
-      accessMode: 'Read',
-      maximun:    100,
-      unit:       'degree celsius'
-    }
-  },
   visitor: {
     characteristicUUID: '',
-    defaultValue:       'OFF',
+    defaultValue:       '',
     dataConverter:      {
-      startIndex: '',
-      endIndex:   '',
-      shiftRight: '',
+      startIndex:        '',
+      endIndex:          '',
+      shiftRight:        '',
       orderOfOperations: [{
-        operationType: 'Multiply',
-        operationValue: "0.03125"
+        operationType:  '',
+        operationValue: ''
       }]
     },
-    dataWrite: {
-      ON:  '1',
-      OFF: '0'
-    }
+    dataWrite: {}
   }
 };
 
 export default {
-  props: {
-    device: {
-      type: Object,
-      default: () => {}
-    },
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    editRowIndex: {
-      type: Number
-    }
-  },
   components: {
     KeyValue,
     SelectKeyValue
   },
+
+  props: {
+    device: {
+      type:    Object,
+      default: () => {}
+    },
+    visible: {
+      type:    Boolean,
+      default: false
+    },
+    editRowIndex: { type: Number }
+  },
+
   data() {
+    const localDevice = _.cloneDeep(this.device);
+
     return {
       accessMode,
-      localDevice: _.cloneDeep(this.device),
-      newProperties: properties,
+      localDevice,
+      index: 0
     };
   },
   computed: {
-    showModel() {
-      return this.visible;
-    },
-    index() {
-      if (this.editRowIndex < 0) {
-        this.localDevice.spec.template.spec.properties.push(this.newProperties);
-        const length = this.device.spec.template.spec.properties.length;
-        return length
-      }
-      return this.editRowIndex
-    }
+    
   },
   watch: {
     device: {
       handler(newVal, oldVal) {
-        this.localDevice = _.cloneDeep(newVal);
+        const length = this.device.spec.template.spec.properties.length;
+        this.localDevice = _.cloneDeep(this.device)
       },
-      deep: true
+      deep: true,
+      immediate:true
+    },
+    editRowIndex: {
+      handler(newVal, oldVal) {
+        if (this.editRowIndex < 0) {
+          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+          const length = this.localDevice.spec.template.spec.properties.length;
+          this.index =  length - 1;
+        } else {
+          this.index = this.editRowIndex;
+        }
+      },
+      immediate:true
     }
   },
   methods: {
@@ -86,11 +82,12 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const properties = this.localDevice.spec.template.spec.properties;
+
           this.$emit('addProperties', _.cloneDeep(properties));
           this.$nextTick(() => {
             this.$refs[formName].resetFields();
+            this.$emit('hideDialog', false);
           });
-          this.$emit('hideDialog', false);
         } else {
           return false;
         }
@@ -108,10 +105,11 @@ export default {
 <template>
   <el-dialog
     title="添加新属性"
-    :visible.sync="showModel"
+    :visible.sync="this.visible"
     :close-on-click-modal="false"
     width="60%"
     :before-close="hide"
+    v-if="localDevice.spec.template.spec.properties.length"
   >
     <el-form ref="form" label-width="130px" :model="localDevice">
       <el-form-item
@@ -124,7 +122,7 @@ export default {
         <el-input v-model="localDevice.spec.template.spec.properties[index].name"></el-input>
       </el-form-item>
 
-      <el-form-item 
+      <el-form-item
         label="描述"
         :prop="'spec.template.spec.properties.' + index + '.description'"
         :rules="[
@@ -146,7 +144,7 @@ export default {
         </el-select>
       </el-form-item>
 
-      <el-form-item 
+      <el-form-item
         label="UUID"
         :prop="'spec.template.spec.properties.' + index + '.visitor.characteristicUUID'"
         :rules="[
@@ -173,7 +171,7 @@ export default {
             v-model="localDevice.spec.template.metadata.labels"
             :value-multiline="false"
             :pad-left="false"
-            :asMap="true"
+            :as-map="true"
             :read-allowed="false"
             add-label="添加设备标签"
             :protip="false"
@@ -181,13 +179,13 @@ export default {
         </el-form-item>
       </template>
 
-      <!-- <template>
-        <el-form-item label="orderOfOperations">
-          <SelectKeyValue 
+      <template>
+        <el-form-item label="Operations">
+          <SelectKeyValue
             :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"
           />
         </el-form-item>
-      </template> -->
+      </template>
 
       <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
         <el-form-item label="dataWrite">
@@ -196,7 +194,7 @@ export default {
             v-model="localDevice.spec.template.spec.properties[index].visitor.dataWrite"
             :value-multiline="false"
             :pad-left="false"
-            :asMap="true"
+            :as-map="true"
             :read-allowed="false"
             add-label="Add DataWrite"
             :protip="false"

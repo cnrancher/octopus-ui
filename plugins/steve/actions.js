@@ -16,7 +16,7 @@ export default {
       if ( res.status === 204 ) {
         return;
       }
-      console.log(res, 'resres')
+
       if ( opt.depaginate ) {
         // @TODO
         /*

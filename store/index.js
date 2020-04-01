@@ -1,5 +1,5 @@
 import Steve from '@/plugins/steve';
-import { CUSTOM } from '@/config/types'
+import { CUSTOM } from '@/config/types';
 
 export const strict = false;
 
@@ -44,7 +44,7 @@ export const actions = {
 
     dispatch('deviceModel/subscribe');
     await dispatch('deviceModel/loadSchemas');
-    
+
     const customresource = await dispatch('deviceModel/findAll', {
       type: CUSTOM,
       opt:  { url: CUSTOM }

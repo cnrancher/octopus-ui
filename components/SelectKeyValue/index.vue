@@ -1,4 +1,3 @@
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 <script>
 const options = [{
   label: 'Add',

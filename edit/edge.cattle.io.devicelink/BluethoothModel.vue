@@ -165,21 +165,6 @@ export default {
       </el-form-item>
 
       <template>
-        <el-form-item label="设备标签">
-          <KeyValue
-            key="labels"
-            v-model="localDevice.spec.template.metadata.labels"
-            :value-multiline="false"
-            :pad-left="false"
-            :as-map="true"
-            :read-allowed="false"
-            add-label="添加设备标签"
-            :protip="false"
-          />
-        </el-form-item>
-      </template>
-
-      <template>
         <el-form-item label="Operations">
           <SelectKeyValue
             :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"

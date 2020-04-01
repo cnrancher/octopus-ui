@@ -7,6 +7,7 @@ import AddModbusTable from './AddModbusTable';
 import Footer from '@/components/form/Footer';
 import BluethoothModel from './BluethoothModel';
 import ModbusModel from './ModbusModel';
+import KeyValue from '@/components/form/KeyValue';
 import { allHash } from '@/utils/promise';
 import { NODE } from '@/config/types';
 import { get } from '@/utils/object';
@@ -22,7 +23,8 @@ export default {
     Footer,
     BluethoothModel,
     ModbusModel,
-    AddModbusTable
+    AddModbusTable,
+    KeyValue
   },
   mixins:     [createEditView, LoadDeps],
   data() {
@@ -184,6 +186,26 @@ export default {
               </el-option>
             </el-select>
           </el-form-item> 
+        </el-col>
+
+        <el-col :span='24'>
+          <div class="moduleName">设备标签</div>
+        </el-col>
+        <el-col :span='24' class="top">
+          <el-form-item label="">
+            <KeyValue
+              key="labels"
+              v-model="value.spec.template.metadata.labels"
+              :value-multiline="false"
+              :pad-left="false"
+              :as-map="true"
+              valueLabel="值"
+              keyLabel="键"
+              :read-allowed="false"
+              add-label="添加设备标签"
+              :protip="false"
+            />
+          </el-form-item>
         </el-col>
 
         <el-col :span='24'>
@@ -370,6 +392,9 @@ export default {
 
   .addNew {
     margin-top: 15px;
+  }
+  .top {
+    margin-top: -50px;
   }
 }
 </style>

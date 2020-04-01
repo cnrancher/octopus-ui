@@ -64,7 +64,7 @@ export const MENUS = [
     children: [
       {
         name:     'device-model',
-        meta:     { title: '设备模版' },
+        meta:     { title: '设备类型' },
         children: []
       },
       {

@@ -232,10 +232,10 @@ export default {
         <div v-if="isView" class="actions">
           <button
             type="button"
-            class="btn bg-primary"
+            class="btn bg-primary left"
             @click="goBack"
           >
-            返回上一级
+            返回
           </button>
           <button ref="actions" type="button" class="btn btn-sm role-multi-action actions" @click="showActions">
             <i class="icon icon-actions" />
@@ -264,6 +264,14 @@ export default {
 </template>
 
 <style lang='scss' scoped>
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .left {
+      margin-right: auto;
+    }
+  }
   .flat {
     border-collapse: collapse;
     table-layout: fixed;

@@ -51,11 +51,14 @@ export default {
     },
   },
 
-  asyncData(ctx) {
-    return ctx.store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
+  asyncData({ store, error }) {
+    return store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
       return {
         rows
       };
+    }).catch(e => {
+      console.log('tmde我错了', e)
+      error({ statusCode: '404', message: 'DeviceLink CRD对象不存在, 请先部署DeviceLink.' })
     });
   },
 };
@@ -65,6 +68,10 @@ export default {
   <div>
     <header>
       <div class="actions">
+        <nuxt-link to="create" append tag="button" type="button" class="btn bg-primary">
+          Create
+        </nuxt-link>
+
         <nuxt-link
           :to="{path: yamlRoute}"
           tag="button"
@@ -72,9 +79,6 @@ export default {
           class="btn bg-primary"
         >
           Create as Yaml
-        </nuxt-link>
-        <nuxt-link to="create" append tag="button" type="button" class="btn bg-primary">
-          Create
         </nuxt-link>
       </div>
     </header>
@@ -85,5 +89,11 @@ export default {
 <style lang="scss" scoped>
   .actions {
     margin-bottom: 30px;
+    display: flex;
+    justify-content: flex-end;
+
+    .btn {
+      margin-left: 20px;
+    }
   }
 </style>

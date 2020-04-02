@@ -135,7 +135,7 @@ export default {
       </el-form-item>
 
       <el-row>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item label="类型">
             <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" :disabled="disableType" placeholder="请选择">
               <el-option

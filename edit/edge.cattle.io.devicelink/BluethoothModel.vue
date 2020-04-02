@@ -8,7 +8,7 @@ import { accessMode } from '@/config/map';
 const properties = {
   name:        '',
   description: '',
-  accessMode:  'NotifyOnly',
+  accessMode:  '',
   visitor: {
     characteristicUUID: '',
     defaultValue:       '',
@@ -40,7 +40,9 @@ export default {
       type:    Boolean,
       default: false
     },
-    editRowIndex: { type: Number }
+    editRowIndex: { 
+      type: Number
+    }
   },
 
   data() {
@@ -132,8 +134,15 @@ export default {
         <el-input v-model="localDevice.spec.template.spec.properties[index].description" type="textarea"></el-input>
       </el-form-item>
 
-      <el-form-item label="accessMode">
-        <el-select v-model="localDevice.spec.template.spec.properties[index].accessMode" placeholder="请选择">
+      <el-form-item label="accessMode"
+        :prop="'spec.template.spec.properties.' + index + '.accessMode'"
+        :rules="[
+          { required: true, message: '请选择accessMode', trigger: 'change' }
+        ]"
+      >
+        <el-select 
+          v-model="localDevice.spec.template.spec.properties[index].accessMode"
+        >
           <el-option
             v-for="item in accessMode"
             :key="item.value"

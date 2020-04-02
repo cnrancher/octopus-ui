@@ -147,7 +147,7 @@ export default {
 
 <template>
   <div class="form">
-    <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="100px" size="mini">
+    <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="100px">
       <el-row>
         <el-col :span='24'>
           <div class="moduleName">基础配置</div>

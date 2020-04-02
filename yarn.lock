@@ -6715,6 +6715,11 @@ element-resize-detector@^1.2.1:
   dependencies:
     batch-processor "1.0.0"
 
+element-theme-chalk@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.npm.taobao.org/element-theme-chalk/download/element-theme-chalk-2.13.0.tgz#2ee1aea38c31a37df55886001021a054b076b356"
+  integrity sha1-LuGuo4wxo331WIYAECGgVLB2s1Y=
+
 element-ui@^2.13.0:
   version "2.13.0"
   resolved "https://registry.npm.taobao.org/element-ui/download/element-ui-2.13.0.tgz#f6bb04e5b0a76ea5f62466044b774407ba4ebd2d"

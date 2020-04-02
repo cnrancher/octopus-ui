@@ -51,8 +51,8 @@ export default {
 <template>
   <div>
     <template v-for="(row, idx) in rows">
-      <el-row :key="idx" :span="24">
-        <el-col :span="3" class="mb-20 mr-20">
+      <el-row :key="idx" :span="24" type='flex' class="mb-20" justify="space-between">
+        <el-col :span="8">
           <el-select v-model="row.operationType" placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -63,14 +63,13 @@ export default {
             </el-option>
           </el-select>
         </el-col>
+
         <el-col :span="8">
           <el-input v-model="row.operationValue" placeholder="e.g. 0"></el-input>
         </el-col>
 
-        <el-col :span="2">
-          <button type="button" class="btn bg-transparent role-link" @click="remove(idx)">
-            Remove
-          </button>
+        <el-col :span="6">
+          <el-button class="bg-remove" @click="remove(idx)"> Remove </el-button>
         </el-col>
       </el-row>
     </template>

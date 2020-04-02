@@ -357,9 +357,9 @@ export default {
                   <input
                     v-else
                     ref="key"
+                    type="text"
                     v-model="row[keyName]"
                     :placeholder="keyPlaceholder"
-                    type="text"
                     @input="queueUpdate"
                   />
                 </slot>
@@ -406,10 +406,10 @@ export default {
               <slot name="moreColumnHeaders" />
               <td v-if="showRemove" class="remove">
                 <slot name="removeButton" :remove="remove" :idx="idx" :row="row">
-                  <button type="button" class="btn bg-transparent role-link" @click="remove(idx)">
+                  <el-button type="button" class="bg-remove" @click="remove(idx)">
                     Remove
                     {{ removeLabel }}
-                  </button>
+                  </el-button>
                 </slot>
               </td>
             </tr>
@@ -419,14 +419,14 @@ export default {
     </table>
     <div v-if="showAdd || showRead" class="footer">
       <slot v-if="showAdd" name="add">
-        <button type="button" class="btn role-tertiary add" @click="add()">
+        <el-button type="primary" @click="add()">
           {{ addLabel }}
-        </button>
+        </el-button>
         <slot name="moreAdd" :rows="rows" />
       </slot>
-      <button v-if="showRead" type="button" class="btn role-tertiary read-from-file" @click="readFromFile">
+      <el-button v-if="showRead" type="button" class="btn role-tertiary read-from-file" @click="readFromFile">
         {{ readLabel }}
-      </button>
+      </el-button>
     </div>
 
     <input
@@ -453,7 +453,7 @@ export default {
   }
 
   TABLE {
-    width: 100%;
+    // width: 100%;
     border-collapse: separate;
     border-spacing: 5px 10px;
   }

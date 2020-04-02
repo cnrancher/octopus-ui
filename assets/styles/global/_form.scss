@@ -264,5 +264,6 @@ INPUT.inline-input {
 */
 
 .fixed select, .fixed.v-select, .fixed input:not(.vs__search){
-  height: 50px;
+  height: 40px;
+  background-color: transparent;
 }

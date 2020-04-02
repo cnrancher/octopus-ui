@@ -16,10 +16,7 @@ const properties = {
       startIndex: '',
       endIndex: '',
       shiftRight: '',
-      orderOfOperations: [{
-        operationType: '',
-        operationValue: ''
-      }]
+      orderOfOperations: []
     },
     dataWrite: {}
   }

@@ -1,7 +1,7 @@
 <script>
 import { PREFIX_DEVICE, SCHEMA } from '../../config/types';
 import ResourceTable from '@/components/ResourceTable';
-import { NAME, NAMESPACE, KIND, AGE } from '@/config/table-headers';
+import { NAME, NAMESPACE, KIND, PROPERTIES, AGE } from '@/config/table-headers';
 import { ucFirst } from '@/utils/string';
 
 export default {
@@ -28,7 +28,7 @@ export default {
         });
       }
 
-      return [NAME, NAMESPACE, ...headerAttr, KIND, AGE];
+      return [NAME, NAMESPACE, PROPERTIES, AGE];
     },
   },
 

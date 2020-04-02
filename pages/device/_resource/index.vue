@@ -1,5 +1,6 @@
 <script>
 /* eslint-disable */
+import _ from 'lodash'
 import { SCHEMA, DEVICE_LINK } from '../../../config/types';
 import { EDIT_YAML, _FLAGGED } from '@/config/query-params';
 import ResourceTable from '@/components/ResourceTable';
@@ -29,7 +30,6 @@ export default {
       params,
       query
     }).href;
-
     return {
       formRoute,
       yamlRoute,
@@ -50,14 +50,12 @@ export default {
       return pluralLabelFor(this.schema);
     },
   },
-
   asyncData({ store, error }) {
     return store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
       return {
         rows
       };
     }).catch(e => {
-      console.log('tmde我错了', e)
       error({ statusCode: '404', message: 'DeviceLink CRD对象不存在, 请先部署DeviceLink.' })
     });
   },

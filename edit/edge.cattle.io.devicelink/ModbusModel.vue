@@ -106,14 +106,15 @@ export default {
 </script>
 <template>
   <el-dialog
-    title="添加新属性"
     :visible.sync="showModel"
     :close-on-click-modal="false"
-    width="60%"
+    width="822px"
+    class="popUp"
     :before-close="hide"
     v-if="localDevice.spec.template.spec.properties.length"
   >
-    <el-form ref="form" label-width="130px" label-position="left" :model="localDevice">
+    <header slot="title"><span class="icon"></span>添加新属性</header>
+    <el-form ref="form" class="form-container" label-width="130px" label-position="right" :model="localDevice">
       <el-form-item 
         label="属性名" 
         :prop="'spec.template.spec.properties.' + index + '.name'"
@@ -131,11 +132,16 @@ export default {
           { required: true, message: '请输入描述', trigger: 'blur' },
         ]"
       >
-        <el-input v-model="localDevice.spec.template.spec.properties[index].description" type="textarea"></el-input>
+        <el-input 
+          v-model="localDevice.spec.template.spec.properties[index].description" 
+          maxlength="256"
+          show-word-limit
+        >
+        </el-input>
       </el-form-item>
 
-      <el-row>
-        <el-col :span="6">
+      <el-row type='flex' justify="space-between">
+        <el-col :span="15">
           <el-form-item label="类型">
             <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" :disabled="disableType" placeholder="请选择">
               <el-option
@@ -149,7 +155,7 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="7" class="offset">
+        <el-col :span="9">
           <template v-if="localDevice.spec.template.spec.properties.dataType === 'boolean'">
             <el-select v-model="localDevice.spec.template.spec.properties.value" placeholder="请选择">
               <el-option label="false" value="false"></el-option>
@@ -163,7 +169,7 @@ export default {
       </el-row>
 
       <el-form-item label="寄存器类型">
-        <el-radio-group v-model="localDevice.spec.template.spec.properties[index].visitor.register" size="small" @change="changeRegister">
+        <el-radio-group class="flex" v-model="localDevice.spec.template.spec.properties[index].visitor.register" size="small" @change="changeRegister">
           <el-radio-button v-for="(item, key) in register" :key="key" :label="item.value">
             {{ item.label }}
           </el-radio-button>
@@ -194,7 +200,79 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.offset {
-  margin-left: 10px;
+.flex {
+  display: flex;
+}
+header {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 36px;
+  font-weight: bold;
+  color: #363636;
+
+  .icon {
+    margin-right: 6px;
+    width: 3px;
+    height: 18px;
+    background-image: linear-gradient(#030b56, #1144d4);
+  }
+}
+
+.form-container {
+  width: 580px;
+  margin: auto;
+  padding-right: 66px;
+}
+</style>
+
+<style lang='scss'>
+.el-input {
+  INPUT:not([type]):not(.view),
+  INPUT[type='text']:not(.view),
+  INPUT[type='password']:not(.view),
+  INPUT[type='number']:not(.view),
+  INPUT[type='date']:not(.view),
+  INPUT[type='email']:not(.view),
+  INPUT[type='search']:not(.view),
+  INPUT[type='tel']:not(.view),
+  INPUT[type='url']:not(.view),
+  SELECT:not(.view),
+  TEXTAREA:not(.view),
+  .labeled-input:not(.view) {
+    background-color: transparent !important;
+  }
+  TEXTAREA {
+    background-color: transparent !important;
+  }
+}
+
+.el-dialog__wrapper.popUp .el-dialog {
+  max-height: 844px !important;
+  overflow-y: auto !important;
+
+  .el-dialog__footer {
+    display: flex;
+    justify-content: center;
+
+    .dialog-footer {
+      .el-button {
+        width: 150px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 14px;
+        padding: 0px;
+        &.el-button--primary {
+          background-color: #3860c6;
+        }
+        &.el-button-default {
+          background-color: #f9f9f9;
+        }
+      }
+    }
+  }
+}
+.el-radio-button--small .el-radio-button__inner {
+  padding: 9px 14px;
 }
 </style>

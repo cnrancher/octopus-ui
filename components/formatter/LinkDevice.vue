@@ -14,13 +14,14 @@ export default {
     return { url: '' };
   },
   mounted() {
-    this.findUrl(this.value);
+    this.findUrl();
   },
   methods: {
     findUrl() {
-      const type = this.row.spec.model.kind.toLowerCase();
+      // const type = this.row.spec.model.kind.toLowerCase();
+      // console.log(this.value, this.row, 'this.row', type, this.row.spec)
 
-      this.url = `/device-model/${ type }`;
+      this.url = `/device-model/${ this.value }`;
     }
   }
 };

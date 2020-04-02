@@ -6,18 +6,18 @@ import SelectKeyValue from '@/components/SelectKeyValue';
 import { accessMode } from '@/config/map';
 
 const properties = {
-  name:        '',
+  name: '',
   description: '',
-  accessMode:  '',
+  accessMode: '',
   visitor: {
     characteristicUUID: '',
-    defaultValue:       '',
-    dataConverter:      {
-      startIndex:        '',
-      endIndex:          '',
-      shiftRight:        '',
+    defaultValue: '',
+    dataConverter: {
+      startIndex: '',
+      endIndex: '',
+      shiftRight: '',
       orderOfOperations: [{
-        operationType:  '',
+        operationType: '',
         operationValue: ''
       }]
     },
@@ -33,19 +33,19 @@ export default {
 
   props: {
     device: {
-      type:    Object,
-      default: () => {}
+      type: Object,
+      default: () => { }
     },
     visible: {
-      type:    Boolean,
+      type: Boolean,
       default: false
     },
-    editRowIndex: { 
+    editRowIndex: {
       type: Number
     }
   },
 
-  data() {
+  data () {
     const localDevice = _.cloneDeep(this.device);
 
     return {
@@ -55,32 +55,32 @@ export default {
     };
   },
   computed: {
-    
+
   },
   watch: {
     device: {
-      handler(newVal, oldVal) {
+      handler (newVal, oldVal) {
         const length = this.device.spec.template.spec.properties.length;
         this.localDevice = _.cloneDeep(this.device)
       },
       deep: true,
-      immediate:true
+      immediate: true
     },
     editRowIndex: {
-      handler(newVal, oldVal) {
+      handler (newVal, oldVal) {
         if (this.editRowIndex < 0) {
           this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
           const length = this.localDevice.spec.template.spec.properties.length;
-          this.index =  length - 1;
+          this.index = length - 1;
         } else {
           this.index = this.editRowIndex;
         }
       },
-      immediate:true
+      immediate: true
     }
   },
   methods: {
-    add(formName) {
+    add (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const properties = this.localDevice.spec.template.spec.properties;
@@ -95,7 +95,7 @@ export default {
         }
       });
     },
-    hide(formName) {
+    hide (formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields();
       }
@@ -106,14 +106,20 @@ export default {
 </script>
 <template>
   <el-dialog
-    title="添加新属性"
     :visible.sync="this.visible"
     :close-on-click-modal="false"
-    width="60%"
+    width="822px"
+    class="popUp"
     :before-close="hide"
     v-if="localDevice.spec.template.spec.properties.length"
-  >
-    <el-form ref="form" label-width="130px" :model="localDevice">
+  > 
+    <header slot="title"><span class="icon"></span>添加新属性</header>
+    <el-form
+      ref="form"
+      label-width="140px"
+      :model="localDevice"
+      class="form-container"
+    >
       <el-form-item
         label="属性名"
         :prop="'spec.template.spec.properties.' + index + '.name'"
@@ -131,18 +137,21 @@ export default {
           { required: true, message: '请输入描述', trigger: 'blur' },
         ]"
       >
-        <el-input v-model="localDevice.spec.template.spec.properties[index].description" type="textarea"></el-input>
+        <el-input
+          v-model="localDevice.spec.template.spec.properties[index].description"
+          maxlength="256"
+          show-word-limit
+        ></el-input>
       </el-form-item>
 
-      <el-form-item label="accessMode"
+      <el-form-item
+        label="accessMode"
         :prop="'spec.template.spec.properties.' + index + '.accessMode'"
         :rules="[
           { required: true, message: '请选择accessMode', trigger: 'change' }
         ]"
       >
-        <el-select 
-          v-model="localDevice.spec.template.spec.properties[index].accessMode"
-        >
+        <el-select v-model="localDevice.spec.template.spec.properties[index].accessMode">
           <el-option
             v-for="item in accessMode"
             :key="item.value"
@@ -163,8 +172,14 @@ export default {
         <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.characteristicUUID"></el-input>
       </el-form-item>
 
-      <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadOnly' || localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
-        <el-form-item v-for="(item,key) in localDevice.spec.template.spec.properties[index].visitor.dataConverter" :key="key" :label="key">
+      <template 
+        v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadOnly' || localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
+        <el-form-item
+          v-for="(item,key) in localDevice.spec.template.spec.properties[index].visitor.dataConverter"
+          v-if="typeof localDevice.spec.template.spec.properties[index].visitor.dataConverter[key] !== 'object'"
+          :key="key"
+          :label="key"
+        > 
           <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter[key]"></el-input>
         </el-form-item>
       </template>
@@ -175,9 +190,7 @@ export default {
 
       <template>
         <el-form-item label="Operations">
-          <SelectKeyValue
-            :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"
-          />
+          <SelectKeyValue :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations" />
         </el-form-item>
       </template>
 
@@ -190,15 +203,96 @@ export default {
             :pad-left="false"
             :as-map="true"
             :read-allowed="false"
+            valueLabel="值"
+            keyLabel="键"
             add-label="Add DataWrite"
             :protip="false"
           />
         </el-form-item>
       </template>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
       <el-button @click="hide('form')">取 消</el-button>
-      <el-button type="primary" @click="add('form')">确 定</el-button>
+      <el-button
+        type="primary"
+        @click="add('form')"
+      >确 定</el-button>
     </span>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+header {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 36px;
+  font-weight: bold;
+  color: #363636;
+
+  .icon {
+    margin-right: 6px;
+    width: 3px;
+    height: 18px;
+    background-image: linear-gradient(#030b56, #1144d4);
+  }
+}
+
+.form-container {
+  width: 580px;
+  margin: auto;
+  padding-right: 66px;
+}
+
+</style>
+
+<style lang='scss'>
+.el-input {
+  INPUT:not([type]):not(.view),
+  INPUT[type='text']:not(.view),
+  INPUT[type='password']:not(.view),
+  INPUT[type='number']:not(.view),
+  INPUT[type='date']:not(.view),
+  INPUT[type='email']:not(.view),
+  INPUT[type='search']:not(.view),
+  INPUT[type='tel']:not(.view),
+  INPUT[type='url']:not(.view),
+  SELECT:not(.view),
+  TEXTAREA:not(.view),
+  .labeled-input:not(.view) {
+    background-color: transparent !important;
+  }
+  TEXTAREA {
+    background-color: transparent !important;
+  }
+}
+
+.el-dialog__wrapper.popUp .el-dialog {
+  max-height: 844px !important;
+  overflow-y: auto !important;
+
+  .el-dialog__footer {
+    display: flex;
+    justify-content: center;
+
+    .dialog-footer {
+      .el-button {
+        width: 150px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 14px;
+        padding: 0px;
+        &.el-button--primary {
+          background-color: #3860c6;
+        }
+        &.el-button-default {
+          background-color: #f9f9f9;
+        }
+      }
+    }
+  }
+}
+</style>

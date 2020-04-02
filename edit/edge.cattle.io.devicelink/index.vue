@@ -80,7 +80,7 @@ export default {
     },
     async loadDeps() {
       const hash = await allHash({
-        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE })
+        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } })
       });
       const nodes = hash.nodes?.map(node => {
         return {

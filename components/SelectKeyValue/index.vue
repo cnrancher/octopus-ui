@@ -74,7 +74,7 @@ export default {
       </el-row>
     </template>
     <el-button type="primary" @click="add">
-      添加OrderOfOperation
+      添加
     </el-button>
   </div>
 </template>

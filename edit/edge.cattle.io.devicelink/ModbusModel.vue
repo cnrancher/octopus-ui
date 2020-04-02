@@ -43,7 +43,8 @@ export default {
       return this.visible;
     },
     disableType() {
-      const type = this.newProperties.visitor.register;
+      const index = this.index;
+      const type = this.localDevice.spec.template.spec.properties[index].visitor.register;
 
       return type === 'CoilRegister' || type === 'DiscreteInputRegister';
     },
@@ -97,7 +98,8 @@ export default {
     changeRegister(value) {
       this.register.forEach((item) => {
         if (item.value === value) {
-          this.newProperties.readOnly = item.readOnly;
+          const index = this.index
+          this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
         }
       });
     }
@@ -156,6 +158,7 @@ export default {
         </el-col>
 
         <el-col :span="9">
+          <h1>{{localDevice.spec.template.spec.properties.dataType}}</h1>
           <template v-if="localDevice.spec.template.spec.properties.dataType === 'boolean'">
             <el-select v-model="localDevice.spec.template.spec.properties.value" placeholder="请选择">
               <el-option label="false" value="false"></el-option>

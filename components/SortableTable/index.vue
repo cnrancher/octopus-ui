@@ -257,10 +257,20 @@ export default {
             return '(JSON Path err)';
           }
         } else {
-          if ( col.combine ) {
-            return `${ get(row, expr) } / ${ get(row, col.combine) }`;
+          if ( col.type === 'Object') {
+            const arr = get(row, expr) || [];
+            let string = ''
+           
+            arr.forEach( item => {
+              const key = Object.keys(item)
+              key.forEach(key => {
+                string += `<span class="info">${key}:${item[key]}</span>`;
+              })
+            })
+            
+            return string
           } else if (col.isObject) {
-            return '我是一个对象';
+            return '';
           }
 
           return get(row, expr);
@@ -430,6 +440,17 @@ $divider-height: 1px;
   table-layout: fixed;
   border-spacing: 0;
   width: 100%;
+
+  span.info {
+    display: inline-block;
+    padding: 0px 10px;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 6px;
+    background-color: #ecf5ff;
+    border-color: #e1f3d8;
+    color: #409eff;
+  }
 
   &.top-divider > THEAD > TR > TH {
     border-width: 0 0 $divider-height 0;

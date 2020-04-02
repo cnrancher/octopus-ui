@@ -46,7 +46,16 @@ export const NAMESPACE = {
   label:  'Namespace',
   value:  'metadata.namespace',
   sort:   ['metadata.namespace', 'nameSort'],
+  width:  '200'
 };
+
+export const PROPERTIES = {
+  name:     'properties',
+  label:    'properties',
+  value:    'status.properties',
+  formatter: 'FormatHtml',
+  type:     'Object'
+}
 
 export const DEIVCE_API_VERSION = {
   name:       'apiVersion',

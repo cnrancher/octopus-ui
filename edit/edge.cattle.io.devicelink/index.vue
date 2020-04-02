@@ -229,17 +229,18 @@ export default {
         <template 
           v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocolConfig"
         >
-          <el-col :span='12'>
-            <el-form-item label="SlaveID">
-              <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].slaveID"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="11" :push="1">
+          <el-col :span="12">
             <el-form-item label="传输模式" required>
               <el-radio-group size="small" v-model="transferMode" @change="changeTransferMode">
                 <el-radio-button label="rtu">RTU</el-radio-button>
                 <el-radio-button label="tcp">TCP</el-radio-button>
               </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="11" :push="1">
+            <el-form-item label="SlaveID">
+              <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].slaveID"></el-input>
             </el-form-item>
           </el-col>
 
@@ -304,7 +305,7 @@ export default {
               </el-form-item>
             </el-col>
 
-            <el-col :span='12'>
+            <el-col :span="11" :push="1">
               <el-form-item label="Port" required>
                 <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].port"></el-input>
               </el-form-item>

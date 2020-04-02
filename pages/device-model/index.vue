@@ -16,7 +16,7 @@ export default {
       return this.$store.getters['deviceModel/schemaFor'](SCHEMA);
     },
     headers() {
-      return [STATE, NAME, NAMESPACE, KIND, AGE];
+      return [STATE, NAME, NAMESPACE, AGE];
     },
   },
 

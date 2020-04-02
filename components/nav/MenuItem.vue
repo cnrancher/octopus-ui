@@ -95,6 +95,15 @@ export default {
       .el-submenu__title {
         background-color: var(--menu-second-bg) !important;
       }
+
+      .el-menu.el-menu--inline {
+        li {
+          span {
+            margin-left: 20px;
+          }
+        }
+      }
+
     }
   }
 
@@ -160,6 +169,7 @@ export default {
 
   .el-menu {
     .el-submenu {
+
       .el-submenu__title {
         span {
           font-size: 14px;

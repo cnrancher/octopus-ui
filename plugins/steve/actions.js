@@ -45,6 +45,7 @@ export default {
       }
 
       if ( typeof res.data !== 'undefined' ) {
+        console.log(res, 'res****')
         return Promise.reject(responseObject(res));
       }
 

@@ -40,7 +40,10 @@ export default {
         operationType:   '',
         operationValue:  '',
       });
-    }
+    },
+    remove(idx) {
+      this.rows.splice(idx-1, 1)
+    },
   }
 };
 </script>
@@ -63,6 +66,12 @@ export default {
         <el-col :span="8">
           <el-input v-model="row.operationValue" placeholder="e.g. 0"></el-input>
         </el-col>
+
+        <el-col :span="2">
+          <button type="button" class="btn bg-transparent role-link" @click="remove(idx)">
+            Remove
+          </button>
+        </el-col>
       </el-row>
     </template>
     <el-button type="primary" @click="add">
@@ -72,5 +81,8 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-
+.remove {
+  cursor: pointer;
+  margin-left: 30px;
+}
 </style>

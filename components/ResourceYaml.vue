@@ -217,6 +217,9 @@ export default {
     },
 
     cancel() {
+      if (this.mode === _CREATE || this.mode === _EDIT) {
+        return this.done();
+      }
       this.mode = _VIEW;
       this.$router.applyQuery({ [MODE]: this.mode });
       this.currentValue = this.value;
@@ -301,13 +304,6 @@ export default {
         <span v-else>{{ schema.attributes.kind }}: {{ obj.id }}</span>
       </h1>
       <div class="actions">
-        <button
-          type="button"
-          class="btn bg-primary"
-          @click="goBack"
-        >
-          返回上一级
-        </button>
         <AsyncButton
           v-if="canDelete && isView"
           key="delete"
@@ -316,14 +312,14 @@ export default {
           waiting-color="bg-error"
           @click="remove"
         />
-        <!-- <button
+        <button
           v-if="canEdit && (isView || isPreview)"
           type="button"
           class="btn bg-primary"
-          @click="navigateToEditAsYaml"
+          @click="edit"
         >
           Edit
-        </button> -->
+        </button>
         <span v-if="showEditAsForm">
           <button class="btn bg-primary" @click="navigateToEditAsForm">Edit as form</button>
         </span>
@@ -386,8 +382,12 @@ export default {
 @import "~assets/styles/base/_functions.scss";
 @import "~assets/styles/base/_mixins.scss";
 
-h1 span {
-  font-size: 20px !important;
+h1 {
+  font-size: 40px !important;
+  color: var(--body-text);
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: 0em;
 }
 
 .diff-mode {
@@ -399,6 +399,8 @@ h1 span {
 
 header .actions {
   margin-bottom: 30px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 footer .actions {

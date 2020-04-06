@@ -5,9 +5,10 @@ import { SCHEMA, DEVICE_LINK } from '../../../config/types';
 import { EDIT_YAML, _FLAGGED } from '@/config/query-params';
 import ResourceTable from '@/components/ResourceTable';
 import {
-  STATE, NAME, NAMESPACE, KIND_APIVERSION, AGE
+  STATE, NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE
 } from '@/config/table-headers';
 import { importList, pluralLabelFor, headersFor } from '@/utils/customized';
+import { allHash } from '@/utils/promise';
 
 export default {
   components: { ResourceTable },
@@ -44,20 +45,34 @@ export default {
       return this.$store.getters['deviceLink/schemaFor'](SCHEMA);
     },
     headers() {
-      return [STATE, NAME, NAMESPACE, KIND_APIVERSION, AGE];
+      return [STATE, NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE];
     },
     typeDisplay() {
       return pluralLabelFor(this.schema);
     },
   },
-  asyncData({ store, error }) {
-    return store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
-      return {
-        rows
-      };
-    }).catch(e => {
-      error({ statusCode: '404', message: 'DeviceLink CRD对象不存在, 请先部署DeviceLink.' })
+  async asyncData({ store, error }) {
+    const { dynamicMenu } = store.state;
+    
+    const hash = await allHash({
+      devicelink: store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
+          return {
+            rows
+          };
+        }).catch(e => {
+          error({ statusCode: '404', message: 'DeviceLink CRD对象不存在, 请先部署DeviceLink.' })
+        }),
+      ...Object.values(dynamicMenu).reduce((all, device) => {
+        const type = device.spec.names.kind.toLowerCase();
+        const url = `devices.edge.cattle.io.${type}`;
+        all[type] = store.dispatch('deviceModel/findAll', { type, opt: { url} });
+        return all
+      }, {})
     });
+    
+    return {
+      hash
+    }
   },
 };
 </script>
@@ -80,7 +95,7 @@ export default {
         </nuxt-link>
       </div>
     </header>
-    <ResourceTable :schema="schema" :rows="rows" :headers="headers" />
+    <ResourceTable :schema="schema" :rows="hash.devicelink.rows" :headers="headers" />
   </div>
 </template>
 

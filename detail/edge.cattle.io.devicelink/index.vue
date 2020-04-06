@@ -1,197 +1,141 @@
 <script>
 /* eslint-disable */
-import omit from 'lodash/omit';
 import  _ from 'lodash'
-import { get } from '@/utils/object';
-
+import LabelValue from './labelValue';
 import createEditView from '@/mixins/create-edit-view';
-import { DESCRIPTION } from '@/config/labels-annotations';
 
 export default {
-  mixins:     [createEditView],
+  components: {
+    LabelValue
+  },
+  mixins: [createEditView],
   data() {
-    return { };
+    const { properties } = this.value.spec.template.spec;
+    const rows = [];
+    for(let i = 0; i < properties.length; i++) {
+      const obj = this.flatterObject(properties[i])
+      rows.push(obj);
+    }
+    return { 
+      activeName: 'second',
+      rows,
+      properties
+    };
   },
   computed: {
     
   },
-  watch: {
+  methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    flatterObject(obj) {
+      const keys = Object.keys(obj);
+      console.log(keys, 'keys');
+      let row = {};
+      keys.forEach( key => {
+        if(typeof obj[key] !== 'object') {
+          row[key] = obj[key];
+        } else {
+          const keyValue = this.flatterObject(obj[key])
+          row = { ...row, ...keyValue }
+        }
+      })
+      return row
+    }
   }
 };
 </script>
 
 <template>
   <div>
-    <form>
-      <div class="row">
-        <div class="col span-6">
-          <div class="title">Metadata</div>
-          <div class="ltr">
-            <div class="ltr span-6">
-              <div class="label">名称</div>
-              <div class="value">{{this.value.metadata.name}}</div>
-            </div>
-            <div class="ltr span-6">
-              <div class="label">命名空间</div>
-              <div class="value">{{this.value.metadata.namespace}}</div>
-            </div>
-            <div class="ltr span-6">
-              <div class="label">创建时间</div>
-              <div class="value">{{this.value.metadata.creationTimestamp}}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col span-6">
-          <div class="title">Model</div>
-          <div class="ltr">
-            <div class="ltr span-6">
-              <div class="label">apiVersion</div>
-              <div class="value">{{this.value.spec.model.apiVersion}}</div>
-            </div>
-            <div class="ltr span-6">
-              <div class="label">kind</div>
-              <div class="value">{{this.value.spec.model.kind}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col span-6">
-          <div class="title">Adaptors</div>
-          <div class="ltr">
-            <div class="ltr span-6">
-              <div class="label">name</div>
-              <div class="value">{{this.value.status.adaptor.name}}</div>
-            </div>
-            <div class="ltr span-6">
-              <div class="label">node</div>
-              <div class="value">{{this.value.status.adaptor.node}}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col span-6">
-          <div class="title">status</div>
-          <div class="ltr">
-            <div class="ltr span-6" v-for="item  in this.value.status.conditions" :key="item.type">
-              <div class="label">{{ item.type }}</div>
-              <div class="value">{{ item.status }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col span-6">
-          <div class="title">template</div>
-          <div class="ltr">
-            <div class="ltr span-6">
-              <div class="label">设备名称</div>
-              <div class="value">{{this.value.spec.template.metadata.labels && this.value.spec.template.metadata.labels.device}}</div>
-            </div>
+    <el-card class="baseInfo">
+      <el-row>
+        <el-col :span="12">
+          <LabelValue label="名称" :value="this.value.metadata.name" />
+        </el-col>
+        <el-col :span="12">
+          <LabelValue label="命名空间" :value="this.value.metadata.namespace" />
+        </el-col>
+        <el-col :span="12">
+          <LabelValue label="创建时间" :value="this.value.metadata.creationTimestamp" />
+        </el-col>
+        <el-col :span="12">
+          <LabelValue label="apiVersion" :value="this.value.spec.model.apiVersion" />
+        </el-col>
+        <el-col :span="12">
+          <LabelValue label="kind" :value="this.value.spec.model.kind" />
+        </el-col>
+        <el-col :span="12">
+          <LabelValue label="node" :value="this.value.status.adaptor.node" />
+        </el-col>
+      </el-row>
+    </el-card>
+
+    <el-card class="statusInfo">
+      <div>Status</div>
+      <el-row>
+        <el-col :span="12" v-for="item in this.value.status.conditions" :key="item.type">
+          <LabelValue :label="item.type" :value="item.status" />
+        </el-col>
+      </el-row>
+    </el-card>
+
+    <el-card class="configuration">
+      <el-row>
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="设备属性" name="second">
+            <el-table
+              :data="properties"
+              style="width: 100%"
+            >
+              <el-table-column type="expand">
+                <template slot-scope="props">
+                  <el-form label-position="left" inline class="demo-table-expand">
+                    <el-form-item label="类型">
+                      <span>{{ props.row.name }}</span>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                label="name"
+                width="180">
+              </el-table-column>
+              <el-table-column
+                prop="description"
+                label="description"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="accessMode"
+                label="accessMode"
+                width="180">
+              </el-table-column>
+              <el-table-column
+                prop="visitor.characteristicUUID"
+                label="UUID"
+                width="280">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="访问配置" name="third">
             <template v-if="this.value.spec.model.kind === 'BluetoothDevice'">
-              <div class="ltr span-6">
-                <div class="label">Name</div>
-                <div class="value">{{this.value.spec.template.spec.name}}</div>
-              </div>
-              <template v-if="this.value.spec.template.spec.properties.length">
-                <div class="ltr span-12">
-                  <div class="value properties">属性:{{this.value.spec.template.spec.properties[0].name}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">Description</div>
-                  <div class="value">{{this.value.spec.template.spec.properties[0].description}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">name</div>
-                  <div class="value">{{this.value.spec.template.spec.properties[0].name}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">characteristicUUID</div>
-                  <div class="value">{{this.value.spec.template.spec.properties[0].visitor.characteristicUUID}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">operationType</div>
-                  <div class="value">
-                    {{this.value.spec.template.spec.properties[0].visitor.dataConverter && this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationType}}
-                  </div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">operationValue</div>
-                  <div class="value">
-                    {{this.value.spec.template.spec.properties[0].visitor.dataConverter && this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationValue}}
-                  </div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">operationValue</div>
-                  <div class="value">
-                    {{this.value.spec.template.spec.properties[0].visitor.dataConverter && this.value.spec.template.spec.properties[0].visitor.dataConverter.orderOfOperations[0].operationValue}}
-                  </div>
-                </div>
-                <div class="ltr span-12">
-                  <div class="value properties">属性:{{this.value.spec.template.spec.properties[0].name}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">Description</div>
-                  <div class="value">{{this.value.spec.template.spec.properties[0].description}}</div>
-                </div>
-                <div class="ltr span-6">
-                  <div class="label">name</div>
-                  <div class="value">{{this.value.spec.template.spec.properties[0].name}}</div>
-                </div>
-              </template>
+              <LabelValue label="设备名称" :value="this.value.spec.template.spec.name" />
             </template>
-          </div>
-        </div>
-      </div>
-    </form>
+          </el-tab-pane>
+          <el-tab-pane label="标签" name="fourth">
+            标签4
+          </el-tab-pane>
+        </el-tabs>
+      </el-row>
+    </el-card>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.title {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 20px;
-  color: #373d41;
-  height: 32px;
-}
-.properties {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.ltr {
-  display: flex;
-  flex-wrap: wrap;
-
-  .label {
-    width: 140px;
-    background-color: #fbfbfc;
-    border-right: 1px solid #ecedee;
-    border-left: 1px solid #ecedee;
-    color: #73777a;
-    padding: 14px 12px;
-    position: relative;
-    line-height: 20px;
-    word-break: break-word;
-    hyphens: auto;
-    display: flex;
-    align-items: center;
-  }
-
-  .value {
-    color: #373d41;
-    position: relative;
-    padding: 14px 12px;
-    flex: 1;
-    line-height: 20px;
-    word-break: break-word;
-    hyphens: auto;
-    display: flex;
-    align-items: center;
-  }
+.baseInfo, .statusInfo {
+  margin: 20px 0;
 }
 </style>

@@ -259,16 +259,17 @@ export default {
         } else {
           if ( col.type === 'Object') {
             const arr = get(row, expr) || [];
-            let string = ''
-           
-            arr.forEach( item => {
-              const key = Object.keys(item)
-              key.forEach(key => {
-                string += `<span class="info">${key}:${item[key]}</span>`;
-              })
-            })
-            
-            return string
+            let string = '';
+
+            arr.forEach( (item) => {
+              const key = Object.keys(item);
+
+              key.forEach((key) => {
+                string += `<span class="info">${ key }:${ item[key] }</span>`;
+              });
+            });
+
+            return string;
           } else if (col.isObject) {
             return '';
           }
@@ -440,17 +441,6 @@ $divider-height: 1px;
   table-layout: fixed;
   border-spacing: 0;
   width: 100%;
-
-  span.info {
-    display: inline-block;
-    padding: 0px 10px;
-    height: 20px;
-    line-height: 20px;
-    margin-right: 6px;
-    background-color: #ecf5ff;
-    border-color: #e1f3d8;
-    color: #409eff;
-  }
 
   &.top-divider > THEAD > TR > TH {
     border-width: 0 0 $divider-height 0;

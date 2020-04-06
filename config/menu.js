@@ -59,13 +59,11 @@ export const MENUS = [
     meta: {
       title:      'loT 管理',
       icon:       require('~/assets/images/iot-management.png'),
-      alwaysShow: true
     },
     children: [
       {
-        name:     'device-model',
-        meta:     { title: '设备类型' },
-        children: []
+        path: '/deviceProtocol',
+        meta:     { title: '设备协议' },
       },
       {
         path: '/device/edge.cattle.io.v1alpha1.devicelink',

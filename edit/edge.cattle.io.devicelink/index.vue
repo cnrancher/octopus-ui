@@ -76,11 +76,18 @@ export default {
   },
   methods: {
     enable(buttonCb) {
-      this.save(buttonCb);
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.save(buttonCb);
+        } else {
+          buttonCb(false)
+          return false;
+        }
+      });
     },
     async loadDeps() {
       const hash = await allHash({
-        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE })
+        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } })
       });
       const nodes = hash.nodes?.map(node => {
         return {

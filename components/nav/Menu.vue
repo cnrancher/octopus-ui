@@ -6,30 +6,10 @@ export default {
   name:       'Menu',
   components: { MenuItem },
   data() {
-    return { openeds: [] };
-  },
-  computed:   {
-    MENUS() {
-      const { dynamicMenu } = this.$store.state;
-      const addMenu = dynamicMenu.map((element) => {
-        const item = {
-          path: `/device-model/${ element.spec.names.kind.toLowerCase() }`,
-          meta: { title: `${ element.spec.names.kind }` }
-        };
-
-        return item;
-      });
-
-      MENUS.find((element, index) => {
-        if (element.name === 'lot-management') {
-          MENUS[index].children[0].children = addMenu;
-        }
-
-        return element.name === 'lot-management';
-      });
-
-      return MENUS;
-    }
+    return {
+      MENUS,
+      openeds: [],
+    };
   },
   methods: {
     closeAll() {

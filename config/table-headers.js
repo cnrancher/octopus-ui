@@ -50,12 +50,12 @@ export const NAMESPACE = {
 };
 
 export const PROPERTIES = {
-  name:     'properties',
-  label:    'properties',
-  value:    'status.properties',
-  formatter: 'FormatHtml',
-  type:     'Object'
-}
+  name:      'properties',
+  label:     'properties',
+  value:     'status.properties',
+  formatter: 'FormatInsert',
+  type:      'Object'
+};
 
 export const DEIVCE_API_VERSION = {
   name:       'apiVersion',

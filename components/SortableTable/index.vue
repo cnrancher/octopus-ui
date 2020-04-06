@@ -259,16 +259,17 @@ export default {
         } else {
           if ( col.type === 'Object') {
             const arr = get(row, expr) || [];
-            let string = ''
-           
-            arr.forEach( item => {
-              const key = Object.keys(item)
-              key.forEach(key => {
-                string += `<span class="info">${key}:${item[key]}</span>`;
-              })
-            })
-            
-            return string
+            let string = '';
+
+            arr.forEach( (item) => {
+              const key = Object.keys(item);
+
+              key.forEach((key) => {
+                string += `<span class="info">${ key }:${ item[key] }</span>`;
+              });
+            });
+
+            return string;
           } else if (col.isObject) {
             return '';
           }

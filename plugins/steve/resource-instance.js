@@ -11,7 +11,6 @@ import { hasCustomEdit, pluralLabelFor } from '@/utils/customized';
 import { findBy } from '@/utils/array';
 import { DEV } from '@/store/prefs';
 import { addParams } from '@/utils/url';
-import { WORKLOAD } from '@/config/types';
 
 const REMAP_STATE = { disabled: 'inactive' };
 
@@ -596,16 +595,17 @@ export default {
 
   detailUrl() {
     const router = this.currentRouter();
-    // const schema = this.$getters['schemaFor'](this.type);
+    const schema = this.$getters['schemaFor'](this.type);
     const query = {};
 
-    // let route = `c-cluster-resource${ schema.attributes.namespaced ? '-namespace' : '' }-id`;
-    const route = `device-resource-id`;
+    let route = `device-resource-id`;
 
-    if (Object.values(WORKLOAD).includes(this.type)) {
-      // route = `c-cluster-workloads${ schema.attributes.namespaced ? '-namespace' : '' }-id`;
-      query.type = this.type;
+    const currentPaht = router.history.current.path
+
+    if (currentPaht.includes('deviceProtocol')) {
+      route = `deviceProtocol-resource-id`;
     }
+    
     const params = {
       resource:  this.type,
       namespace: this.metadata && this.metadata.namespace,

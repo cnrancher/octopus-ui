@@ -42,7 +42,7 @@ export default {
       });
     },
     remove(idx) {
-      this.rows.splice(idx-1, 1)
+      this.rows.splice(idx - 1, 1);
     },
   }
 };
@@ -51,7 +51,7 @@ export default {
 <template>
   <div>
     <template v-for="(row, idx) in rows">
-      <el-row :key="idx" :span="24" type='flex' class="mb-20" justify="space-between">
+      <el-row :key="idx" :span="24" type="flex" class="mb-20" justify="space-between">
         <el-col :span="8">
           <el-select v-model="row.operationType" placeholder="请选择">
             <el-option
@@ -69,7 +69,9 @@ export default {
         </el-col>
 
         <el-col :span="6">
-          <el-button class="bg-remove" @click="remove(idx)"> Remove </el-button>
+          <el-button class="bg-remove" @click="remove(idx)">
+            Remove
+          </el-button>
         </el-col>
       </el-row>
     </template>

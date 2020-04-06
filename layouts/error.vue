@@ -1,44 +1,50 @@
 <template>
   <div class="__nuxt-error-page">
     <div class="error">
-      <div class="title">{{ message }}</div>
+      <div class="title">
+        {{ message }}
+      </div>
       <p v-if="statusCode === 404" class="description">
-        <NuxtLink class="error-link" to="/">Back to the home page</NuxtLink>
+        <NuxtLink class="error-link" to="/">
+          Back to the home page
+        </NuxtLink>
       </p>
-      <NuxtLink class="error-link" to="/global-overview">点击返回到全局概览</NuxtLink>
+      <NuxtLink class="error-link" to="/global-overview">
+        点击返回到全局概览
+      </NuxtLink>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'NuxtError',
+  name:  'NuxtError',
   props: {
     error: {
-      type: Object,
+      type:    Object,
       default: null
     }
   },
   computed: {
-    statusCode () {
-      return (this.error && this.error.statusCode) || 500
+    statusCode() {
+      return (this.error && this.error.statusCode) || 500;
     },
-    message () {
-      return this.error.message || 'Error'
+    message() {
+      return this.error.message || 'Error';
     }
   },
-  head () {
+  head() {
     return {
       title: this.message,
-      meta: [
+      meta:  [
         {
-          name: 'viewport',
+          name:    'viewport',
           content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
         }
       ]
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

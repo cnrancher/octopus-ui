@@ -76,7 +76,14 @@ export default {
   },
   methods: {
     enable(buttonCb) {
-      this.save(buttonCb);
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.save(buttonCb);
+        } else {
+          buttonCb(false)
+          return false;
+        }
+      });
     },
     async loadDeps() {
       const hash = await allHash({

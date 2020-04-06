@@ -357,8 +357,8 @@ export default {
                   <input
                     v-else
                     ref="key"
-                    type="text"
                     v-model="row[keyName]"
+                    type="text"
                     :placeholder="keyPlaceholder"
                     @input="queueUpdate"
                   />

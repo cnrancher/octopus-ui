@@ -30,16 +30,6 @@ export const RBAC = {
   CLUSTER_ROLE_BINDING: 'rbac.authorization.k8s.io.v1.clusterrolebinding',
 };
 
-export const WORKLOAD = {
-  DEPLOYMENT:             'apps.v1.deployment',
-  DAEMON_SET:             'apps.v1.daemonset',
-  STATEFUL_SET:           'apps.v1.statefulset',
-  CRON_JOB:               'batch.v1beta1.cronjob',
-  JOB:                    'batch.v1.job',
-  REPLICA_SET:            'apps.v1.replicaset',
-  REPLICATION_CONTROLLER: 'core.v1.replicationcontroller'
-};
-
 export const RIO = {
   CLUSTER_DOMAIN:   'admin.rio.cattle.io.v1.clusterdomain',
   FEATURE:          'admin.rio.cattle.io.v1.feature',

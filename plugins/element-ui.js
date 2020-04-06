@@ -4,4 +4,4 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 // @TODO: custom theme
 // import '@/assets/styles/base/element-variables.scss'
-Vue.use(ElementUI, { size: 'small', zIndex: 1000 });
+Vue.use(ElementUI, { size: 'mini', zIndex: 1000 });

@@ -18,10 +18,7 @@ export default {
   },
   methods: {
     findUrl() {
-      // const type = this.row.spec.model.kind.toLowerCase();
-      // console.log(this.value, this.row, 'this.row', type, this.row.spec)
-
-      this.url = `/device-model/${ this.value }`;
+      this.url = `/deviceProtocol/${ this.value }`;
     }
   }
 };

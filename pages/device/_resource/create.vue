@@ -19,7 +19,6 @@ export default {
   computed:   {
     doneRoute() {
       const name = this.$route.name.replace(/create$/, '');
-      console.log(name, 'name')
       return 'device-resource';
     },
     hasComponent() {
@@ -36,7 +35,6 @@ export default {
       const name = this.doneRoute;
       const params = this.$route.params;
       const out = this.$router.resolve({ name, params }).href;
-      console.log('parentLink', name, params, out)
       return out;
     },
     doneEditOverride() {

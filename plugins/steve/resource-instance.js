@@ -600,12 +600,12 @@ export default {
 
     let route = `device-resource-id`;
 
-    const currentPaht = router.history.current.path
+    const currentPaht = router.history.current.path;
 
     if (currentPaht.includes('deviceProtocol')) {
       route = `deviceProtocol-resource-id`;
     }
-    
+
     const params = {
       resource:  this.type,
       namespace: this.metadata && this.metadata.namespace,

@@ -250,31 +250,6 @@ header {
   }
 }
 
-.el-dialog__wrapper.popUp .el-dialog {
-  max-height: 844px !important;
-  overflow-y: auto !important;
-
-  .el-dialog__footer {
-    display: flex;
-    justify-content: center;
-
-    .dialog-footer {
-      .el-button {
-        width: 150px;
-        height: 32px;
-        line-height: 32px;
-        border-radius: 14px;
-        padding: 0px;
-        &.el-button--primary {
-          background-color: #3860c6;
-        }
-        &.el-button-default {
-          background-color: #f9f9f9;
-        }
-      }
-    }
-  }
-}
 .el-radio-button--small .el-radio-button__inner {
   padding: 9px 14px;
 }

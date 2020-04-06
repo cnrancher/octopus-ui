@@ -53,7 +53,6 @@ export default {
   },
   async asyncData({ store, error }) {
     const { dynamicMenu } = store.state;
-    console.log('this.$store.state;', dynamicMenu);
     
     const hash = await allHash({
       devicelink: store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
@@ -70,7 +69,7 @@ export default {
         return all
       }, {})
     });
-    console.log('hash', hash)
+    
     return {
       hash
     }

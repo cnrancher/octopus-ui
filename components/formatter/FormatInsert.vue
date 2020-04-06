@@ -13,24 +13,32 @@ export default {
   data() {
     let deviceValue = null;
     const deviceType = this.row.spec.model.kind.toLowerCase();
-    const { name, namespace } = this.row.metadata;
-    const url = `devices.edge.cattle.io.${deviceType}/${namespace}/${name}`;
-    const type = `devices.edge.cattle.io.${deviceType}`;
+    const { name } = this.row.metadata;
     const { list } = this.$store.state.deviceModel.types[deviceType] || [];
-    console.log(list, 'list')
-    // list.forEach(crd => {
-    //   if (crd.metadata.name === name) {
-    //     deviceValue = crd.
-    //   }
-    // });
-    return {
-      deviceValue: null
-    };
+
+    list.forEach((crd) => {
+      if (crd.metadata.name === name) {
+        deviceValue = crd.status?.properties[0];
+      }
+    });
+
+    return { deviceValue: deviceValue || [] };
   },
 };
 </script>
 
 <template>
-  <span v-html="value">
-  </span>
+  <div class="label">
+    <el-tag v-for="(value,name) in deviceValue" :key="name">
+      {{ name }}:{{ value }}
+    </el-tag>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.label {
+  span {
+    margin-right: 10px;
+  }
+}
+</style>

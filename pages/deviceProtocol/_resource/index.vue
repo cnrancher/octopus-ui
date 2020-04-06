@@ -6,9 +6,8 @@ export default {
 
   data() {
     const { dynamicMenu } = this.$store.state;
-    return {
-      deviceType: dynamicMenu
-    };
+
+    return { deviceType: dynamicMenu };
   },
 
   methods: {
@@ -24,18 +23,22 @@ export default {
 
 <template>
   <el-row :gutter="12">
-    <el-col :span="6" v-for="device in deviceType" :key="device.spec.names.kind">
+    <el-col v-for="device in deviceType" :key="device.spec.names.kind" :span="6">
       <el-card shadow="always" class="card">
         <div class="container">
-          {{  device.spec.names.kind }}
+          {{ device.spec.names.kind }}
         </div>
         <div class="desc">
           这是描述
         </div>
         <div class="action">
           <el-button-group>
-            <el-button type="primary" @click="handerView(device)">View</el-button>
-            <el-button type="primary" @click="handerEdit(device)">Edit</el-button>
+            <el-button type="primary" @click="handerView(device)">
+              View
+            </el-button>
+            <el-button type="primary" @click="handerEdit(device)">
+              Edit
+            </el-button>
           </el-button-group>
           <LiveDate :value="device.metadata.creationTimestamp" />
         </div>

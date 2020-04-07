@@ -23,7 +23,15 @@ export default {
 
 <template>
   <el-row :gutter="12">
-    <el-col v-for="device in deviceType" :key="device.spec.names.kind" :span="6">
+    <el-col 
+      v-for="device in deviceType" 
+      :key="device.spec.names.kind" 
+      :xs="24" 
+      :sm="24" 
+      :md="12" 
+      :lg="12" 
+      :xl="6"
+    >
       <el-card shadow="always" class="card">
         <div class="container">
           <template v-if="device.spec.names.kind === 'BluetoothDevice'">
@@ -39,7 +47,7 @@ export default {
         <div class="desc">
           <template v-if="device.spec.names.kind === 'BluetoothDevice'">
             BLE代表低功耗蓝牙（Bluetooth Low Energy，通常描述为Bluetooth 智能设备）。 
-            BLE是一种专为短距离通信而设计的无线通信形式。 
+            BLE是一种专为短距离通信而设计的无线通信形式。
             BLE 适配器定义了BLE协议的访问配置与设备属性参数，点击查看详情。
           </template>
           <template v-if="device.spec.names.kind === 'ModbusDevice'">
@@ -63,13 +71,19 @@ export default {
 
 <style lang="scss" scoped>
 .card {
+  margin-bottom: 18px;
   .container {
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
-    height: 160px;
+    height: 130px;
     font-size: 20px;
+
+    img {
+      width: 100%;
+      height: 130px;
+    }
   }
 
   .desc {

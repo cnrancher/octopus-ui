@@ -55,10 +55,11 @@ export default {
     async login(buttonCb) {
       try {
         this.err = null;
+
         await this.$store.dispatch('auth/login', {
           body: {
             username: this.username,
-            password: '0ecb73d28591aec03838e362bb62a78b'
+            password: this.password
           }
         });
 
@@ -120,12 +121,12 @@ export default {
         <form>
           <div class="username">
             <span>用户名</span>
-            <span>记住<el-checkbox v-model="remember" size="medium" class="remember"></el-checkbox></span>
+            <span>记住<el-checkbox v-model="remember" class="remember"></el-checkbox></span>
           </div>
-          <el-input ref="username" v-model="username" size="medium" placeholder="请输入用户名" autocomplete="username" />
+          <el-input ref="username" v-model="username" placeholder="请输入用户名" autocomplete="username" />
           <div class="password">
             <span class="label">密码</span>
-            <el-input ref="password" v-model="password" size="medium" placeholder="请输入密码" autocomplete="password" />
+            <el-input show-password ref="password" v-model="password" placeholder="请输入密码" autocomplete="password" />
           </div>
           <AsyncButton
             type="submit"

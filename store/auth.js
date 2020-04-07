@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+import { R_SESS } from '@/config/cookies';
 const ERR_CLIENT = 'client';
 const ERR_SERVER = 'server';
 
@@ -30,12 +32,18 @@ export const mutations = {
 
 export const actions = {
   async login({ dispatch }, { body }) {
+
+    Cookies.set(R_SESS, `${body.username}:${body.password}`, {
+      expires: 2,
+      path: '/',
+      secure: true,
+    });
+
     try {
       await dispatch('deviceLink/findAll', {
         opt:  {
           url:    `/v1`,
           method: 'get',
-          // auth: body
         }
       }, { root: true });
 

@@ -174,7 +174,7 @@ export default {
 
         <el-col :span="12">
           <el-form-item label="设备类型">
-            <el-radio-group size="small" v-model="value.spec.model.kind" @change="changeKind">
+            <el-radio-group v-model="value.spec.model.kind" @change="changeKind">
               <el-radio-button label="ModbusDevice">Modbus Device</el-radio-button>
               <el-radio-button label="BluetoothDevice">Bluethooth Device</el-radio-button>
               <el-radio-button label="OPC_UADevice" disabled>OPC_UA Device</el-radio-button>
@@ -236,9 +236,9 @@ export default {
         <template 
           v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocolConfig"
         >
-          <el-col :span="12">
+          <el-col :span="12" class="topMargin">
             <el-form-item label="传输模式" required>
-              <el-radio-group size="small" v-model="transferMode" @change="changeTransferMode">
+              <el-radio-group v-model="transferMode" @change="changeTransferMode">
                 <el-radio-button label="rtu">RTU</el-radio-button>
                 <el-radio-button label="tcp">TCP</el-radio-button>
               </el-radio-group>
@@ -252,7 +252,7 @@ export default {
           </el-col>
 
           <template v-if="transferMode === 'rtu' && isModeReady">
-            <el-col :span='12'>
+            <el-col :span="12">
               <el-form-item label="串口" required>
                 <el-input v-model="value.spec.template.spec.protocolConfig[transferMode].serialPort"></el-input>
               </el-form-item>
@@ -260,7 +260,15 @@ export default {
 
             <el-col :span='24'>
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="可选rtu配置" name="3" class="optional">
+                <el-collapse-item  name="3" class="optional">
+                  <template slot="title">
+                    <template v-if="activeNames.length <= 0">
+                      <i class="el-icon-caret-right"></i>可选rtu配置
+                    </template>
+                    <template v-else>
+                      <i class="el-icon-caret-bottom"></i>可选rtu配置
+                    </template>
+                  </template>
                   <el-col :span='12'>
                     <el-form-item label="baudRate">
                       <el-input v-model="value.spec.template.spec.protocolConfig[transferMode].baudRate"></el-input>
@@ -270,7 +278,7 @@ export default {
                   <el-col :span="11" :push="1">
                     <el-form-item label="dataBits">
                       <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits">
-                        <el-option 
+                        <el-option
                           v-for="item in dataBits" :key="item.value" 
                           :label="item.label"      :value="item.value"
                         >
@@ -388,11 +396,6 @@ export default {
 .form {
   width: 1000px;
 
-  .el-collapse-item__header {
-    font-weight: bold;
-    font-size: 25px;
-  }
-
   .moduleName {
     font-size: 18px;
     margin: 20px 0;
@@ -404,5 +407,30 @@ export default {
   .top {
     margin-top: -50px;
   }
+
+  .topMargin {
+    margin-top: -1px;
+  }
+
+  .optional {
+    i {
+      color: #409EFF;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.el-collapse-item__header {
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #f6f7fb;
+}
+.el-collapse-item__wrap {
+  background-color: #f6f7fb;
+  padding-left: 20px;
+}
+.el-collapse-item__arrow {
+  font-size: 0px;
 }
 </style>

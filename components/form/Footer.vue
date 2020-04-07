@@ -50,9 +50,9 @@ export default {
       </div>
     </div>
     <div class="text-center">
-      <button v-if="!isView" type="button" class="btn role-secondary" @click="done">
-        Cancel
-      </button>
+      <el-button v-if="!isView" type="button" @click="done">
+        取消
+      </el-button>
       <AsyncButton v-if="isEdit" key="edit" mode="edit" @click="save" />
       <AsyncButton v-if="isCreate" key="create" mode="create" @click="save" />
     </div>

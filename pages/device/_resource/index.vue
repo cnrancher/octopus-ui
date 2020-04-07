@@ -82,7 +82,7 @@ export default {
     <header>
       <div class="actions">
         <nuxt-link to="create" append tag="button" type="button" class="btn bg-primary">
-          Create
+          创建
         </nuxt-link>
 
         <nuxt-link
@@ -91,7 +91,7 @@ export default {
           type="button"
           class="btn bg-primary"
         >
-          Create as Yaml
+          编辑 Yaml
         </nuxt-link>
       </div>
     </header>

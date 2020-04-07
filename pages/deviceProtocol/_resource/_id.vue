@@ -10,5 +10,5 @@ export default {
 </script>
 
 <template>
-  <ResourceDetail v-bind="_data" />
+  <ResourceDetail v-bind="_data" customTitle="CRD" />
 </template>

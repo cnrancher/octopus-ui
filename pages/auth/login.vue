@@ -55,7 +55,7 @@ export default {
     async login(buttonCb) {
       try {
         this.err = null;
-        const res = await this.$store.dispatch('auth/login', {
+        await this.$store.dispatch('auth/login', {
           body: {
             username: this.username,
             password: '0ecb73d28591aec03838e362bb62a78b'

@@ -88,6 +88,10 @@ export default {
   mixins:     { CreateEditView },
 
   props: {
+    customTitle: {
+      type:    String,
+      default: null,
+    },
     hasCustomDetail: {
       type:    Boolean,
       default: null,
@@ -207,6 +211,7 @@ export default {
   <div>
     <template v-if="asYaml">
       <ResourceYaml
+        :customTitle="customTitle"
         :obj="model"
         :value="yaml"
         :done-route="doneRoute"
@@ -221,6 +226,7 @@ export default {
           <span v-if="realMode === 'edit'">Edit {{ typeDisplay }}:&nbsp;</span>
           <span v-else-if="realMode === 'stage'">Stage from {{ typeDisplay }}:&nbsp;</span>
           <span v-else-if="realMode === 'clone'">Clone from {{ typeDisplay }}:&nbsp;</span>
+          <span v-else-if="mode === 'view'">BluetoothDevice: </span>
           <nuxt-link
             v-else
             v-trim-whitespace
@@ -231,6 +237,7 @@ export default {
         </h1>
         <div v-if="isView" class="actions">
           <button
+            v-if="mode !== 'view'"
             type="button"
             class="btn bg-primary left"
             @click="goBack"
@@ -243,7 +250,7 @@ export default {
         </div>
         <div v-if="showEditAsYaml" class="actions">
           <button class="btn bg-primary" @click="navigateToEditAsYaml">
-            Edit as YAML
+            编辑 Yaml
           </button>
         </div>
       </header>
@@ -259,11 +266,27 @@ export default {
         :type-label="typeDisplay"
         :mode="mode"
       />
+      <div class="center" v-if="mode === 'view'">
+        <button
+          type="button"
+          class="btn bg-primary"
+          @click="goBack"
+        >
+          返回
+        </button>
+      </div>
     </template>
   </div>
 </template>
 
 <style lang='scss' scoped>
+  h1 {
+    font-size: 30px !important;
+  }
+  .center {
+    display: flex;
+    justify-content: center;
+  }
   .actions {
     display: flex;
     justify-content: flex-end;

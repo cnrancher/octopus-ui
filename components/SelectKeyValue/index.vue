@@ -70,7 +70,7 @@ export default {
 
         <el-col :span="6">
           <el-button class="bg-remove" @click="remove(idx)">
-            Remove
+            删除
           </el-button>
         </el-col>
       </el-row>

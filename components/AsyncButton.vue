@@ -6,10 +6,10 @@ const ERROR = 'error';
 
 const LABEL = {
   create: {
-    action:  'Create',
-    waiting: 'Creating&hellip;',
-    success: 'Created',
-    error:   'Error',
+    action:  '创建',
+    waiting: '创建中',
+    success: '创建',
+    error:   '错误',
   },
   apply: {
     action:  'Apply',
@@ -18,10 +18,10 @@ const LABEL = {
     error:   'Error',
   },
   edit: {
-    action:  'Save',
-    waiting: 'Saving&hellip;',
-    success: 'Saved',
-    error:   'Error',
+    action:  '保存',
+    waiting: '保存中',
+    success: '保存',
+    error:   '错误',
   },
   delete: {
     action:  'Delete',
@@ -189,7 +189,7 @@ export default {
 </script>
 
 <template>
-  <button
+  <el-button
     :class="classes"
     :name="name"
     :type="type"
@@ -200,5 +200,5 @@ export default {
     <i v-if="isSpinning" class="icon icon-spinner icon-spin mr-5" />
     <i v-else-if="icon" :class="{icon: true, [icon]: true}" />
     <span v-show="showLabel" v-html="label" />
-  </button>
+  </el-button>
 </template>

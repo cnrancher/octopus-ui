@@ -12,6 +12,12 @@ export default {
   },
   data() {
     let deviceValue = null;
+    console.log(this.row, 'Todo: error', this.value);
+    if (!this.row.spec) {
+      return {
+        deviceValue: []
+      }
+    }
     const deviceType = this.row.spec.model.kind.toLowerCase();
     const { name } = this.row.metadata;
     const { list } = this.$store.state.deviceModel.types[deviceType] || [];
@@ -29,8 +35,8 @@ export default {
 
 <template>
   <div class="label">
-    <el-tag v-for="(value,name) in deviceValue" :key="name">
-      {{ name }}:{{ value }}
+    <el-tag v-for="(v,k) in deviceValue" :key="k">
+      {{ k }}:{{ v }}
     </el-tag>
   </div>
 </template>

@@ -1,7 +1,16 @@
 <script>
 export default {
   name:   'MenuItem',
-  props:  ['menu', 'fisrtLayer']
+  props: {
+    menu: {
+      type:     Object,
+      required: true,
+    },
+    fisrtLayer: {
+      type:     Boolean,
+      required: false
+    }
+  }
 };
 </script>
 <template>

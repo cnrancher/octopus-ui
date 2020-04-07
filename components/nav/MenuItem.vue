@@ -51,6 +51,7 @@ export default {
     display: inline-block;
     background-repeat: no-repeat;
     margin-right: 20px;
+    background-position: -25px 0px;
     width: 20px;
     height: 20px;
   }
@@ -70,14 +71,11 @@ export default {
   .el-menu-item, .el-submenu__title {
     &:hover {
       background-color: var(--menu-hover-bg);
-      .img {
-        background-position: 0 -30px;
-      }
       span {
         color: var(--menu-action-text);
       }
-      img {
-        background-position: -10px -10px;
+      .img {
+        background-position: 0px 0px;
       }
     }
 
@@ -94,7 +92,7 @@ export default {
         &:hover {
           background-color: var(--menu-hover-bg);
           .img {
-            background-position: 0 -30px;
+            background-position: 0px 0px;
           }
         }
       }
@@ -120,7 +118,7 @@ export default {
     .el-menu-item {
       background-color: var(--menu-hover-bg) !important;
       .img {
-        background-position: 0 -30px;
+        background-position: 0px 0px;
       }
       span {
         color: var(--menu-action-text);
@@ -131,7 +129,7 @@ export default {
   .el-menu--inline div.li:hover, .el-menu--inline div.li:focus {
     background-color: var(--menu-hover-bg);
     .img {
-      background-position: 0 -30px;
+      background-position: 0px 0px;
     }
     span {
       color: var(--menu-action-text);
@@ -151,7 +149,7 @@ export default {
     &:hover {
       color: var(--menu-action-text);
       .img {
-        background-position: 0 -30px;
+        background-position: 0px 0px;
       }
     }
     padding: 0 22px !important;
@@ -187,7 +185,7 @@ export default {
         &:hover {
           background-color: var(--menu-hover-bg);
           .img {
-            background-position: 0 -30px;
+            background-position: 0px 0px;
           }
         }
       }

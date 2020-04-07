@@ -8,7 +8,7 @@ import { accessMode } from '@/config/map';
 const properties = {
   name: '',
   description: '',
-  accessMode: '',
+  accessMode: 'NotifyOnly',
   visitor: {
     characteristicUUID: '',
     defaultValue: '',
@@ -80,7 +80,8 @@ export default {
     add (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const properties = this.localDevice.spec.template.spec.properties;
+          let properties = this.localDevice.spec.template.spec.properties;
+          properties = this.clearEmptyString(properties);
 
           this.$emit('addProperties', _.cloneDeep(properties));
           this.$nextTick(() => {
@@ -97,6 +98,19 @@ export default {
         this.$refs[formName].resetFields();
       }
       this.$emit('hideDialog', false);
+    },
+    clearEmptyString(obj) {
+      const keys = Object.keys(obj);
+      keys.forEach( key => {
+        if (typeof  obj[key] !== 'object') {
+          if(obj[key] === '') {
+            delete obj[key]
+          }
+        } else {
+          this.clearEmptyString(obj[key])
+        }
+      })
+      return obj;
     }
   }
 };
@@ -181,17 +195,18 @@ export default {
         </el-form-item>
       </template>
 
-      <el-form-item label="defaultValue">
-        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue"></el-input>
-      </el-form-item>
-
-      <template>
+      <template v-if="localDevice.spec.template.spec.properties[index].accessMode !== 'NotifyOnly'">
         <el-form-item label="Operations">
           <SelectKeyValue :value="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations" />
         </el-form-item>
       </template>
 
       <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
+
+        <el-form-item label="defaultValue">
+          <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue"></el-input>
+        </el-form-item>
+
         <el-form-item label="dataWrite">
           <KeyValue
             key="labels"

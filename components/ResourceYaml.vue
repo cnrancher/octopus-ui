@@ -22,6 +22,10 @@ export default {
   },
 
   props: {
+    customTitle: {
+      type:    String,
+      default: null,
+    },
     forCreate: {
       type:    Boolean,
       default: false,
@@ -301,9 +305,10 @@ export default {
     <header>
       <h1>
         <span v-if="isCreate">Create {{ schema.attributes.kind }}</span>
+        <span v-else-if="customTitle">{{ customTitle }}: {{ obj.id }}</span>
         <span v-else>{{ schema.attributes.kind }}: {{ obj.id }}</span>
       </h1>
-      <div class="actions">
+      <div class="actions" v-if="!customTitle">
         <AsyncButton
           v-if="canDelete && isView"
           key="delete"
@@ -363,15 +368,20 @@ export default {
       :footer-space="71"
     />
     <footer>
-      <div class="actions">
+      <div class="actions" v-if="!customTitle">
         <button v-if="!isView" type="button" class="btn bg-transparent" @click="cancel">
-          Cancel
+          取消
         </button>
         <button v-if="isEdit" type="button" class="btn bg-transparent" @click="preview">
-          Preview
+          预览
         </button>
         <AsyncButton v-if="isEdit || isPreview" key="apply" mode="apply" @click="save" />
         <AsyncButton v-if="isCreate" key="create" mode="create" @click="save" />
+      </div>
+      <div class="actions" v-else>
+        <el-button type="primary" @click="cancel">
+          返回
+        </el-button>
       </div>
     </footer>
   </div>
@@ -383,11 +393,12 @@ export default {
 @import "~assets/styles/base/_mixins.scss";
 
 h1 {
-  font-size: 40px !important;
+  font-size: 30px !important;
   color: var(--body-text);
   font-style: normal;
   font-weight: 300;
   letter-spacing: 0em;
+  margin-bottom: 15px;
 }
 
 .diff-mode {
@@ -398,12 +409,13 @@ h1 {
 }
 
 header .actions {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: flex-end;
 }
 
 footer .actions {
   text-align: center;
+  margin-top: 15px;
 }
 </style>

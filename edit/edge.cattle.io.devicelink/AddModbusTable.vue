@@ -1,6 +1,15 @@
 <script>
 export default {
-  props: ['properties', 'visible'],
+  props: {
+    properties: {
+      type:     Array,
+      required: true
+    },
+    visible: {
+      type:     Boolean,
+      required: true
+    }
+  },
   data() {
     return {
       typeOption: [{

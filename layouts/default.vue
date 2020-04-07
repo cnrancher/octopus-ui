@@ -1,13 +1,10 @@
 <script>
-import { mapState } from 'vuex';
-import { addObject, removeObject } from '@/utils/array';
 import { THEME } from '@/store/prefs';
 import applyTypeConfigs from '@/config/type-config';
 import PromptRemove from '@/components/PromptRemove';
 import ActionMenu from '@/components/ActionMenu';
 import Menu from '@/components/nav/Menu';
 import Logout from '@/components/nav/logout';
-import { NORMAN, RANCHER } from '@/config/types';
 
 applyTypeConfigs();
 

@@ -595,7 +595,6 @@ export default {
 
   detailUrl() {
     const router = this.currentRouter();
-    const schema = this.$getters['schemaFor'](this.type);
     const query = {};
 
     let route = `device-resource-id`;

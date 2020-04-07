@@ -407,7 +407,7 @@ export default {
               <td v-if="showRemove" class="remove">
                 <slot name="removeButton" :remove="remove" :idx="idx" :row="row">
                   <el-button type="button" class="bg-remove" @click="remove(idx)">
-                    Remove
+                    删除
                     {{ removeLabel }}
                   </el-button>
                 </slot>

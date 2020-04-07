@@ -1,4 +1,6 @@
 <script>
+import { R_SESS } from '@/config/cookies';
+
 export default {
   data() {
     return { visible: false };
@@ -11,6 +13,7 @@ export default {
     logout() {
       this.$router.push('/auth/login');
       this.visible = false;
+      this.$cookies.remove(R_SESS);
     }
   }
 };

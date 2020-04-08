@@ -1,6 +1,6 @@
 export const STATE = {
   name:      'state',
-  label:     'status',
+  label:     '状态',
   sort:      ['stateSort', 'nameSort'],
   value:     'stateDisplay',
   width:     150,
@@ -10,7 +10,7 @@ export const STATE = {
 
 export const NAME = {
   name:      'name',
-  label:     'Name',
+  label:     '名称',
   value:     'nameDisplay',
   sort:      ['nameSort'],
   formatter: 'LinkModel',
@@ -34,16 +34,16 @@ export const KIND = {
 
 export const KIND_APIVERSION = {
   name:       'kind',
-  label:      'Devicekind',
+  label:      '设备协议',
   value:      'spec.model.kind',
   sort:       ['nameSort'],
-  formatter:  'LinkDevice',
+  // formatter:  'LinkDevice',
   width:       200,
 };
 
 export const NAMESPACE = {
   name:   'namespace',
-  label:  'Namespace',
+  label:  '命名空间',
   value:  'metadata.namespace',
   sort:   ['metadata.namespace', 'nameSort'],
   width:  '200'
@@ -51,8 +51,9 @@ export const NAMESPACE = {
 
 export const PROPERTIES = {
   name:      'properties',
-  label:     'properties',
+  label:     '上报属性',
   value:     'status.properties',
+  sort:       ['nameSort'],
   formatter: 'FormatInsert',
   type:      'Object'
 };
@@ -151,7 +152,7 @@ export const PODS = {
 
 export const AGE = {
   name:       'age',
-  label:      'Age',
+  label:      '创建时间',
   value:      'metadata.creationTimestamp',
   sort:       'metadata.creationTimestamp',
   search:     false,

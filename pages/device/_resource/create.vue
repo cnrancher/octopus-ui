@@ -73,7 +73,6 @@ export default {
     <component
       :is="showComponent"
       :done-route="doneRoute"
-      :customTitle="BluetoothDevice"
       mode="create"
       :value="model"
       :obj="model"

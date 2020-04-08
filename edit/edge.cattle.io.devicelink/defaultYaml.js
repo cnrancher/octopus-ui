@@ -29,7 +29,7 @@ export const MODBUS_DEVICE_RTU = {
   template: {
     metadata: { labels: {} },
     spec:     {
-      protocolConfig: {
+      protocol: {
         rtu: {
           slaveID:    '',
           serialPort: '',
@@ -56,7 +56,7 @@ export const MODBUS_DEVICE_TCP = {
   template: {
     metadata: { labels: {} },
     spec:     {
-      protocolConfig: {
+      protocol: {
         tcp: {
           slaveID:    '',
           serialPort: '',

@@ -108,5 +108,9 @@ export default {
     .btn {
       margin-left: 20px;
     }
+
+    .bg-primary {
+      color: #fff;
+    }
   }
 </style>

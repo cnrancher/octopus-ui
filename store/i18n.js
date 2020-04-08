@@ -12,7 +12,7 @@ export const state = function() {
   const available = translationContext.keys().map(path => path.replace(/^.*\/([^\/]+)\.[^.]+$/, '$1'));
 
   const out = {
-    default:      'en-us',
+    default:      'zh-hant',
     selected:     null,
     previous:     null,
     available,

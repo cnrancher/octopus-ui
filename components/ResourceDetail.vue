@@ -269,7 +269,7 @@ export default {
       <div class="center" v-if="mode === 'view'">
         <button
           type="button"
-          class="btn bg-primary"
+          class="btn bg-primary backColor"
           @click="goBack"
         >
           返回
@@ -280,6 +280,9 @@ export default {
 </template>
 
 <style lang='scss' scoped>
+  .backColor {
+    color: #fff !important;
+  }
   h1 {
     font-size: 30px !important;
   }

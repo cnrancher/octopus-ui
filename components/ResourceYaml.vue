@@ -379,7 +379,7 @@ export default {
         <AsyncButton v-if="isCreate" key="create" mode="create" @click="save" />
       </div>
       <div class="actions" v-else>
-        <el-button type="primary" @click="cancel">
+        <el-button type="primary" @click="cancel" class="backColor">
           返回
         </el-button>
       </div>
@@ -417,5 +417,9 @@ header .actions {
 footer .actions {
   text-align: center;
   margin-top: 15px;
+}
+
+.backColor {
+  color: #fff !important;
 }
 </style>

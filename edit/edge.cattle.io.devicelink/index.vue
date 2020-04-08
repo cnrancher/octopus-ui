@@ -70,7 +70,7 @@ export default {
         'spec.template.spec.macAddress': [
           { validator: validateAccessConfig, trigger: 'blur' }
         ],
-        'value.spec.template.spec.protocolConfig.rtu.slaveID': [
+        'value.spec.template.spec.protocol.rtu.slaveID': [
           { required: true, message: '请输入SlaveID' }
         ]
       }
@@ -153,7 +153,7 @@ export default {
   },
   computed: {
     isModeReady() {
-      const config = this.value.spec.template.spec.protocolConfig;
+      const config = this.value.spec.template.spec.protocol;
       if (config) {
         return Object.keys(config).includes(this.transferMode) ? true : false;
       }
@@ -252,7 +252,7 @@ export default {
         </template>
         
         <template 
-          v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocolConfig"
+          v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocol"
         >
           <el-col :span="12" class="topMargin">
             <el-form-item label="传输模式" required>
@@ -265,14 +265,14 @@ export default {
 
           <el-col :span="11" :push="1">
             <el-form-item label="SlaveID">
-              <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].slaveID"></el-input>
+              <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
             </el-form-item>
           </el-col>
 
           <template v-if="transferMode === 'rtu' && isModeReady">
             <el-col :span="12">
               <el-form-item label="串口" required>
-                <el-input v-model="value.spec.template.spec.protocolConfig[transferMode].serialPort"></el-input>
+                <el-input v-model="value.spec.template.spec.protocol[transferMode].serialPort"></el-input>
               </el-form-item>
             </el-col>
 
@@ -289,13 +289,13 @@ export default {
                   </template>
                   <el-col :span='12'>
                     <el-form-item label="baudRate">
-                      <el-input v-model="value.spec.template.spec.protocolConfig[transferMode].baudRate"></el-input>
+                      <el-input v-model="value.spec.template.spec.protocol[transferMode].baudRate"></el-input>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="dataBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits" clearable>
+                      <el-select v-model="value.spec.template.spec.protocol[transferMode].dataBits" clearable>
                         <el-option
                           v-for="item in dataBits" :key="item.value" 
                           :label="item.label"      :value="item.value"
@@ -307,7 +307,7 @@ export default {
 
                   <el-col :span='12'>
                     <el-form-item label="parity">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity" clearable>
+                      <el-select v-model="value.spec.template.spec.protocol[transferMode].parity" clearable>
                         <el-option 
                           v-for="item in parity" :key="item.value"
                           :label="item.label" :value="item.value"
@@ -319,7 +319,7 @@ export default {
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="stopBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].stopBits" clearable>
+                      <el-select v-model="value.spec.template.spec.protocol[transferMode].stopBits" clearable>
                         <el-option label="1" value="1"></el-option>
                         <el-option label="2" value="2"></el-option>
                       </el-select>
@@ -334,13 +334,13 @@ export default {
           <template v-else>
             <el-col :span='12'>
               <el-form-item label="IP" required>
-                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].ip"></el-input>
+                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].ip"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="11" :push="1">
               <el-form-item label="Port" required>
-                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocolConfig[transferMode].port"></el-input>
+                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].port"></el-input>
               </el-form-item>
             </el-col>
           </template>

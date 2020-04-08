@@ -77,8 +77,6 @@ function hexbinColorGenerator(count = 0) {
 export default {
   components: { 'el-table': Table },
   data() {
-    // console.log(binData(data));
-
     return {
       screenWidth: document.documentElement.clientWidth,
       gaugeList: [],
@@ -123,6 +121,10 @@ export default {
     }
   },
   methods: {
+    formatFontSize(val,initWidth=1920) {
+      const nowClientWidth = document.documentElement.clientWidth;
+      return val * (nowClientWidth/initWidth)
+    },
     drawGauge() {
       const chartContainerNames = ['ec1', 'ec2', 'ec3'];
       chartContainerNames.forEach((ecItem, ecIndex) => {
@@ -218,21 +220,21 @@ export default {
                   const params = pieData[ecItem].split('|');
                   return `{percent|${ params[0] }%}\n{type|${params[1]}}\n{describe|${params[2]}}`;
                 },
-                textStyle: { fontSize: 44 },
+                textStyle: { fontSize: this.formatFontSize(44) },
                 rich:      {
                   percent: {
-                    fontSize:   40,
+                    fontSize:   this.formatFontSize(40),
                     color:      '#423fa9',
                     fontWeight: 'bold',
                     fontFamily: 'hyzhuzi'
                   },
                   type: {
-                    fontSize: 18,
+                    fontSize: this.formatFontSize(18),
                     color:    '#000'
                   },
                   describe: {
                     color:    '#375ec4',
-                    fontSize: 16,
+                    fontSize: this.formatFontSize(15),
                     height:   20
                   }
                 }
@@ -566,39 +568,6 @@ export default {
               <td>&nbsp;</td>
             </tr>
           </table>
-          <!-- <el-table
-            :data="tableData"
-            :header-row-class-name="event-table"
-          >
-            <el-table-column
-              prop="id"
-              label="ID"
-            />
-            <el-table-column
-              prop="name"
-              label="姓名"
-            />
-            <el-table-column
-              prop="name1"
-              label="姓名"
-            />
-            <el-table-column
-              prop="name2"
-              label="姓名"
-            />
-            <el-table-column
-              prop="name3"
-              label="姓名"
-            />
-            <el-table-column
-              prop="name4"
-              label="姓名"
-            />
-            <el-table-column
-              prop="name5"
-              label="姓名"
-            />
-          </el-table> -->
         </div>
       </el-col>
       <el-col class="side" :span="8">
@@ -609,28 +578,25 @@ export default {
           </h3>
           <div class="pie">
             <div class="item">
-              <div class="item-content" ref="rightGauge1">
-                <!-- <el-progress :percentage="25" :color="['#d4fba4', '#8dc449']" :stroke-width="16" :width="175" type="circle"></el-progress> -->
-              </div>
+              <div class="item-content" ref="rightGauge1"></div>
               <p>在线数量</p>
             </div>
             <div class="item">
-              <div class="item-content" ref="rightGauge2">
-              </div>
+              <div class="item-content" ref="rightGauge2"></div>
               <p>离线数量</p>
             </div>
           </div>
           <div class="count">
             <div>
-              <span>设备总数：</span>
+              <span>设备总数:</span>
               <span>100</span>
             </div>
             <div>
-              <span>在线数量：</span>
+              <span>在线数量:</span>
               <span>90</span>
             </div>
             <div>
-              <span>离线数量：</span>
+              <span>离线数量:</span>
               <span>10</span>
             </div>
           </div>
@@ -1049,22 +1015,22 @@ export default {
         }
       }
       .count {
-        display: grid;
-        grid-template-columns: repeat(3, 33.3%);
+        display: flex;
+        justify-content: space-around;
         padding: 20px 0px 30px;
+
         div {
-          display: grid;
-          grid-template-columns: 69% 30%;
+          display: flex;
+          align-items: flex-end;
+          box-sizing: border-box;
           border-right: 1px solid #ddd;
-          padding-right: 5px;
+          padding-right: 0.4vw;
           span:first-child {
             line-height: 1.5;
-            text-align: right;
-            font-size: 18px;
+            font-size: 0.8vw;
           }
           span:last-child {
-            text-align: left;
-            font-size: 24px;
+            font-size: 1.3vw;
           }
         }
         div:last-child {

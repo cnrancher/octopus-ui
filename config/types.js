@@ -5,6 +5,7 @@ export const CONFIG_MAP = 'core.v1.configmap';
 export const COUNT = 'count';
 export const EVENT = 'core.v1.event';
 export const NAMESPACE = 'core.v1.namespace';
+export const NAMESPACES = 'namespaces';
 export const NODE = 'node';
 export const POD = 'core.v1.pod';
 export const RESOURCE_QUOTA = 'core.v1.resourcequota';

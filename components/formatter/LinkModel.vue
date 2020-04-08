@@ -25,3 +25,12 @@ export default {
     </a>
   </span>
 </template>
+
+<style lang="scss" scoped>
+span {
+  cursor: pointer;
+  a:hover {
+    text-decoration: underline;
+  }
+}
+</style>

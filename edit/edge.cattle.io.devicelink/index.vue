@@ -16,6 +16,7 @@ import { BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP } from './defa
 import { parity, dataBits } from '@/config/map'
 
 import createEditView from '@/mixins/create-edit-view';
+import { NAMESPACES } from '../../config/types';
 
 export default {
   components: {
@@ -52,6 +53,7 @@ export default {
       editRowIndex: -1,
       transferMode: 'rtu',
       allNodes: [],
+      allNamespace: [],
       rules: {
         'metadata.name': [
           { required: true, message: '请输入名称' }
@@ -87,7 +89,8 @@ export default {
     },
     async loadDeps() {
       const hash = await allHash({
-        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } })
+        nodes:      this.$store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } }),
+        namespaces:  this.$store.dispatch('deviceLink/findAll', { type: NAMESPACES, opt: { url: NAMESPACES } }),
       });
       const nodes = hash.nodes?.map(node => {
         return {
@@ -95,7 +98,15 @@ export default {
           label: node.id
         }
       })
+
+      const namespaces = hash.namespaces?.map( NS => {
+        return {
+          value: NS.id,
+          label: NS.id
+        }
+      })
       this.allNodes = nodes;
+      this.allNamespace = namespaces;
     },
     addAttribute() {
       this.dialogVisible = true;
@@ -168,7 +179,14 @@ export default {
 
         <el-col :span="11" :push="1">
           <el-form-item label="命名空间" prop="metadata.namespace">
-            <el-input v-model="value.metadata.namespace"></el-input>
+            <el-select v-model="value.metadata.namespace" placeholder="请选择">
+              <el-option
+                v-for="item in allNamespace"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
 
@@ -277,7 +295,7 @@ export default {
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="dataBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits">
+                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].dataBits" clearable>
                         <el-option
                           v-for="item in dataBits" :key="item.value" 
                           :label="item.label"      :value="item.value"
@@ -289,7 +307,7 @@ export default {
 
                   <el-col :span='12'>
                     <el-form-item label="parity">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity">
+                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].parity" clearable>
                         <el-option 
                           v-for="item in parity" :key="item.value"
                           :label="item.label" :value="item.value"
@@ -301,7 +319,7 @@ export default {
 
                   <el-col :span="11" :push="1">
                     <el-form-item label="stopBits">
-                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].stopBits">
+                      <el-select v-model="value.spec.template.spec.protocolConfig[transferMode].stopBits" clearable>
                         <el-option label="1" value="1"></el-option>
                         <el-option label="2" value="2"></el-option>
                       </el-select>

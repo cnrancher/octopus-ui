@@ -13,15 +13,15 @@ export default {
     let deviceValue = null;
     const deviceType = this.value.spec.model.kind.toLowerCase();
     const { name } = this.value.metadata;
-    const { list } = this.$store.state.deviceModel.types[deviceType] || [];
+    const list = this.$store.state.deviceModel.types[deviceType]?.list || [];
 
     const { properties } = this.value.spec.template.spec;
     const rows = [];
-    for(let i = 0; i < properties.length; i++) {
-      const obj = this.flatterObject(properties[i])
-      rows.push(obj);
-    }
-
+    // for(let i = 0; i < properties.length; i++) {
+    //   const obj = this.flatterObject(properties[i])
+    //   rows.push(obj);
+    // }
+   
     list.forEach((crd) => {
       if (crd.metadata.name === name) {
         deviceValue = crd.status?.properties[0];
@@ -63,6 +63,7 @@ export default {
 <template>
   <div>
     <el-card class="baseInfo">
+      <div class="title">基础信息</div>
       <el-row>
         <el-col :span="12">
           <LabelValue label="名称" :value="this.value.metadata.name" />
@@ -86,7 +87,7 @@ export default {
     </el-card>
 
     <el-card class="statusInfo">
-      <div>	properties</div>
+      <div class="title">上报属性</div>
       <el-row>
         <el-col :span="12" v-for="(v, k) in deviceValue" :key="k">
           <LabelValue :label="k" :value="v" />
@@ -148,17 +149,17 @@ export default {
               </el-table-column>
               <el-table-column
                 prop="name"
-                label="name"
+                label="名称"
                 width="180">
               </el-table-column>
               <el-table-column
                 prop="description"
-                label="description"
+                label="描述"
               >
               </el-table-column>
               <el-table-column
                 prop="accessMode"
-                label="accessMode"
+                label="访问模式"
                 width="180">
               </el-table-column>
               <el-table-column
@@ -187,7 +188,7 @@ export default {
     </el-card>
 
     <el-card class="statusInfo">
-      <div>Status</div>
+      <div class="title">状态</div>
       <el-row>
         <el-col :span="12" v-for="item in this.value.status.conditions" :key="item.type">
           <LabelValue :label="item.type" :value="item.status" />
@@ -205,5 +206,10 @@ export default {
   margin: 10px;
   font-size: 14px;
   font-weight: bold;
+}
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 </style>

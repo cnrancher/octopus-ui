@@ -46,7 +46,7 @@ export const actions = {
           method: 'get',
         }
       }, { root: true });
-
+      
       return true;
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {

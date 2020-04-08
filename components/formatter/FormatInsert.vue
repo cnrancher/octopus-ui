@@ -12,7 +12,7 @@ export default {
   },
   data() {
     let deviceValue = null;
-    console.log(this.row, 'Todo: error', this.value);
+
     if (!this.row.spec) {
       return {
         deviceValue: []
@@ -24,7 +24,7 @@ export default {
 
     list.forEach((crd) => {
       if (crd.metadata.name === name) {
-        deviceValue = crd.status?.properties[0];
+        deviceValue = crd.status?.properties?.[0];
       }
     });
 

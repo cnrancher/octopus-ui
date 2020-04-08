@@ -90,7 +90,7 @@ export default {
       <h1 class="welcome">
         您好
         <br />
-        欢迎您使用Octopus
+        欢迎使用Edge UI
       </h1>
       <div class="language">
         <v-popover

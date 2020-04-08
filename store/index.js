@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Steve from '@/plugins/steve';
 import { CUSTOM } from '@/config/types';
 
@@ -51,6 +52,14 @@ export const actions = {
     });
 
     commit('setDynamicMenu', customresource);
+    
+    const dynamicMenu = state.dynamicMenu;
+    Object.values(dynamicMenu).reduce((all, device) => {
+      const type = device.spec.names.kind.toLowerCase();
+      const url = `devices.edge.cattle.io.${type}`;
+      dispatch('deviceModel/findAll', { type, opt: { url} });
+    }, {})
+
     commit('clusterChanged', true);
   },
 

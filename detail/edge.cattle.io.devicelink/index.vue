@@ -28,8 +28,8 @@ export default {
       }
     });
 
-    console.log(properties, 'properties', list, deviceType, name, deviceValue)
-    return { 
+    console.log(properties, 'properties', list, deviceType, deviceValue, this.value)
+    return {
       activeName: 'second',
       rows,
       properties,
@@ -105,44 +105,61 @@ export default {
             >
               <el-table-column type="expand" >
                 <template slot-scope="scope">
-                  <template v-if="properties[scope.$index].accessMode === 'NotifyOnly'">
-                    <div class="center">无相关属性配置</div>
-                  </template>
-                  <template v-else-if="properties[scope.$index].accessMode === 'ReadOnly'">
-                    <el-row>
-                      <el-col :span="12" v-for="(v, k) in properties[scope.$index].visitor.dataConverter" :key="k">
-                        <template v-if="typeof properties[scope.$index].visitor.dataConverter[k] !== 'object'">
-                          <LabelValue :label="k" :value="v" />
-                        </template>
-                      </el-col>
-                    </el-row>
-                    <div class="header">orderOfOperations</div>
-                    <el-row>
-                      <template v-for="(item, index) in properties[scope.$index].visitor.dataConverter.orderOfOperations">
-                        <el-col :span="12"  :key="index">
-                          <LabelValue :label="item.operationType" :value="item.operationValue" />
+                  <template v-if="value.spec.model.kind === 'BluetoothDevice'">
+                    <template v-if="properties[scope.$index].accessMode === 'NotifyOnly'">
+                      <div class="center">无相关属性配置</div>
+                    </template>
+                    <template v-else-if="properties[scope.$index].accessMode === 'ReadOnly'">
+                      <el-row>
+                        <el-col :span="12" v-for="(v, k) in properties[scope.$index].visitor.dataConverter" :key="k">
+                          <template v-if="typeof properties[scope.$index].visitor.dataConverter[k] !== 'object'">
+                            <LabelValue :label="k" :value="v" />
+                          </template>
                         </el-col>
-                      </template>
-                    </el-row>
-                  </template>
-                  <template v-else>
-                    <el-row>
-                      <el-col :span="12" v-for="(v, k) in properties[scope.$index].visitor.dataConverter" :key="k">
-                        <template v-if="typeof properties[scope.$index].visitor.dataConverter[k] !== 'object'">
-                          <LabelValue :label="k" :value="v" />
+                      </el-row>
+                      <div class="header">orderOfOperations</div>
+                      <el-row>
+                        <template v-for="(item, index) in properties[scope.$index].visitor.dataConverter.orderOfOperations">
+                          <el-col :span="12"  :key="index">
+                            <LabelValue :label="item.operationType" :value="item.operationValue" />
+                          </el-col>
                         </template>
+                      </el-row>
+                    </template>
+                    <template v-else>
+                      <el-row>
+                        <el-col :span="12" v-for="(v, k) in properties[scope.$index].visitor.dataConverter" :key="k">
+                          <template v-if="typeof properties[scope.$index].visitor.dataConverter[k] !== 'object'">
+                            <LabelValue :label="k" :value="v" />
+                          </template>
+                        </el-col>
+                        <el-col :span="12">
+                          <LabelValue label="defaultValue" :value="properties[scope.$index].visitor.defaultValue" />
+                        </el-col>
+                      </el-row>
+                      <div class="header">orderOfOperations</div>
+                      <el-row>
+                        <template v-for="(item, index) in properties[scope.$index].visitor.dataConverter.orderOfOperations">
+                          <el-col :span="12"  :key="index">
+                            <LabelValue :label="item.operationType" :value="item.operationValue" />
+                          </el-col>
+                        </template>
+                      </el-row>
+                    </template>
+                  </template>
+                  <template v-if="value.spec.model.kind === 'ModbusDevice'">
+                    <el-row>
+                      <el-col :span="12">
+                        <LabelValue label="readOnly" :value="properties[scope.$index].readOnly" />
                       </el-col>
                       <el-col :span="12">
-                        <LabelValue label="defaultValue" :value="properties[scope.$index].visitor.defaultValue" />
+                        <LabelValue label="value" :value="properties[scope.$index].value" />
                       </el-col>
-                    </el-row>
-                    <div class="header">orderOfOperations</div>
-                    <el-row>
-                      <template v-for="(item, index) in properties[scope.$index].visitor.dataConverter.orderOfOperations">
-                        <el-col :span="12"  :key="index">
-                          <LabelValue :label="item.operationType" :value="item.operationValue" />
-                        </el-col>
-                      </template>
+                      <el-col :span="12" v-for="(v, k) in properties[scope.$index].visitor" :key="k">
+                        <template v-if="typeof properties[scope.$index].visitor[k] !== 'object'">
+                          <LabelValue :label="k" :value="v" />
+                        </template>
+                      </el-col>
                     </el-row>
                   </template>
                 </template>
@@ -172,6 +189,19 @@ export default {
           <el-tab-pane label="访问配置" name="third">
             <template v-if="this.value.spec.model.kind === 'BluetoothDevice'">
               <LabelValue label="设备名称" :value="this.value.spec.template.spec.name" />
+            </template>
+
+            <template v-if="this.value.spec.model.kind === 'ModbusDevice'">
+              <template v-for="(v, k) in this.value.spec.template.spec.protocol.rtu">
+                <el-col :span="12"  :key="k">
+                  <LabelValue :label="k" :value="v" />
+                </el-col>
+              </template>
+              <template v-for="(v, k) in this.value.spec.template.spec.protocol.tcp">
+                <el-col :span="12"  :key="k">
+                  <LabelValue :label="k" :value="v" />
+                </el-col>
+              </template>
             </template>
           </el-tab-pane>
           <el-tab-pane label="标签" name="fourth">

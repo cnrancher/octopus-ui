@@ -5,6 +5,7 @@ import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';
 import echarts from 'echarts';
 import '@/assets/fonts/hyzhuzi/style.scss';
+import DashboardProgressBar from '@/components/DashboardProgressBar';
 
 const hexbinData = {
   hexbindemo1: [
@@ -75,42 +76,85 @@ function hexbinColorGenerator(count = 0) {
 }
 
 export default {
-  components: { 'el-table': Table },
+  components: { 'el-table': Table, 'DashboardProgressBar': DashboardProgressBar },
   data() {
     return {
       screenWidth: document.documentElement.clientWidth,
       gaugeList: [],
-      rightGaugeList: []
+      rightGaugeList: [],
+      tableData: [
+        {
+          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 2, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 3, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 4, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 5, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 6, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 7, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 8, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 9, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 10, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 11, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+        {
+          id: 12, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
+        },
+      ],
+      progressList: [
+        {
+          index: 1, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '91', percent: 91
+        },
+        {
+          index: 2, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '87', percent: 87
+        },
+        {
+          index: 3, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '82', percent: 82
+        },
+        {
+          index: 4, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '75', percent: 75
+        },
+        {
+          index: 5, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '61', percent: 61
+        },
+        {
+          index: 6, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '56', percent: 56
+        },
+        {
+          index: 7, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '48', percent: 48
+        },
+        {
+          index: 8, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '41', percent: 41
+        },
+        {
+          index: 9, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '39', percent: 39
+        },
+        {
+          index: 10, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '37', percent: 37
+        }
+      ]
     };
 
     return {};
-  },
-  computed: {
-    tableData() {
-      return [
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-      ];
-    }
   },
   mounted() {
     this.drawHexbin();
@@ -134,8 +178,8 @@ export default {
             {
               name:        '刻度',
               type:        'gauge',
-              radius:      '80%',
-              center:      ['50%', '55%'],
+              radius:      '84%',
+              center:      ['50%', '58%'],
               splitNumber: 6, // 刻度数量
               startAngle:  225,
               endAngle:    -45,
@@ -149,7 +193,7 @@ export default {
               axisLabel: {
                 show:     false,
                 color:    '#423fa9',
-                distance: 30
+                distance: 60
               }, // 刻度标签。
               axisTick: {
                 show:        true,
@@ -158,11 +202,11 @@ export default {
                   color: '#423fa9',
                   width: 1
                 },
-                length: -16
+                length: -14
               }, // 刻度样式
               splitLine: {
                 show:      true,
-                length:    -28,
+                length:    -22,
                 lineStyle: { color: '#423fa9' }
               }, // 分隔线样式
               detail:  { show: false },
@@ -170,15 +214,15 @@ export default {
             },
             {
               type:        'gauge',
-              radius:      '90%',
-              center:      ['50%', '55%'],
+              radius:      '91.5%',
+              center:      ['50%', '58%'],
               splitNumber: 0, // 刻度数量
               startAngle:  225,
               endAngle:    -45,
               axisLine:    {
                 show:      true,
                 lineStyle: {
-                  width: 13,
+                  width: 10,
                   color: [
                     [
                       0.5, new echarts.graphic.LinearGradient(0, 0, 1, 0, [
@@ -205,7 +249,7 @@ export default {
               pointer:   { show: false },
               title:     {
                 show:         true,
-                offsetCenter: [0, '26%'], // x, y，单位px
+                offsetCenter: [0, '20%'], // x, y，单位px
                 textStyle:    {
                   color:    '#fff',
                   fontSize: 20
@@ -214,7 +258,7 @@ export default {
               // 仪表盘详情，用于显示数据。
               detail: {
                 show:         true,
-                offsetCenter: [0, 0],
+                offsetCenter: [0, '-4%'],
                 color:        '#423fa9',
                 formatter(param) {
                   const params = pieData[ecItem].split('|');
@@ -226,11 +270,13 @@ export default {
                     fontSize:   this.formatFontSize(40),
                     color:      '#423fa9',
                     fontWeight: 'bold',
-                    fontFamily: 'hyzhuzi'
+                    fontFamily: 'hyzhuzi',
+                    height: 60
                   },
                   type: {
                     fontSize: this.formatFontSize(18),
-                    color:    '#000'
+                    color:    '#000',
+                    height: 30
                   },
                   describe: {
                     color:    '#375ec4',
@@ -388,7 +434,7 @@ export default {
       </el-col>
     </el-row>
     <el-row :gutter="20" type="flex">
-      <el-col :span="16" class="content">
+      <el-col :span="15" class="content">
         <div class="usage">
           <h3 class="module-title">
             <i class="icon dashboard-source"></i>
@@ -434,19 +480,19 @@ export default {
           </h3>
           <ul>
             <li class="dashboard-icon-tick">
-              <i>&radic;</i>
+              <i></i>
               <span>Datastore</span>
             </li>
             <li class="dashboard-icon-error">
-              <i>X</i>
+              <i></i>
               <span>System Controllers</span>
             </li>
             <li class="dashboard-icon-tick">
-              <i>&radic;</i>
+              <i></i>
               <span>Networking</span>
             </li>
             <li class="dashboard-icon-question">
-              <i>?</i>
+              <i></i>
               <span>Nodes</span>
             </li>
           </ul>
@@ -456,121 +502,40 @@ export default {
             <i class="icon dashboard-set"></i>
             集群事件
           </h3>
-          <table>
-            <thead>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-              <th>名称</th>
-            </thead>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-          </table>
+          <el-table
+            :data="tableData"
+            cell-class-name="events-table-td"
+            class="events-table"
+            height="21vw"
+          >
+            <el-table-column
+              label="名称"
+              prop="name"
+            />
+            <el-table-column
+              label="名称"
+              prop="name1"
+            />
+            <el-table-column
+              label="名称"
+              prop="name2"
+            />
+            <el-table-column
+              label="名称"
+              prop="name3"
+            />
+            <el-table-column
+              label="名称"
+              prop="name4"
+            />
+            <el-table-column
+              label="名称"
+              prop="name5"
+            />
+          </el-table>
         </div>
       </el-col>
-      <el-col class="side" :span="8">
+      <el-col class="side" :span="9">
         <div class="iot">
           <h3 class="module-title">
             <i class="icon dashboard-iot"></i>
@@ -588,15 +553,15 @@ export default {
           </div>
           <div class="count">
             <div>
-              <span>设备总数:</span>
+              <span>设备总数：</span>
               <span>100</span>
             </div>
             <div>
-              <span>在线数量:</span>
+              <span>在线数量：</span>
               <span>90</span>
             </div>
             <div>
-              <span>离线数量:</span>
+              <span>离线数量：</span>
               <span>10</span>
             </div>
           </div>
@@ -606,222 +571,16 @@ export default {
             <i class="icon dashboard-balance"></i>
             工作负载
           </h3>
-          <div class="item">
-            <p class="item-title">
-              <span>CPU密集型Pod TOP10</span>
-              <span>单位：分钟</span>
-            </p>
-            <ul class="bar-wrapper">
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 87.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  91
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 80%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  87
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 76.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  82
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 70%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  75
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 64.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  61
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 60%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  56
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 54.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  48
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 48%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  41
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 42.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  39
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 38%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  37
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div class="item">
-            <p class="item-title">
-              <span>内存密集型Pod TOP10</span>
-              <span>单位：MiB</span>
-            </p>
-            <ul class="bar-wrapper">
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 87.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  91
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 80%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  87
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 76.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  82
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 70%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  75
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 64.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  61
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 60%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  56
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 54.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  48
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 48%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  41
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 42.5%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  39
-                </div>
-              </li>
-              <li>
-                <div class="bar-container"></div>
-                <div class="progress-bar" style="width: 38%"></div>
-                <div class="progress-bar-text">
-                  kube-system/fluenttd-cloud-logging-kubernetes-minion-group
-                </div>
-                <div class="bar-text">
-                  37
-                </div>
-              </li>
-            </ul>
-          </div>
+          <DashboardProgressBar 
+            title="CPU密集型Pod TOP10"
+            unit="单位：分钟"
+            :list="progressList"
+          />
+          <DashboardProgressBar 
+            title="内存密集型Pod TOP10"
+            unit="单位：MiB"
+            :list="progressList"
+          />
         </div>
       </el-col>
     </el-row>
@@ -849,11 +608,11 @@ export default {
       padding-left: 2vw;
       line-height: 1.5;
       span {
-        font-size: 16px;
+        font-size: 0.8vw;
         font-weight: bold;
       }
       span:last-child {
-        font-size: 14px;
+        font-size: 0.7vw;
         font-weight: normal;
       }
       .position {
@@ -865,7 +624,7 @@ export default {
       }
     }
     .usage, .service, .event, .balance, .iot {
-      padding: 10px;
+      padding: 0.83vw;
       border: 1px solid #ddd;
       margin-bottom: 20px;
       border-radius: 5px;
@@ -873,7 +632,7 @@ export default {
       background-color: #fff;
     }
     .module-title {
-      font-size: 24px;
+      font-size: 1.25vw;
       margin-bottom: 4px;
       font-family: fzpszhjw;
     }
@@ -894,8 +653,8 @@ export default {
         background: url('~assets/images/dashboard-system.png') no-repeat center;
       }
       .pie-container div {
-        width: 80%;
-        height: 20vh;
+        width: 100%;
+        height: 25vh;
         margin: 0 auto;
       }
       .service {
@@ -903,30 +662,34 @@ export default {
           display: grid;
           grid-template-columns: repeat(4, 20%);
           grid-column-gap: 6%;
+          margin: 1.45vw 0 1.25vw;
           li {
             list-style: none;
             min-height: 40px;
             background-color: #ddd;
             line-height: 1;
             color: #454545;
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
             i {
-              width: 40px;
-              height: 40px;
+              width: 2vw;
+              height: 2vw;
               line-height: 2.6;
               color: #fff;
               display: inline-block;
               vertical-align: middle;
               text-align: center;
               font-style: normal;
-              background: url('~assets/images/dashboard-monitor.png') no-repeat center;
+              border-top-left-radius: 10px;
+              border-bottom-left-radius: 10px;
             }
             span {
               line-height: 1;
               padding-left: 10px;
-              font-size: 16px;
+              font-size: 0.9vw;
+              font-weight: bold;
               display: inline-block;
+              vertical-align: middle;
             }
           }
           li:last-child {
@@ -935,57 +698,70 @@ export default {
           .dashboard-icon-tick {
             border: 1px solid #8dc449;
             i {
-              background-color: #8dc449;
+              background: url('~assets/images/dashboard-tick.png') no-repeat center #8dc449;
             }
           }
           .dashboard-icon-question {
             border: 1px solid #fac40f;
             i {
-              background-color: #fac40f;
+              background: url('~assets/images/dashboard-question.png') no-repeat center #fac40f;
             }
           }
           .dashboard-icon-error {
             border: 1px solid #ee5558;
             i {
-              background-color: #ee5558;
+              background: url('~assets/images/dashboard-fork.png') no-repeat center #ee5558;
             }
           }
         }
       }
       .usage-list {
         display: grid;
-        grid-template-columns: repeat(3, 32%);
+        grid-template-columns: repeat(3, 32.5%);
         grid-column-gap: 1.3%;
-        // margin-top: 10px;
         .item {
           width: 100%;
           border: 1px solid #ddd;
           padding: 10px 20px 0;
           margin-right: 10px;
           h4 {
-            font-size: 18px;
+            font-size: 0.9vw;
             font-weight: bold;
           }
         }
       }
-      table {
-        width: 100%;
-        border: 0;
-        border-collapse: collapse;
-        margin-top: 16px;
-        thead {
-          background-color: #404aaf;
-        }
-        th, td {
-          color: #fff;
-          line-height: 40px;
-          padding: 0;
-        }
-        tr:nth-child(odd) {
-          background-color: #fff;
-        }
-        tr:nth-child(even) {
-          background-color: #ededed;
+      .event {
+        .events-table {
+          width: 100%;
+          border: 0;
+          border-collapse: collapse;
+          height: 26.5vw;
+          margin-top: 16px;
+          th, td {
+            color: #fff;
+            line-height: 2.08vw;
+            padding: 0;
+            font-size: 0.83vw;
+            text-align: center;
+          }
+          thead {
+            th {
+              background-color: #404aaf;
+              font-weight: normal;
+            }
+          }
+          tbody {
+            tr:nth-child(odd) {
+              background-color: #fff;
+            }
+            tr:nth-child(even) {
+              background-color: #ededed;
+            }
+            .events-table-td {
+              color: #000;
+              padding: 0.5vw 0;
+            }
+          }
         }
       }
     }
@@ -1006,7 +782,7 @@ export default {
           .item {
           text-align: center;
           .item-content {
-            height: 20vh;
+            height: 18vh;
             padding-bottom: 10px;
           }
           p {
@@ -1017,7 +793,7 @@ export default {
       .count {
         display: flex;
         justify-content: space-around;
-        padding: 20px 0px 30px;
+        padding: 1.1vw 0;
 
         div {
           display: flex;
@@ -1042,76 +818,7 @@ export default {
 
       .balance {
         border: 1px solid #ddd;
-        padding: 10px;
-        .item {
-          margin-top: 10px;
-          width: 100%;
-          .item-title {
-            color: #fff;
-            background: #404aaf;
-            padding: 5px 10px 5px 20px;
-            span:last-child {
-              float: right;
-              font-size: 12px;
-            }
-          }
-        }
-        .bar-wrapper {
-          padding: 10px;
-          border: 1px solid #ddd;
-          margin-top: 0;
-          li {
-            list-style: none;
-            width: 100%;
-            height: 12px;
-            padding-right: 20px;
-            position: relative;
-            margin: 0 0 20px;
-            .bar-container{
-              height: 100%;
-              width: 95%;
-              background-color: #0f1ca0;
-              opacity: 0.2;
-              border-radius: 20px;
-              position: absolute;
-              top: 0;
-              left: 0;
-              /* justify-content: space-between; */
-            }
-            .progress-bar {
-              height: 100%;
-              border-radius: 20px;
-              background-color: #2048ce;
-              background-image: linear-gradient(90deg, #2048ce, #161e73);
-              width: 27%;
-              opacity: 1;
-              position: absolute;
-              top: 0;
-              left: 0;
-            }
-            .progress-bar-text {
-              height: 100%;
-              width: 100%;
-              padding-left: 5px;
-              position: absolute;
-              top: 0;
-              left: 0;
-              font-size: 12px;
-              color: #fff;
-            }
-            .bar-text {
-              position: absolute;
-              width: 24px;
-              right: -2%;
-              text-align: center;
-              font-weight: bold;
-              color: #1245d9;
-            }
-          }
-          li:last-child {
-            margin-bottom: 0;
-          }
-        }
+        padding: 0.83vw 0.5vw;
       }
     }
     .dashboard-tooltip {

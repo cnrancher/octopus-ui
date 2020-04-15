@@ -308,7 +308,7 @@ export default {
         <span v-else-if="customTitle">{{ customTitle }}: {{ obj.id }}</span>
         <span v-else>{{ schema.attributes.kind }}: {{ obj.id }}</span>
       </h1>
-      <div class="actions" v-if="!customTitle">
+      <div v-if="!customTitle" class="actions">
         <AsyncButton
           v-if="canDelete && isView"
           key="delete"
@@ -368,7 +368,7 @@ export default {
       :footer-space="71"
     />
     <footer>
-      <div class="actions" v-if="!customTitle">
+      <div v-if="!customTitle" class="actions">
         <button v-if="!isView" type="button" class="btn bg-transparent" @click="cancel">
           取消
         </button>
@@ -378,8 +378,8 @@ export default {
         <AsyncButton v-if="isEdit || isPreview" key="apply" mode="apply" @click="save" />
         <AsyncButton v-if="isCreate" key="create" mode="create" @click="save" />
       </div>
-      <div class="actions" v-else>
-        <el-button type="primary" @click="cancel" class="backColor">
+      <div v-else class="actions">
+        <el-button type="primary" class="backColor" @click="cancel">
           返回
         </el-button>
       </div>

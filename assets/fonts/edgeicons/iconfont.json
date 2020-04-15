@@ -1,0 +1,100 @@
+{
+  "id": "1743347",
+  "name": "edge",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "图标",
+  "glyphs": [
+    {
+      "icon_id": "13998478",
+      "name": "坐标",
+      "font_class": "zuobiao1",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "13998480",
+      "name": "系统服务",
+      "font_class": "xitongfuwu",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "13998481",
+      "name": "资源使用",
+      "font_class": "ziyuanshiyong",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "13998482",
+      "name": "集群事件",
+      "font_class": "jiqunx",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "13998486",
+      "name": "工作负载",
+      "font_class": "gongzuofuzai",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "13998466",
+      "name": "坐标",
+      "font_class": "zuobiao",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "13998302",
+      "name": "工作负载（灰）",
+      "font_class": "-workload",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "13998317",
+      "name": "iot管理（灰）",
+      "font_class": "-iot-management",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "13998355",
+      "name": "边缘AI（灰）",
+      "font_class": "-edge-ai",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "13998403",
+      "name": "MQTT管理 (灰)",
+      "font_class": "-mqtt",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "13998444",
+      "name": "系统管理 (灰)",
+      "font_class": "-setting",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "13998287",
+      "name": "全局概览（灰）",
+      "font_class": "-global-resource",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "13998293",
+      "name": "基础设施（灰）",
+      "font_class": "-infrastructure",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    }
+  ]
+}

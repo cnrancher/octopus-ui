@@ -68,3 +68,25 @@ export const MODBUS_DEVICE_TCP = {
     }
   }
 };
+
+export const OPC_UA_DEVICE = {
+  adaptor: {
+    node: '',
+    name: 'adaptors.edge.cattle.io/modbus'
+  },
+  model: {
+    apiVersion: 'devices.edge.cattle.io/v1alpha1',
+    kind:       'OPCUADevice'
+  },
+  template: {
+    metadata: { labels: {} },
+    spec:     {
+      protocol: {
+        url:      '',
+        username: '',
+        password:   '',
+      },
+      properties: []
+    }
+  }
+};

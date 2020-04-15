@@ -14,13 +14,11 @@ export default {
     let deviceValue = null;
 
     if (!this.row.spec) {
-      return {
-        deviceValue: []
-      }
+      return { deviceValue: [] };
     }
     const deviceType = this.row.spec.model.kind.toLowerCase();
     const { name } = this.row.metadata;
-    const { list } = this.$store.state.deviceModel.types[deviceType] || [];
+    const { list } = this.$store.state.deviceModel.types[deviceType] || { list: [] };
 
     list.forEach((crd) => {
       if (crd.metadata.name === name) {

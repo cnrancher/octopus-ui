@@ -199,6 +199,7 @@ module.exports = {
     '/api':       proxyWsOpts(api), // Managment k8s API
     '/apis':      proxyWsOpts(api), // Managment k8s API
     '/v1':        proxyWsOpts(api), // Management Steve API
+    '/v2':        proxyWsOpts(api), // login api
     '/v3':        proxyWsOpts(api), // Rancher API
     '/v3-public': proxyOpts(api), // Rancher Unauthed API
     '/api-ui':    proxyOpts(api), // Browser API UI

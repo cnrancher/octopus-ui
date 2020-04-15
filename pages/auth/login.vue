@@ -126,7 +126,7 @@ export default {
           <el-input ref="username" v-model="username" placeholder="请输入用户名" autocomplete="username" />
           <div class="password">
             <span class="label">密码</span>
-            <el-input show-password ref="password" v-model="password" placeholder="请输入密码" autocomplete="password" />
+            <el-input ref="password" v-model="password" show-password placeholder="请输入密码" autocomplete="password" />
           </div>
           <AsyncButton
             type="submit"

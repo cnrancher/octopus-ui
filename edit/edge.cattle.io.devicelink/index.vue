@@ -4,15 +4,17 @@ import _ from 'lodash';
 import LoadDeps from '@/mixins/load-deps';
 import AddTable from './AddTable';
 import AddModbusTable from './AddModbusTable';
+import AddOpcUaTable from './AddOpcUaTable';
 import Footer from '@/components/form/Footer';
 import BluethoothModel from './BluethoothModel';
 import ModbusModel from './ModbusModel';
+import OpcUaModel from './OpcUaModel';
 import KeyValue from '@/components/form/KeyValue';
 import { allHash } from '@/utils/promise';
 import { NODE } from '@/config/types';
 import { get } from '@/utils/object';
 import { DESCRIPTION } from '@/config/labels-annotations';
-import { BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP } from './defaultYaml'
+import { BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE } from './defaultYaml'
 import { parity, dataBits } from '@/config/map'
 
 import createEditView from '@/mixins/create-edit-view';
@@ -21,9 +23,11 @@ import { NAMESPACES } from '../../config/types';
 export default {
   components: {
     AddTable,
+    AddOpcUaTable,
     Footer,
     BluethoothModel,
     ModbusModel,
+    OpcUaModel,
     AddModbusTable,
     KeyValue
   },
@@ -129,10 +133,13 @@ export default {
     },
     changeKind(value) {
       this.transferMode = 'rtu';
+      console.log(value, 'kind', OPC_UA_DEVICE)
       if(value === 'ModbusDevice') {
-        this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
+        this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
-        this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE))
+        this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
+      } else if (value === 'OPCUADevice') {
+        this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
       }
     },
     changeTransferMode(mode) {
@@ -179,7 +186,13 @@ export default {
 
         <el-col :span="11" :push="1">
           <el-form-item label="命名空间" prop="metadata.namespace">
-            <el-select v-model="value.metadata.namespace" placeholder="请选择">
+            <el-select 
+              v-model="value.metadata.namespace" 
+              filterable
+              allow-create
+              default-first-option 
+              placeholder="请选择"
+            >
               <el-option
                 v-for="item in allNamespace"
                 :key="item.value"
@@ -195,7 +208,7 @@ export default {
             <el-radio-group v-model="value.spec.model.kind" @change="changeKind">
               <el-radio-button label="ModbusDevice">Modbus Device</el-radio-button>
               <el-radio-button label="BluetoothDevice">Bluethooth Device</el-radio-button>
-              <el-radio-button label="OPC_UADevice" disabled>OPC_UA Device</el-radio-button>
+              <el-radio-button label="OPCUADevice">OPC_UA Device</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -347,6 +360,27 @@ export default {
           
         </template>
 
+        <template v-else-if="value.spec.model.kind === 'OPCUADevice' && value.spec.template.spec.protocol">
+          <el-col :span='12'>
+            <el-form-item label="URL" required>
+              <el-input v-model="value.spec.template.spec.protocol.url"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="11" :push="1">
+            <el-form-item label="username">
+              <el-input v-model="value.spec.template.spec.protocol.username"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="password">
+              <el-input v-model="value.spec.template.spec.protocol.password"></el-input>
+            </el-form-item>
+          </el-col>
+        
+        </template>
+
         <el-col :span='24'>
           <div class="moduleName">属性配置</div>
         </el-col>
@@ -371,6 +405,14 @@ export default {
               :visible='dialogVisible'
               @editRow="edit($event)"
               @deleteRow="deleteRow($event)"
+            />
+
+            <AddOpcUaTable
+              v-if="value.spec.model.kind === 'OPCUADevice'"
+              :properties="value.spec.template.spec.properties" 
+              :visible='dialogVisible'
+              @editRow='edit($event)'
+              @deleteRow='deleteRow($event)'
             />
 
             <el-button 
@@ -400,6 +442,15 @@ export default {
       />
       <ModbusModel
         v-if="value.spec.model.kind === 'ModbusDevice'"
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :visible = 'dialogVisible'
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+      />
+
+      <OpcUaModel 
+        v-if="value.spec.model.kind === 'OPCUADevice'"
         @addProperties = "addProperties($event)" 
         @hideDialog = "hideDialog($event)"
         :visible = 'dialogVisible'

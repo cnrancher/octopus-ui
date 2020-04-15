@@ -5,9 +5,9 @@ export default {
   components: { LiveDate },
 
   data() {
-    const { dynamicMenu } = this.$store.state;
+    const { devicesType } = this.$store.state;
 
-    return { deviceType: dynamicMenu };
+    return { deviceType: devicesType };
   },
 
   methods: {
@@ -23,13 +23,13 @@ export default {
 
 <template>
   <el-row :gutter="12">
-    <el-col 
-      v-for="device in deviceType" 
-      :key="device.spec.names.kind" 
-      :xs="24" 
-      :sm="24" 
-      :md="12" 
-      :lg="12" 
+    <el-col
+      v-for="device in deviceType"
+      :key="device.spec.names.kind"
+      :xs="24"
+      :sm="24"
+      :md="12"
+      :lg="12"
       :xl="6"
     >
       <el-card shadow="always" class="card">
@@ -46,12 +46,12 @@ export default {
         </div>
         <div class="desc">
           <template v-if="device.spec.names.kind === 'BluetoothDevice'">
-            BLE代表低功耗蓝牙（Bluetooth Low Energy，通常描述为Bluetooth 智能设备）。 
+            BLE代表低功耗蓝牙（Bluetooth Low Energy，通常描述为Bluetooth 智能设备）。
             BLE是一种专为短距离通信而设计的无线通信形式。
             BLE 适配器定义了BLE协议的访问配置与设备属性参数，点击查看详情。
           </template>
           <template v-if="device.spec.names.kind === 'ModbusDevice'">
-            Modbus是Modicon系统开发的通信协议。 简而言之，它是一种用于在电子设备之间通过串行线路传输信息的方法。 
+            Modbus是Modicon系统开发的通信协议。 简而言之，它是一种用于在电子设备之间通过串行线路传输信息的方法。
             Modbus协议是一个主从架构的协议，Modbus适配器可以被称为Modbus主站，负责连接和采集Modbus从站（设备）的信息。
           </template>
           <template v-if="device.spec.names.kind === 'OPC_UADevice'">

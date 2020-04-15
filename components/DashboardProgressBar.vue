@@ -48,7 +48,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .balance {
     border: 1px solid #ddd;
     padding: 0.83vw 0.5vw;

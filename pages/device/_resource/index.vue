@@ -52,7 +52,7 @@ export default {
     },
   },
   async asyncData({ store, error }) {
-    const { dynamicMenu } = store.state;
+    const { devicesType } = store.state;
     
     const hash = await allHash({
       devicelink: store.dispatch('deviceLink/findAll', { type: DEVICE_LINK, opt: { url: `${DEVICE_LINK}s` } }).then((rows) => {
@@ -62,7 +62,7 @@ export default {
         }).catch(e => {
           error({ statusCode: '404', message: 'DeviceLink CRD对象不存在, 请先部署DeviceLink.' })
         }),
-      ...Object.values(dynamicMenu).reduce((all, device) => {
+      ...Object.values(devicesType).reduce((all, device) => {
         const type = device.spec.names.kind.toLowerCase();
         const url = `devices.edge.cattle.io.${type}`;
         all[type] = store.dispatch('deviceModel/findAll', { type, opt: { url} });

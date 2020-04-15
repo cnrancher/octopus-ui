@@ -1,3 +1,5 @@
+import applyTypeConfigs from '@/config/type-config';
+
 export default async function({
   route, app, store, redirect, req, isDev
 }) {
@@ -6,10 +8,14 @@ export default async function({
     return;
   }
 
-  // Make sure you're actually logged in
-  if (!store.getters['auth/loggedIn'] ) {
+  if ( !store.getters['auth/loggedIn'] ) {
     try {
+      await store.dispatch('deviceModel/findAll', {
+        type: 'schemas',
+        opt:  { url: '/v1/schemas' }
+      });
 
+      store.commit('auth/loggedIn');
     } catch (e) {
       const status = e?._status;
 
@@ -27,10 +33,14 @@ export default async function({
     }
   }
 
+  applyTypeConfigs(store);
+
   try {
-    await Promise.all([
-      store.dispatch('loadCluster')
-    ]);
+    if (store.getters['auth/loggedIn']) {
+      await Promise.all([
+        store.dispatch('loadCluster')
+      ]);
+    }
   } catch (e) {
     redirect(302, '/fail-whale');
   }

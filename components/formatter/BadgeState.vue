@@ -22,6 +22,7 @@ export default {
 
       for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
         const condition = this.row.status.conditions[i];
+
         if (condition.DeviceCreated && condition.DeviceCreated === 'Unknown') {
           bgColor = 'yellow';
         } else if (condition.status === 'False') {

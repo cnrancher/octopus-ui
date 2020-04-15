@@ -12,7 +12,7 @@ export const plugins = [
 export const state = () => {
   return {
     clusterReady: false,
-    dynamicMenu:  [],
+    devicesType:  [],
   };
 };
 
@@ -22,12 +22,15 @@ export const mutations = {
   clusterChanged(state, ready) {
     state.clusterReady = ready;
   },
-  setDynamicMenu(state, customresources) {
-    const menus = customresources.filter((element) => {
-      return element.id.includes('.devices.edge.cattle.io');
+  
+  setDevicesType(state, customresources) {
+    const customResource = customresources.filter((custom) => {
+      if (custom.metadata.annotations?.['devices.edge.cattle.io/enable'] === 'true') {
+        return true
+      }
     });
 
-    state.dynamicMenu = menus;
+    state.devicesType = customResource;
   }
 };
 
@@ -51,10 +54,10 @@ export const actions = {
       opt:  { url: CUSTOM }
     });
 
-    commit('setDynamicMenu', customresource);
+    commit('setDevicesType', customresource);
     
-    const dynamicMenu = state.dynamicMenu;
-    Object.values(dynamicMenu).reduce((all, device) => {
+    const devicesType = state.devicesType;
+    Object.values(devicesType).reduce((all, device) => {
       const type = device.spec.names.kind.toLowerCase();
       const url = `devices.edge.cattle.io.${type}`;
       dispatch('deviceModel/findAll', { type, opt: { url} });

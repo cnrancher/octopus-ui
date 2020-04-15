@@ -48,6 +48,38 @@ export const typeOption = [{
   label: 'boolean'
 }];
 
+export const opcTypeOption = [{
+  value: 'int16',
+  label: 'int16'
+}, {
+  value: 'int32',
+  label: 'int32'
+}, {
+  value: 'int64',
+  label: 'int64'
+}, {
+  value: 'unit16',
+  label: 'unit16'
+}, {
+  value: 'unit32',
+  label: 'unit32'
+}, {
+  value: 'unit64',
+  label: 'unit64'
+}, {
+  value: 'string',
+  label: 'string'
+}, {
+  value: 'float',
+  label: 'float'
+}, {
+  value: 'double',
+  label: 'double'
+}, {
+  value: 'boolean',
+  label: 'boolean'
+}];
+
 export const register = [{
   value:    'CoilRegister',
   label:    '线圈寄存器',

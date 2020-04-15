@@ -1,18 +1,17 @@
 <script>
 /* eslint-disable */
 import _ from 'lodash';
-import { typeOption, register } from '@/config/map'
+import { opcTypeOption, register } from '@/config/map'
 
 const properties = {
   name:        '',
   description: '',
-  value:       'true',
-  dataType:    'boolean',
-  readOnly:    'true',
+  value:       '',
+  dataType:    '',
+  readOnly:    'false',
   visitor:     {
-    register: 'CoilRegister',
-    offset:   '',
-    quantity: '',
+    nodeID:   '',
+    browseName: '',
   }
 };
 
@@ -33,7 +32,7 @@ export default {
       localDevice:   _.cloneDeep(this.device),
       index: 0,
       newProperties: properties,
-      typeOption,
+      opcTypeOption,
       register,
       activeNames: []
     };
@@ -41,12 +40,6 @@ export default {
   computed: {
     showModel() {
       return this.visible;
-    },
-    disableType() {
-      const index = this.index;
-      const type = this.localDevice.spec.template.spec.properties[index].visitor.register;
-
-      return type === 'CoilRegister' || type === 'DiscreteInputRegister';
     },
   },
   watch: {
@@ -142,12 +135,19 @@ export default {
         </el-input>
       </el-form-item>
 
+      <el-form-item label="readOnly">
+        <el-select v-model="localDevice.spec.template.spec.properties[index].readOnly" placeholder="请选择">
+          <el-option label="读/写" value="false"></el-option>
+          <el-option label="只读" value="true"></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-row type='flex' justify="space-between">
         <el-col :span="15">
-          <el-form-item label="类型">
-            <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" :disabled="disableType" placeholder="请选择">
+          <el-form-item label="类型" required>
+            <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" placeholder="请选择">
               <el-option
-                v-for="item in typeOption"
+                v-for="item in opcTypeOption"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -157,7 +157,7 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="9">
+        <el-col :span="9" v-if="localDevice.spec.template.spec.properties[index].readOnly === 'false'">
           <h1>{{localDevice.spec.template.spec.properties.dataType}}</h1>
           <template v-if="localDevice.spec.template.spec.properties.dataType === 'boolean'">
             <el-select v-model="localDevice.spec.template.spec.properties.value" placeholder="请选择">
@@ -165,33 +165,23 @@ export default {
               <el-option label="true" value="true"></el-option>
             </el-select>
           </template>
+          
           <template v-else>
             <el-input v-model="localDevice.spec.template.spec.properties[index].value"></el-input>
           </template>
         </el-col>
       </el-row>
 
-      <el-form-item label="寄存器类型">
-        <el-radio-group class="flex" v-model="localDevice.spec.template.spec.properties[index].visitor.register" size="small" @change="changeRegister">
-          <el-radio-button v-for="(item, key) in register" :key="key" :label="item.value">
-            {{ item.label }}
-          </el-radio-button>
-        </el-radio-group>
-      </el-form-item>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="nodeID" required>
+            <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.nodeID" placeholder="ns=3"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="访问模式">
-        <el-select v-model="localDevice.spec.template.spec.properties[index].readOnly" placeholder="请选择" disabled>
-          <el-option label="读/写" value="false"></el-option>
-          <el-option label="只读" value="true"></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="寄存器偏移地址 ">
-        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.offset"></el-input>
-      </el-form-item>
-
-      <el-form-item label="寄存器的个数 ">
-        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.quantity"></el-input>
+      <el-form-item label="browseName ">
+        <el-input v-model="localDevice.spec.template.spec.properties[index].visitor.browseName"></el-input>
       </el-form-item>
    
     </el-form>
@@ -226,11 +216,5 @@ header {
   width: 580px;
   margin: auto;
   padding-right: 66px;
-}
-</style>
-
-<style lang='scss'>
-.el-radio-button--small .el-radio-button__inner {
-  padding: 9px 14px;
 }
 </style>

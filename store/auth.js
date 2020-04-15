@@ -21,7 +21,7 @@ export const mutations = {
     state.hasAuth = !!hasAuth;
   },
 
-  loggedInAs(state, principalId) {
+  loggedIn(state) {
     state.loggedIn = true;
   },
 
@@ -31,22 +31,25 @@ export const mutations = {
 };
 
 export const actions = {
-  async login({ dispatch }, { body }) {
-
-    Cookies.set(R_SESS, `${body.username}:${body.password}`, {
-      expires: 2,
-      path: '/',
-      secure: true,
-    });
-
+  async login({ dispatch, commit }, { body }) {
     try {
-      await dispatch('deviceLink/findAll', {
+      const res = await dispatch('deviceLink/find', {
         opt:  {
-          url:    `/v1`,
-          method: 'get',
+          url:    `/v2-public/auth?action=login`,
+          method: 'post',
+          auth:   body
         }
       }, { root: true });
-      
+
+      if (res.data) {
+        commit('loggedIn');
+        Cookies.set(R_SESS, `${ res.data }`, {
+          expires: 2,
+          path:    '/',
+          secure:  true,
+        });
+      }
+
       return true;
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {
@@ -57,16 +60,15 @@ export const actions = {
     }
   },
 
-  logout({ dispatch, commit }, clearToken = true) {
-    if ( clearToken !== false ) {
-      try {
-        console.log('To simulate the exit...');
-      } catch (e) {
-
+  async logout({ dispatch, commit }) {
+    await dispatch('deviceLink/find', {
+      opt:  {
+        url:                  `/v2-public/auth?action=logout`,
+        method:               'get',
+        redirectUnauthorized: false,
       }
-    }
+    }, { root: true });
 
     commit('loggedOut');
-    dispatch('onLogout', null, { root: true });
   }
 };

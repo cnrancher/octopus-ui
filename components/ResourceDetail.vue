@@ -211,7 +211,7 @@ export default {
   <div>
     <template v-if="asYaml">
       <ResourceYaml
-        :customTitle="customTitle"
+        :custom-title="customTitle"
         :obj="model"
         :value="yaml"
         :done-route="doneRoute"
@@ -266,7 +266,7 @@ export default {
         :type-label="typeDisplay"
         :mode="mode"
       />
-      <div class="center" v-if="mode === 'view'">
+      <div v-if="mode === 'view'" class="center">
         <button
           type="button"
           class="btn bg-primary backColor"

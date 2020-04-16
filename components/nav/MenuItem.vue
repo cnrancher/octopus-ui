@@ -18,9 +18,9 @@ export default {
     <template v-if="!menu.children">
       <nuxt-link :key="menu.path" :to="menu.path">
         <el-menu-item
-          :index="menu.name || menu.name"
+          :index="menu.name"
         >
-          <div class="img" :style="{backgroundImage:`url(${menu.meta.icon})`}"></div>
+          <i class="iconfont" :class="menu.meta.icon"></i>
           <span>{{ menu.meta.title }}</span>
         </el-menu-item>
       </nuxt-link>
@@ -29,7 +29,7 @@ export default {
     <template v-else>
       <el-submenu :key="menu.name" :index="menu.name">
         <template slot="title">
-          <div class="img" :style="{backgroundImage:`url(${menu.meta.icon})`}"></div>
+          <i class="iconfont" :class="menu.meta.icon"></i>
           <span>{{ menu.meta.title }}</span>
         </template>
         <template v-if="menu.children">
@@ -47,13 +47,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-  .img {
-    display: inline-block;
-    background-repeat: no-repeat;
+  .iconfont{
+    font-size: 20px;
     margin-right: 20px;
-    background-position: -25px 0px;
-    width: 20px;
-    height: 20px;
   }
 
   .shadow-up {
@@ -68,71 +64,17 @@ export default {
     box-shadow:inset 0px -10px 10px var(--menu-second-shadow);
   }
 
-  .el-menu-item, .el-submenu__title {
-    &:hover {
-      background-color: var(--menu-hover-bg);
-      span {
-        color: var(--menu-action-text);
-      }
-      .img {
-        background-position: 0px 0px;
-      }
-    }
-
-    color: var(--menu-text);
-
-  }
-
-  .el-submenu {
-    .el-menu {
-      background-color: var(--menu-second-bg);
-      .el-menu-item, .el-submenu__title {
-        background-color: var(--menu-second-bg);
-
-        &:hover {
-          background-color: var(--menu-hover-bg);
-          .img {
-            background-position: 0px 0px;
-          }
-        }
-      }
-    }
-
-    .el-menu.el-menu--inline {
-      .el-submenu__title {
-        background-color: var(--menu-second-bg) !important;
-      }
-
-      .el-menu.el-menu--inline {
-        li {
-          span {
-            margin-left: 20px;
-          }
-        }
-      }
-
-    }
-  }
-
   .nuxt-link-exact-active {
     .el-menu-item {
-      background-color: var(--menu-hover-bg) !important;
-      .img {
-        background-position: 0px 0px;
-      }
-      span {
-        color: var(--menu-action-text);
+      span, .iconfont {
+        color: var(--menu-hover-bg) !important;
       }
     }
-  }
-
-  .el-menu--inline div.li:hover, .el-menu--inline div.li:focus {
-    background-color: var(--menu-hover-bg);
-    .img {
-      background-position: 0px 0px;
-    }
-    span {
-      color: var(--menu-action-text);
+    .is-active {
+      background-color: var(--menu-hover-bg) !important;  
+      span, .iconfont {
+        color: var(--menu-action-text) !important;
+      }
     }
   }
 </style>
@@ -142,17 +84,39 @@ export default {
   .el-submenu__icon-arrow {
     margin-top: -3px !important;
   }
+
   .el-menu-item.is-active {
-    color: var(--menu-text);
+    span, .iconfont {
+      color: var(--menu-text);
+    }
   }
-  .el-menu-item, .el-submenu__title {
-    &:hover {
-      color: var(--menu-action-text);
-      .img {
-        background-position: 0px 0px;
+
+  .el-submenu.is-active.is-opened {
+    .el-submenu__title {
+      background-color: var(--menu-hover-bg) !important;  
+      span, .iconfont {
+        color: var(--menu-action-text) !important;
       }
     }
-    padding: 0 22px !important;
+    .nuxt-link-exact-active {
+      .is-active {
+        background-color: transparent !important;  
+      }
+      span, .iconfont {
+        color: var(--menu-hover-bg) !important;
+      }
+    }
+  }
+
+  .el-menu-item, .el-submenu__title {
+    &:hover, &:focus {
+      background-color: transparent;
+      span, .iconfont {
+        color: var(--menu-hover-bg);
+      }
+    }
+
+    padding: 0 20px !important;
     height: 40px;
     line-height: 40px;
     font-size: 16px;
@@ -160,16 +124,31 @@ export default {
     span {
       font-size: 16px;
     }
+
   }
 
   .el-submenu {
     .el-menu-item {
-      padding: 0 22px !important;
+      padding: 0 42px !important;
       height: 40px;
       line-height: 40px;
       font-size: 14px;
       span {
         font-size: 14px;
+      }
+    }
+
+    .el-menu {
+      background-color: var(--menu-second-bg);
+
+      .el-menu-item, .el-submenu__title {
+        background-color: var(--menu-second-bg);
+      }
+    }
+
+    .el-menu.el-menu--inline {
+      .el-submenu__title {
+        background-color: var(--menu-second-bg) !important;
       }
     }
   }
@@ -182,12 +161,6 @@ export default {
           font-size: 14px;
         }
         background-color: var(--menu-second-bg);
-        &:hover {
-          background-color: var(--menu-hover-bg);
-          .img {
-            background-position: 0px 0px;
-          }
-        }
       }
       .el-menu-item {
         height: 40px;

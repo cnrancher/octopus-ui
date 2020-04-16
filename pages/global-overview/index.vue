@@ -8,65 +8,10 @@ import '@/assets/fonts/hyzhuzi/style.scss';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 
-const hexbinData = {
-  hexbindemo1: [
-    { num: 20, data: 'IP-1-2-1-1-1:20%' },
-    { num: 30, data: 'IP-1-3-1-1-1:30%' },
-    { num: 40, data: 'IP-1-4-1-1-1:40%' },
-    { num: 50, data: 'IP-5-1-1-1-1:50%' },
-    { num: 60, data: 'IP-1-6-1-1-1:60%' },
-    { num: 66, data: 'IP-1-6-1-1-1:60%' },
-    { num: 70, data: 'IP-1-7-1-1-1:70%' },
-    { num: 80, data: 'IP-1-8-1-1-1:80%' },
-    { num: 90, data: 'IP-9-1-1-1-1:90%' },
-    { num: 10, data: 'IP-1-1-1-1-1:10%' },
-    { num: 99, data: 'IP-1-1-0-1-1:98%' }
-  ],
-  hexbindemo2: [
-    { num: 10, data: 'IP-1-1-1-1-1:10%' },
-    { num: 70, data: 'IP-1-7-1-1-1:70%' },
-    { num: 80, data: 'IP-1-8-1-1-1:80%' },
-    { num: 30, data: 'IP-1-3-1-1-1:30%' },
-    { num: 40, data: 'IP-1-4-1-1-1:40%' },
-    { num: 50, data: 'IP-5-1-1-1-1:50%' },
-    { num: 60, data: 'IP-1-6-1-1-1:60%' },
-    { num: 66, data: 'IP-1-6-1-1-1:60%' },
-    { num: 20, data: 'IP-1-2-1-1-1:20%' },
-    { num: 90, data: 'IP-9-1-1-1-1:90%' },
-    { num: 99, data: 'IP-1-1-0-1-1:98%' }
-  ],
-  hexbindemo3: [
-    { num: 10, data: 'IP-1-1-1-1-1:10%' },
-    { num: 20, data: 'IP-1-2-1-1-1:20%' },
-    { num: 30, data: 'IP-1-3-1-1-1:30%' },
-    { num: 40, data: 'IP-1-4-1-1-1:40%' },
-    { num: 50, data: 'IP-5-1-1-1-1:50%' },
-    { num: 70, data: 'IP-1-7-1-1-1:70%' },
-    { num: 80, data: 'IP-1-8-1-1-1:80%' },
-    { num: 60, data: 'IP-1-6-1-1-1:60%' },
-    { num: 66, data: 'IP-1-6-1-1-1:60%' },
-    { num: 90, data: 'IP-9-1-1-1-1:90%' },
-    { num: 99, data: 'IP-1-1-0-1-1:98%' }
-  ]
-}
-
 const pieData = {
   ec1: '91|CPU|已使用2中的0.2',
   ec2: '65|Memory|已使用7.7GIB中的0.1',
   ec3: '21|Pods|已使用110中的12',
-}
-
-const rightGaugeData = {
-  rightGauge1: {
-    title: '90个',
-    color: ['#d4fba4', '#8dc449'],
-    values: [80, 20]
-  },
-  rightGauge2: {
-    title: '10个',
-    color: ['#f4cccd', '#ee5558'],
-    values: [20, 80]
-  }
 }
 
 function hexbinColorGenerator(count = 0) {
@@ -166,19 +111,26 @@ export default {
         {
           index: 4, name: 'Nodes', status: 'unknown'
         }
-      ]
+      ],
+      iotInfo: {
+        total: 0,
+        online: 0,
+        offline: 0
+      },
+      hexbinData: []
     };
 
     return {};
   },
   mounted() {
-    this.drawHexbin();
+    // this.drawHexbin();
     this.drawGauge();
     this.drawRightGauge();
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
     }
-    console.log(this.$store);
+    this.getMetricsIoNodes();
+    this.getDeviceInfo();
   },
   methods: {
     formatFontSize(val,initWidth=1920) {
@@ -315,19 +267,20 @@ export default {
       });
     },
     drawHexbin() {
+      const { hexbinData } = this;
       const hexbinContainerNames = ['hexbindemo1', 'hexbindemo2', 'hexbindemo3'];
       const tooltipRef = this.$refs['tooltip'];
 
       hexbinContainerNames.forEach((demoItem, demoIndex) => {
         const i = 0;
         let j;
-        const list = hexbinData[demoItem];
+        const list = hexbinData[demoIndex];
         const d3Node = d3.select(this.$refs[demoItem]);
         const color = d3.scaleSequential(d3.interpolateLab('#8276b8', '#4646b0')).domain([0, 20]);
         const points = [
           [25,50], [70,50], [115,50], [160,50], [205,50], [250,50],
           [48,89], [93,89], [138,89], [183,89], [228,89]
-        ];
+        ].splice(0, list.length);
         const mHexbin = hexbin().size([400, 100]);
         const hexagon = d3Node.selectAll('path')
           .data(mHexbin(points))
@@ -353,11 +306,28 @@ export default {
       });
 
     },
-    drawRightGauge() {
-      const rightGaugeNames = ['rightGauge1', 'rightGauge2'];
+    drawRightGauge(isRenew) {
+      const { online, offline, total } = this.iotInfo;
+      const leftNum = Math.round(online / total * 100);
+      const rightNum = Math.round(offline / total * 100);
+
+      const rightGaugeOpts = {
+        rightGaugeLeft: {
+          title: `${online}个`,
+          color: ['#d4fba4', '#8dc449'],
+          values: [leftNum, 100 - leftNum]
+        },
+        rightGaugeRight: {
+          title: `${offline}个`,
+          color: ['#f4cccd', '#ee5558'],
+          values: [rightNum, 100 - rightNum]
+        }
+      }
+
+      const rightGaugeNames = ['rightGaugeLeft', 'rightGaugeRight'];
       rightGaugeNames.forEach((ecItem, ecIndex) => {
         const ecDraw = echarts.init(this.$refs[ecItem]);
-        const customOpt = rightGaugeData[ecItem]
+        const customOpt = rightGaugeOpts[ecItem]
         const option = {
           title: {
             text: customOpt.title,
@@ -421,11 +391,84 @@ export default {
           ]
         };
         ecDraw.setOption(option);
-        this.rightGaugeList.push(ecDraw);
+        if (!isRenew) {
+          this.rightGaugeList.push(ecDraw);
+        }
         setTimeout(() => {
           ecDraw.resize();
         }, 500);
       });
+    },
+    async getMetricsIoNodes() {
+      const { nodesMetricsData, nodesData, podsData } = await this.$store.dispatch('dashboard/getMetricsIoNodes', {
+        body: {}
+      });
+      const nodesMap = {};
+      // 数据整合
+      nodesData.forEach((nodeItem, nodeIndex) => {
+        // 有节点容量capacity和节点可分配资源allocatable
+        const { id, status } = nodeItem;
+        nodesMap[id] = { status };
+      });
+      nodesMetricsData.forEach((nodesMetricsItem, nodesMetricsIndex) => {
+        const { id, usage } = nodesMetricsItem;
+        nodesMap[id] = {
+          ...nodesMap[id],
+          usage,
+          podList: []
+        }
+      });
+      podsData.forEach((podItem, podIndex) => {
+        const { spec } = podItem;
+        const { nodeName } = spec;
+        if (nodesMap[nodeName]) {
+          nodesMap[nodeName].podList.push(podItem);
+        }
+      });
+
+      const hexbinData = [[], [], []]
+
+      const displayData = Object.keys(nodesMap).map(keyItem => {
+        const { usage, status, podList } = nodesMap[keyItem];
+        const { cpu, memory, pods } = status.allocatable;
+        const cpuUsedRate = (parseInt(usage.cpu, 10) / parseInt(cpu, 10) / 1000 / 1000 / 1000 * 100).toFixed(2);
+        const memoryUsedRate = (parseInt(usage.memory, 10) / parseInt(memory, 10) * 100).toFixed(2);
+        const podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(2);
+        const name = keyItem.toString();
+        hexbinData[0].push({
+          num: parseFloat(cpuUsedRate),
+          data: `${name}:${cpuUsedRate}%`
+        });
+        hexbinData[1].push({
+          num: parseFloat(memoryUsedRate),
+          data: `${name}:${memoryUsedRate}%`
+        });
+        hexbinData[2].push({
+          num: parseFloat(podsUsedRate),
+          data: `${name}:${podsUsedRate}%`
+        });
+
+        return {
+          cpuUsedRate, memoryUsedRate, podsUsedRate,
+          name: keyItem.toString()
+        }
+      });
+      this.hexbinData = hexbinData;
+      console.log(nodesMap, hexbinData);
+    },
+    async getDeviceInfo() {
+      const data = await this.$store.dispatch('dashboard/getDeviceInfo', {
+        body: {}
+      });
+      let total = data.length;
+      let online = 0;
+      let offline = 0;
+      data.forEach((deviceItem, deviceIndex) => {
+        const state = deviceItem.metadata.state;
+        if ('active' === state.name) online++;
+      });
+      offline = total - online;
+      this.iotInfo = { total, online, offline };
     }
   },
   watch: {
@@ -436,6 +479,12 @@ export default {
       this.rightGaugeList.forEach(chartsItem => {
         chartsItem.resize();
       })
+    },
+    iotInfo: function(val) {
+      this.drawRightGauge(true);
+    },
+    hexbinData: function() {
+      this.drawHexbin();
     }
   }
 };
@@ -541,26 +590,26 @@ export default {
           </h3>
           <div class="pie">
             <div class="item">
-              <div class="item-content" ref="rightGauge1"></div>
+              <div class="item-content" ref="rightGaugeLeft"></div>
               <p>在线数量</p>
             </div>
             <div class="item">
-              <div class="item-content" ref="rightGauge2"></div>
+              <div class="item-content" ref="rightGaugeRight"></div>
               <p>离线数量</p>
             </div>
           </div>
           <div class="count">
             <div>
               <span>设备总数：</span>
-              <span>100</span>
+              <span>{{ iotInfo.total }}</span>
             </div>
             <div>
               <span>在线数量：</span>
-              <span>90</span>
+              <span>{{ iotInfo.online }}</span>
             </div>
             <div>
               <span>离线数量：</span>
-              <span>10</span>
+              <span>{{ iotInfo.offline }}</span>
             </div>
           </div>
         </div>

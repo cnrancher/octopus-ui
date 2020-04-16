@@ -5,6 +5,7 @@ import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';
 import echarts from 'echarts';
 import '@/assets/fonts/hyzhuzi/style.scss';
+import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 
 const hexbinData = {
@@ -76,7 +77,7 @@ function hexbinColorGenerator(count = 0) {
 }
 
 export default {
-  components: { 'el-table': Table, 'DashboardProgressBar': DashboardProgressBar },
+  components: { 'el-table': Table, 'DashboardProgressBar': DashboardProgressBar, ServiceStatusList: ServiceStatusList },
   data() {
     return {
       screenWidth: document.documentElement.clientWidth,
@@ -151,6 +152,20 @@ export default {
         {
           index: 10, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '37', percent: 37
         }
+      ],
+      serviceList: [
+        {
+          index: 1, name: 'Datastore', status: 'success'
+        },
+        {
+          index: 2, name: 'System Controllers', status: 'error'
+        },
+        {
+          index: 3, name: 'Networking', status: 'success'
+        },
+        {
+          index: 4, name: 'Nodes', status: 'unknown'
+        }
       ]
     };
 
@@ -163,6 +178,7 @@ export default {
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
     }
+    console.log(this.$store);
   },
   methods: {
     formatFontSize(val,initWidth=1920) {
@@ -308,8 +324,6 @@ export default {
         const list = hexbinData[demoItem];
         const d3Node = d3.select(this.$refs[demoItem]);
         const color = d3.scaleSequential(d3.interpolateLab('#8276b8', '#4646b0')).domain([0, 20]);
-        // const points = [[20,20], [20,60], [20,100], [40,40], [60,60], [80,100], [40,80], [80,40], [120,40], [120,60], [120,80], [140,40]];
-        // const points = [[20,60], [20,100], [60,60], [80,100], [40,80], [120,60], [120,80]];
         const points = [
           [25,50], [70,50], [115,50], [160,50], [205,50], [250,50],
           [48,89], [93,89], [138,89], [183,89], [228,89]
@@ -428,13 +442,9 @@ export default {
 </script>
 <template>
   <div class="wrapper">
-    <el-row type="flex">
-      <el-col :span="24">
-        <h3 class="header-border"><i class="position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20" type="flex">
-      <el-col :span="15" class="content">
+    <h3 class="header-border"><i class="position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
+    <div class="content">
+      <div class="content-main">
         <div class="usage">
           <h3 class="module-title">
             <i class="icon dashboard-source"></i>
@@ -447,8 +457,7 @@ export default {
                 <svg ref="hexbindemo1"></svg>
               </div>
               <h4>集群整体CPU使用率</h4>
-              <div class="pie-container">
-                <div ref="ec1"></div>
+              <div class="pie-container" ref="ec1">
               </div>
             </div>
             <div class="item">
@@ -457,8 +466,7 @@ export default {
                 <svg ref="hexbindemo2"></svg>
               </div>
               <h4>集群整体内存使用率</h4>
-              <div class="pie-container">
-                <div ref="ec2"></div>
+              <div class="pie-container" ref="ec2">
               </div>
             </div>
             <div class="item">
@@ -467,8 +475,7 @@ export default {
                 <svg ref="hexbindemo3"></svg>
               </div>
               <h4>集群整体Pod数量</h4>
-              <div class="pie-container">
-                <div ref="ec3"></div>
+              <div class="pie-container" ref="ec3">
               </div>
             </div>
           </div>
@@ -478,24 +485,9 @@ export default {
             <i class="icon dashboard-system"></i>
             系统服务
           </h3>
-          <ul>
-            <li class="dashboard-icon-tick">
-              <i></i>
-              <span>Datastore</span>
-            </li>
-            <li class="dashboard-icon-error">
-              <i></i>
-              <span>System Controllers</span>
-            </li>
-            <li class="dashboard-icon-tick">
-              <i></i>
-              <span>Networking</span>
-            </li>
-            <li class="dashboard-icon-question">
-              <i></i>
-              <span>Nodes</span>
-            </li>
-          </ul>
+          <ServiceStatusList 
+            :list="serviceList"
+          />
         </div>
         <div class="event">
           <h3 class="module-title">
@@ -511,31 +503,37 @@ export default {
             <el-table-column
               label="名称"
               prop="name"
+              min-width="100px"
             />
             <el-table-column
               label="名称"
               prop="name1"
+              min-width="100px"
             />
             <el-table-column
               label="名称"
               prop="name2"
+              min-width="100px"
             />
             <el-table-column
               label="名称"
               prop="name3"
+              min-width="100px"
             />
             <el-table-column
               label="名称"
               prop="name4"
+              min-width="100px"
             />
             <el-table-column
               label="名称"
               prop="name5"
+              min-width="100px"
             />
           </el-table>
         </div>
-      </el-col>
-      <el-col class="side" :span="9">
+      </div>
+      <div class="content-side">
         <div class="iot">
           <h3 class="module-title">
             <i class="icon dashboard-iot"></i>
@@ -582,8 +580,8 @@ export default {
             :list="progressList"
           />
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
     <div ref="tooltip" class="dashboard-tooltip"></div>
   </div>
 </template>
@@ -591,9 +589,7 @@ export default {
 <style lang="scss">
   @import "~assets/fonts/fzpszhjw/style.scss";
   .wrapper {
-    clear: both;
     background-color: #f6f7fb;
-    
     .icon {
       display: inline-block;
       height: 25px;
@@ -608,11 +604,11 @@ export default {
       padding-left: 2vw;
       line-height: 1.5;
       span {
-        font-size: 0.8vw;
+        font-size: 16px;
         font-weight: bold;
       }
       span:last-child {
-        font-size: 0.7vw;
+        font-size: 14px;
         font-weight: normal;
       }
       .position {
@@ -632,193 +628,137 @@ export default {
       background-color: #fff;
     }
     .module-title {
-      font-size: 1.25vw;
+      font-size: 24px;
       margin-bottom: 4px;
       font-family: fzpszhjw;
     }
-    
     .content {
-      min-height: 800px;
-      width: 100%;
-      padding-left: 1.2vh;
       display: grid;
-      grid-template-rows: repeat(3, auto);
-      .dashboard-set {
-        background: url('~assets/images/dashboard-set.png') no-repeat center;
-      }
-      .dashboard-source {
-        background: url('~assets/images/dashboard-source.png') no-repeat center;
-      }
-      .dashboard-system {
-        background: url('~assets/images/dashboard-system.png') no-repeat center;
-      }
-      .pie-container div {
-        width: 100%;
-        height: 25vh;
-        margin: 0 auto;
-      }
-      .service {
-        ul {
+      // min-width: 1716px;
+      grid-template-columns: 70% 28%;
+      grid-column-gap: 1.3%;
+      .content-main {
+        min-height: 800px;
+        display: grid;
+        grid-template-rows: repeat(3, auto);
+        .dashboard-set {
+          background: url('~assets/images/dashboard-set.png') no-repeat center;
+        }
+        .dashboard-source {
+          background: url('~assets/images/dashboard-source.png') no-repeat center;
+        }
+        .dashboard-system {
+          background: url('~assets/images/dashboard-system.png') no-repeat center;
+        }
+        .pie-container {
+          width: 100%;
+          min-height: 280px;
+          margin: 0 auto;
+        }
+        .usage-list {
           display: grid;
-          grid-template-columns: repeat(4, 20%);
-          grid-column-gap: 6%;
-          margin: 1.45vw 0 1.25vw;
-          li {
-            list-style: none;
-            min-height: 40px;
-            background-color: #ddd;
-            line-height: 1;
-            color: #454545;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-            i {
-              width: 2vw;
-              height: 2vw;
-              line-height: 2.6;
-              color: #fff;
-              display: inline-block;
-              vertical-align: middle;
-              text-align: center;
-              font-style: normal;
-              border-top-left-radius: 10px;
-              border-bottom-left-radius: 10px;
-            }
-            span {
-              line-height: 1;
-              padding-left: 10px;
-              font-size: 0.9vw;
-              font-weight: bold;
-              display: inline-block;
-              vertical-align: middle;
-            }
-          }
-          li:last-child {
-            margin-right: 0;
-          }
-          .dashboard-icon-tick {
-            border: 1px solid #8dc449;
-            i {
-              background: url('~assets/images/dashboard-tick.png') no-repeat center #8dc449;
-            }
-          }
-          .dashboard-icon-question {
-            border: 1px solid #fac40f;
-            i {
-              background: url('~assets/images/dashboard-question.png') no-repeat center #fac40f;
-            }
-          }
-          .dashboard-icon-error {
-            border: 1px solid #ee5558;
-            i {
-              background: url('~assets/images/dashboard-fork.png') no-repeat center #ee5558;
-            }
-          }
-        }
-      }
-      .usage-list {
-        display: grid;
-        grid-template-columns: repeat(3, 32.5%);
-        grid-column-gap: 1.3%;
-        .item {
-          width: 100%;
-          border: 1px solid #ddd;
-          padding: 10px 20px 0;
-          margin-right: 10px;
-          h4 {
-            font-size: 0.9vw;
-            font-weight: bold;
-          }
-        }
-      }
-      .event {
-        .events-table {
-          width: 100%;
-          border: 0;
-          border-collapse: collapse;
-          height: 26.5vw;
-          margin-top: 16px;
-          th, td {
-            color: #fff;
-            line-height: 2.08vw;
-            padding: 0;
-            font-size: 0.83vw;
-            text-align: center;
-          }
-          thead {
-            th {
-              background-color: #404aaf;
-              font-weight: normal;
-            }
-          }
-          tbody {
-            tr:nth-child(odd) {
-              background-color: #fff;
-            }
-            tr:nth-child(even) {
-              background-color: #ededed;
-            }
-            .events-table-td {
-              color: #000;
-              padding: 0.5vw 0;
-            }
-          }
-        }
-      }
-    }
-    .side {
-      height: 100%;
-      display: grid;
-      grid-template-rows: repeat(3, auto);
-      .dashboard-balance {
-        background: url('~assets/images/dashboard-balance.png') no-repeat center;
-      }
-      .dashboard-iot {
-        background: url('~assets/images/dashboard-iot.png') no-repeat center;
-      }
-      .pie {
-        display: grid;
-        padding-top: 10px;
-        grid-template-columns: repeat(2, 50%);
+          grid-template-columns: repeat(3, 32.5%);
+          grid-column-gap: 1.2%;
           .item {
-          text-align: center;
-          .item-content {
-            height: 18vh;
-            padding-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 10px 20px 0;
+            h4 {
+              font-size: 17px;
+              font-weight: bold;
+            }
           }
-          p {
-            font-size: 16px;
+        }
+        .event {
+          .events-table {
+            width: 99.9%;
+            border: 0;
+            border-collapse: collapse;
+            height: 26.5vw;
+            margin-top: 16px;
+            th, td {
+              color: #fff;
+              line-height: 2.08vw;
+              padding: 0;
+              font-size: 16px;
+              text-align: center;
+            }
+            thead {
+              th {
+                background-color: #404aaf;
+                font-weight: normal;
+              }
+            }
+            tbody {
+              tr:nth-child(odd) {
+                background-color: #fff;
+              }
+              tr:nth-child(even) {
+                background-color: #ededed;
+              }
+              .events-table-td {
+                color: #000;
+                padding: 0.5vw 0;
+              }
+            }
           }
         }
       }
-      .count {
-        display: flex;
-        justify-content: space-around;
-        padding: 1.1vw 0;
-
-        div {
+      .content-side {
+        height: 100%;
+        display: grid;
+        min-height: 800px;
+        grid-template-rows: repeat(2, auto);
+        .dashboard-balance {
+          background: url('~assets/images/dashboard-balance.png') no-repeat center;
+        }
+        .dashboard-iot {
+          background: url('~assets/images/dashboard-iot.png') no-repeat center;
+        }
+        .pie {
+          display: grid;
+          padding-top: 10px;
+          grid-template-columns: repeat(2, 50%);
+            .item {
+            text-align: center;
+            .item-content {
+              min-height: 210px;
+              padding-bottom: 10px;
+            }
+            p {
+              font-size: 16px;
+            }
+          }
+        }
+        .count {
           display: flex;
-          align-items: flex-end;
-          box-sizing: border-box;
-          border-right: 1px solid #ddd;
-          padding-right: 0.4vw;
-          span:first-child {
-            line-height: 1.5;
-            font-size: 0.8vw;
-          }
-          span:last-child {
-            font-size: 1.3vw;
-          }
-        }
-        div:last-child {
-          list-style: none;
-          border-right: none;
-          padding-right: 0;
-        }
-      }
+          justify-content: space-around;
+          padding: 1.1vw 0;
 
-      .balance {
-        border: 1px solid #ddd;
-        padding: 0.83vw 0.5vw;
+          div {
+            display: flex;
+            align-items: flex-end;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            padding-right: 0.4vw;
+            span:first-child {
+              line-height: 1.5;
+              font-size: 18px;
+            }
+            span:last-child {
+              font-size: 26px;
+            }
+          }
+          div:last-child {
+            list-style: none;
+            border-right: none;
+            padding-right: 0;
+          }
+        }
+
+        .balance {
+          border: 1px solid #ddd;
+          padding: 0.83vw 0.5vw;
+        }
       }
     }
     .dashboard-tooltip {

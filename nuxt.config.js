@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { trimWhitespaceSsr as trimWhitespace } from './plugins/trim-whitespace';
+import realImg from './plugins/real-img'
 import { directiveSsr as t } from './plugins/i18n';
 import { STANDARD } from './config/private-label';
 
@@ -191,6 +192,8 @@ module.exports = {
     { src: '~/plugins/extend-router' },
     { src: '~/plugins/lookup', ssr: false },
     { src: '~/plugins/nuxt-client-init', ssr: false },
+
+    { src: '~/plugins/real-img', ssr: false }
   ],
 
   // Proxy: https://github.com/nuxt-community/proxy-module#options

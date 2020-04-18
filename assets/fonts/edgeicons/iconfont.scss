@@ -16,28 +16,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.iconzuobiao1:before {
+.icon-earth:before {
+  content: "\e629";
+}
+
+.icon-position:before {
   content: "\e618";
 }
 
-.iconxitongfuwu:before {
+.icon-system:before {
   content: "\e61a";
 }
 
-.iconziyuanshiyong:before {
+.icon-source:before {
   content: "\e61b";
 }
 
-.iconjiqunx:before {
+.icon-set:before {
   content: "\e61c";
 }
 
-.icongongzuofuzai:before {
+.icon-dashboad-workload:before {
   content: "\e61d";
-}
-
-.iconzuobiao:before {
-  content: "\e617";
 }
 
 .icon-workload:before {
@@ -67,4 +67,3 @@
 .icon-infrastructure:before {
   content: "\e607";
 }
-

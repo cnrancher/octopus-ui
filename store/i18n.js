@@ -24,6 +24,9 @@ export const state = function() {
 };
 
 export const getters = {
+  getLanguage(state) {
+    return state.selected
+  },
   selectedLocaleLabel(state) {
     const key = `locale.${ state.selected }`;
 

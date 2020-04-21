@@ -17,13 +17,18 @@ export default {
     }
   },
   data() {
-    const tempList = this.list.map((item) => {
-      item.width = `${ item.percent * FULL_RADIUS }%`;
+    return { displayList: [] };
+  },
+  watch: {
+    list() {
+      const tempList = this.list.map((item) => {
+        item.width = `${ item.percent * FULL_RADIUS }%`;
 
-      return item;
-    });
+        return item;
+      });
 
-    return { displayList: tempList };
+      this.displayList = tempList;
+    }
   }
 };
 </script>

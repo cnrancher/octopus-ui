@@ -471,13 +471,14 @@ export default {
         body: {}
       });
       this.tableData = data.map(eventItem => {
-        const { metadata, reason, _type, lastTimestamp, message } = eventItem;
+        const { metadata, message } = eventItem;
+        const { fields } = metadata;
         return {
           namespace: metadata.namespace,
-          lastSeen: lastTimestamp,
-          type: _type,
-          reason,
-          object: '',
+          lastSeen: fields[0],
+          type: fields[1],
+          reason: fields[2],
+          object: fields[3],
           message
         }
       });
@@ -560,12 +561,12 @@ export default {
 </script>
 <template>
   <div class="wrapper">
-    <h3 class="header-border"><i class="position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
+    <h3 class="header-border"><i class="position icon iconfont iconzuobiao1"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
     <div class="content">
       <div class="content-main">
         <div class="usage">
           <h3 class="module-title">
-            <i class="icon dashboard-source"></i>
+            <i class="icon iconfont iconziyuanshiyong"></i>
             资源使用
           </h3>
           <div class="usage-list">
@@ -600,7 +601,7 @@ export default {
         </div>
         <div class="service">
           <h3 class="module-title">
-            <i class="icon dashboard-system"></i>
+            <i class="icon iconfont iconxitongfuwu"></i>
             系统服务
           </h3>
           <ServiceStatusList 
@@ -609,7 +610,7 @@ export default {
         </div>
         <div class="event">
           <h3 class="module-title">
-            <i class="icon dashboard-set"></i>
+            <i class="icon iconfont iconjiqunx"></i>
             集群事件
           </h3>
           <el-table
@@ -654,7 +655,7 @@ export default {
       <div class="content-side">
         <div class="iot">
           <h3 class="module-title">
-            <i class="icon dashboard-iot"></i>
+            <i class="icon iconfont icon-iot-management"></i>
             IoT设备
           </h3>
           <div class="pie">
@@ -684,7 +685,7 @@ export default {
         </div>
         <div class="balance">
           <h3 class="module-title">
-            <i class="icon dashboard-balance"></i>
+            <i class="icon iconfont icongongzuofuzai"></i>
             工作负载
           </h3>
           <DashboardProgressBar 
@@ -733,8 +734,7 @@ export default {
         display: inline-block;
         width: 20px;
         height: 20px;
-        background: url('~assets/images/dashboard-position.png') no-repeat center;
-        vertical-align: middle;
+        vertical-align: baseline;
       }
     }
     .usage, .service, .event, .balance, .iot {
@@ -759,14 +759,8 @@ export default {
         min-height: 800px;
         display: grid;
         grid-template-rows: repeat(3, auto);
-        .dashboard-set {
-          background: url('~assets/images/dashboard-set.png') no-repeat center;
-        }
-        .dashboard-source {
-          background: url('~assets/images/dashboard-source.png') no-repeat center;
-        }
-        .dashboard-system {
-          background: url('~assets/images/dashboard-system.png') no-repeat center;
+        .icon {
+          font-size: 25px;
         }
         .pie-container {
           width: 100%;
@@ -826,11 +820,8 @@ export default {
         display: grid;
         min-height: 800px;
         grid-template-rows: repeat(2, auto);
-        .dashboard-balance {
-          background: url('~assets/images/dashboard-balance.png') no-repeat center;
-        }
-        .dashboard-iot {
-          background: url('~assets/images/dashboard-iot.png') no-repeat center;
+        .icon {
+          font-size: 25px;
         }
         .pie {
           display: grid;

@@ -97,7 +97,7 @@ export default {
           placement="bottom"
         >
           <div class="hand select">
-            <i class="edge-icon-earth"></i>
+            <i class="iconfont icon-earth"></i>
             <span>{{ selectedLocaleLabel }}</span>
             <i class="el-icon-arrow-down"></i>
           </div>
@@ -152,6 +152,12 @@ export default {
     background-position: center center;
     height: 100vh;
     min-width: 700px;
+
+    .icon-earth {
+      color: #097bc9;
+      font-size: 18px;
+      font-weight: 800;
+    }
 
     .login-module {
       background-color: #fff;

@@ -6,46 +6,46 @@
   "description": "图标",
   "glyphs": [
     {
+      "icon_id": "792223",
+      "name": "the earth2-地球",
+      "font_class": "-earth",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
       "icon_id": "13998478",
       "name": "坐标",
-      "font_class": "zuobiao1",
+      "font_class": "-position",
       "unicode": "e618",
       "unicode_decimal": 58904
     },
     {
       "icon_id": "13998480",
       "name": "系统服务",
-      "font_class": "xitongfuwu",
+      "font_class": "-system",
       "unicode": "e61a",
       "unicode_decimal": 58906
     },
     {
       "icon_id": "13998481",
       "name": "资源使用",
-      "font_class": "ziyuanshiyong",
+      "font_class": "-source",
       "unicode": "e61b",
       "unicode_decimal": 58907
     },
     {
       "icon_id": "13998482",
       "name": "集群事件",
-      "font_class": "jiqunx",
+      "font_class": "-set",
       "unicode": "e61c",
       "unicode_decimal": 58908
     },
     {
       "icon_id": "13998486",
       "name": "工作负载",
-      "font_class": "gongzuofuzai",
+      "font_class": "-dashboad-workload",
       "unicode": "e61d",
       "unicode_decimal": 58909
-    },
-    {
-      "icon_id": "13998466",
-      "name": "坐标",
-      "font_class": "zuobiao",
-      "unicode": "e617",
-      "unicode_decimal": 58903
     },
     {
       "icon_id": "13998302",

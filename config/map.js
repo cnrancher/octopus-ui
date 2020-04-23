@@ -97,3 +97,24 @@ export const register = [{
   label:    '输入寄存器',
   readOnly: 'true'
 }];
+
+export const deviceDefaultInfo = {
+  BluetoothDevice: { 
+    icon:  'Bluetooth_Smart_Logo.svg',
+    label: 'Bluethooth Device'
+  },
+  ModbusDevice:    { 
+    icon:  'modbus.svg',
+    label: 'Modbus Device'
+  },
+  OPCUADevice:     { 
+    icon:  'opc-ua.svg',
+    label: 'OPC_UA Device'
+  },
+  default:         { 
+    icon:  'device-default.png',
+    label: 'defalut'
+  }
+};
+
+export const defaultDevice = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];

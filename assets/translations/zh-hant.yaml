@@ -11,6 +11,17 @@ nav:
     used: In-Use
     all: All
 
+deviceInfo:
+  BluetoothDevice: 
+    BLE代表低功耗蓝牙（Bluetooth Low Energy，通常描述为Bluetooth 智能设备）。
+    BLE是一种专为短距离通信而设计的无线通信形式。
+    BLE 适配器定义了BLE协议的访问配置与设备属性参数，点击查看详情。
+  ModbusDevice: 
+    Modbus是Modicon系统开发的通信协议。 简而言之，它是一种用于在电子设备之间通过串行线路传输信息的方法。
+    Modbus协议是一个主从架构的协议，Modbus适配器可以被称为Modbus主站，负责连接和采集Modbus从站（设备）的信息。
+  OPCUADevice: 
+    OPC统一体系结构（OPC UA）是由OPC Foundation开发的用于工业自动化的机器对机器通信协议。 OPC-UA适配器专注于与工业设备和系统进行通信以进行数据收集和控制。
+
 footer:
   docs: 文档
   forums: 论坛

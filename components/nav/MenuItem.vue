@@ -71,7 +71,7 @@ export default {
       }
     }
     .is-active {
-      background-color: var(--menu-hover-bg) !important;  
+      background-color: var(--menu-hover-bg) !important;
       span, .iconfont {
         color: var(--menu-action-text) !important;
       }
@@ -93,14 +93,14 @@ export default {
 
   .el-submenu.is-active.is-opened {
     .el-submenu__title {
-      background-color: var(--menu-hover-bg) !important;  
+      background-color: var(--menu-hover-bg) !important;
       span, .iconfont {
         color: var(--menu-action-text) !important;
       }
     }
     .nuxt-link-exact-active {
       .is-active {
-        background-color: transparent !important;  
+        background-color: transparent !important;
       }
       span, .iconfont {
         color: var(--menu-hover-bg) !important;

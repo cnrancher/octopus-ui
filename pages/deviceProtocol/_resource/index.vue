@@ -1,15 +1,17 @@
 <script>
 import LiveDate from '@/components/formatter/LiveDate';
-import { deviceDefaultInfo } from '@/config/map'
+import { deviceDefaultInfo, defaultDevice } from '@/config/map';
 
 export default {
   components: { LiveDate },
 
   data() {
     const { devicesType } = this.$store.state;
-    const language = this.$store.getters['i18n/getLanguage']
+    const language = this.$store.getters['i18n/getLanguage'];
+
     return {
       devicesType,
+      defaultDevice,
       language
     };
   },
@@ -20,7 +22,8 @@ export default {
     },
     defaultImg(kind) {
       const iconUrl = deviceDefaultInfo[kind]?.icon || deviceDefaultInfo.default.icon;
-      return require(`static/${iconUrl}`);
+
+      return require(`static/${ iconUrl }`);
     }
   }
 };
@@ -28,11 +31,11 @@ export default {
 
 <template>
   <div id="device-protocol">
-    <el-row :gutter="12" class="cardModule" type='flex'>
+    <el-row :gutter="12" class="cardModule" type="flex">
       <el-col
         v-for="device in devicesType"
-        class="device"
         :key="device.spec.names.kind"
+        class="device"
         :xs="24"
         :sm="24"
         :md="12"
@@ -41,11 +44,11 @@ export default {
       >
         <el-card shadow="always" class="card">
           <img
-            :src="defaultImg(device.spec.names.kind)"
             v-real-img="device.metadata.annotations['devices.edge.cattle.io/icon']"
+            :src="defaultImg(device.spec.names.kind)"
           />
           <div class="desc">
-            <template v-if="language === 'zh-hant'">
+            <template v-if="language === 'zh-hant' && defaultDevice.includes(device.spec.names.kind)">
               <div v-t="`deviceInfo.${device.spec.names.kind}`"></div>
             </template>
 
@@ -77,10 +80,10 @@ export default {
 
   .card {
     margin-bottom: 18px;
-    
+
     img {
-      width: 100%;
       height: 130px;
+      background-size: cover;
     }
 
     .desc {

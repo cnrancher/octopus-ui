@@ -1,5 +1,10 @@
 <script>
 /* eslint-disable */
+import { allHash } from '@/utils/promise';
+import LoadDeps from '@/mixins/load-deps';
+import {
+  NODE, PODS, EVENTS, COMPONENTS_STATUS, METRICS, DEVICE_LINKS, K3S
+} from '@/config/types';
 import * as d3 from 'd3';
 import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';
@@ -8,17 +13,24 @@ import '@/assets/fonts/hyzhuzi/style.scss';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 
-const pieData = {
-  ec1: '91|CPU|已使用2中的0.2',
-  ec2: '65|Memory|已使用7.7GIB中的0.1',
-  ec3: '21|Pods|已使用110中的12',
-}
-
 function hexbinColorGenerator(count = 0) {
   if (count <= 25) return '#f0f3fb';
   else if (count > 25 && count <= 50) return '#b0bee7';
   else if (count > 50 && count <= 75) return '#4674d3';
   else if (count > 75) return '#39277f';
+}
+
+// 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
+function formatCPUValue(cpuValue) {
+  let value = parseInt(cpuValue, 10);
+  if (!value) return 0;
+  if (/n/.test(cpuValue)) return value; // n结尾的直接返回
+  else if (/m/.test(cpuValue)) return value * 1000 * 1000; // m结尾的换算成为单位的值
+  return value * 1000 * 1000 * 1000; // 核数时的返回
+}
+// 1024，目前后台返回的是ki结尾，需要去掉单位
+function formatMemoryValue(memoryValue) {
+  return parseInt(memoryValue, 10) || 0;
 }
 
 export default {
@@ -28,76 +40,7 @@ export default {
       screenWidth: document.documentElement.clientWidth,
       gaugeList: [],
       rightGaugeList: [],
-      tableData: [
-        {
-          id: 1, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 2, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 3, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 4, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 5, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 6, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 7, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 8, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 9, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 10, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 11, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-        {
-          id: 12, name: '名称', name1: '名称', name2: '名称', name3: '名称', name4: '名称', name5: '名称'
-        },
-      ],
-      progressList: [
-        {
-          index: 1, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '91', percent: 91
-        },
-        {
-          index: 2, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '87', percent: 87
-        },
-        {
-          index: 3, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '82', percent: 82
-        },
-        {
-          index: 4, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '75', percent: 75
-        },
-        {
-          index: 5, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '61', percent: 61
-        },
-        {
-          index: 6, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '56', percent: 56
-        },
-        {
-          index: 7, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '48', percent: 48
-        },
-        {
-          index: 8, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '41', percent: 41
-        },
-        {
-          index: 9, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '39', percent: 39
-        },
-        {
-          index: 10, name: 'kube-system/fluenttd-cloud-logging-kubernetes-minion-group', value: '37', percent: 37
-        }
-      ],
+      tableData: [],
       serviceList: [
         {
           index: 1, name: 'Datastore', status: 'success'
@@ -117,29 +60,95 @@ export default {
         online: 0,
         offline: 0
       },
-      hexbinData: []
+      hexbinData: [],
+      gaugeData: {},
+      cpuLoadList: [],
+      memoryLoadList: []
     };
-
-    return {};
   },
-  mounted() {
-    // this.drawHexbin();
-    this.drawGauge();
-    this.drawRightGauge();
+  async mounted() {
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
     }
-    this.getMetricsIoNodes();
-    this.getDeviceInfo();
+    await this.$store.dispatch('dashboard/fetchALl', {
+      body: {}
+    });
+  },
+  computed: {
+    nodesData() {
+      if (this.$store.getters['deviceLink/hasType']('node')) {
+        return this.$store.getters['deviceLink/all']('node');
+      } else {
+        return this.$store.getters['dashboard/nodes'];
+      }
+    }, 
+    nodesMetricsData() {
+      if (this.$store.getters['deviceLink/hasType']('metrics.k8s.io.nodemetrics')) {
+        return this.$store.getters['deviceLink/all']('metrics.k8s.io.nodemetrics');
+      } else {
+        return this.$store.getters['dashboard/nodesMetrics'];
+      }
+    },
+    podsData() {
+      if (this.$store.getters['deviceLink/hasType']('pod')) {
+        return this.$store.getters['deviceLink/all']('pod');
+      } else {
+        return this.$store.getters['dashboard/pods'];
+      }
+    }, 
+    devices() {
+      if (this.$store.getters['deviceLink/hasType']('edge.cattle.io.devicelink')) {
+        return this.$store.getters['deviceLink/all']('edge.cattle.io.devicelink');
+      } else {
+        return this.$store.getters['dashboard/devices'];
+      }
+    },
+    podsLoadInfo() {
+      if (this.$store.getters['deviceLink/hasType']('metrics.k8s.io.podmetrics')) {
+        return this.$store.getters['deviceLink/all']('metrics.k8s.io.podmetrics');
+      } else {
+        return this.$store.getters['dashboard/podsLoadInfo'];
+      }
+    },
+    eventList() {
+      if (this.$store.getters['deviceLink/hasType']('event')) {
+        return this.$store.getters['deviceLink/all']('event');
+      } else {
+        return this.$store.getters['dashboard/events'];
+      }
+    },
+    datastorage() {
+      return this.$store.getters['dashboard/datastorage'];
+    },
+    systemControllers() {
+      if (this.$store.getters['deviceLink/hasType']('componentstatus')) {
+        return this.$store.getters['deviceLink/all']('componentstatus');
+      } else {
+        return this.$store.getters['dashboard/systemControllers'];
+      }
+    },
+    networking() {
+      if (this.$store.getters['deviceLink/hasType']('k3s.cattle.io.addon')) {
+        return this.$store.getters['deviceLink/all']('k3s.cattle.io.addon');
+      } else {
+        return this.$store.getters['dashboard/networking'];
+      }
+    }
   },
   methods: {
-    formatFontSize(val,initWidth=1920) {
+    formatFontSize(val, initWidth = 1920) {
       const nowClientWidth = document.documentElement.clientWidth;
       return val * (nowClientWidth/initWidth)
     },
+    getDataFromStore(type) {
+      return this.$store.getters['deviceLink/hasType'](type) ? this.$store.getters['deviceLink/all'](type) : [];
+    },
     drawGauge() {
-      const chartContainerNames = ['ec1', 'ec2', 'ec3'];
+      const chartContainerNames = ['cpuUsedGauge', 'memoryUsedGauge', 'podsUsedGauge'];
+      const { gaugeData } = this;
       chartContainerNames.forEach((ecItem, ecIndex) => {
+        const params = gaugeData[ecItem].split('|');
+        const rate = parseFloat(params[0]) / 100;
         const baseOptions = {
         // backgroundColor: '#043654',
         series: [
@@ -193,7 +202,7 @@ export default {
                   width: 10,
                   color: [
                     [
-                      0.5, new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                      rate, new echarts.graphic.LinearGradient(0, 0, 1, 0, [
                         {
                           offset: 0,
                           color:  '#3861c6'
@@ -229,7 +238,6 @@ export default {
                 offsetCenter: [0, '-4%'],
                 color:        '#423fa9',
                 formatter(param) {
-                  const params = pieData[ecItem].split('|');
                   return `{percent|${ params[0] }%}\n{type|${params[1]}}\n{describe|${params[2]}}`;
                 },
                 textStyle: { fontSize: this.formatFontSize(44) },
@@ -268,7 +276,7 @@ export default {
     },
     drawHexbin() {
       const { hexbinData } = this;
-      const hexbinContainerNames = ['hexbindemo1', 'hexbindemo2', 'hexbindemo3'];
+      const hexbinContainerNames = ['cpuUsageHexbin', 'memoryUsageHexbin', 'podsUsageHexbin'];
       const tooltipRef = this.$refs['tooltip'];
 
       hexbinContainerNames.forEach((demoItem, demoIndex) => {
@@ -291,7 +299,6 @@ export default {
             return hexbinColorGenerator(list[i].num);
           })
           .on('mouseover', (pointsInfo, pointsIndex, pathArray) => {
-            // console.log(d3Node.selectAll('path'), d3Node);
             const pathDom = pathArray[pointsIndex];
             const pathDomPosition = pathDom.getBoundingClientRect();
             tooltipRef.style.display = 'block';
@@ -399,10 +406,8 @@ export default {
         }, 500);
       });
     },
-    async getMetricsIoNodes() {
-      const { nodesMetricsData, nodesData, podsData } = await this.$store.dispatch('dashboard/getMetricsIoNodes', {
-        body: {}
-      });
+    updateMetricsIoNodes() {
+      const { nodesMetricsData, nodesData, podsData } = this;
       const nodesMap = {};
       // 数据整合
       nodesData.forEach((nodeItem, nodeIndex) => {
@@ -426,13 +431,22 @@ export default {
         }
       });
 
-      const hexbinData = [[], [], []]
+      let clusterCPU = 0;
+      let clusterMemory = 0;
+      let clusterPods = 0;
 
-      const displayData = Object.keys(nodesMap).map(keyItem => {
+      let clusterUsedCPU = 0;
+      let clusterUsedMemory = 0;
+      let clusterUsedPods = 0;
+      // 分别对应CPU，内存和pod
+      const hexbinData = [[], [], []];
+
+      // 计算单个节点的CPU，内存和pod使用率
+      const dataFormat = Object.keys(nodesMap).map(keyItem => {
         const { usage, status, podList } = nodesMap[keyItem];
         const { cpu, memory, pods } = status.allocatable;
-        const cpuUsedRate = (parseInt(usage.cpu, 10) / parseInt(cpu, 10) / 1000 / 1000 / 1000 * 100).toFixed(2);
-        const memoryUsedRate = (parseInt(usage.memory, 10) / parseInt(memory, 10) * 100).toFixed(2);
+        const cpuUsedRate = (formatCPUValue(usage.cpu, 10) / formatCPUValue(cpu, 10) * 100).toFixed(2);
+        const memoryUsedRate = (formatMemoryValue(usage.memory, 10) / formatMemoryValue(memory, 10) * 100).toFixed(2);
         const podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(2);
         const name = keyItem.toString();
         hexbinData[0].push({
@@ -447,28 +461,123 @@ export default {
           num: parseFloat(podsUsedRate),
           data: `${name}:${podsUsedRate}%`
         });
+        // 统计集群总量
+        clusterCPU += formatCPUValue(cpu, 10);
+        clusterMemory += formatMemoryValue(memory, 10);
+        clusterPods += parseInt(pods, 10);
 
+        // 统计集群已使用总量
+        clusterUsedCPU += formatCPUValue(usage.cpu, 10);
+        clusterUsedMemory += formatMemoryValue(usage.memory, 10);
+        clusterUsedPods += podList.length;
         return {
           cpuUsedRate, memoryUsedRate, podsUsedRate,
           name: keyItem.toString()
         }
       });
+      const clusterCPUUsedRate = (clusterUsedCPU / clusterCPU * 100).toFixed(2);
+      const clusterMemoryUsedRate = (clusterUsedMemory / clusterMemory * 100).toFixed(2);
+      const clusterPodsUsedRate = (clusterUsedPods / clusterPods * 100).toFixed(2);
       this.hexbinData = hexbinData;
-      console.log(nodesMap, hexbinData);
+      this.gaugeData = {
+        cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用2中的0.2`,
+        memoryUsedGauge: `${clusterMemoryUsedRate}|Memory|已使用7.7GIB中的0.1`,
+        podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用110中的12`,
+      };
     },
-    async getDeviceInfo() {
-      const data = await this.$store.dispatch('dashboard/getDeviceInfo', {
-        body: {}
-      });
-      let total = data.length;
+    updateDeviceInfo() {
+      const { devices } = this;
+      let total = devices.length;
       let online = 0;
       let offline = 0;
-      data.forEach((deviceItem, deviceIndex) => {
+      devices.forEach((deviceItem, deviceIndex) => {
         const state = deviceItem.metadata.state;
         if ('active' === state.name) online++;
       });
       offline = total - online;
       this.iotInfo = { total, online, offline };
+    },
+    updatePodsLoadInfo() {
+      const { nodesData, podsLoadInfo } = this;
+      let clusterCPU = 0;
+      let clusterMemory = 0;
+      nodesData.forEach((nodeItem, nodeIndex) => {
+        const { cpu, memory } = nodeItem.status.allocatable;
+        clusterCPU += formatCPUValue(cpu);
+        clusterMemory += formatMemoryValue(memory);
+      })
+      const cpuLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
+        const cpu = formatCPUValue(podItem.containers[0].usage.cpu);
+        const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
+        const cpuUsageRate = cpu / clusterCPU * 100;
+        return { id: podIndex, name: podItem.id, value: cpuUsage, percent: cpuUsageRate };
+      })
+      .sort((leftItem, rightItem) => rightItem.value - leftItem.value);
+      const memoryLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
+        const memory = formatMemoryValue(podItem.containers[0].usage.memory);
+        const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
+        const memoryUsageRate = memory / clusterMemory * 100;
+        return { id: podIndex, name: podItem.id, value: memoryUsage, percent: memoryUsageRate };
+      })
+      .sort((leftItem, rightItem) => rightItem.value - leftItem.value);
+
+      this.cpuLoadList = cpuLoadSortList.splice(0, 10);
+      this.memoryLoadList = memoryLoadSortList.splice(0, 10);
+    },
+    updateEventsData() {
+      const { eventList } = this;
+      this.tableData = eventList.map(eventItem => {
+        const { metadata, message } = eventItem;
+        const { fields } = metadata;
+        return {
+          namespace: metadata.namespace,
+          lastSeen: fields[0],
+          type: fields[1],
+          reason: fields[2],
+          object: fields[3],
+          message
+        }
+      });
+    },
+    updateSystemServiceStatus() {
+      const { datastorage, systemControllers, networking, nodesData } = this;
+      const systemServeives = [
+        {
+          index: 0, name: 'Datastore', status: datastorage.health ? 'success' : 'error'
+        }
+      ];
+      let systemControllersStatus = true;
+      let networkingStatus = true;
+      let nodesStatus = true;
+
+      systemControllers.forEach((controllerItem, controllerIndex) => {
+        const { state } = controllerItem.metadata;
+        systemControllersStatus &= 'active' === state.name;
+      });
+      systemServeives.push({
+        index: 1, name: 'System Controllers', status: systemControllersStatus ? 'success' : 'error'
+      });
+
+      nodesData.forEach((nodeItem, nodeIndex) => {
+        networkingStatus &= '' !== nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'];
+        nodesStatus &= 'active' === nodeItem.metadata.state.name;
+      });
+
+      networking.forEach((networkingItem, networkingIndex) => {
+        const { metadata } = networkingItem;
+        if (!!~['traefik', 'coredns'].indexOf(metadata.name)) {
+          networkingStatus &= 'active' === metadata.state.name;
+        }
+      });
+
+      systemServeives.push({
+        index: 2, name: 'Networking', status: networkingStatus ? 'success' : 'error'
+      });
+      systemServeives.push({
+        index: 3, name: 'Nodes', status: nodesStatus ? 'success' : 'error'
+      })
+      
+      this.serviceList = systemServeives;
     }
   },
   watch: {
@@ -480,58 +589,126 @@ export default {
         chartsItem.resize();
       })
     },
+    nodesData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+        this.updatePodsLoadInfo();
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    podsData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+      },
+      deep: true,
+      immediate: true
+    },
+    nodesMetricsData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+      },
+      deep: true,
+      immediate: true
+    },
+    eventList: {
+      handler(val) {
+        this.updateEventsData();
+      },
+      deep: true,
+      immediate: true
+    },
+    devices: {
+      handler(val) {
+        this.updateDeviceInfo();
+      },
+      deep: true,
+      immediate: true
+    },
+    podsLoadInfo: {
+      handler(val) {
+        this.updatePodsLoadInfo();
+      },
+      deep: true,
+      immediate: true
+    },
+    datastorage: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    systemControllers: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    networking: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
     iotInfo: function(val) {
       this.drawRightGauge(true);
     },
     hexbinData: function() {
       this.drawHexbin();
+    },
+    gaugeData: function() {
+      this.drawGauge();
     }
   }
 };
 </script>
 <template>
   <div class="wrapper">
-    <h3 class="header-border"><i class="position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
+    <h3 class="header-border"><i class="position icon iconfont iconzuobiao1"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
     <div class="content">
       <div class="content-main">
         <div class="usage">
           <h3 class="module-title">
-            <i class="icon dashboard-source"></i>
+            <i class="icon iconfont iconziyuanshiyong"></i>
             资源使用
           </h3>
           <div class="usage-list">
             <div class="item">
               <h4>每个节点CPU使用率</h4>
               <div class="hexbin-container">
-                <svg ref="hexbindemo1"></svg>
+                <svg ref="cpuUsageHexbin"></svg>
               </div>
               <h4>集群整体CPU使用率</h4>
-              <div class="pie-container" ref="ec1">
+              <div class="pie-container" ref="cpuUsedGauge">
               </div>
             </div>
             <div class="item">
               <h4>每个节点内存使用率</h4>
               <div class="hexbin-container">
-                <svg ref="hexbindemo2"></svg>
+                <svg ref="memoryUsageHexbin"></svg>
               </div>
               <h4>集群整体内存使用率</h4>
-              <div class="pie-container" ref="ec2">
+              <div class="pie-container" ref="memoryUsedGauge">
               </div>
             </div>
             <div class="item">
               <h4>每个节点Pod使用率</h4>
               <div class="hexbin-container">
-                <svg ref="hexbindemo3"></svg>
+                <svg ref="podsUsageHexbin"></svg>
               </div>
               <h4>集群整体Pod数量</h4>
-              <div class="pie-container" ref="ec3">
+              <div class="pie-container" ref="podsUsedGauge">
               </div>
             </div>
           </div>
         </div>
         <div class="service">
           <h3 class="module-title">
-            <i class="icon dashboard-system"></i>
+            <i class="icon iconfont iconxitongfuwu"></i>
             系统服务
           </h3>
           <ServiceStatusList 
@@ -540,7 +717,7 @@ export default {
         </div>
         <div class="event">
           <h3 class="module-title">
-            <i class="icon dashboard-set"></i>
+            <i class="icon iconfont iconjiqunx"></i>
             集群事件
           </h3>
           <el-table
@@ -550,33 +727,33 @@ export default {
             height="21vw"
           >
             <el-table-column
-              label="名称"
-              prop="name"
+              label="NAMESPACE"
+              prop="namespace"
               min-width="100px"
             />
             <el-table-column
-              label="名称"
-              prop="name1"
+              label="LAST SEEN"
+              prop="lastSeen"
               min-width="100px"
             />
             <el-table-column
-              label="名称"
-              prop="name2"
+              label="TYPE"
+              prop="type"
               min-width="100px"
             />
             <el-table-column
-              label="名称"
-              prop="name3"
+              label="REASON"
+              prop="reason"
               min-width="100px"
             />
             <el-table-column
-              label="名称"
-              prop="name4"
+              label="OBJECT"
+              prop="object"
               min-width="100px"
             />
             <el-table-column
-              label="名称"
-              prop="name5"
+              label="MESSAGE"
+              prop="message"
               min-width="100px"
             />
           </el-table>
@@ -585,7 +762,7 @@ export default {
       <div class="content-side">
         <div class="iot">
           <h3 class="module-title">
-            <i class="icon dashboard-iot"></i>
+            <i class="icon iconfont icon-iot-management"></i>
             IoT设备
           </h3>
           <div class="pie">
@@ -615,18 +792,18 @@ export default {
         </div>
         <div class="balance">
           <h3 class="module-title">
-            <i class="icon dashboard-balance"></i>
+            <i class="icon iconfont icongongzuofuzai"></i>
             工作负载
           </h3>
           <DashboardProgressBar 
             title="CPU密集型Pod TOP10"
             unit="单位：分钟"
-            :list="progressList"
+            :list="cpuLoadList"
           />
           <DashboardProgressBar 
             title="内存密集型Pod TOP10"
             unit="单位：MiB"
-            :list="progressList"
+            :list="memoryLoadList"
           />
         </div>
       </div>
@@ -664,8 +841,7 @@ export default {
         display: inline-block;
         width: 20px;
         height: 20px;
-        background: url('~assets/images/dashboard-position.png') no-repeat center;
-        vertical-align: middle;
+        vertical-align: baseline;
       }
     }
     .usage, .service, .event, .balance, .iot {
@@ -690,14 +866,8 @@ export default {
         min-height: 800px;
         display: grid;
         grid-template-rows: repeat(3, auto);
-        .dashboard-set {
-          background: url('~assets/images/dashboard-set.png') no-repeat center;
-        }
-        .dashboard-source {
-          background: url('~assets/images/dashboard-source.png') no-repeat center;
-        }
-        .dashboard-system {
-          background: url('~assets/images/dashboard-system.png') no-repeat center;
+        .icon {
+          font-size: 25px;
         }
         .pie-container {
           width: 100%;
@@ -707,10 +877,10 @@ export default {
         .usage-list {
           display: grid;
           grid-template-columns: repeat(3, 32.5%);
-          grid-column-gap: 1.2%;
+          grid-column-gap: 1.4%;
           .item {
             border: 1px solid #ddd;
-            padding: 10px 20px 0;
+            padding: 10px 10px 0;
             h4 {
               font-size: 17px;
               font-weight: bold;
@@ -757,11 +927,8 @@ export default {
         display: grid;
         min-height: 800px;
         grid-template-rows: repeat(2, auto);
-        .dashboard-balance {
-          background: url('~assets/images/dashboard-balance.png') no-repeat center;
-        }
-        .dashboard-iot {
-          background: url('~assets/images/dashboard-iot.png') no-repeat center;
+        .icon {
+          font-size: 25px;
         }
         .pie {
           display: grid;

@@ -1,38 +1,110 @@
+import { allHash } from '@/utils/promise';
+import {
+  NODE, PODS, EVENTS, COMPONENTS_STATUS, METRICS, DEVICE_LINKS, K3S
+} from '@/config/types';
 const ERR_CLIENT = 'client';
 const ERR_SERVER = 'server';
 
 export const state = function() {
-  return {};
+  return {
+    nodes:             [],
+    events:            [],
+    nodesMetrics:      [],
+    pods:              [],
+    devices:           [],
+    podsLoadInfo:      [],
+    datastorage:       true,
+    systemControllers: [],
+    networking:        []
+  };
 };
 
-export const getters = {};
+export const getters = {
+  nodes(state) {
+    return state.nodes;
+  },
+  events(state) {
+    return state.events;
+  },
+  nodesMetrics(state) {
+    return state.nodesMetrics;
+  },
+  pods(state) {
+    return state.pods;
+  },
+  devices(state) {
+    return state.devices;
+  },
+  podsLoadInfo(state) {
+    return state.podsLoadInfo;
+  },
+  datastorage(state) {
+    return state.datastorage;
+  },
+  systemControllers(state) {
+    return state.systemControllers;
+  },
+  networking(state) {
+    return state.networking;
+  }
+};
 
-export const mutations = {};
+export const mutations = {
+  updateNodes(state, newNodes) {
+    state.nodes = newNodes;
+  },
+  updateNodesMetrics(state, newNodesMetrics) {
+    state.nodesMetrics = newNodesMetrics;
+  },
+  updateEvents(state, newEvents) {
+    state.events = newEvents;
+  },
+  updatePods(state, newPods) {
+    state.pods = newPods;
+  },
+  updateDevices(state, newDevices) {
+    state.devices = newDevices;
+  },
+  updatePodsLoadInfo(state, newPodsLoadInfo) {
+    state.podsLoadInfo = newPodsLoadInfo;
+  },
+  updateDatastorage(state, newDatastorage) {
+    state.datastorage = newDatastorage;
+  },
+  updateSystemControllers(state, newSystemControllers) {
+    state.systemControllers = newSystemControllers;
+  },
+  updateNetworking(state, newNetworking) {
+    state.networking = newNetworking;
+  }
+};
 
 export const actions = {
-  async getMetricsIoNodes({ dispatch, commit }, { body }) {
+  async fetchALl({ dispatch, commit }, { body }) {
     try {
-      const rets = await Promise.all([
-        dispatch('deviceLink/request', {
-          url:    `/v1/metrics.k8s.io.nodes`,
-          method: 'get'
-        }, { root: true }),
-        dispatch('deviceLink/request', {
-          url:    `/v1/nodes`,
-          method: 'get'
-        }, { root: true }),
-        dispatch('deviceLink/request', {
-          url:    `/v1/pods`,
-          method: 'get'
-        }, { root: true })
-      ]);
-      const nodesMetricsData = rets[0].data;
-      const nodesData = rets[1].data;
-      const podsData = rets[2].data;
+      const {
+        nodesData, nodesMetricsData, podsData, devices, podsLoadInfo, events, datastorage, systemControllers, networking
+      } = await allHash({
+        nodesData:         dispatch('deviceLink/findAll', { type: 'node', opt: { url: NODE } }, { root: true }),
+        nodesMetricsData:  dispatch('deviceLink/findAll', { type: 'metrics.k8s.io.nodemetrics', opt: { url: METRICS.NODES } }, { root: true }),
+        podsData:          dispatch('deviceLink/findAll', { type: 'pod', opt: { url: PODS } }, { root: true }),
+        devices:           dispatch('deviceLink/findAll', { type: 'edge.cattle.io.devicelink', opt: { url: DEVICE_LINKS } }, { root: true }),
+        podsLoadInfo:      dispatch('deviceLink/findAll', { type: 'metrics.k8s.io.podmetrics', opt: { url: METRICS.PODS } }, { root: true }),
+        events:            dispatch('deviceLink/findAll', { type: 'event', opt: { url: EVENTS } }, { root: true }),
+        datastorage:       dispatch('deviceLink/request', { url: '/v2-public/health/datastorage', method: 'get' }, { root: true }),
+        systemControllers: dispatch('deviceLink/findAll', { type: 'componentstatus', opt: { url: COMPONENTS_STATUS } }, { root: true }),
+        networking:        dispatch('deviceLink/findAll', { type: 'k3s.cattle.io.addon', opt: { url: K3S.ADDONS } }, { root: true })
+      });
 
-      return {
-        nodesMetricsData, nodesData, podsData
-      };
+      commit('updateNodes', nodesData);
+      commit('updateNodesMetrics', nodesMetricsData);
+      commit('updatePods', podsData);
+      commit('updateDevices', devices);
+      commit('updatePodsLoadInfo', podsLoadInfo);
+      commit('updateEvents', events);
+      commit('updateDatastorage', datastorage);
+      commit('updateSystemControllers', systemControllers);
+      commit('updateNetworking', networking);
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {
         return Promise.reject(ERR_CLIENT);
@@ -41,15 +113,29 @@ export const actions = {
       return Promise.reject(ERR_SERVER);
     }
   },
-
-  async getDeviceInfo({ dispatch, commit }, { body }) {
+  async fetchNodes({ dispatch, commit }, { body }) {
     try {
-      const res = await dispatch('deviceLink/request', {
-        url:    `/v1/edge.cattle.io.devicelinks`,
-        method: 'get'
+      const res = await dispatch('deviceLink/findAll', {
+        type:    NODE,
+        opt:  { url: NODE }
       }, { root: true });
 
-      return res.data;
+      commit('updateNodes', res);
+
+      return res;
+    } catch (err) {
+      if ( err._status >= 400 && err._status <= 499 ) {
+        return Promise.reject(ERR_CLIENT);
+      }
+
+      return Promise.reject(ERR_SERVER);
+    }
+  },
+  async getSystemServiceStatus({ dispatch, commit, rootGetters }, { body }) {
+    try {
+      const res = await dispatch('deviceLink/request', { url: `/v2-public/health/datastorage`, method: 'get' }, { root: true });
+
+      commit('updateDatastorage', res);
     } catch (err) {
       if ( err._status >= 400 && err._status <= 499 ) {
         return Promise.reject(ERR_CLIENT);

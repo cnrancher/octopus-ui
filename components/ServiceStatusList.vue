@@ -22,13 +22,19 @@ export default {
   },
 
   data() {
-    const tempList = this.list.map((item) => {
-      item.classname = getItemClassname(item.status);
+    return { displayList: [] };
+  },
 
-      return item;
-    });
+  watch: {
+    list() {
+      const tempList = this.list.map((item) => {
+        item.classname = getItemClassname(item.status);
 
-    return { displayList: tempList };
+        return item;
+      });
+
+      return { displayList: tempList };
+    }
   }
 };
 </script>

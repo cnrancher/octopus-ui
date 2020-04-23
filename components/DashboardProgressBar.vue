@@ -74,6 +74,7 @@ export default {
       padding: 10px;
       border: 1px solid #ddd;
       margin-top: 0;
+      min-height: 300px;
       li {
         list-style: none;
         width: 100%;

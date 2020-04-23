@@ -1,5 +1,10 @@
 <script>
 /* eslint-disable */
+import { allHash } from '@/utils/promise';
+import LoadDeps from '@/mixins/load-deps';
+import {
+  NODE, PODS, EVENTS, COMPONENTS_STATUS, METRICS, DEVICE_LINKS, K3S
+} from '@/config/types';
 import * as d3 from 'd3';
 import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';
@@ -61,23 +66,82 @@ export default {
       memoryLoadList: []
     };
   },
-  mounted() {
-    // this.drawHexbin();
-    // this.drawGauge();
-    this.drawRightGauge();
+  async mounted() {
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
     }
-    this.getMetricsIoNodes();
-    this.getDeviceInfo();
-    this.getPodsLoadInfo();
-    this.getEvents();
-    this.getSystemServiceStatus();
+    await this.$store.dispatch('dashboard/fetchALl', {
+      body: {}
+    });
+  },
+  computed: {
+    nodesData() {
+      if (this.$store.getters['deviceLink/hasType']('node')) {
+        return this.$store.getters['deviceLink/all']('node');
+      } else {
+        return this.$store.getters['dashboard/nodes'];
+      }
+    }, 
+    nodesMetricsData() {
+      if (this.$store.getters['deviceLink/hasType']('metrics.k8s.io.nodemetrics')) {
+        return this.$store.getters['deviceLink/all']('metrics.k8s.io.nodemetrics');
+      } else {
+        return this.$store.getters['dashboard/nodesMetrics'];
+      }
+    },
+    podsData() {
+      if (this.$store.getters['deviceLink/hasType']('pod')) {
+        return this.$store.getters['deviceLink/all']('pod');
+      } else {
+        return this.$store.getters['dashboard/pods'];
+      }
+    }, 
+    devices() {
+      if (this.$store.getters['deviceLink/hasType']('edge.cattle.io.devicelink')) {
+        return this.$store.getters['deviceLink/all']('edge.cattle.io.devicelink');
+      } else {
+        return this.$store.getters['dashboard/devices'];
+      }
+    },
+    podsLoadInfo() {
+      if (this.$store.getters['deviceLink/hasType']('metrics.k8s.io.podmetrics')) {
+        return this.$store.getters['deviceLink/all']('metrics.k8s.io.podmetrics');
+      } else {
+        return this.$store.getters['dashboard/podsLoadInfo'];
+      }
+    },
+    eventList() {
+      if (this.$store.getters['deviceLink/hasType']('event')) {
+        return this.$store.getters['deviceLink/all']('event');
+      } else {
+        return this.$store.getters['dashboard/events'];
+      }
+    },
+    datastorage() {
+      return this.$store.getters['dashboard/datastorage'];
+    },
+    systemControllers() {
+      if (this.$store.getters['deviceLink/hasType']('componentstatus')) {
+        return this.$store.getters['deviceLink/all']('componentstatus');
+      } else {
+        return this.$store.getters['dashboard/systemControllers'];
+      }
+    },
+    networking() {
+      if (this.$store.getters['deviceLink/hasType']('k3s.cattle.io.addon')) {
+        return this.$store.getters['deviceLink/all']('k3s.cattle.io.addon');
+      } else {
+        return this.$store.getters['dashboard/networking'];
+      }
+    }
   },
   methods: {
-    formatFontSize(val,initWidth=1920) {
+    formatFontSize(val, initWidth = 1920) {
       const nowClientWidth = document.documentElement.clientWidth;
       return val * (nowClientWidth/initWidth)
+    },
+    getDataFromStore(type) {
+      return this.$store.getters['deviceLink/hasType'](type) ? this.$store.getters['deviceLink/all'](type) : [];
     },
     drawGauge() {
       const chartContainerNames = ['cpuUsedGauge', 'memoryUsedGauge', 'podsUsedGauge'];
@@ -342,10 +406,8 @@ export default {
         }, 500);
       });
     },
-    async getMetricsIoNodes() {
-      const { nodesMetricsData, nodesData, podsData } = await this.$store.dispatch('dashboard/getMetricsIoNodes', {
-        body: {}
-      });
+    updateMetricsIoNodes() {
+      const { nodesMetricsData, nodesData, podsData } = this;
       const nodesMap = {};
       // 数据整合
       nodesData.forEach((nodeItem, nodeIndex) => {
@@ -423,24 +485,20 @@ export default {
         podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用110中的12`,
       };
     },
-    async getDeviceInfo() {
-      const data = await this.$store.dispatch('dashboard/getDeviceInfo', {
-        body: {}
-      });
-      let total = data.length;
+    updateDeviceInfo() {
+      const { devices } = this;
+      let total = devices.length;
       let online = 0;
       let offline = 0;
-      data.forEach((deviceItem, deviceIndex) => {
+      devices.forEach((deviceItem, deviceIndex) => {
         const state = deviceItem.metadata.state;
         if ('active' === state.name) online++;
       });
       offline = total - online;
       this.iotInfo = { total, online, offline };
     },
-    async getPodsLoadInfo() {
-      const { nodesData, podsData } = await this.$store.dispatch('dashboard/getPodsLoadInfo', {
-        body: {}
-      });
+    updatePodsLoadInfo() {
+      const { nodesData, podsLoadInfo } = this;
       let clusterCPU = 0;
       let clusterMemory = 0;
       nodesData.forEach((nodeItem, nodeIndex) => {
@@ -448,14 +506,14 @@ export default {
         clusterCPU += formatCPUValue(cpu);
         clusterMemory += formatMemoryValue(memory);
       })
-      const cpuLoadSortList = podsData.map((podItem, podIndex) => {
+      const cpuLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
         const cpu = formatCPUValue(podItem.containers[0].usage.cpu);
         const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
         const cpuUsageRate = cpu / clusterCPU * 100;
         return { id: podIndex, name: podItem.id, value: cpuUsage, percent: cpuUsageRate };
       })
       .sort((leftItem, rightItem) => rightItem.value - leftItem.value);
-      const memoryLoadSortList = podsData.map((podItem, podIndex) => {
+      const memoryLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
         const memory = formatMemoryValue(podItem.containers[0].usage.memory);
         const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
         const memoryUsageRate = memory / clusterMemory * 100;
@@ -466,11 +524,9 @@ export default {
       this.cpuLoadList = cpuLoadSortList.splice(0, 10);
       this.memoryLoadList = memoryLoadSortList.splice(0, 10);
     },
-    async getEvents() {
-      const data = await this.$store.dispatch('dashboard/getEvents', {
-        body: {}
-      });
-      this.tableData = data.map(eventItem => {
+    updateEventsData() {
+      const { eventList } = this;
+      this.tableData = eventList.map(eventItem => {
         const { metadata, message } = eventItem;
         const { fields } = metadata;
         return {
@@ -483,10 +539,8 @@ export default {
         }
       });
     },
-    async getSystemServiceStatus() {
-      const { datastorage, systemControllers, networking, nodes } = await this.$store.dispatch('dashboard/getSystemServiceStatus', {
-        body: {}
-      });
+    updateSystemServiceStatus() {
+      const { datastorage, systemControllers, networking, nodesData } = this;
       const systemServeives = [
         {
           index: 0, name: 'Datastore', status: datastorage.health ? 'success' : 'error'
@@ -504,7 +558,7 @@ export default {
         index: 1, name: 'System Controllers', status: systemControllersStatus ? 'success' : 'error'
       });
 
-      nodes.forEach((nodeItem, nodeIndex) => {
+      nodesData.forEach((nodeItem, nodeIndex) => {
         networkingStatus &= '' !== nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'];
         nodesStatus &= 'active' === nodeItem.metadata.state.name;
       });
@@ -522,18 +576,6 @@ export default {
       systemServeives.push({
         index: 3, name: 'Nodes', status: nodesStatus ? 'success' : 'error'
       })
-      // {
-      //     index: 1, name: 'Datastore', status: 'success'
-      //   },
-      //   {
-      //     index: 2, name: 'System Controllers', status: 'error'
-      //   },
-      //   {
-      //     index: 3, name: 'Networking', status: 'success'
-      //   },
-      //   {
-      //     index: 4, name: 'Nodes', status: 'unknown'
-      //   }
       
       this.serviceList = systemServeives;
     }
@@ -546,6 +588,71 @@ export default {
       this.rightGaugeList.forEach(chartsItem => {
         chartsItem.resize();
       })
+    },
+    nodesData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+        this.updatePodsLoadInfo();
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    podsData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+      },
+      deep: true,
+      immediate: true
+    },
+    nodesMetricsData: {
+      handler(val) {
+        this.updateMetricsIoNodes();
+      },
+      deep: true,
+      immediate: true
+    },
+    eventList: {
+      handler(val) {
+        this.updateEventsData();
+      },
+      deep: true,
+      immediate: true
+    },
+    devices: {
+      handler(val) {
+        this.updateDeviceInfo();
+      },
+      deep: true,
+      immediate: true
+    },
+    podsLoadInfo: {
+      handler(val) {
+        this.updatePodsLoadInfo();
+      },
+      deep: true,
+      immediate: true
+    },
+    datastorage: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    systemControllers: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
+    },
+    networking: {
+      handler(val) {
+        this.updateSystemServiceStatus();
+      },
+      deep: true,
+      immediate: true
     },
     iotInfo: function(val) {
       this.drawRightGauge(true);
@@ -770,10 +877,10 @@ export default {
         .usage-list {
           display: grid;
           grid-template-columns: repeat(3, 32.5%);
-          grid-column-gap: 1.2%;
+          grid-column-gap: 1.4%;
           .item {
             border: 1px solid #ddd;
-            padding: 10px 20px 0;
+            padding: 10px 10px 0;
             h4 {
               font-size: 17px;
               font-weight: bold;

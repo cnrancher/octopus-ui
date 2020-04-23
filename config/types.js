@@ -7,7 +7,11 @@ export const EVENT = 'core.v1.event';
 export const NAMESPACE = 'core.v1.namespace';
 export const NAMESPACES = 'namespaces';
 export const NODE = 'node';
+export const NODES = 'nodes';
 export const POD = 'core.v1.pod';
+export const PODS = 'pods';
+export const EVENTS = 'events';
+export const COMPONENTS_STATUS = 'componentstatuses';
 export const RESOURCE_QUOTA = 'core.v1.resourcequota';
 export const SCHEMA = 'schema';
 export const SECRET = 'core.v1.secret';
@@ -21,6 +25,7 @@ export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions'
 
 export const HELM = 'helm.cattle.io.v1.helmchart';
 export const DEVICE_LINK='edge.cattle.io.devicelink';
+export const DEVICE_LINKS='edge.cattle.io.devicelinks';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';
 export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevice';
 
@@ -45,3 +50,12 @@ export const RIO = {
 
   SYSTEM_NAMESPACE: 'rio-system',
 };
+
+export const METRICS = {
+  NODES: 'metrics.k8s.io.nodes',
+  PODS: 'metrics.k8s.io.pods'
+}
+
+export const K3S = {
+  ADDONS: 'k3s.cattle.io.addons'
+}

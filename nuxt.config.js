@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { trimWhitespaceSsr as trimWhitespace } from './plugins/trim-whitespace';
-import realImg from './plugins/real-img'
+import realImg from './plugins/real-img';
 import { directiveSsr as t } from './plugins/i18n';
 import { STANDARD } from './config/private-label';
 

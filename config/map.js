@@ -99,16 +99,22 @@ export const register = [{
 }];
 
 export const deviceDefaultInfo = {
-  'BluetoothDevice': {
-    icon: 'Bluetooth_Smart_Logo.svg',
+  BluetoothDevice: { 
+    icon:  'Bluetooth_Smart_Logo.svg',
+    label: 'Bluethooth Device'
   },
-  'ModbusDevice': {
-    icon: 'modbus.svg'
+  ModbusDevice:    { 
+    icon:  'modbus.svg',
+    label: 'Modbus Device'
   },
-  'OPCUADevice': {
-    icon: 'opc-ua.svg'
+  OPCUADevice:     { 
+    icon:  'opc-ua.svg',
+    label: 'OPC_UA Device'
   },
-  'default': {
-    icon: 'default.jpg'
+  default:         { 
+    icon:  'device-default.png',
+    label: 'defalut'
   }
-}
+};
+
+export const defaultDevice = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];

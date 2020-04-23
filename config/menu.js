@@ -14,7 +14,7 @@ export const MENUS = [
       icon:  'icon-infrastructure',
     },
     children: [
-      { 
+      {
         name: 'infrastructure/node-management',
         path: '/infrastructure/node-management',
         meta: { title: '节点管理' }

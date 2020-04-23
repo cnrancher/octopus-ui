@@ -90,3 +90,25 @@ export const OPC_UA_DEVICE = {
     }
   }
 };
+
+export const customDevice = {
+  adaptor: {
+    node: '',
+    name: ''
+  },
+  model: {
+    apiVersion: 'devices.edge.cattle.io/v1alpha1',
+    kind:       ''
+  },
+  template: {
+    metadata: { 
+      labels: {
+        'wj': 'test1'
+      }
+    },
+    spec:     {
+      protocol: {},
+      properties: []
+    }
+  }
+}

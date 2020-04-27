@@ -10,14 +10,20 @@ import { hexbin } from 'd3-hexbin';
 import { Table } from 'element-ui';
 import echarts from 'echarts';
 import '@/assets/fonts/hyzhuzi/style.scss';
+import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 
-function hexbinColorGenerator(count = 0) {
-  if (count <= 25) return '#f0f3fb';
-  else if (count > 25 && count <= 50) return '#b0bee7';
-  else if (count > 50 && count <= 75) return '#4674d3';
-  else if (count > 75) return '#39277f';
+function hexbinColorGenerator(count = 0, deep) {
+  if (count <= 25) {
+    return deep ? '#ccccff' : '#f0f3fb';
+  } else if (count > 25 && count <= 50) {
+    return deep ? '#6666cc' : '#b0bee7';
+  } else if (count > 50 && count <= 75) {
+    return deep ? '#6666ff' : '#4674d3';
+  } else if (count > 75) {
+    return deep ? '#330099' : '#39277f';
+  }
 }
 
 // 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
@@ -73,6 +79,9 @@ export default {
     await this.$store.dispatch('dashboard/fetchALl', {
       body: {}
     });
+    this.updateMetricsIoNodes();
+    this.updateSystemServiceStatus();
+    this.updateDeviceInfo();
   },
   computed: {
     nodesData() {
@@ -143,130 +152,62 @@ export default {
     getDataFromStore(type) {
       return this.$store.getters['deviceLink/hasType'](type) ? this.$store.getters['deviceLink/all'](type) : [];
     },
-    drawGauge() {
+    drawGauge(gaugeData) {
       const chartContainerNames = ['cpuUsedGauge', 'memoryUsedGauge', 'podsUsedGauge'];
-      const { gaugeData } = this;
       chartContainerNames.forEach((ecItem, ecIndex) => {
         const params = gaugeData[ecItem].split('|');
         const rate = parseFloat(params[0]) / 100;
-        const baseOptions = {
-        // backgroundColor: '#043654',
-        series: [
-            {
-              name:        '刻度',
-              type:        'gauge',
-              radius:      '84%',
-              center:      ['50%', '58%'],
-              splitNumber: 6, // 刻度数量
-              startAngle:  225,
-              endAngle:    -45,
-              axisLine:    {
-                show:      true,
-                lineStyle: {
-                  width: 1,
-                  color: [[1, 'rgba(0,0,0,0)']]
-                }
-              }, // 仪表盘轴线
-              axisLabel: {
-                show:     false,
-                color:    '#423fa9',
-                distance: 60
-              }, // 刻度标签。
-              axisTick: {
-                show:        true,
-                splitNumber: 10,
-                lineStyle:   {
-                  color: '#423fa9',
-                  width: 1
-                },
-                length: -14
-              }, // 刻度样式
-              splitLine: {
-                show:      true,
-                length:    -22,
-                lineStyle: { color: '#423fa9' }
-              }, // 分隔线样式
-              detail:  { show: false },
-              pointer: { show: false }
-            },
-            {
-              type:        'gauge',
-              radius:      '91.5%',
-              center:      ['50%', '58%'],
-              splitNumber: 0, // 刻度数量
-              startAngle:  225,
-              endAngle:    -45,
-              axisLine:    {
-                show:      true,
-                lineStyle: {
-                  width: 10,
-                  color: [
-                    [
-                      rate, new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                        {
-                          offset: 0,
-                          color:  '#3861c6'
-                        },
-                        {
-                          offset: 1,
-                          color:  '#423fa9'
-                        }
-                      ])
-                    ],
-                    [
-                      1, 'rgba(65,62,84,0)'
-                    ]
-                  ]
-                }
+        const baseOptions = baseGaugeConfigGenerator();
+        baseOptions.series[1].axisLine.lineStyle.color = [
+          [
+            rate, new echarts.graphic.LinearGradient(0, rate > 0.5 ? 0 : 1, rate > 0.5 ? 1 : 0, 0, [
+              {
+                offset: 0.1,
+                color:  '#33ccff'
               },
-              // 分隔线样式。
-              splitLine: { show: false },
-              axisLabel: { show: false },
-              axisTick:  { show: false },
-              pointer:   { show: false },
-              title:     {
-                show:         true,
-                offsetCenter: [0, '20%'], // x, y，单位px
-                textStyle:    {
-                  color:    '#fff',
-                  fontSize: 20
-                }
+              {
+                offset: 0.6,
+                color:  '#0066ff'
               },
-              // 仪表盘详情，用于显示数据。
-              detail: {
-                show:         true,
-                offsetCenter: [0, '-4%'],
-                color:        '#423fa9',
-                formatter(param) {
-                  return `{percent|${ params[0] }%}\n{type|${params[1]}}\n{describe|${params[2]}}`;
-                },
-                textStyle: { fontSize: this.formatFontSize(44) },
-                rich:      {
-                  percent: {
-                    fontSize:   this.formatFontSize(40),
-                    color:      '#423fa9',
-                    fontWeight: 'bold',
-                    fontFamily: 'hyzhuzi',
-                    height: 60
-                  },
-                  type: {
-                    fontSize: this.formatFontSize(18),
-                    color:    '#000',
-                    height: 30
-                  },
-                  describe: {
-                    color:    '#375ec4',
-                    fontSize: this.formatFontSize(15),
-                    height:   20
-                  }
-                }
-              },
-              data: []
-            }
+              {
+                offset: 1,
+                color:  '#423fa9'
+              }
+            ])
+          ],
+          [
+            1, 'rgba(65,62,84,0)'
           ]
+        ];
+        baseOptions.series[1].detail = {
+          show:         true,
+          offsetCenter: [0, '-4%'],
+          color:        '#423fa9',
+          formatter(param) {
+            return `{percent|${ params[0] }%}\n{type|${params[1]}}\n{describe|${params[2]}}`;
+          },
+          textStyle: { fontSize: this.formatFontSize(44) },
+          rich:      {
+            percent: {
+              fontSize:   this.formatFontSize(40),
+              color:      '#423fa9',
+              fontWeight: 'bold',
+              fontFamily: 'hyzhuzi',
+              height: 60
+            },
+            type: {
+              fontSize: this.formatFontSize(18),
+              color:    '#000',
+              height: 30
+            },
+            describe: {
+              color:    '#375ec4',
+              fontSize: this.formatFontSize(15),
+              height:   20
+            }
+          }
         };
         const ecDraw = echarts.init(this.$refs[ecItem]);
-
         ecDraw.setOption(baseOptions);
         this.gaugeList.push(ecDraw);
         setTimeout(() => {
@@ -274,8 +215,7 @@ export default {
         }, 500);
       });
     },
-    drawHexbin() {
-      const { hexbinData } = this;
+    drawHexbin(hexbinData) {
       const hexbinContainerNames = ['cpuUsageHexbin', 'memoryUsageHexbin', 'podsUsageHexbin'];
       const tooltipRef = this.$refs['tooltip'];
 
@@ -295,8 +235,10 @@ export default {
           .enter().append('path')
           .attr('d', mHexbin.hexagon(25))
           .attr('transform', d => `translate(${ d.x },${ d.y })`)
+          .attr('stroke', '#fff')
+          .attr('stroke-width', '1')
           .attr('fill', (d, i) => {
-            return hexbinColorGenerator(list[i].num);
+            return hexbinColorGenerator(list[i].num, false);
           })
           .on('mouseover', (pointsInfo, pointsIndex, pathArray) => {
             const pathDom = pathArray[pointsIndex];
@@ -305,16 +247,24 @@ export default {
             tooltipRef.style.top = pathDomPosition.top -30 + 'px';
             tooltipRef.style.left = pathDomPosition.left - 60 + 'px';
             tooltipRef.innerHTML = list[pointsIndex].data;
-            
-          })
-          .on('mouseout', () => {
-            tooltipRef.style.display = 'none';
+            d3.select(this.$refs[demoItem]).append('path')
+            .attr('d', mHexbin.hexagon(25))
+            .attr('transform', `scale(1.2) translate(${ pointsInfo.x * 0.8 },${ pointsInfo.y * 0.8 })`)
+            .attr('stroke', '#fff')
+            .attr('stroke-width', '2')
+            .attr('fill', (d, i) => {
+              return hexbinColorGenerator(list[pointsIndex].num, true);
+            })
+            .on('mouseout', (pointsInfo, pointsIndex, pathArray) => {
+              d3.select(pathArray[0]).remove();
+              tooltipRef.style.display = 'none';
+            });
           });
       });
 
     },
-    drawRightGauge(isRenew) {
-      const { online, offline, total } = this.iotInfo;
+    drawRightGauge(iotInfo) {
+      const { online, offline, total } = iotInfo;
       const leftNum = Math.round(online / total * 100);
       const rightNum = Math.round(offline / total * 100);
 
@@ -335,72 +285,9 @@ export default {
       rightGaugeNames.forEach((ecItem, ecIndex) => {
         const ecDraw = echarts.init(this.$refs[ecItem]);
         const customOpt = rightGaugeOpts[ecItem]
-        const option = {
-          title: {
-            text: customOpt.title,
-            x: 'center',
-            y: 'center',
-            textStyle: {
-              fontWeight: 'normal',
-              color: customOpt.color[1],
-              fontSize: '30',
-              fontFamily: 'hyzhuzi'
-            }
-          },
-          color: [customOpt.color[0]],
-          series: [
-            {
-              name: 'Line 1',
-              type: 'pie',
-              clockWise: true,
-              radius: ['80%', '96%'],
-              itemStyle: {
-                normal: {
-                  label: {
-                    show: false
-                  },
-                  labelLine: {
-                    show: false
-                  }
-                }
-              },
-              hoverAnimation: false, 
-              data: [
-                {
-                  value: customOpt.values[0],
-                  name: '01',
-                  itemStyle: {
-                    normal: {
-                      color: { // 完成的圆环的颜色
-                        colorStops: [{
-                          offset: 0,
-                          color: customOpt.color[1] // 0% 处的颜色
-                        }, {
-                          offset: 1,
-                          color: customOpt.color[1] // 100% 处的颜色
-                        }]
-                      },
-                      label: {
-                        show: false
-                      },
-                      labelLine: {
-                        show: false
-                      }
-                    } 
-                  }
-                }, 
-                {
-                  name: '02',
-                  value: customOpt.values[1]
-                }
-              ]
-            }
-          ]
-        };
+        const option = rightGaugeConfigGenerator(customOpt);
         ecDraw.setOption(option);
-        if (!isRenew) {
-          this.rightGaugeList.push(ecDraw);
-        }
+        this.rightGaugeList.push(ecDraw);
         setTimeout(() => {
           ecDraw.resize();
         }, 500);
@@ -427,7 +314,7 @@ export default {
         const { spec } = podItem;
         const { nodeName } = spec;
         if (nodesMap[nodeName]) {
-          nodesMap[nodeName].podList.push(podItem);
+          nodesMap[nodeName]?.podList.push(podItem);
         }
       });
 
@@ -445,21 +332,21 @@ export default {
       const dataFormat = Object.keys(nodesMap).map(keyItem => {
         const { usage, status, podList } = nodesMap[keyItem];
         const { cpu, memory, pods } = status.allocatable;
-        const cpuUsedRate = (formatCPUValue(usage.cpu, 10) / formatCPUValue(cpu, 10) * 100).toFixed(2);
-        const memoryUsedRate = (formatMemoryValue(usage.memory, 10) / formatMemoryValue(memory, 10) * 100).toFixed(2);
-        const podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(2);
+        const cpuUsedRate = (formatCPUValue(usage.cpu, 10) / formatCPUValue(cpu, 10) * 100).toFixed(1);
+        const memoryUsedRate = (formatMemoryValue(usage.memory, 10) / formatMemoryValue(memory, 10) * 100).toFixed(1);
+        const podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(1);
         const name = keyItem.toString();
         hexbinData[0].push({
           num: parseFloat(cpuUsedRate),
-          data: `${name}:${cpuUsedRate}%`
+          data: `${name}: ${cpuUsedRate}%`
         });
         hexbinData[1].push({
           num: parseFloat(memoryUsedRate),
-          data: `${name}:${memoryUsedRate}%`
+          data: `${name}: ${memoryUsedRate}%`
         });
         hexbinData[2].push({
           num: parseFloat(podsUsedRate),
-          data: `${name}:${podsUsedRate}%`
+          data: `${name}: ${podsUsedRate}%`
         });
         // 统计集群总量
         clusterCPU += formatCPUValue(cpu, 10);
@@ -478,12 +365,13 @@ export default {
       const clusterCPUUsedRate = (clusterUsedCPU / clusterCPU * 100).toFixed(2);
       const clusterMemoryUsedRate = (clusterUsedMemory / clusterMemory * 100).toFixed(2);
       const clusterPodsUsedRate = (clusterUsedPods / clusterPods * 100).toFixed(2);
-      this.hexbinData = hexbinData;
-      this.gaugeData = {
+
+      this.drawHexbin(hexbinData);
+      this.drawGauge({
         cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用2中的0.2`,
         memoryUsedGauge: `${clusterMemoryUsedRate}|Memory|已使用7.7GIB中的0.1`,
-        podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用110中的12`,
-      };
+        podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用110中的12`
+      });
     },
     updateDeviceInfo() {
       const { devices } = this;
@@ -496,33 +384,49 @@ export default {
       });
       offline = total - online;
       this.iotInfo = { total, online, offline };
+      this.drawRightGauge({ total, online, offline });
     },
     updatePodsLoadInfo() {
       const { nodesData, podsLoadInfo } = this;
-      let clusterCPU = 0;
-      let clusterMemory = 0;
-      nodesData.forEach((nodeItem, nodeIndex) => {
-        const { cpu, memory } = nodeItem.status.allocatable;
-        clusterCPU += formatCPUValue(cpu);
-        clusterMemory += formatMemoryValue(memory);
-      })
-      const cpuLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
+      let maxCpuLoad = 0;
+      let maxMemoryLoad = 0;
+      const cpuLoadList = podsLoadInfo.map((podItem, podIndex) => {
         const cpu = formatCPUValue(podItem.containers[0].usage.cpu);
         const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
-        const cpuUsageRate = cpu / clusterCPU * 100;
-        return { id: podIndex, name: podItem.id, value: cpuUsage, percent: cpuUsageRate };
+        return { id: podIndex, name: podItem.id, value: cpuUsage };
       })
-      .sort((leftItem, rightItem) => rightItem.value - leftItem.value);
-      const memoryLoadSortList = podsLoadInfo.map((podItem, podIndex) => {
+      .sort((leftItem, rightItem) => rightItem.value - leftItem.value)
+      .splice(0, 10)
+      .map((item, itemIndex) => {
+        let percent = 0;
+        if (0 === itemIndex) {
+          percent = 100;
+          maxCpuLoad = item.value;
+        } else {
+          percent = item.value / maxCpuLoad * 100;
+        }
+        return { ...item, value: item.value.toFixed(1), percent };
+      });
+      const memoryLoadList = podsLoadInfo.map((podItem, podIndex) => {
         const memory = formatMemoryValue(podItem.containers[0].usage.memory);
         const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
-        const memoryUsageRate = memory / clusterMemory * 100;
-        return { id: podIndex, name: podItem.id, value: memoryUsage, percent: memoryUsageRate };
+        return { id: podIndex, name: podItem.id, value: memoryUsage };
       })
-      .sort((leftItem, rightItem) => rightItem.value - leftItem.value);
+      .sort((leftItem, rightItem) => rightItem.value - leftItem.value)
+      .splice(0, 10)
+      .map((item, itemIndex) => {
+        let percent = 0;
+        if (0 === itemIndex) {
+          percent = 100;
+          maxMemoryLoad = item.value;
+        } else {
+          percent = item.value / maxMemoryLoad * 100;
+        }
+        return { ...item, value: item.value.toFixed(1), percent };
+      });
 
-      this.cpuLoadList = cpuLoadSortList.splice(0, 10);
-      this.memoryLoadList = memoryLoadSortList.splice(0, 10);
+      this.$set(this.$data, 'cpuLoadList', cpuLoadList);
+      this.$set(this.$data, 'memoryLoadList', memoryLoadList);
     },
     updateEventsData() {
       const { eventList } = this;
@@ -592,25 +496,21 @@ export default {
     nodesData: {
       handler(val) {
         this.updateMetricsIoNodes();
-        this.updatePodsLoadInfo();
         this.updateSystemServiceStatus();
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
     podsData: {
       handler(val) {
         this.updateMetricsIoNodes();
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
     nodesMetricsData: {
       handler(val) {
         this.updateMetricsIoNodes();
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
     eventList: {
       handler(val) {
@@ -623,8 +523,7 @@ export default {
       handler(val) {
         this.updateDeviceInfo();
       },
-      deep: true,
-      immediate: true
+      deep: true
     },
     podsLoadInfo: {
       handler(val) {
@@ -653,27 +552,18 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    iotInfo: function(val) {
-      this.drawRightGauge(true);
-    },
-    hexbinData: function() {
-      this.drawHexbin();
-    },
-    gaugeData: function() {
-      this.drawGauge();
     }
   }
 };
 </script>
 <template>
   <div class="wrapper">
-    <h3 class="header-border"><i class="position icon iconfont iconzuobiao1"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
+    <h3 class="header-border"><i class="position icon iconfont icon-position"></i><span>智慧园区-北京朝阳</span><span>（最后一次备份于2020-03-01 22:22:22）</span></h3>
     <div class="content">
       <div class="content-main">
         <div class="usage">
           <h3 class="module-title">
-            <i class="icon iconfont iconziyuanshiyong"></i>
+            <i class="icon iconfont icon-source"></i>
             资源使用
           </h3>
           <div class="usage-list">
@@ -708,7 +598,7 @@ export default {
         </div>
         <div class="service">
           <h3 class="module-title">
-            <i class="icon iconfont iconxitongfuwu"></i>
+            <i class="icon iconfont icon-system"></i>
             系统服务
           </h3>
           <ServiceStatusList 
@@ -717,7 +607,7 @@ export default {
         </div>
         <div class="event">
           <h3 class="module-title">
-            <i class="icon iconfont iconjiqunx"></i>
+            <i class="icon iconfont icon-set"></i>
             集群事件
           </h3>
           <el-table
@@ -727,34 +617,30 @@ export default {
             height="21vw"
           >
             <el-table-column
-              label="NAMESPACE"
+              label="命名空间"
               prop="namespace"
-              min-width="100px"
             />
             <el-table-column
-              label="LAST SEEN"
+              label="事件时间"
               prop="lastSeen"
-              min-width="100px"
             />
             <el-table-column
-              label="TYPE"
+              label="类型"
               prop="type"
-              min-width="100px"
             />
             <el-table-column
-              label="REASON"
+              label="原因"
               prop="reason"
-              min-width="100px"
             />
             <el-table-column
-              label="OBJECT"
+              label="资源对象"
               prop="object"
-              min-width="100px"
+              min-width="150"
             />
             <el-table-column
-              label="MESSAGE"
+              label="事件消息"
               prop="message"
-              min-width="100px"
+              min-width="220"
             />
           </el-table>
         </div>
@@ -792,12 +678,12 @@ export default {
         </div>
         <div class="balance">
           <h3 class="module-title">
-            <i class="icon iconfont icongongzuofuzai"></i>
+            <i class="icon iconfont icon-workload"></i>
             工作负载
           </h3>
           <DashboardProgressBar 
             title="CPU密集型Pod TOP10"
-            unit="单位：分钟"
+            unit="单位：M"
             :list="cpuLoadList"
           />
           <DashboardProgressBar 
@@ -816,6 +702,7 @@ export default {
   @import "~assets/fonts/fzpszhjw/style.scss";
   .wrapper {
     background-color: #f6f7fb;
+    min-width: 1440px;
     .icon {
       display: inline-block;
       height: 25px;
@@ -859,7 +746,6 @@ export default {
     }
     .content {
       display: grid;
-      // min-width: 1716px;
       grid-template-columns: 70% 28%;
       grid-column-gap: 1.3%;
       .content-main {
@@ -885,6 +771,12 @@ export default {
               font-size: 17px;
               font-weight: bold;
             }
+            path {
+              transition: all .3s ease-in-out; 
+            }
+            path:hover {
+              cursor: pointer;
+            }
           }
         }
         .event {
@@ -896,7 +788,7 @@ export default {
             margin-top: 16px;
             th, td {
               color: #fff;
-              line-height: 2.08vw;
+              line-height: 36px;
               padding: 0;
               font-size: 16px;
               text-align: center;

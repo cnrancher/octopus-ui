@@ -702,6 +702,7 @@ export default {
   @import "~assets/fonts/fzpszhjw/style.scss";
   .wrapper {
     background-color: #f6f7fb;
+    min-width: 1440px;
     .icon {
       display: inline-block;
       height: 25px;
@@ -745,7 +746,6 @@ export default {
     }
     .content {
       display: grid;
-      min-width: 1550px;
       grid-template-columns: 70% 28%;
       grid-column-gap: 1.3%;
       .content-main {

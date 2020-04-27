@@ -1,5 +1,5 @@
 <script>
-const FULL_RADIUS = 0.95;
+const FULL_RADIUS = 0.88;
 
 export default {
   props: {
@@ -16,18 +16,15 @@ export default {
       default: () => []
     }
   },
-  data() {
-    return { displayList: [] };
-  },
-  watch: {
-    list() {
+  computed: {
+    displayList() {
       const tempList = this.list.map((item) => {
         item.width = `${ item.percent * FULL_RADIUS }%`;
 
         return item;
       });
 
-      this.displayList = tempList;
+      return tempList;
     }
   }
 };
@@ -71,7 +68,7 @@ export default {
       }
     }
     .bar-wrapper {
-      padding: 10px;
+      padding: 10px 0 10px 10px;
       border: 1px solid #ddd;
       margin-top: 0;
       min-height: 300px;
@@ -84,7 +81,7 @@ export default {
         margin: 0 0 20px;
         .bar-container{
           height: 100%;
-          width: 95%;
+          width: 88%;
           background-color: #0f1ca0;
           opacity: 0.2;
           border-radius: 20px;
@@ -116,9 +113,9 @@ export default {
         }
         .bar-text {
           position: absolute;
-          width: 24px;
-          right: -2%;
-          text-align: center;
+          width: 10%;
+          right: 0;
+          text-align: left;
           font-weight: bold;
           color: #1245d9;
         }

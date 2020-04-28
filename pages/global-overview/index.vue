@@ -712,12 +712,12 @@ export default {
           <stop offset="100%" stop-color="#2d2894"/>
         </linearGradient>
         <linearGradient id="liner-middle" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#99cef6"/>
-          <stop offset="100%" stop-color="#bbc5ff"/>
+          <stop offset="0%" stop-color="#56a7f2"/>
+          <stop offset="100%" stop-color="#7b9dfc"/>
         </linearGradient>
         <linearGradient id="liner-shallow" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#e8f9ff"/>
-          <stop offset="100%" stop-color="#ecebfd"/>
+          <stop offset="0%" stop-color="#bde7fe"/>
+          <stop offset="100%" stop-color="#c7cdfa"/>
         </linearGradient>
         <filter id="blurFilter" x="0" y="0">
           <feOffset result="offOut" in="SourceAlpha" dx="0" dy="1" />

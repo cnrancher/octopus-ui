@@ -1,5 +1,4 @@
 <script>
-const FULL_RADIUS = 0.88;
 
 export default {
   props: {
@@ -19,7 +18,7 @@ export default {
   computed: {
     displayList() {
       const tempList = this.list.map((item) => {
-        item.width = `${ item.percent * FULL_RADIUS }%`;
+        item.width = `${ item.percent }%`;
 
         return item;
       });
@@ -37,10 +36,11 @@ export default {
     </p>
     <ul class="bar-wrapper">
       <li v-for="progress in displayList" :key="progress.index">
-        <div class="bar-container"></div>
-        <div :style="{width: progress.width}" class="progress-bar"></div>
-        <div class="progress-bar-text">
-          {{ progress.name }}
+        <div class="bar-container">
+          <div :style="{width: progress.width}" class="progress-bar"></div>
+          <div class="progress-bar-text">
+            {{ progress.name }}
+          </div>
         </div>
         <div class="bar-text">
           {{ progress.value }}
@@ -82,13 +82,12 @@ export default {
         .bar-container{
           height: 100%;
           width: 88%;
-          background-color: #0f1ca0;
-          opacity: 0.2;
+          background-color: #cfd2ec;
           border-radius: 20px;
           position: absolute;
           top: 0;
           left: 0;
-          /* justify-content: space-between; */
+          overflow: hidden;
         }
         .progress-bar {
           height: 100%;
@@ -96,7 +95,6 @@ export default {
           background-color: #2048ce;
           background-image: linear-gradient(90deg, #2048ce, #161e73);
           width: 27%;
-          opacity: 1;
           position: absolute;
           top: 0;
           left: 0;

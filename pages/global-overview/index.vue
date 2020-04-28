@@ -26,9 +26,16 @@ function hexbinClassNameGenerator(count) {
 // 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
 function formatCPUValue(cpuValue) {
   let value = parseInt(cpuValue, 10);
-  if (!value) return 0;
-  if (/n/.test(cpuValue)) return value; // n结尾的直接返回
-  else if (/m/.test(cpuValue)) return value * 1000 * 1000; // m结尾的换算成为单位的值
+  if (!value) {
+    return 0;
+  }
+  if (/n/.test(cpuValue)) {
+    return value; // n结尾的直接返回
+  } else if (/m/.test(cpuValue)) {
+    return value * 1000 * 1000; // m结尾的换算成为单位的值
+  } else if (/\u/.test(cpuValue)) {
+    return value * 1000 * 10; // 100u=1m
+  }
   return value * 1000 * 1000 * 1000; // 核数时的返回
 }
 // 1024，目前后台返回的是ki结尾，需要去掉单位
@@ -246,18 +253,22 @@ export default {
             tooltipRef.style.top = pathDomPosition.top -30 + 'px';
             tooltipRef.style.left = pathDomPosition.left - 60 + 'px';
             tooltipRef.innerHTML = list[pointsIndex].data;
-            d3.select(this.$refs[demoItem]).append('path')
-            .attr('d', mHexbin.hexagon(25))
-            .attr('transform', `scale(1.2) translate(${ pointsInfo.x * 0.8 },${ pointsInfo.y * 0.8 })`)
-            .attr('stroke', '#fff')
-            .attr('stroke-width', '2')
-            .attr('fill', (d, i) => {
-              return `url(#${hexbinClassNameGenerator(list[pointsIndex].num)})`;
-            })
-            .on('mouseout', (pointsInfo, pointsIndex, pathArray) => {
-              d3.select(pathArray[0]).remove();
-              tooltipRef.style.display = 'none';
-            });
+            pathDom.setAttribute('transform', `scale(1.2) translate(${ pointsInfo.x * 0.8 },${ pointsInfo.y * 0.8 })`);
+            setTimeout(() => {
+              d3.select(this.$refs[demoItem]).append('path')
+              .attr('d', mHexbin.hexagon(25))
+              .attr('transform', `scale(1.2) translate(${ pointsInfo.x * 0.8 },${ pointsInfo.y * 0.8 })`)
+              .attr('stroke', '#fff')
+              .attr('stroke-width', '2')
+              .attr('fill', (d, i) => {
+                return `url(#${hexbinClassNameGenerator(list[pointsIndex].num)})`;
+              })
+              .on('mouseout', (hoverPointsInfo, pointsIndex, pathArray) => {
+                d3.select(pathArray[0]).remove();
+                pathDom.setAttribute('transform', `scale(1) translate(${ pointsInfo.x },${ pointsInfo.y })`);
+                tooltipRef.style.display = 'none';
+              });
+            }, 0);
           });
       });
 
@@ -701,12 +712,12 @@ export default {
           <stop offset="100%" stop-color="#2d2894"/>
         </linearGradient>
         <linearGradient id="liner-middle" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#0085e9"/>
-          <stop offset="100%" stop-color="#556eff"/>
+          <stop offset="0%" stop-color="#99cef6"/>
+          <stop offset="100%" stop-color="#bbc5ff"/>
         </linearGradient>
         <linearGradient id="liner-shallow" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#15c7ff"/>
-          <stop offset="100%" stop-color="#4c3fe9"/>
+          <stop offset="0%" stop-color="#e8f9ff"/>
+          <stop offset="100%" stop-color="#ecebfd"/>
         </linearGradient>
         <filter id="blurFilter" x="0" y="0">
           <feOffset result="offOut" in="SourceAlpha" dx="0" dy="1" />
@@ -794,12 +805,7 @@ export default {
             }
             path {
               transition: all .3s ease-in-out; 
-            }
-            .liner-shallow {
-              opacity: .1
-            }
-            .liner-middle {
-              opacity: .4;
+              opacity: .7
             }
             path:hover {
               cursor: pointer;
@@ -871,7 +877,7 @@ export default {
         .count {
           display: flex;
           justify-content: space-around;
-          padding: 1.1vw 0;
+          padding: 21px 0;
 
           div {
             display: flex;
@@ -896,7 +902,7 @@ export default {
 
         .balance {
           border: 1px solid #ddd;
-          padding: 0.83vw 0.5vw;
+          padding: 16px 10px;
         }
       }
     }

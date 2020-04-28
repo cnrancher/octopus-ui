@@ -329,7 +329,9 @@ export default {
       });
 
       let clusterCPU = 0;
+      let clusterCPUCore = 0;
       let clusterMemory = 0;
+      let clusterMemoryG = 0;
       let clusterPods = 0;
 
       let clusterUsedCPU = 0;
@@ -362,7 +364,7 @@ export default {
         clusterCPU += formatCPUValue(cpu, 10);
         clusterMemory += formatMemoryValue(memory, 10);
         clusterPods += parseInt(pods, 10);
-
+        clusterCPUCore += parseInt(cpu, 10);
         // 统计集群已使用总量
         clusterUsedCPU += formatCPUValue(usage.cpu, 10);
         clusterUsedMemory += formatMemoryValue(usage.memory, 10);
@@ -378,9 +380,9 @@ export default {
 
       this.drawHexbin(hexbinData);
       this.drawGauge({
-        cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用2中的0.2`,
-        memoryUsedGauge: `${clusterMemoryUsedRate}|Memory|已使用7.7GIB中的0.1`,
-        podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用110中的12`
+        cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用${clusterCPUCore}中的${(clusterUsedCPU / 1000000000).toFixed(2)}`,
+        memoryUsedGauge: `${clusterMemoryUsedRate}|Memory|已使用${(clusterMemory / 1024 / 1024).toFixed(1)}GIB中的${(clusterUsedMemory / 1024 / 1024).toFixed(1)}`,
+        podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用${clusterPods}中的${clusterUsedPods}`
       });
     },
     updateDeviceInfo() {

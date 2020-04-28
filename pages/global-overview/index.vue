@@ -14,18 +14,15 @@ import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/da
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 
-function hexbinColorGenerator(count = 0, deep) {
-  if (count <= 25) {
-    return deep ? '#ccccff' : '#f0f3fb';
-  } else if (count > 25 && count <= 50) {
-    return deep ? '#6666cc' : '#b0bee7';
-  } else if (count > 50 && count <= 75) {
-    return deep ? '#6666ff' : '#4674d3';
-  } else if (count > 75) {
-    return deep ? '#330099' : '#39277f';
+function hexbinClassNameGenerator(count) {
+  if (count <= 30) {
+    return 'liner-shallow';
+  } else if (count > 30 && count <= 70) {
+    return 'liner-middle';
+  } else if (count > 70) {
+    return 'liner-deep';
   }
 }
-
 // 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
 function formatCPUValue(cpuValue) {
   let value = parseInt(cpuValue, 10);
@@ -220,8 +217,6 @@ export default {
       const tooltipRef = this.$refs['tooltip'];
 
       hexbinContainerNames.forEach((demoItem, demoIndex) => {
-        const i = 0;
-        let j;
         const list = hexbinData[demoIndex];
         const d3Node = d3.select(this.$refs[demoItem]);
         const color = d3.scaleSequential(d3.interpolateLab('#8276b8', '#4646b0')).domain([0, 20]);
@@ -233,12 +228,16 @@ export default {
         const hexagon = d3Node.selectAll('path')
           .data(mHexbin(points))
           .enter().append('path')
+          .attr('class', (d, i) => {
+            return hexbinClassNameGenerator(list[i].num);
+          })
           .attr('d', mHexbin.hexagon(25))
           .attr('transform', d => `translate(${ d.x },${ d.y })`)
           .attr('stroke', '#fff')
           .attr('stroke-width', '1')
+          .attr('filter', 'url(#blurFilter)')
           .attr('fill', (d, i) => {
-            return hexbinColorGenerator(list[i].num, false);
+            return `url(#${hexbinClassNameGenerator(list[i].num)})`;
           })
           .on('mouseover', (pointsInfo, pointsIndex, pathArray) => {
             const pathDom = pathArray[pointsIndex];
@@ -253,7 +252,7 @@ export default {
             .attr('stroke', '#fff')
             .attr('stroke-width', '2')
             .attr('fill', (d, i) => {
-              return hexbinColorGenerator(list[pointsIndex].num, true);
+              return `url(#${hexbinClassNameGenerator(list[pointsIndex].num)})`;
             })
             .on('mouseout', (pointsInfo, pointsIndex, pathArray) => {
               d3.select(pathArray[0]).remove();
@@ -614,7 +613,7 @@ export default {
             :data="tableData"
             cell-class-name="events-table-td"
             class="events-table"
-            height="21vw"
+            height="410px"
           >
             <el-table-column
               label="命名空间"
@@ -695,6 +694,27 @@ export default {
       </div>
     </div>
     <div ref="tooltip" class="dashboard-tooltip"></div>
+    <svg class="liner">
+      <defs>
+        <linearGradient id="liner-deep" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#3fa1ff"/>
+          <stop offset="100%" stop-color="#2d2894"/>
+        </linearGradient>
+        <linearGradient id="liner-middle" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#0085e9"/>
+          <stop offset="100%" stop-color="#556eff"/>
+        </linearGradient>
+        <linearGradient id="liner-shallow" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#15c7ff"/>
+          <stop offset="100%" stop-color="#4c3fe9"/>
+        </linearGradient>
+        <filter id="blurFilter" x="0" y="0">
+          <feOffset result="offOut" in="SourceAlpha" dx="0" dy="1" />
+          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1" />
+          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+      </defs>
+    </svg>
   </div>
 </template>
 
@@ -732,7 +752,7 @@ export default {
       }
     }
     .usage, .service, .event, .balance, .iot {
-      padding: 0.83vw;
+      padding: 20px;
       border: 1px solid #ddd;
       margin-bottom: 20px;
       border-radius: 5px;
@@ -745,11 +765,12 @@ export default {
       font-family: fzpszhjw;
     }
     .content {
-      display: grid;
-      grid-template-columns: 70% 28%;
-      grid-column-gap: 1.3%;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
       .content-main {
         min-height: 800px;
+        width: 71%;
         display: grid;
         grid-template-rows: repeat(3, auto);
         .icon {
@@ -774,12 +795,21 @@ export default {
             path {
               transition: all .3s ease-in-out; 
             }
+            .liner-shallow {
+              opacity: .1
+            }
+            .liner-middle {
+              opacity: .4;
+            }
             path:hover {
               cursor: pointer;
+              opacity: 1;
             }
           }
         }
         .event {
+          width: 100%;
+          overflow: auto;
           .events-table {
             width: 99.9%;
             border: 0;
@@ -816,6 +846,7 @@ export default {
       }
       .content-side {
         height: 100%;
+        width: 28%;
         display: grid;
         min-height: 800px;
         grid-template-rows: repeat(2, auto);
@@ -882,6 +913,10 @@ export default {
       color: #fff;
       display: none;
       z-index: 1000;
+    }
+    .liner {
+      width: 0;
+      height: 0;
     }
   }
   

@@ -380,7 +380,7 @@ export default {
 
       this.drawHexbin(hexbinData);
       this.drawGauge({
-        cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用${clusterCPUCore}中的${(clusterUsedCPU / 1000000000).toFixed(2)}`,
+        cpuUsedGauge: `${clusterCPUUsedRate}|CPU|已使用${clusterCPUCore * 1000}M中的${(clusterUsedCPU / 1000000).toFixed(1)}M`,
         memoryUsedGauge: `${clusterMemoryUsedRate}|Memory|已使用${(clusterMemory / 1024 / 1024).toFixed(1)}GIB中的${(clusterUsedMemory / 1024 / 1024).toFixed(1)}`,
         podsUsedGauge: `${clusterPodsUsedRate}|Pods|已使用${clusterPods}中的${clusterUsedPods}`
       });
@@ -807,10 +807,10 @@ export default {
             }
             path {
               transition: all .3s ease-in-out; 
-              opacity: .7
+              opacity: .8;
             }
             path:hover {
-              cursor: pointer;
+              transition: all .3s ease-in-out; 
               opacity: 1;
             }
           }

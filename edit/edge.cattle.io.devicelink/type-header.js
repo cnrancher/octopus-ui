@@ -69,3 +69,9 @@ export const OPCUADeviceHeader = [
   value,
   nodeID
 ];
+
+export const CUSTOMDeviceHeader = [
+  name,
+  description,
+  value,
+]

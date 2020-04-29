@@ -91,14 +91,14 @@ export const MENUS = [
   {
     name: 'mqtt-management',
     meta: {
-      title: 'MQTT 管理',
+      title: '应用管理',
       icon:  'icon-mqtt',
     },
     children: [
       {
         name: 'mqtt-management/default',
         path: '/mqtt-management',
-        meta: { title: 'MQTT 管理1' }
+        meta: { title: 'MQTT 管理' }
       }
     ]
   },

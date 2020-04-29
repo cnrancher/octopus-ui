@@ -73,7 +73,7 @@ export default {
     if ( mode === _PREVIEW ) {
       mode = _EDIT;
     }
-
+    console.log('---yarmlvalue--', this.value)
     return {
       currentValue: this.value,
       mode,

@@ -21,7 +21,8 @@ export const INGRESS = 'networking.k8s.io.v1beta1.ingress';
 export const PV = 'core.v1.persistentvolume';
 export const PVC = 'core.v1.persistentvolumeclaim';
 export const TLS_CERT = 'kubernetes.io/tls';
-export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions'
+export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions';
+export const CATALOGS = 'edgeapi.cattle.io.catalog';
 
 export const HELM = 'helm.cattle.io.v1.helmchart';
 export const DEVICE_LINK='edge.cattle.io.devicelink';

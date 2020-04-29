@@ -7,6 +7,7 @@ import Footer from '@/components/form/Footer';
 import BluethoothModel from './BluethoothModel';
 import ModbusModel from './ModbusModel';
 import OpcUaModel from './OpcUaModel';
+import CustomModel from './custom/CustomModel';
 import KeyValue from '@/components/form/KeyValue';
 import CustomTemplate from './custom/templates';
 import { allHash } from '@/utils/promise';
@@ -21,7 +22,7 @@ import {
   customDevice
 } from './defaultYaml';
 import { parity, dataBits, deviceDefaultInfo } from '@/config/map';
-import { BluethoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader } from './type-header';
+import { BluethoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
 import createEditView from '@/mixins/create-edit-view';
 
 export default {
@@ -31,6 +32,7 @@ export default {
     BluethoothModel,
     ModbusModel,
     OpcUaModel,
+    CustomModel,
     KeyValue,
     CustomTemplate
   },
@@ -69,6 +71,7 @@ export default {
       allNodes: [],
       allNamespace: [],
       templateProtocol: {},
+      templateProperties: {},
       rules: {
         'metadata.name': [
           { required: true, message: '请输入名称' }
@@ -162,8 +165,9 @@ export default {
         templateSpec.adaptor.name = `adaptors.edge.cattle.io/${kind.toLowerCase()}`;
         templateSpec.model.kind = kind;
         templateSpec.template.spec = spec;
-        // this.$set(this, 'templateProtocol', _.cloneDeep(templateSpec));
-        console.log(templateSpec, 'ajax******', resource, spec);
+        this.$set(this, 'templateProtocol', _.cloneDeep(spec.protocol));
+        this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items));
+        console.log(templateSpec, 'ajax******', resource, spec, spec.protocol);
       }
     },
     changeTransferMode(mode) {
@@ -193,7 +197,7 @@ export default {
     },
     currentHeader() {
       const kind = this.value.spec.model.kind;
-      let  headers = []
+      let  headers = [];
       if (kind === 'ModbusDevice') {
         headers = ModbusDeviceHeader;
       } else if (kind === 'BluetoothDevice') {
@@ -201,9 +205,7 @@ export default {
       } else if (kind === 'OPCUADevice') {
         headers = OPCUADeviceHeader;
       } else {
-        // custom device
-        console.log('自定义标题')
-        headers = OPCUADeviceHeader;
+        headers = CUSTOMDeviceHeader;
       }
       return headers
     },
@@ -427,7 +429,11 @@ export default {
         </template>
 
         <template v-else>
-          <CustomTemplate :templateProtocol="value.spec.template.spec.protocol" />
+          <CustomTemplate 
+            :templateProtocol="templateProtocol"
+            :value="value"
+            :key="value.spec.model.kind"
+          />
         </template>
 
         <el-col :span='24'>
@@ -476,7 +482,7 @@ export default {
         :visible = 'dialogVisible'
       />
       <ModbusModel
-        v-if="value.spec.model.kind === 'ModbusDevice'"
+        v-else-if="value.spec.model.kind === 'ModbusDevice'"
         @addProperties = "addProperties($event)" 
         @hideDialog = "hideDialog($event)"
         :visible = 'dialogVisible'
@@ -485,10 +491,20 @@ export default {
       />
 
       <OpcUaModel
-        v-if="value.spec.model.kind === 'OPCUADevice'"
+        v-else-if="value.spec.model.kind === 'OPCUADevice'"
         @addProperties = "addProperties($event)" 
         @hideDialog = "hideDialog($event)"
         :visible = 'dialogVisible'
+        :editRowIndex = "editRowIndex"
+        :device= "value"
+      />
+
+      <CustomModel
+        v-else
+        @addProperties = "addProperties($event)" 
+        @hideDialog = "hideDialog($event)"
+        :visible = 'dialogVisible'
+        :templateProperties="templateProperties"
         :editRowIndex = "editRowIndex"
         :device= "value"
       />

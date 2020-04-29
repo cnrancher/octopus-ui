@@ -1,5 +1,4 @@
 <script>
-const FULL_RADIUS = 0.95;
 
 export default {
   props: {
@@ -16,18 +15,15 @@ export default {
       default: () => []
     }
   },
-  data() {
-    return { displayList: [] };
-  },
-  watch: {
-    list() {
+  computed: {
+    displayList() {
       const tempList = this.list.map((item) => {
-        item.width = `${ item.percent * FULL_RADIUS }%`;
+        item.width = `${ item.percent }%`;
 
         return item;
       });
 
-      this.displayList = tempList;
+      return tempList;
     }
   }
 };
@@ -40,10 +36,11 @@ export default {
     </p>
     <ul class="bar-wrapper">
       <li v-for="progress in displayList" :key="progress.index">
-        <div class="bar-container"></div>
-        <div :style="{width: progress.width}" class="progress-bar"></div>
-        <div class="progress-bar-text">
-          {{ progress.name }}
+        <div class="bar-container">
+          <div :style="{width: progress.width}" class="progress-bar"></div>
+          <div class="progress-bar-text">
+            {{ progress.name }}
+          </div>
         </div>
         <div class="bar-text">
           {{ progress.value }}
@@ -71,7 +68,7 @@ export default {
       }
     }
     .bar-wrapper {
-      padding: 10px;
+      padding: 10px 0 10px 10px;
       border: 1px solid #ddd;
       margin-top: 0;
       min-height: 300px;
@@ -84,14 +81,13 @@ export default {
         margin: 0 0 20px;
         .bar-container{
           height: 100%;
-          width: 95%;
-          background-color: #0f1ca0;
-          opacity: 0.2;
+          width: 88%;
+          background-color: #cfd2ec;
           border-radius: 20px;
           position: absolute;
           top: 0;
           left: 0;
-          /* justify-content: space-between; */
+          overflow: hidden;
         }
         .progress-bar {
           height: 100%;
@@ -99,7 +95,6 @@ export default {
           background-color: #2048ce;
           background-image: linear-gradient(90deg, #2048ce, #161e73);
           width: 27%;
-          opacity: 1;
           position: absolute;
           top: 0;
           left: 0;
@@ -116,9 +111,9 @@ export default {
         }
         .bar-text {
           position: absolute;
-          width: 24px;
-          right: -2%;
-          text-align: center;
+          width: 10%;
+          right: 0;
+          text-align: left;
           font-weight: bold;
           color: #1245d9;
         }

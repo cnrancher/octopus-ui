@@ -1,79 +1,95 @@
 <script>
-import _ from 'lodash'
-import { CATALOGS } from '@/config/types';
+import _ from 'lodash';
+import catalogHeader from './header';
+import { CATALOGS, HELM } from '@/config/types';
 
 export default {
+  components: {
+    catalogHeader
+  },
   data() {
     return {
-      search: '',
+      search: ''
     }
   },
   methods: {
     defaultImg() {
       return require(`static/device-default.png`);
     },
-    handerLaunch(item) {
-      console.log('----handerLaunch----', item)
-      item.viewEditYaml();
+    lanuch() {
+      this.$router.push('./mqtt-management/catalog');
     },
+    handermanage() {
+      this.$router.push('./mqtt-management/catalog-config')
+    }
   },
-  async asyncData(ctx) {
-    const { route, store } = ctx;
+  mounted() {
+    console.log('---log', this.helmChart.length)
+    if ( this.helmChart.length ===0 ) {
+      this.$router.replace('./mqtt-management/catalog')
+    }
+  },
+  async asyncData({ store, route }) {
 
     const catalogs = await store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
-    console.log(_.cloneDeep(catalogs), '----catalogs');
-    const list = catalogs[0].spec.indexFile.entries
-
+    const helmChart = await store.dispatch('deviceLink/findAll', { type: HELM, opt:  { url: `${HELM}s` } });
+    console.log('----log', catalogs)
     return {
-      catalogs: [],
-    };
+      catalogs,
+      helmChart,
+    }
   }
 }
 </script>
 
 <template>
   <div id="mqtt">
-    <header>
-      <div class="name">应用列表</div>
-      <el-button class="refresh" type="primary" icon="el-icon-refresh-left">刷新</el-button>
-      <el-input class="search" v-model="search" placeholder="搜索"></el-input>
-    </header>
-    <el-divider></el-divider>
+    <catalogHeader>
+      <template v-slot:name>
+        应用列表
+      </template>
+
+      <template v-slot:action>
+        <el-button class="refresh" type="primary" icon="el-icon-setting" @click="handermanage">管理</el-button>
+        <el-button class="refresh" type="primary" @click="lanuch">启动</el-button>
+      </template>
+    </catalogHeader>
+
     <div class="cardList">
       <div class="title">
-        <div class="name">catalogList</div>
+        <div class="name">Catalog</div>
         <div class="fold">折叠</div>
       </div>
 
-      <div class="list">
-        <el-row :gutter="30">
-          <el-col
-            class="card"
-            :xs="24"
-            :sm="24"
-            :md="12"
-            :lg="8"
-            :xl="6"
-            v-for="(item, key)  in catalogs"
-            :key="key"
-          >
-            <nuxt-link to="launch" append>
-              <el-card>
-                <div class="brand">
-                  <img
-                    v-real-img="item[0].icon"
-                    :src="defaultImg()"
-                  />
+      <el-row :gutter="30">
+        <el-col
+          class="card"
+          v-for="(item, key) in helmChart"
+          :xs="24"
+          :sm="24"
+          :md="12"
+          :lg="8"
+          :xl="6"
+          :key="key"
+        >
+          <div class="catalog-view">
+            <div class="catalog-icon">
+              <img :src="defaultImg()" alt="">
+            </div>
+            <div class="catalog-info">
+              <div class="info">
+                <div class="name">name</div>
+                <div class="version">
+                  <div class="upgrade">升级</div>
+                  <el-tag type="success">Active</el-tag>
                 </div>
-
-                <el-divider></el-divider>
-                
-                <div class="name">{{ key }}</div>
-              </el-card>
-            </nuxt-link>
-          </el-col>
-        </el-row>
-      </div>
+              </div>
+              <div class="line"></div>
+              <div class="progress"></div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -101,44 +117,68 @@ export default {
     }
   }
 
-  .cardList {
-    .title {
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 15px;
-      font-weight: 500;
+  .title {
+    display: flex;
+    .name {
+      flex: 1;
+    }
+    margin-bottom: 20px;
+  }
 
-      .fold {
-        color: blue;
-        cursor: pointer;
+  .catalog-view {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #dde4e6;
+    display: flex;
+
+    .catalog-icon {
+      width: 120px;
+      height: 120px;
+      border-right: 1px solid #dde4e6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 80px;
+        height: 80px;
       }
     }
+    .catalog-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background-color: #f2f5f5;
+      justify-content: center;
 
-    .card {
-      margin-bottom: 20px;
-
-      .brand {
+      .info {
         display: flex;
-        justify-content: center;
-
-        img {
-          width: 40px;
-          height: 40px;
+        height: 30px;
+        padding: 0px 10px;
+        .name {
+          width: 100px;
+          line-height: 30px;
+          flex: 1;
+        }
+        .version {
+          display: flex;
+          align-items: center;
         }
       }
-      .name {
-        text-align: center;
+
+      .line {
+        border-top: 2px solid #dde4e6;
+        margin: 10px 10px;
+      }
+
+      .progress {
+        width: 120px;
+        height: 10px;
+        border-radius: 5px;
+        background-color: red;
+        margin-left: auto;
+        margin-right: 10px;
       }
     }
-  }
-}
-</style>
-
-<style lang="scss">
-#mqtt {
-  .el-card__body {
-    cursor: pointer;
   }
 }
 </style>

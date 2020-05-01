@@ -459,6 +459,7 @@ export default {
       if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
+      console.log(this, '---opt', opt)
 
       return this.$dispatch('request', opt);
     };

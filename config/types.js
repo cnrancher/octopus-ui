@@ -23,8 +23,8 @@ export const PVC = 'core.v1.persistentvolumeclaim';
 export const TLS_CERT = 'kubernetes.io/tls';
 export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions';
 export const CATALOGS = 'edgeapi.cattle.io.catalog';
+export const HELM = 'helm.cattle.io.helmchart';
 
-export const HELM = 'helm.cattle.io.v1.helmchart';
 export const DEVICE_LINK='edge.cattle.io.devicelink';
 export const DEVICE_LINKS='edge.cattle.io.devicelinks';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';

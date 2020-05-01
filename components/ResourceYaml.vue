@@ -236,6 +236,7 @@ export default {
     async save(buttonDone) {
       try {
         if ( this.isCreate ) {
+          console.log('----crate----', this.currentValue)
           await this.schema.followLink('collection', {
             method:  'POST',
             headers: {

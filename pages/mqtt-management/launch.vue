@@ -1,24 +1,34 @@
 <script>
 /* eslint-disable */
 import Collapse from './collapse';
+import catalogHeader from './header';
 import CodeMirror from '@/components/CodeMirror';
+
+const currentValue = `apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: my-nginx
+  namespace: default
+spec:
+  chart: nginx
+  repo: http://charts.cnrancher.cn/mqtt
+  version: 0.1.0
+  targetNamespace: kube-system`;
 
 export default {
   components: {
     Collapse,
-    CodeMirror
+    CodeMirror,
+    catalogHeader
   },
   data() {
-    const currentValue = `
-      apiVersion: helm.cattle.io/v1
-      kind: HelmChart
-      metadata:
-        name: my-mqtt #可配置，应用名称
-        namespace: kube-system #固定使用kube-system
-    `;
-    console.log('---cucurrentValue', currentValue)
+
+
+    console.log('---cucurrentValue', currentValue);
+
     return {
       currentValue,
+      app: this.$route.query.app,
       sizeForm: {
         name: 'wj'
       }
@@ -44,16 +54,29 @@ export default {
       };
     },
   },
+  mounted() {
+  },
   methods: {
+    async launch() {
+      await this.$store.dispatch('deviceLink/request', {
+        method:  'POST',
+        headers: {
+          'content-type': 'application/yaml',
+          accept:         'application/json',
+        },
+        url: 'v1/helm.cattle.io.helmcharts',
+        data: this.currentValue,
+      });
+    },
     onInput(value) {
       this.currentValue = value;
     },
     onReady(cm) {
       cm.getMode().fold = 'yaml';
 
-      // if ( this.isCreate ) {
-      cm.execCommand('foldAll');
-      // }
+      if ( this.isCreate ) {
+        cm.execCommand('foldAll');
+      }
     },
 
     onChanges(cm, changes) {
@@ -116,11 +139,11 @@ export default {
 
 <template>
   <div id="launch">
-    <header>
-      <p>应用商店: EMQX</p>
-    </header>
-
-    <el-divider></el-divider>
+    <catalogHeader>
+      <template v-slot:name>
+        应用商店: {{ app }}
+      </template>
+    </catalogHeader>
 
     <div class="box">
       <div class="mqtt-info">
@@ -182,7 +205,7 @@ export default {
 
               <el-col>
                 <div class="action">
-                  <el-button type="primary">启动</el-button>
+                  <el-button type="primary" @click="launch">启动</el-button>
 
                   <nuxt-link to="/mqtt-management" class="cancel">
                     <el-button>取消</el-button>

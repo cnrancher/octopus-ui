@@ -1,32 +1,18 @@
 <script>
 import _ from 'lodash';
 import catalogHeader from './header';
-import { CATALOGS, HELM } from '@/config/types';
+import ResourceTable from '@/components/ResourceTable';
+import { CATALOGS, HELM, SCHEMA } from '@/config/types';
 
 export default {
   components: {
-    catalogHeader
+    catalogHeader,
+    ResourceTable
   },
   data() {
     return {
       search: '',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      currentValue: {}
     }
   },
   methods: {
@@ -35,13 +21,70 @@ export default {
     },
     formatter(row, column) {
       return row.address;
+    },
+    hideModal() {
+      this.$store.commit('catalogs/showModelInfo', {
+        isShow: false,
+        id: ''
+      }, { root: true });
+    },
+    async getCurrentValue() {
+      const id = this.$store.state.catalogs.showInfo.id;
+      const value = await this.$store.dispatch('deviceLink/find', { type: CATALOGS, id });
+      this.currentValue = Object.assign({}, value)
     }
   },
+  computed: {
+    schema() {
+      return this.$store.getters['deviceLink/schemaFor'](SCHEMA);
+    },
+    headers() {
+      const STATE = {
+        name:      'state',
+        label:     'State',
+        value:     'id',
+        sort:      ['nameSort'],
+        width:     200
+      };
+      const SCOPE = {
+        name:      'scope',
+        label:     'Scope',
+        value:     'metadata.namespace',
+        sort:      ['nameSort'],
+        width:     200
+      };
+      const NAME = {
+        name:      'name',
+        label:     'Name',
+        value:     'metadata.name',
+        sort:      ['nameSort'],
+        width:     200
+      };
+      const CATALOG_URL = {
+        name:      'catalogUrl',
+        label:     'Catalog Url',
+        value:     'spec.url',
+        sort:      ['nameSort'],
+        width:     400
+      };
+      const BRANCHE = {
+        name:      'branch',
+        label:     'branch',
+        value:     'id',
+        sort:      ['nameSort'],
+        width:     200
+      };
+      return [STATE, SCOPE, NAME, CATALOG_URL, BRANCHE];
+    },
+    isShow() {
+      this.getCurrentValue()
+      return this.$store.state.catalogs.showInfo.isShow;
+    },
+  },
   async asyncData({ store, route }) {
-
     const catalogs = await store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
     const helmChart = await store.dispatch('deviceLink/findAll', { type: HELM, opt:  { url: `${HELM}s` } });
-    console.log('----log', catalogs)
+
     return {
       catalogs,
       helmChart,
@@ -58,37 +101,32 @@ export default {
       </template>
     </catalogHeader>
    
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      :default-sort = "{prop: 'date', order: 'descending'}"
-      >
-      <el-table-column
-        prop="date"
-        label="日期"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="姓名"
-        sortable
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="address"
-        label="地址"
-        :formatter="formatter">
-      </el-table-column>
-    </el-table>
-    <nuxt-link to="/mqtt-management">
+    <ResourceTable :schema="schema" :rows="catalogs" :headers="headers" />
+  
+    <nuxt-link to="/mqtt-management" class="back">
       <el-button type="primary">返回</el-button>
     </nuxt-link>
+
+    <el-dialog
+      title="编辑应用商店"
+      :visible="isShow"
+      width="600"
+    >
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="hideModal">取 消</el-button>
+        <el-button type="primary" @click="hideModal">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>  
 </template>
 
 <style lang="scss" scoped>
-
+.back {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
 </style>
 
 <style lang="scss">

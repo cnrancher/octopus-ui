@@ -1,11 +1,11 @@
 <script>
 import _ from 'lodash';
-import catalogHeader from './header';
+import CatalogHeader from './header';
 import { CATALOGS, HELM } from '@/config/types';
 
 export default {
   components: {
-    catalogHeader
+    CatalogHeader
   },
   data() {
     return {
@@ -21,10 +21,37 @@ export default {
     },
     handermanage() {
       this.$router.push('./mqtt-management/catalog-config')
+    },
+    upgradeInfo(chart) {
+      const { version } = chart.spec;
+      const allVersion = chart.chartInfo.map(C => {
+        return C.version
+      }).sort(function (a, b) {
+        return (b).localeCompare(a);
+      })
+      
+      if (version === allVersion[0]) {
+        return `已经是最新版本 (${version})`;
+      } else {
+        return `有可用更新 (${allVersion[0]})`;
+      }
+    },
+    showActions() {
+      this.$store.commit('actionMenu/show', {
+        resources: this.originalModel,
+        elem:      this.$refs.actions,
+      });
+    },
+  },
+  computed: {
+    searchHelmChart() {
+      console.log('this.helmChart', this.helmChart)
+      return this.helmChart.filter( chart => {
+        return chart.metadata.name.includes(this.search)
+      })
     }
   },
   mounted() {
-    console.log('---log', this.helmChart.length)
     if ( this.helmChart.length ===0 ) {
       this.$router.replace('./mqtt-management/catalog')
     }
@@ -33,10 +60,18 @@ export default {
 
     const catalogs = await store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
     const helmChart = await store.dispatch('deviceLink/findAll', { type: HELM, opt:  { url: `${HELM}s` } });
-    console.log('----log', catalogs)
+    const filterHelmChart = helmChart.filter(chart => {
+      return chart.metadata?.annotations?.['edgeapi.cattle.io/edge-api-server'] === "true"
+    })
+
+    const comppositonHelmChart = filterHelmChart.map(chart => {
+      chart.chartInfo = catalogs[0].spec.indexFile.entries[chart.spec.chart]
+      return chart
+    })
+
     return {
       catalogs,
-      helmChart,
+      helmChart: comppositonHelmChart,
     }
   }
 }
@@ -44,7 +79,7 @@ export default {
 
 <template>
   <div id="mqtt">
-    <catalogHeader>
+    <CatalogHeader>
       <template v-slot:name>
         应用列表
       </template>
@@ -53,7 +88,7 @@ export default {
         <el-button class="refresh" type="primary" icon="el-icon-setting" @click="handermanage">管理</el-button>
         <el-button class="refresh" type="primary" @click="lanuch">启动</el-button>
       </template>
-    </catalogHeader>
+    </CatalogHeader>
 
     <div class="cardList">
       <div class="title">
@@ -61,10 +96,14 @@ export default {
         <div class="fold">折叠</div>
       </div>
 
+      <div class="search">
+        <el-input v-model="search" placeholder="搜索"></el-input>
+      </div>
+
       <el-row :gutter="30">
         <el-col
           class="card"
-          v-for="(item, key) in helmChart"
+          v-for="(chart, key) in searchHelmChart"
           :xs="24"
           :sm="24"
           :md="12"
@@ -78,10 +117,13 @@ export default {
             </div>
             <div class="catalog-info">
               <div class="info">
-                <div class="name">name</div>
+                <div class="name">{{ chart.metadata.name }}</div>
                 <div class="version">
-                  <div class="upgrade">升级</div>
+                  <nuxt-link :to="`./mqtt-management/launch?app=${chart.spec.chart}&mode=upgrade&id=${chart.id}`" class="upgrade">{{upgradeInfo(chart)}}</nuxt-link>
                   <el-tag type="success">Active</el-tag>
+                  <button ref="actions" type="button" class="btn btn-sm role-multi-action actions">
+                    <i class="icon icon-actions" />
+                  </button>
                 </div>
               </div>
               <div class="line"></div>
@@ -96,23 +138,13 @@ export default {
 
 <style lang="scss" scoped>
 #mqtt {
-  header {
+
+  .search {
+    margin-bottom: 30px;
     display: flex;
+    justify-content: flex-end;
 
-    .name {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 500;
-    }
-    
-    .refresh {
-      margin-right: 30px;
-      width: 80px;
-    }
-
-    .search {
+    .el-input {
       width: 200px;
     }
   }

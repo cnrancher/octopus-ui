@@ -71,3 +71,26 @@ function definedValueKeys(obj) {
 
   return compact(flattenDeep(validKeys));
 }
+
+export function filterObj(obj, arr, isfuzzy=false) {
+  const result = {}
+  if (isfuzzy) {
+    Object.keys(obj).filter((key) => {
+      for(let i=0; i<arr.length; i++) {
+        if (key.includes(arr[i])) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }).forEach((key) => {
+      result[key] = obj[key]
+    })
+  } else {
+    Object.keys(obj).filter((key) => arr.includes(key)).forEach((key) => {
+      result[key] = obj[key]
+    })
+  }
+  
+  return result
+}

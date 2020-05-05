@@ -1,40 +1,113 @@
 <script>
 /* eslint-disable */
 import Collapse from './collapse';
-import catalogHeader from './header';
+import CatalogHeader from './header';
 import CodeMirror from '@/components/CodeMirror';
+import YAML from 'json2yaml';
+import { CATALOGS, HELM, NODE } from '@/config/types';
 
-const currentValue = `apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: my-nginx
-  namespace: default
-spec:
-  chart: nginx
-  repo: http://charts.cnrancher.cn/mqtt
-  version: 0.1.0
-  targetNamespace: kube-system`;
+const currentValue = `  replicaCount: 3
+  image:
+    pullPolicy: IfNotPresent
+    repository: emqx/emqx
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    accessMode: ReadWriteOnce
+    enabled: false
+    size: 20Mi
+  service.type: ClusterIP
+  emqxConfig:
+    EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname
+    EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443
+    EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local
+  emqxLicneseSecretName: null
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+  ingress:
+    annotations: {}
+    enabled: false
+    hosts:
+    - chart-example.local
+    path: /
+    tls: []`;
+
+const jsonData = {
+  "apiVersion": "helm.cattle.io/v1",
+  "kind": "HelmChart",
+  "metadata": {
+    "annotations": {
+      "edgeapi.cattle.io/owner-name": "admin",
+      "edgeapi.cattle.io/edge-api-server": "true"
+    },
+    "name": "", // my-mqtt
+    "namespace": "kube-system",
+    "description": '' // 是否加在这里
+  },
+  "spec": {
+    "chart": "", // emqx
+    "repo": "", // http://charts.cnrancher.cn
+    "version": "", // v2.0.0-rc.1
+    "targetNamespace": "", // default
+    "valuesContent": ''
+  }
+}
 
 export default {
   components: {
     Collapse,
     CodeMirror,
-    catalogHeader
+    CatalogHeader
   },
   data() {
+    const { id, app, mode } = this.$route.query;
 
-
-    console.log('---cucurrentValue', currentValue);
-
+    jsonData.spec.chart = app;
+    
     return {
+      baseValue: jsonData,
       currentValue,
-      app: this.$route.query.app,
-      sizeForm: {
-        name: 'wj'
-      }
+      app,
+      id,
+      mode,
+    }
+  },
+  mounted() {
+    if (this.mode === 'launch') {
+      this.baseValue.spec.version = this.versions[0]
+    }
+
+    if (this.mode === 'upgrade') {
+      const currentCahrt = this.helmChart.filter( chart => {
+        return chart.id === this.id
+      })
+      console.log('---currentCahrt', currentCahrt)
+
+      this.baseValue.metadata.name = currentCahrt[0].metadata.name;
+      this.baseValue.spec.chart = currentCahrt[0].spec.chart;
+      this.baseValue.spec.version = currentCahrt[0].spec.version;
+      this.baseValue.spec.targetNamespace = currentCahrt[0].spec.targetNamespace;
     }
   },
   computed: {
+    description() {
+      return this.catalogs[this.app][0].description
+    },
+    versions() {
+      const versions = this.catalogs[this.app].map( V => {
+        return V.version
+      })
+
+      return versions.sort(function (a, b) {
+        return (b).localeCompare(a);
+      })
+    },
     cmOptions() {
       const readOnly = false;
       const gutters = ['CodeMirror-lint-markers'];
@@ -54,18 +127,17 @@ export default {
       };
     },
   },
-  mounted() {
-  },
   methods: {
     async launch() {
+      this.baseValue.spec.valuesContent =  YAML.stringify(this.currentValue);
       await this.$store.dispatch('deviceLink/request', {
         method:  'POST',
         headers: {
-          'content-type': 'application/yaml',
+          'content-type': 'application/json',
           accept:         'application/json',
         },
         url: 'v1/helm.cattle.io.helmcharts',
-        data: this.currentValue,
+        data: this.baseValue,
       });
     },
     onInput(value) {
@@ -78,7 +150,6 @@ export default {
         cm.execCommand('foldAll');
       }
     },
-
     onChanges(cm, changes) {
       if ( changes.length !== 1 ) {
         return;
@@ -133,46 +204,75 @@ export default {
     defaultImg() {
       return require(`static/device-default.png`);
     }
+  },
+  async asyncData(ctx) {
+    const { route, store } = ctx;
+
+    const catalogs = await store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
+    const helmChart = await store.dispatch('deviceLink/findAll', { type: HELM, opt:  { url: `${HELM}s` } });
+
+    const nodes = await store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } });
+
+    const list = catalogs[0].spec.indexFile.entries;
+    const node = nodes.map(N => {
+      return {
+        value: N.id
+      }
+    })
+    console.log('-----log', list, node)
+    return {
+      catalogs: list,
+      helmChart,
+      node
+    };
   }
 }
 </script>
 
 <template>
   <div id="launch">
-    <catalogHeader>
+    <CatalogHeader>
       <template v-slot:name>
         应用商店: {{ app }}
       </template>
-    </catalogHeader>
+    </CatalogHeader>
 
     <div class="box">
       <div class="mqtt-info">
         <img :src="defaultImg()" alt="">
         <div class="introduce">
-          <div class="name">EMQX</div>
-          <div class="desc">A Helm chart for EMQX</div>
+          <div class="name">{{ app }}</div>
+          <div class="desc">{{ description }}</div>
         </div>
       </div>
 
       <div class="config">
         <Collapse>
-          <el-form ref="form" :model="sizeForm">
+          <el-form ref="form" :model="baseValue">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="名称">
-                  <el-input v-model="sizeForm.name"></el-input>
+                <el-form-item label="名称" required>
+                  <el-input v-model="baseValue.metadata.name"></el-input>
                 </el-form-item>
               </el-col>
 
               <el-col :span="12">
-                <el-form-item label="模版版本">
-                  <el-input v-model="sizeForm.name"></el-input>
+                <el-form-item label="模版版本" required>
+                  <el-select v-model="baseValue.spec.version" class="version">
+                    <el-option
+                      v-for="v in versions"
+                      :key="v"
+                      :label="v"
+                      :value="v"
+                    >
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
 
               <el-col :span="12">
                 <el-form-item label="添加描述">
-                  <el-input v-model="sizeForm.name"></el-input>
+                  <el-input v-model="baseValue.metadata.description"></el-input>
                 </el-form-item>
               </el-col>
 
@@ -181,8 +281,22 @@ export default {
               </el-col>
 
               <el-col>
-                <el-form-item label="命名空间">
-                  <el-input v-model="sizeForm.name"></el-input>
+                <el-form-item label="命名空间" required>
+                  <el-select
+                    disabled
+                    v-model="baseValue.spec.targetNamespace" 
+                    class="version"
+                    filterable
+                    allow-create
+                  >
+                    <el-option
+                      v-for="N in node"
+                      :key="N.value"
+                      :label="N.value"
+                      :value="N.value"
+                    >
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
 
@@ -205,7 +319,14 @@ export default {
 
               <el-col>
                 <div class="action">
-                  <el-button type="primary" @click="launch">启动</el-button>
+
+                  <template v-if="mode==='launch'">
+                    <el-button type="primary" @click="launch">启动</el-button>
+                  </template>
+
+                  <template v-if="mode==='upgrade'">
+                    <el-button type="primary">升级</el-button>
+                  </template>
 
                   <nuxt-link to="/mqtt-management" class="cancel">
                     <el-button>取消</el-button>
@@ -224,6 +345,10 @@ export default {
 #launch {
   .el-divider__text {
     background-color: var(--main-bg);
+  }
+
+  .version {
+    width: 100%;
   }
   .box {
     .mqtt-info {

@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import catalogHeader from './header';
 import { CATALOGS, HELM } from '@/config/types';
+import { filterObj } from '@/utils/object' 
 
 export default {
   components: {
@@ -13,11 +14,18 @@ export default {
       search: '',
     }
   },
-
+  computed: {
+    newCatalogs() {
+      return filterObj(this.catalogs, [this.search], true)
+    }
+  },
   methods: {
     defaultImg() {
       return require(`static/device-default.png`);
-    }
+    },
+    handlerRefresh() {
+      this.$store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s/kube-system/mqtt-library?action=refresh`, force: true } });
+    },
   },
   async asyncData(ctx) {
     const { route, store } = ctx;
@@ -42,7 +50,7 @@ export default {
       </template>
 
       <template v-slot:action>
-        <el-button class="refresh" type="primary" icon="el-icon-refresh-left">刷新</el-button>
+        <el-button class="refresh" type="primary" icon="el-icon-refresh-left" @click='handlerRefresh'>刷新</el-button>
         <el-input v-model="search" placeholder="搜索"></el-input>
       </template>
     </catalogHeader>
@@ -62,10 +70,10 @@ export default {
             :md="12"
             :lg="8"
             :xl="6"
-            v-for="(item, key)  in catalogs"
+            v-for="(item, key)  in newCatalogs"
             :key="key"
           >
-            <nuxt-link :to="{path: 'launch', query: { app: key }}">
+            <nuxt-link :to="{path: 'launch', query: { app: key,  mode: 'launch' }}">
               <el-card>
                 <div class="brand">
                   <img

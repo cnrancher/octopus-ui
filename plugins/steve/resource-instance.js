@@ -360,7 +360,9 @@ export default {
 
   _standardActions() {
     const all = [];
+    console.log('this-----', this)
     const links = this.links || {};
+    const actions = this.actions || {};
     const hasView = !!links.rioview || !!links.view;
     const customEdit = hasCustomEdit(this.type);
 
@@ -380,6 +382,13 @@ export default {
       label:   (links.update ? 'Edit/View as YAML' : 'View as YAML'),
       icon:    'icon icon-file',
       enabled:  hasView,
+    });
+
+    all.push({
+      action:  'refresh',
+      label:   '升级',
+      icon:    'icon icon-fw icon-copy',
+      enabled:  !!actions.refresh,
     });
 
     all.push({
@@ -667,8 +676,16 @@ export default {
         [EDIT_YAML]: _FLAGGED,
         ...moreQuery
       });
-
       this.currentRouter().push({ path: url });
+    };
+  },
+
+  refresh() { // TODO general
+    return (resources = this) => {
+      this.$commit('catalogs/showModelInfo', {
+        isShow: true,
+        id: this.id
+      }, { root: true });
     };
   },
 

@@ -69,8 +69,10 @@ export default {
   },
   methods: {
     create(formName) {
-      this.baseValue.spec.valuesContent =  '';
-      
+      const currentValue = jsyaml.safeLoad(this.currentValue);
+      this.baseValue.spec.valuesContent =  currentValue;
+      console.log('-------', this.baseValue, this.currentValue);
+
       this.$refs[formName].validate( async (valid) => {
         if (valid) {
           const data = await this.$store.dispatch('deviceLink/request', {
@@ -98,7 +100,6 @@ export default {
     async update(formName) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
       this.baseValue.spec.valuesContent =  currentValue;
-      console.log('-------', this.baseValue, this.currentValue)
       this.$refs[formName].validate( async (valid) => {
         if (valid) {
           const data = await this.helmChart.followLink('update', {
@@ -196,7 +197,6 @@ export default {
   async asyncData(ctx) {
     const { route, store } = ctx;
     const { id, app, mode } = route.query;
-
     const helmChart = await store.dispatch('deviceLink/find', { type: HELM, opt:  { force: true }, id });
     let yaml = ''
     if (mode === 'edit') {
@@ -207,6 +207,7 @@ export default {
     let currentValue = ''
     if (mode === 'create') {
       jsonData = DefalutYaml;
+      jsonData.spec.chart = app
       currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
       console.log('----DefalutYaml', DefalutYaml);
     }

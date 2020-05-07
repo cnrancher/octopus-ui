@@ -147,16 +147,17 @@ export default {
 
     console.log('Find', type, id);
     let out;
-
+    console.log('id----', id, type, opt)
     if ( opt.force !== true ) {
       out = getters.byId(type, id);
       if ( out ) {
         return out;
       }
     }
-
     opt = opt || {};
     opt.url = getters.urlFor(type, id, opt);
+    console.log('id----', id, opt.url)
+
     const res = await dispatch('request', opt);
 
     if ( !getters.hasType(type) ) {

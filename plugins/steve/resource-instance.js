@@ -360,7 +360,6 @@ export default {
 
   _standardActions() {
     const all = [];
-    console.log('this-----', this)
     const links = this.links || {};
     const actions = this.actions || {};
     const hasView = !!links.rioview || !!links.view;
@@ -464,11 +463,9 @@ export default {
       if ( opt.urlSuffix ) {
         opt.url += opt.urlSuffix;
       }
-
       if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
-      console.log(this, '---opt', opt)
 
       return this.$dispatch('request', opt);
     };
@@ -609,10 +606,14 @@ export default {
 
     let route = `device-resource-id`;
 
-    const currentPaht = router.history.current.path;
+    const currentPath = router.history.current.path;
 
-    if (currentPaht.includes('deviceProtocol')) {
+    if (currentPath.includes('deviceProtocol')) {
       route = `deviceProtocol-resource-id`;
+    }
+
+    if (currentPath.includes('mqttManagement')) {
+      route = `mqttManagement-resource-id`;
     }
 
     const params = {
@@ -620,6 +621,7 @@ export default {
       namespace: this.metadata && this.metadata.namespace,
       id:        this.id
     };
+
     const url = router.resolve({
       name:   route,
       params,
@@ -676,6 +678,7 @@ export default {
         [EDIT_YAML]: _FLAGGED,
         ...moreQuery
       });
+
       this.currentRouter().push({ path: url });
     };
   },

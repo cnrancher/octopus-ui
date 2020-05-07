@@ -35,7 +35,7 @@ export function proxyFor(ctx, obj, isClone = false) {
       });
     }
   }
-
+  
   const model = lookup(obj.type) || ResourceInstance;
 
   const proxy = new Proxy(obj, {

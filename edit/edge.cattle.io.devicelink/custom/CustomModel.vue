@@ -25,6 +25,7 @@ export default {
   },
   data() {
     console.log('------this.templateProperties', this.templateProperties.properties);
+    console.log('------editRowIndex-----', this.editRowIndex)
     const { required } = this.templateProperties;
     const properties = this.translationProperties(this.templateProperties.properties);
     console.log('-----properties', properties)
@@ -48,7 +49,7 @@ export default {
         const length = this.device.spec.template.spec.properties.length;
         this.localDevice = _.cloneDeep(newVal)
         if (length <= 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(this,properties));
+          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(this.properties));
         }
       },
       deep: true,

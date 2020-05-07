@@ -17,10 +17,10 @@ export default {
       return require(`static/device-default.png`);
     },
     lanuch() {
-      this.$router.push('./mqtt-management/catalog');
+      this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog/catalog');
     },
     handermanage() {
-      this.$router.push('./mqtt-management/catalog-config')
+      this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog/catalog-config')
     },
     upgradeInfo(chart) {
       const { version } = chart.spec;
@@ -36,16 +36,19 @@ export default {
         return `有可用更新 (${allVersion[0]})`;
       }
     },
-    showActions() {
+    getStatus(obj) {
+      return 'Action'
+    },
+    showActions(value, e) {
+      console.log('--------availableActions', value.availableActions)
       this.$store.commit('actionMenu/show', {
-        resources: this.originalModel,
-        elem:      this.$refs.actions,
+        resources: value,
+        elem:      e.target,
       });
     },
   },
   computed: {
     searchHelmChart() {
-      console.log('this.helmChart', this.helmChart)
       return this.helmChart.filter( chart => {
         return chart.metadata.name.includes(this.search)
       })
@@ -53,7 +56,7 @@ export default {
   },
   mounted() {
     if ( this.helmChart.length ===0 ) {
-      this.$router.replace('./mqtt-management/catalog')
+      this.$router.replace('/mqttManagement/edgeapi.cattle.io.catalog/catalog')
     }
   },
   async asyncData({ store, route }) {
@@ -63,9 +66,8 @@ export default {
     const filterHelmChart = helmChart.filter(chart => {
       return chart.metadata?.annotations?.['edgeapi.cattle.io/edge-api-server'] === "true"
     })
-
     const comppositonHelmChart = filterHelmChart.map(chart => {
-      chart.chartInfo = catalogs[0].spec.indexFile.entries[chart.spec.chart]
+      chart.chartInfo = catalogs[0].spec.indexFile.entries[chart.spec.chart] || []
       return chart
     })
 
@@ -119,9 +121,9 @@ export default {
               <div class="info">
                 <div class="name">{{ chart.metadata.name }}</div>
                 <div class="version">
-                  <nuxt-link :to="`./mqtt-management/launch?app=${chart.spec.chart}&mode=upgrade&id=${chart.id}`" class="upgrade">{{upgradeInfo(chart)}}</nuxt-link>
-                  <el-tag type="success">Active</el-tag>
-                  <button ref="actions" type="button" class="btn btn-sm role-multi-action actions">
+                  <nuxt-link :to="`/mqttManagement/edgeapi.cattle.io.catalog/create?app=${chart.spec.chart}&mode=edit&id=${chart.id}`">{{upgradeInfo(chart)}}</nuxt-link>
+                  <el-tag type="success">{{ getStatus(chart) }}</el-tag>
+                  <button ref="actions" type="button" class="btn btn-sm role-multi-action actions" @click="showActions(chart, $event)">
                     <i class="icon icon-actions" />
                   </button>
                 </div>
@@ -155,6 +157,11 @@ export default {
       flex: 1;
     }
     margin-bottom: 20px;
+  }
+
+  .card {
+    margin-bottom: 20px;
+    min-width: 450px;
   }
 
   .catalog-view {

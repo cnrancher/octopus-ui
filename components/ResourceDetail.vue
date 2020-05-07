@@ -19,6 +19,7 @@ import {
 export async function asyncData(ctx) {
   const { store, params, route } = ctx;
   const { resource, namespace, id } = params;
+
   const hasCustomDetail = _hasCustomDetail(resource);
   const hasCustomEdit = _hasCustomEdit(resource);
   // There are 5 "real" modes: view, create, edit, stage, clone

@@ -89,15 +89,15 @@ export const MENUS = [
     }
   },
   {
-    name: 'mqtt-management',
+    name: 'mqttManagement',
     meta: {
       title: '应用管理',
       icon:  'icon-mqtt',
     },
     children: [
       {
-        name: 'mqtt-management/default',
-        path: '/mqtt-management',
+        name: 'mqttManagement/default',
+        path: '/mqttManagement/edgeapi.cattle.io.catalog',
         meta: { title: 'MQTT 管理' }
       }
     ]

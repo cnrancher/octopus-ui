@@ -4,60 +4,9 @@ import Collapse from './collapse';
 import CatalogHeader from './header';
 import CodeMirror from '@/components/CodeMirror';
 import YAML from 'json2yaml';
+import DefalutYaml from './value.json'
 import { CATALOGS, HELM, NODE } from '@/config/types';
 
-const currentValue = `  replicaCount: 3
-  image:
-    pullPolicy: IfNotPresent
-    repository: emqx/emqx
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  persistence:
-    accessMode: ReadWriteOnce
-    enabled: false
-    size: 20Mi
-  service.type: ClusterIP
-  emqxConfig:
-    EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname
-    EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443
-    EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local
-  emqxLicneseSecretName: null
-  tolerations: []
-  nodeSelector: {}
-  affinity: {}
-  ingress:
-    annotations: {}
-    enabled: false
-    hosts:
-    - chart-example.local
-    path: /
-    tls: []`;
-
-const jsonData = {
-  "apiVersion": "helm.cattle.io/v1",
-  "kind": "HelmChart",
-  "metadata": {
-    "annotations": {
-      "edgeapi.cattle.io/owner-name": "admin",
-      "edgeapi.cattle.io/edge-api-server": "true"
-    },
-    "name": "", // my-mqtt
-    "namespace": "kube-system",
-    "description": '' // 是否加在这里
-  },
-  "spec": {
-    "chart": "", // emqx
-    "repo": "", // http://charts.cnrancher.cn
-    "version": "", // v2.0.0-rc.1
-    "targetNamespace": "", // default
-    "valuesContent": ''
-  }
-}
 
 export default {
   components: {
@@ -66,36 +15,27 @@ export default {
     CatalogHeader
   },
   data() {
-    const { id, app, mode } = this.$route.query;
-
-    jsonData.spec.chart = app;
-    
     return {
-      baseValue: jsonData,
-      currentValue,
-      app,
-      id,
-      mode,
+      
     }
   },
   mounted() {
-    if (this.mode === 'launch') {
+    if (this.mode === 'create') {
       this.baseValue.spec.version = this.versions[0]
     }
 
-    if (this.mode === 'upgrade') {
-      const currentCahrt = this.helmChart.filter( chart => {
-        return chart.id === this.id
-      })
-      console.log('---currentCahrt', currentCahrt)
-
-      this.baseValue.metadata.name = currentCahrt[0].metadata.name;
-      this.baseValue.spec.chart = currentCahrt[0].spec.chart;
-      this.baseValue.spec.version = currentCahrt[0].spec.version;
-      this.baseValue.spec.targetNamespace = currentCahrt[0].spec.targetNamespace;
+    if (this.mode === 'edit') {
+      let json = jsyaml.safeLoad(this.yaml);
+      this.baseValue = json;
+      const valuesContent = json.spec.valuesContent;
+      const currentValue = jsyaml.safeDump(valuesContent);
+      this.currentValue = currentValue;
     }
   },
   computed: {
+    isEdit() {
+      return this.mode === 'edit'
+    },
     description() {
       return this.catalogs[this.app][0].description
     },
@@ -128,16 +68,64 @@ export default {
     },
   },
   methods: {
-    async launch() {
-      this.baseValue.spec.valuesContent =  YAML.stringify(this.currentValue);
-      await this.$store.dispatch('deviceLink/request', {
-        method:  'POST',
-        headers: {
-          'content-type': 'application/json',
-          accept:         'application/json',
-        },
-        url: 'v1/helm.cattle.io.helmcharts',
-        data: this.baseValue,
+    create(formName) {
+      this.baseValue.spec.valuesContent =  '';
+      
+      this.$refs[formName].validate( async (valid) => {
+        if (valid) {
+          const data = await this.$store.dispatch('deviceLink/request', {
+            method:  'POST',
+            headers: {
+              'content-type': 'application/json',
+              accept:         'application/json',
+            },
+            url: 'v1/helm.cattle.io.helmcharts',
+            data: this.baseValue,
+          });
+
+          if (data._status === 201) {
+            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog')
+            this.$nextTick(() => {
+              this.$refs[formName].resetFields();
+            });
+          }
+          
+        } else {
+          return false;
+        }
+      });
+    },
+    async update(formName) {
+      const currentValue = jsyaml.safeLoad(this.currentValue);
+      this.baseValue.spec.valuesContent =  currentValue;
+      console.log('-------', this.baseValue, this.currentValue)
+      this.$refs[formName].validate( async (valid) => {
+        if (valid) {
+          const data = await this.helmChart.followLink('update', {
+            method:  'PUT',
+            headers: {
+              'content-type': 'application/json',
+              accept:         'application/json',
+            },
+            data: this.baseValue,
+          });
+
+          if (data._status === 200) {
+            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog')
+            this.$nextTick(() => {
+              this.$refs[formName].resetFields();
+            });
+          }
+          
+        } else {
+          return false;
+        }
+      });
+    },
+    cancel(formName) {
+      this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog');
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields();
       });
     },
     onInput(value) {
@@ -207,10 +195,23 @@ export default {
   },
   async asyncData(ctx) {
     const { route, store } = ctx;
+    const { id, app, mode } = route.query;
 
+    const helmChart = await store.dispatch('deviceLink/find', { type: HELM, opt:  { force: true }, id });
+    let yaml = ''
+    if (mode === 'edit') {
+      yaml = (await helmChart.followLink('view', { headers: { accept: 'application/yaml' } })).data;
+    }
+
+    let jsonData= DefalutYaml;
+    let currentValue = ''
+    if (mode === 'create') {
+      jsonData = DefalutYaml;
+      currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
+      console.log('----DefalutYaml', DefalutYaml);
+    }
+    console.log('yaml---', yaml)
     const catalogs = await store.dispatch('deviceLink/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
-    const helmChart = await store.dispatch('deviceLink/findAll', { type: HELM, opt:  { url: `${HELM}s` } });
-
     const nodes = await store.dispatch('deviceLink/findAll', { type: NODE, opt: { url: NODE } });
 
     const list = catalogs[0].spec.indexFile.entries;
@@ -219,11 +220,16 @@ export default {
         value: N.id
       }
     })
-    console.log('-----log', list, node)
     return {
       catalogs: list,
       helmChart,
-      node
+      baseValue: jsonData,
+      currentValue,
+      node,
+      id,
+      app,
+      mode,
+      yaml
     };
   }
 }
@@ -251,8 +257,13 @@ export default {
           <el-form ref="form" :model="baseValue">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="名称" required>
-                  <el-input v-model="baseValue.metadata.name"></el-input>
+                <el-form-item label="名称"
+                  :prop="'metadata.name'"
+                  :rules="[
+                    { required: true, message: '请输入名称', trigger: 'blur' },
+                  ]"
+                >
+                  <el-input v-model="baseValue.metadata.name" :disabled="isEdit"></el-input>
                 </el-form-item>
               </el-col>
 
@@ -281,9 +292,13 @@ export default {
               </el-col>
 
               <el-col>
-                <el-form-item label="命名空间" required>
+                <el-form-item label="命名空间"
+                  :prop="'spec.targetNamespace'"
+                  :rules="[
+                    { required: true, message: '请选择命名空间', trigger: 'blur' },
+                  ]"
+                >
                   <el-select
-                    disabled
                     v-model="baseValue.spec.targetNamespace" 
                     class="version"
                     filterable
@@ -320,17 +335,15 @@ export default {
               <el-col>
                 <div class="action">
 
-                  <template v-if="mode==='launch'">
-                    <el-button type="primary" @click="launch">启动</el-button>
+                  <template v-if="mode==='create'">
+                    <el-button type="primary" @click="create('form')">启动</el-button>
                   </template>
 
-                  <template v-if="mode==='upgrade'">
-                    <el-button type="primary">升级</el-button>
+                  <template v-if="mode==='edit'">
+                    <el-button type="primary" @click="update('form')">升级</el-button>
                   </template>
 
-                  <nuxt-link to="/mqtt-management" class="cancel">
-                    <el-button>取消</el-button>
-                  </nuxt-link>
+                  <el-button @click="cancel('form')" class="cancel">取消</el-button>
                 </div>
               </el-col>
             </el-row>

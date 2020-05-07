@@ -73,7 +73,7 @@ export default {
             v-for="(item, key)  in newCatalogs"
             :key="key"
           >
-            <nuxt-link :to="{path: 'launch', query: { app: key,  mode: 'launch' }}">
+            <nuxt-link :to="{path: 'create', query: { app: key,  mode: 'create' }}">
               <el-card>
                 <div class="brand">
                   <img

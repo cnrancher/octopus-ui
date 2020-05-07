@@ -16,17 +16,37 @@ export default {
     }
   },
   methods: {
-    defaultImg() {
-      return require(`static/device-default.png`);
-    },
-    formatter(row, column) {
-      return row.address;
-    },
     hideModal() {
       this.$store.commit('catalogs/showModelInfo', {
         isShow: false,
         id: ''
       }, { root: true });
+    },
+    update(formName) {
+      console.log(this, '-----', this.currentValue);
+      this.$refs[formName].validate( async (valid) => {
+        if (valid) {
+          const data = await this.$store.dispatch('deviceLink/request', {
+            method:  'PUT',
+            headers: {
+              'content-type': 'application/json',
+              accept:         'application/json',
+            },
+            url: 'v1/edgeapi.cattle.io.catalogs/kube-system/my-mqtt',
+            data: this.currentValue,
+          });
+
+          if (data._status === 200) {
+            this.hideModal();
+            this.$nextTick(() => {
+              this.$refs[formName].resetFields();
+            });
+          }
+          
+        } else {
+          return false;
+        }
+      });
     },
     async getCurrentValue() {
       const id = this.$store.state.catalogs.showInfo.id;
@@ -42,8 +62,9 @@ export default {
       const STATE = {
         name:      'state',
         label:     'State',
-        value:     'id',
+        value:     'status',
         sort:      ['nameSort'],
+        formatter:  'FormatCatalogState',
         width:     200
       };
       const SCOPE = {
@@ -67,17 +88,11 @@ export default {
         sort:      ['nameSort'],
         width:     400
       };
-      const BRANCHE = {
-        name:      'branch',
-        label:     'branch',
-        value:     'id',
-        sort:      ['nameSort'],
-        width:     200
-      };
-      return [STATE, SCOPE, NAME, CATALOG_URL, BRANCHE];
+     
+      return [STATE, SCOPE, NAME, CATALOG_URL];
     },
     isShow() {
-      this.getCurrentValue()
+      this.getCurrentValue();
       return this.$store.state.catalogs.showInfo.isShow;
     },
   },
@@ -97,13 +112,13 @@ export default {
   <div class="catalog-config">
     <catalogHeader>
       <template v-slot:name>
-        Catalogs
+        商店设置
       </template>
     </catalogHeader>
    
     <ResourceTable :schema="schema" :rows="catalogs" :headers="headers" />
   
-    <nuxt-link to="/mqtt-management" class="back">
+    <nuxt-link to="/mqttManagement/edgeapi.cattle.io.catalog" class="back">
       <el-button type="primary">返回</el-button>
     </nuxt-link>
 
@@ -112,10 +127,27 @@ export default {
       :visible="isShow"
       width="600"
     >
-      <span>这是一段信息</span>
+      <el-form
+        ref="form"
+        v-if="currentValue.metadata"
+        :model="currentValue"
+        class="form-container"
+      >
+        <el-form-item
+          label="名称"
+        >
+          <el-input v-model="currentValue.metadata.name" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="商店URL地址"
+        >
+          <el-input v-model="currentValue.spec.url"></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideModal">取 消</el-button>
-        <el-button type="primary" @click="hideModal">确 定</el-button>
+        <el-button type="primary" @click="update('form')">确 定</el-button>
       </span>
     </el-dialog>
   </div>  

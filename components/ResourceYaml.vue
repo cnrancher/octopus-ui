@@ -73,7 +73,6 @@ export default {
     if ( mode === _PREVIEW ) {
       mode = _EDIT;
     }
-    console.log('---yarmlvalue--', this.value)
     return {
       currentValue: this.value,
       mode,
@@ -236,7 +235,6 @@ export default {
     async save(buttonDone) {
       try {
         if ( this.isCreate ) {
-          console.log('----crate----', this.currentValue)
           await this.schema.followLink('collection', {
             method:  'POST',
             headers: {

@@ -83,10 +83,7 @@ export const actions = {
       const res = await this.$axios({
         method: 'post',
         url:    '/v2-public/auth?action=login',
-        auth:   {
-          username: 'admin',
-          password: '4fd1a96f8b541cc37368fdb7d1302630'
-        }
+        auth:   body
       });
 
       if (res.data) {

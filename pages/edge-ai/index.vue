@@ -1,5 +1,5 @@
 <template>
   <h1 class="p-20">
-    Edge AI
+    Coming soon
   </h1>
 </template>

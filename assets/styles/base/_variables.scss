@@ -1,0 +1,34 @@
+$max-width: 1440px !default;
+$min-width: 75% !default;
+
+$outline-width: 1px;
+
+$z-indexes: (
+  default: 1,
+  overContent: 2,
+
+  tableGroup: 10,
+  fixedTableHeader: 11,
+
+  modalOverlay: 20,
+  modalContent: 21,
+
+  dropdownOverlay: 30,
+  dropdownContent: 31,
+
+  loadingOverlay: 40,
+  loadingContent: 41
+);
+
+$text-light: 300;
+
+
+// Usage Example:
+// @media only screen and (min-width: map-get($breakpoints, '--viewport-*')) {
+// }
+$breakpoints: (
+  '--viewport-4':  480px,
+  '--viewport-7':  768px,
+  '--viewport-9':  992px,
+  '--viewport-12': 1200px,
+);

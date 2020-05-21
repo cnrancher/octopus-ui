@@ -1,0 +1,340 @@
+locale:
+  none: (None)
+  en-us: English
+
+generic:
+  close: Close
+  comingSoon: Coming Soon
+  created: Created
+  customize: Customize
+  na: "n/a"
+  unknown: Unknown
+
+suffix:
+  ib: iB
+  cpus: CPUs
+
+header:
+  backToRancher: "← Back to Rancher"
+
+nav:
+  ns:
+    all: All Namespaces
+    user: All User Namespaces
+    system: All System Namespaces
+    clusterLevel: Cluster-Level Resources
+    namespaced: Namespaced Resources
+    project: "Project: {name}"
+    namespace: "{name}"
+    orphan: "Not in a Project"
+
+cluster:
+  provider:
+    amazonelasticcontainerservice:
+      label: Amazon Elastic Container Service for Kubernetes
+      shortLabel: Amazon EKS
+    tencentengine:
+      label: Tencent Kubernetes Engine
+      shortLabel: Tencent TKE
+    azurekubernetesservice:
+      label: Azure Container Service
+      shortLabel: Azure AKS
+    aliyunengine:
+      label: Aliyun Kubernetes Container Service
+      shortLabel: Alibaba ACK
+    googlekubernetesengine:
+      label: Google Kubernetes Engine
+      shortLabel: Google GKE
+    k3simport:
+      label: Rancher K3S
+      shortLabel: K3S
+    huaweiengine:
+      label: Huawei Cloud Container Engine
+      shortLabel: Huawei CCE
+    oracleokeengine:
+      label: Oracle Container Engine long
+      shortLabel: Oracle OKE
+    rancherkubernetesengine:
+      label: Rancher Kubernetes Engine
+      shortLabel: Custom
+    custom:
+      label: From existing nodes (Custom)
+      shortLabel: Custom
+    imported:
+      label: Import an existing cluster
+      shortLabel: Imported
+
+containerResourceLimit:
+  label: Container Default Resource Limit
+  helpText: Configure how much of the resources the container can consume by default.
+  helpTextDetail: The amount of resources the container can consume by default.
+  requestsCpu: CPU Reservation
+  requestsMemory: Memory Reservation
+  limitsCpu: CPU Limit
+  limitsMemory: Memory Limit
+  cpuPlaceholder: e.g. 1000
+  memPlaceholder: e.g. 128
+
+
+footer:
+  docs: Docs
+  forums: Forums
+  slack: Slack
+  issue: File an Issue
+  download: Download CLI
+
+clusterIndexPage:
+  header: "Cluster: {name}"
+  sections:
+    nodes:
+      label: Unhealthy Nodes
+      noRows: "There are no unhealthy nodes to show."
+    gatekeeper:
+      label: OPA Gatekeeper Constraint Violations
+      disabled: OPA Gatekeeper is not configured.
+      buttonText: Configure Gatekeeper
+      noRows: "There are no contrains with violations to show."
+    events:
+      label: Events
+
+gatekeeperIndex:
+  unavailable: "OPA + Gatekeeper is not available in the system-charts catalog."
+  violations: Violations
+
+gatekeeperConfig:
+  header: OPA Gatekeeper
+  flag: Experimental
+  configure:
+    description: Description
+    helpText:
+      listItem1: "OPA Gatekeeper provides first-class integration between OPA (Open Policy Agent) and Kubernetes."
+      listItem2: "You can Customize Gatekeeper’s yaml configuartion or Enable Gatekeeper with defaults."
+      listItem3: "For more information, visit the "
+      listItem4: "OPA Documentation."
+    requirements:
+      header: Requirements
+      helpText:
+        listItem1: "0.1 CPU Cores"
+        listItem2: "256 MiB of Memory"
+  infoBox:
+    auditFromCache: Audit From Cache
+    auditInterval: Audit Interval
+    constraintViolationsLimit: Constraint Violation Limit
+    replicas: Replicas
+    imageRepository: Image
+    imageTag: Version
+  yaml:
+    buttonText: Customize
+
+gatekeeperConstraint:
+  template: Template
+  violations:
+    title: Violations
+  parameters:
+    title: Parameters
+    editAsForm: Edit as Form
+    editAsYaml: Edit as YAML
+    addParameter: Add Parameter
+  enforcementAction:
+    title: Enforcement Action
+  match:
+    title: Match
+  tab:
+    namespaces:
+      title: Namespaces
+      sub:
+        namespaces: Namespaces
+        excludedNamespaces: Excluded Namespaces
+    selectors:
+      title: Selectors
+      sub:
+        labelSelector: 
+          title: Label Selector
+          addLabel: Add Label
+        namespaceSelector: 
+          title: Namespace Selector
+          addNamespace: Add Namespace
+    kinds:
+      title: Kinds
+
+
+
+infoBoxCluster:
+  cpu: CPU Usage
+  created: Created
+  memory: Memory
+  pods: Pods
+  provider: Provider
+  reserved: "{numerator} of {denominator} reserved"
+  used: "{numerator} of {denominator} used"
+  version: Kubernetes Version
+  nodes:
+    label: Nodes
+    total:
+      label: Total Nodes
+    worker:
+      label: Worker
+    etcd:
+      label: Etcd
+    controlPlane:
+      label: Control Plane
+
+resourceDetail:
+  header:
+    view: '{name}'
+    create: 'Create {type}'
+    edit: 'Edit {type}: {name}'
+    clone: 'Clone from {type}: {name}'
+    stage: 'Stage from {type}: {name}'
+  masthead:
+    namespace: 'Namespace'
+    project: 'Project'
+    yaml: 'YAML'
+    overview: 'Overview'
+
+sortableTable:
+  noRows: "There are no rows to show."
+  noData: "There are no rows which match your search query."
+  paging:
+    generic: |
+      {pages, plural,
+      =0 {No Items}
+      =1 {{count} {count, plural, =1 {Item} other {Items}}}
+      other {{from} - {to} of {count} Items}}
+    resource: |
+      {pages, plural,
+      =0 {No {pluralLabel}}
+      =1 {{count} {count, plural, =1 {{singularLabel}} other {{pluralLabel}}}}
+      other {{from} - {to} of {count} {pluralLabel}}}
+    workload: |
+      {pages, plural,
+      =0 {No Workloads}
+      =1 {{count} {count, plural, =1 {Workload} other {Workloads}}}
+      other {{from} - {to} of {count} Workloads}}
+
+model:
+  namespace:
+    project: "Project: {name}"
+    notInAProject: "Not in a Project"
+
+configmapPage:
+  data:
+    title: Data
+    protip: Use this area for anything that's UTF-8 text data
+  tabs:
+    binaryData:
+      label: Binary Data
+
+wm:
+  connection:
+    connected: Connected
+    disconnected: Disconnected
+    error: Error
+  containerShell:
+    containerName: 'Container: {label}'
+    clear: Clear
+  containerLogs:
+    containerName: 'Container: {label}'
+    clear: Clear
+    download: Download
+    follow: Follow
+    range:
+      label: Show the last
+      lines: '{value} Lines'
+      minutes: '{value} Minutes'
+      hours: '{value} Hours'
+      all: 'Everything'
+    previous: Use Previous Container
+    wrap: Wrap Lines
+    timestamps: Show Timestamps
+    search: Filter
+    noMatch: No lines match the current filter.
+    noData: There are no log entries to show in the current range.
+
+tableHeaders:
+  state: State
+  download: Download
+  internalExternalIp: "Internal/External IP"
+  name: Name
+  simpleName: Name
+  effect: Effect
+  nameUnlinked: Name
+  namespaceNameUnlinked: Name
+  namespaceName: Name
+  node: Node
+  nodeName: Name
+  roles: Roles
+  version: Version
+  cpu: CPU
+  ram: RAM
+  pods: Pods
+  age: Age
+  image: Image
+  rioImage: Image
+  podImages: Image
+  endpoints: Endpoint
+  scale: Scale
+  simpleScale: Scale
+  weight: Weight
+  success: Success
+  reqRate: Req Rate
+  p95: 95%tile
+  keys: Data
+  targetKind: Target Type
+  target: Target
+  matches: Matches
+  destination: Target
+  username: Username
+  userDisplayName: Display Name
+  userId: ID
+  userStatus: Status
+  address: Address
+  simpleType: Type
+  imageSize: Size
+  type: Type
+  status: Status
+  lastHeartbeatTime: Last update
+  reason: Reason
+  message: Message
+  key: Key
+  value: Value
+  builtIn: Built In
+  clusterCreatorDefault: Cluster Creator Default
+  resource: Resource
+  apiGroup: API Groups
+  ingressTarget: Target
+  rbac:
+    create: Create
+    delete: Delete
+    get: Get
+    list: List
+    patch: Patch
+    update: Update
+    watch: Watch
+
+node:
+  detail:
+    detailTop:
+      ipAddress: IP Address
+      version: Version
+      os: OS
+      containerRuntime: Container Runtime
+    glance:
+      pidPressure: PID Pressure
+      diskPressure: Disk Pressure
+      memoryPressure: Memory Pressure
+      kubelet: kubelet
+      consumptionGauge:
+        cpu: CPU
+        memory: MEMORY
+        pods: PODS
+        amount: '{used} of {total} {unit} used'
+    tab:
+      conditions: Conditions
+      info: Info
+      address: Address
+      images: images
+      taints: Taints
+
+internalExternalIP:
+  none: None

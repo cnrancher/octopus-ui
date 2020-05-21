@@ -1,0 +1,317 @@
+<script>
+import { capitalize, words } from 'lodash';
+import ConsumptionGauge from '@/components/ConsumptionGauge';
+import DetailTop from '@/components/DetailTop';
+import HStack from '@/components/Layout/Stack/HStack';
+import VStack from '@/components/Layout/Stack/VStack';
+import Alert from '@/components/Alert';
+import SortableTable from '@/components/SortableTable';
+import Tab from '@/components/Tabbed/Tab';
+import BadgeState from '@/components/BadgeState';
+import {
+  ADDRESS,
+  EFFECT,
+  IMAGE_SIZE,
+  KEY,
+  LAST_HEARTBEAT_TIME,
+  MESSAGE,
+  REASON,
+  SIMPLE_NAME,
+  SIMPLE_TYPE,
+  STATUS,
+  VALUE,
+} from '@/config/table-headers';
+import ResourceTabs from '@/components/form/ResourceTabs';
+import Poller from '@/utils/poller';
+import { METRIC } from '@/config/types';
+import createEditView from '@/mixins/create-edit-view';
+import { formatSi, exponentNeeded, UNITS } from '@/utils/units';
+import CopyToClipboardText from '@/components/CopyToClipboardText';
+
+const METRICS_POLL_RATE_MS = 30000;
+const MAX_FAILURES = 2;
+
+export default {
+  name: 'DetailNode',
+
+  components: {
+    Alert,
+    BadgeState,
+    ConsumptionGauge,
+    CopyToClipboardText,
+    DetailTop,
+    HStack,
+    VStack,
+    ResourceTabs,
+    Tab,
+    SortableTable
+  },
+
+  mixins: [createEditView],
+
+  props: {
+    value: {
+      type:     Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      metricPoller:           new Poller(this.loadMetrics, METRICS_POLL_RATE_MS, MAX_FAILURES),
+      metrics:                { cpu: 0, memory: 0 },
+      conditionsTableHeaders: [
+        SIMPLE_TYPE,
+        STATUS,
+        LAST_HEARTBEAT_TIME,
+        REASON,
+        MESSAGE
+      ],
+      infoTableHeaders: [
+        {
+          ...KEY,
+          label: '',
+          width: 200
+        },
+        {
+          ...VALUE,
+          label: ''
+        }
+      ],
+      addressTableHeaders: [
+        SIMPLE_TYPE,
+        ADDRESS
+      ],
+      imageTableHeaders: [
+        { ...SIMPLE_NAME, width: 400 },
+        IMAGE_SIZE
+      ],
+      taintTableHeaders: [
+        KEY,
+        VALUE,
+        EFFECT
+      ]
+    };
+  },
+
+  computed: {
+    memoryUnits() {
+      const exponent = exponentNeeded(this.value.ramCapacity, 1024);
+
+      return `${ UNITS[exponent] }iB`;
+    },
+
+    pidPressureStatus() {
+      return this.mapToStatus(this.value.isPidPressureOk);
+    },
+
+    diskPressureStatus() {
+      return this.mapToStatus(this.value.isDiskPressureOk);
+    },
+
+    memoryPressureStatus() {
+      return this.mapToStatus(this.value.isMemoryPressureOk);
+    },
+
+    kubeletStatus() {
+      return this.mapToStatus(this.value.isKubeletOk);
+    },
+
+    conditionsTableRows() {
+      return this.value.status.conditions;
+    },
+
+    infoTableRows() {
+      return Object.keys(this.value.status.nodeInfo)
+        .map(key => ({
+          key:   capitalize(words(key).join(' ')),
+          value: this.value.status.nodeInfo[key]
+        }));
+    },
+
+    addressTableRows() {
+      return this.value.status.addresses;
+    },
+
+    imageTableRows() {
+      return this.value.status.images.map(image => ({
+        name:      image.names[1],
+        sizeBytes: image.sizeBytes
+      }));
+    },
+
+    taintTableRows() {
+      return this.value.spec.taints || [];
+    },
+
+    detailTopColumns() {
+      return [
+        {
+          title:   this.t('node.detail.detailTop.ipAddress'),
+          name:    'ip-address'
+        },
+        {
+          title:   this.t('node.detail.detailTop.version'),
+          content:  this.value.version
+        },
+        {
+          title:   this.t('node.detail.detailTop.os'),
+          content:  this.value.status.nodeInfo.osImage
+        },
+        {
+          title:   this.t('node.detail.detailTop.containerRuntime'),
+          name:    'container-runtime'
+        },
+      ];
+    }
+  },
+
+  mounted() {
+    this.metricPoller.start();
+  },
+
+  beforeDestroy() {
+    this.metricPoller.stop();
+  },
+
+  methods: {
+    memoryFormatter(value) {
+      const formatOptions = {
+        addSuffix:  false,
+        increment:  1024,
+      };
+
+      return formatSi(value, formatOptions);
+    },
+
+    mapToStatus(isOk) {
+      return isOk
+        ? 'success'
+        : 'error';
+    },
+    async loadMetrics() {
+      const schema = this.$store.getters['cluster/schemaFor'](METRIC.NODE);
+
+      if (schema) {
+        await this.$store.dispatch('cluster/find', {
+          type: METRIC.NODE,
+          id:   this.value.id,
+          opt:  { force: true }
+        });
+
+        this.$forceUpdate();
+      }
+    }
+  }
+};
+</script>
+
+<template>
+  <VStack class="node">
+    <DetailTop :columns="detailTopColumns">
+      <template v-slot:ip-address>
+        <CopyToClipboardText :text="value.internalIp" />
+      </template>
+      <template v-slot:state>
+        <BadgeState v-if="value.showDetailStateBadge" :value="value" />
+      </template>
+      <template v-slot:container-runtime>
+        <span><span v-if="value.containerRuntimeIcon" class="icon" :class="value.containerRuntimeIcon" /> {{ value.containerRuntimeVersion }}</span>
+      </template>
+    </DetailTop>
+    <HStack class="glance" :show-dividers="true">
+      <VStack class="alerts" :show-dividers="true" vertical-align="space-evenly">
+        <Alert :status="pidPressureStatus" :message="t('node.detail.glance.pidPressure')" />
+        <Alert :status="diskPressureStatus" :message="t('node.detail.glance.diskPressure')" />
+        <Alert :status="memoryPressureStatus" :message="t('node.detail.glance.memoryPressure')" />
+        <Alert :status="kubeletStatus" :message="t('node.detail.glance.kubelet')" />
+      </VStack>
+      <HStack class="cluster" horizontal-align="space-evenly">
+        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.cpu')" :capacity="value.cpuCapacity" :used="value.cpuUsage" />
+        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.memory')" :capacity="value.ramCapacity" :used="value.ramUsage" :units="memoryUnits" :number-formatter="memoryFormatter" />
+        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.pods')" :capacity="value.podCapacity" :used="value.podConsumed" />
+      </HStack>
+    </HStack>
+    <ResourceTabs v-model="value" :mode="mode">
+      <template v-slot:before>
+        <Tab name="conditions" :label="t('node.detail.tab.conditions')">
+          <SortableTable
+            key-field="_key"
+            :headers="conditionsTableHeaders"
+            :rows="conditionsTableRows"
+            :row-actions="false"
+            :table-actions="false"
+            :search="false"
+          />
+        </Tab>
+        <Tab name="info" :label="t('node.detail.tab.info')">
+          <SortableTable
+            key-field="_key"
+            :headers="infoTableHeaders"
+            :rows="infoTableRows"
+            :row-actions="false"
+            :table-actions="false"
+            :show-headers="false"
+            :search="false"
+          />
+        </Tab>
+        <Tab name="address" :label="t('node.detail.tab.address')">
+          <SortableTable
+            key-field="_key"
+            :headers="addressTableHeaders"
+            :rows="addressTableRows"
+            :row-actions="false"
+            :table-actions="false"
+            :search="false"
+          />
+        </Tab>
+        <Tab name="images" :label="t('node.detail.tab.images')">
+          <SortableTable
+            key-field="_key"
+            :headers="imageTableHeaders"
+            :rows="imageTableRows"
+            :row-actions="false"
+            :table-actions="false"
+          />
+        </Tab>
+        <Tab name="taints" :label="t('node.detail.tab.taints')">
+          <SortableTable
+            key-field="_key"
+            :headers="taintTableHeaders"
+            :rows="taintTableRows"
+            :row-actions="false"
+            :table-actions="false"
+            :search="false"
+          />
+        </Tab>
+      </template>
+    </ResourceTabs>
+  </VStack>
+</template>
+
+<style lang="scss" scoped>
+.cluster {
+  flex: 1;
+}
+
+$divider-spacing: 20px;
+
+.glance {
+  margin-top: 20px;
+
+  & > * {
+    padding: 0 $divider-spacing;
+
+    &:first-child {
+      padding-left: 0;
+    }
+  }
+}
+
+.alerts {
+  width: 25%;
+  & > * {
+    flex: 1;
+  }
+}
+</style>

@@ -1,7 +1,7 @@
 export const MENUS = [
   {
     name: 'global-overview',
-    path: '/global-overview',
+    path: '/c/local',
     meta: {
       title: '全局概览',
       icon:  'icon-global-resource',

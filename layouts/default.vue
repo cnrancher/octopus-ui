@@ -168,7 +168,7 @@ export default {
           :can-collapse="true"
         >
           <template slot="accordion">
-            <h6>{{ g.label }}</h6>
+            <h6 style="color: #fff">{{ g.label }}</h6>
           </template>
         </Group>
       </div>

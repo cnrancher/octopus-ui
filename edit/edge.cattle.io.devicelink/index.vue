@@ -300,7 +300,7 @@ export default {
 
         <template v-if="value.spec.model.kind === 'BluetoothDevice'">
           <el-col :span="12">
-            <el-form-item label="设备名称" prop="spec.template.spec.name">
+            <el-form-item label="蓝牙设备名称" prop="spec.template.spec.name">
               <el-input v-model="value.spec.template.spec.name"></el-input>
             </el-form-item>
           </el-col>

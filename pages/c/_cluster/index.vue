@@ -1,13 +1,17 @@
 <script>
-/* eslint-disable */
 import * as d3 from 'd3';
 import echarts from 'echarts';
+import _ from 'lodash';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from './dashboard-charts';
-
-// import '@/assets/fonts/hyzhuzi/style.scss';
+import { allHash } from '@/utils/promise';
+import '@/assets/fonts/hyzhuzi/style.scss';
+import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
+import {
+  NODE, POD, EVENT, COMPONENTSTATUS, METRIC, DEVICE_LINKS, K3S
+} from '@/config/types';
 
 function hexbinClassNameGenerator(count) {
   if (count <= 30) {
@@ -19,6 +23,13 @@ function hexbinClassNameGenerator(count) {
   }
 }
 
+function getSystemStatus(name, status) {
+  return {
+    name, 
+    status: status ? 'success' : 'error'
+  }
+}
+
 // 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
 function formatCPUValue(cpuValue) {
   const value = parseInt(cpuValue, 10);
@@ -26,6 +37,7 @@ function formatCPUValue(cpuValue) {
   if (!value) {
     return 0;
   }
+
   if (/n/.test(cpuValue)) {
     return value; // n结尾的直接返回
   } else if (/m/.test(cpuValue)) {
@@ -47,84 +59,35 @@ export default {
     DashboardProgressBar,
     ServiceStatusList
   },
+
+  mixins:     [LoadDeps],
+
   data() {
     return {
-      screenWidth:    document.documentElement.clientWidth,
-      gaugeList:      [],
-      rightGaugeList: [],
-      tableData:      [],
-      serviceList:    [],
-      iotInfo:        {
+      screenWidth:      document.documentElement.clientWidth,
+      gaugeList:        [],
+      rightGaugeList:   [],
+      tableData:        [],
+      serviceList:      [],
+      iotInfo:          {
         total:   0,
         online:  0,
         offline: 0
       },
-      hexbinData:     [],
-      gaugeData:      {},
-      cpuLoadList:    [],
-      memoryLoadList: []
+      hexbinData:       [],
+      gaugeData:        {},
+      cpuLoadList:      [],
+      memoryLoadList:   [],
+      events:           [],
+      nodesMetricsData: [],
+      nodesData:        [],
+      podsData:         [],
+      devices:          [],
+      podsLoadInfo:     [],
+      datastorage:      [],
+      systemControllers:[],
+      networking:       []
     };
-  },
-  computed: {
-    nodesData() {
-      if (this.$store.getters['management/hasType']('node')) {
-        return this.$store.getters['management/all']('node');
-      } else {
-        return this.$store.getters['dashboard/nodes'];
-      }
-    },
-    nodesMetricsData() {
-      if (this.$store.getters['management/hasType']('metrics.k8s.io.nodemetrics')) {
-        return this.$store.getters['management/all']('metrics.k8s.io.nodemetrics');
-      } else {
-        return this.$store.getters['dashboard/nodesMetrics'];
-      }
-    },
-    podsData() {
-      if (this.$store.getters['management/hasType']('pod')) {
-        return this.$store.getters['management/all']('pod');
-      } else {
-        return this.$store.getters['dashboard/pods'];
-      }
-    },
-    devices() {
-      if (this.$store.getters['management/hasType']('edge.cattle.io.devicelink')) {
-        return this.$store.getters['management/all']('edge.cattle.io.devicelink');
-      } else {
-        return this.$store.getters['dashboard/devices'];
-      }
-    },
-    podsLoadInfo() {
-      if (this.$store.getters['management/hasType']('metrics.k8s.io.podmetrics')) {
-        return this.$store.getters['management/all']('metrics.k8s.io.podmetrics');
-      } else {
-        return this.$store.getters['dashboard/podsLoadInfo'];
-      }
-    },
-    eventList() {
-      if (this.$store.getters['management/hasType']('event')) {
-        return this.$store.getters['management/all']('event');
-      } else {
-        return this.$store.getters['dashboard/events'];
-      }
-    },
-    datastorage() {
-      return this.$store.getters['dashboard/datastorage'];
-    },
-    systemControllers() {
-      if (this.$store.getters['management/hasType']('componentstatus')) {
-        return this.$store.getters['management/all']('componentstatus');
-      } else {
-        return this.$store.getters['dashboard/systemControllers'];
-      }
-    },
-    networking() {
-      if (this.$store.getters['management/hasType']('k3s.cattle.io.addon')) {
-        return this.$store.getters['management/all']('k3s.cattle.io.addon');
-      } else {
-        return this.$store.getters['dashboard/networking'];
-      }
-    }
   },
   watch: {
     screenWidth(val) {
@@ -135,84 +98,73 @@ export default {
         chartsItem.resize();
       });
     },
-    nodesData: {
-      handler(val) {
-        this.updateMetricsIoNodes();
-        this.updateSystemServiceStatus();
-      },
-      deep: true
+    nodesData() {
+      this.updateMetricsIoNodes();
+      this.updateSystemServiceStatus();
     },
-    podsData: {
-      handler(val) {
-        this.updateMetricsIoNodes();
-      },
-      deep: true
+    podsData() {
+      this.updateMetricsIoNodes();
     },
-    nodesMetricsData: {
-      handler(val) {
-        this.updateMetricsIoNodes();
-      },
-      deep: true
+    nodesMetricsData() {
+      this.updateMetricsIoNodes();
     },
-    eventList: {
-      handler(val) {
-        this.updateEventsData();
-      },
-      deep:      true,
-      immediate: true
-    },
-    devices: {
-      handler(val) {
-        this.updateDeviceInfo();
-      },
-      deep: true
+    devices() {
+      this.updateDeviceInfo();
     },
     podsLoadInfo: {
       handler(val) {
+        console.log('--追踪到podsLoadInfo更新')
         this.updatePodsLoadInfo();
       },
       deep:      true,
-      immediate: true
     },
-    datastorage: {
-      handler(val) {
-        this.updateSystemServiceStatus();
-      },
-      deep:      true,
-      immediate: true
+    eventList() {
+      console.log('--追踪到eventList更新')
+      this.updateEventsData();
     },
-    systemControllers: {
-      handler(val) {
-        this.updateSystemServiceStatus();
-      },
-      deep:      true,
-      immediate: true
+    datastorage() {
+      this.updateSystemServiceStatus();
     },
-    networking: {
-      handler(val) {
-        this.updateSystemServiceStatus();
-      },
-      deep:      true,
-      immediate: true
-    }
+    systemControllers() {
+      this.updateSystemServiceStatus();
+    },
+    networking() {
+      this.updateSystemServiceStatus();
+    },
   },
-  async mounted() {
+  mounted() {
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
     };
-    await this.$store.dispatch('dashboard/fetchALl', { body: {} });
-    this.updateMetricsIoNodes();
-    this.updateSystemServiceStatus();
-    this.updateDeviceInfo();
   },
   methods: {
+    async loadDeps() {
+      const hash = await allHash({
+        event:              this.$store.dispatch('management/findAll', { type: EVENT }),
+        nodesMetricsData:   this.$store.dispatch('management/findAll', { type: METRIC.NODE }),
+        podsLoadInfo:       this.$store.dispatch('management/findAll', { type: METRIC.POD }),
+        podsData:           this.$store.dispatch('management/findAll', { type: POD }),
+        nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
+        devices:            this.$store.dispatch('management/findAll', { type: 'edge.cattle.io.devicelink' }),
+        datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),
+        systemControllers:  this.$store.dispatch('management/findAll', { type: COMPONENTSTATUS }),
+        networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
+      });
+      
+      this.events = hash.event;
+      this.nodesData = hash.nodes;
+      this.devices = hash.devices;
+      this.podsData = hash.podsData;
+      this.networking = hash.networking;
+      this.datastorage = hash.datastorage;
+      this.podsLoadInfo = hash.podsLoadInfo;
+      this.nodesMetricsData = hash.nodesMetricsData;
+      this.systemControllers = hash.systemControllers;
+    },
     formatFontSize(val, initWidth = 1920) {
       const nowClientWidth = document.documentElement.clientWidth;
 
       return val * (nowClientWidth / initWidth);
-    },
-    getDataFromStore(type) {
-      return this.$store.getters['management/hasType'](type) ? this.$store.getters['deviceLink/all'](type) : [];
     },
     drawGauge(gaugeData) {
       const chartContainerNames = ['cpuUsedGauge', 'memoryUsedGauge', 'podsUsedGauge'];
@@ -271,6 +223,7 @@ export default {
             }
           }
         };
+
         const ecDraw = echarts.init(this.$refs[ecItem]);
 
         ecDraw.setOption(baseOptions);
@@ -400,7 +353,6 @@ export default {
       let clusterUsedPods = 0;
       // 分别对应CPU，内存和pod
       const hexbinData = [[], [], []];
-
       // 计算单个节点的CPU，内存和pod使用率
       Object.keys(nodesMap).map((keyItem) => {
         const { usage, status, podList } = nodesMap[keyItem];
@@ -439,6 +391,7 @@ export default {
           name: keyItem.toString()
         };
       });
+      
       const clusterCPUUsedRate = (clusterUsedCPU / clusterCPU * 100).toFixed(2);
       const clusterMemoryUsedRate = (clusterUsedMemory / clusterMemory * 100).toFixed(2);
       const clusterPodsUsedRate = (clusterUsedPods / clusterPods * 100).toFixed(2);
@@ -473,6 +426,7 @@ export default {
     },
     updatePodsLoadInfo() {
       const { podsLoadInfo } = this;
+      console.log('----podsLoadInfo', podsLoadInfo)
       let maxCpuLoad = 0;
       let maxMemoryLoad = 0;
       const cpuLoadList = podsLoadInfo.map((podItem, podIndex) => {
@@ -527,44 +481,23 @@ export default {
       this.$set(this.$data, 'cpuLoadList', cpuLoadList);
       this.$set(this.$data, 'memoryLoadList', memoryLoadList);
     },
-    updateEventsData() {
-      const { eventList } = this;
-
-      this.tableData = eventList.map((eventItem) => {
-        const { metadata, message } = eventItem;
-        const { fields } = metadata;
-
-        return {
-          namespace: metadata.namespace,
-          lastSeen:  fields[0],
-          type:      fields[1],
-          reason:    fields[2],
-          object:    fields[3],
-          message
-        };
-      });
-    },
     updateSystemServiceStatus() {
       const {
         datastorage, systemControllers, networking, nodesData
       } = this;
-      const systemServeives = [
-        {
-          index:  0, name:   'Datastore', status: datastorage.health ? 'success' : 'error'
-        }
-      ];
+      const systemServeives = [];
+      systemServeives.push(getSystemStatus('Datastore', datastorage.health))
+
       let systemControllersStatus = true;
       let networkingStatus = true;
       let nodesStatus = true;
 
       systemControllers.forEach((controllerItem, controllerIndex) => {
         const { state } = controllerItem.metadata;
-
         systemControllersStatus &= state.name === 'active';
       });
-      systemServeives.push({
-        index:  1, name:   'System Controllers', status: systemControllersStatus ? 'success' : 'error'
-      });
+     
+      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus))
 
       nodesData.forEach((nodeItem, nodeIndex) => {
         networkingStatus &= nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'] !== '';
@@ -578,14 +511,10 @@ export default {
           networkingStatus &= metadata.state.name === 'active';
         }
       });
-
-      systemServeives.push({
-        index:  2, name:   'Networking', status: networkingStatus ? 'success' : 'error'
-      });
-      systemServeives.push({
-        index:  3, name:   'Nodes', status: nodesStatus ? 'success' : 'error'
-      });
-
+      
+      systemServeives.push(getSystemStatus('Networking', networkingStatus))
+      systemServeives.push(getSystemStatus('Nodes', nodesStatus))
+      
       this.serviceList = systemServeives;
     }
   }
@@ -651,30 +580,30 @@ export default {
               集群事件
             </h3>
             <el-table
-              :data="tableData"
+              :data="events"
               cell-class-name="events-table-td"
               class="events-table"
               height="410px"
             >
               <el-table-column
                 label="命名空间"
-                prop="namespace"
+                prop="metadata.namespace"
               />
               <el-table-column
                 label="事件时间"
-                prop="lastSeen"
+                prop="metadata.fields[0]"
               />
               <el-table-column
                 label="类型"
-                prop="type"
+                prop="metadata.fields[1]"
               />
               <el-table-column
                 label="原因"
-                prop="reason"
+                prop="metadata.fields[2]"
               />
               <el-table-column
                 label="资源对象"
-                prop="object"
+                prop="metadata.fields[3]"
                 min-width="150"
               />
               <el-table-column
@@ -758,7 +687,7 @@ export default {
 </template>
 
 <style lang="scss">
-  // @import "~assets/fonts/fzpszhjw/style.scss";
+  @import "~assets/fonts/fzpszhjw/style.scss";
   .wrapper {
     background-color: #f6f7fb;
     min-width: 1440px;

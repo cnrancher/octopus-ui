@@ -92,21 +92,21 @@ export default {
     }
     .dashboard-icon-tick {
       border: 1px solid #8dc449;
-      // i {
-      //   background: url('~assets/images/dashboard-tick.png') no-repeat center #8dc449;
-      // }
+      i {
+        background: url('~assets/images/dashboard-tick.png') no-repeat center #8dc449;
+      }
     }
     .dashboard-icon-question {
       border: 1px solid #fac40f;
-      // i {
-      //   background: url('~assets/images/dashboard-question.png') no-repeat center #fac40f;
-      // }
+      i {
+        background: url('~assets/images/dashboard-question.png') no-repeat center #fac40f;
+      }
     }
     .dashboard-icon-error {
       border: 1px solid #ee5558;
-      // i {
-      //   background: url('~assets/images/dashboard-fork.png') no-repeat center #ee5558;
-      // }
+      i {
+        background: url('~assets/images/dashboard-fork.png') no-repeat center #ee5558;
+      }
     }
   }
 </style>

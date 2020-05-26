@@ -11,11 +11,6 @@ export default {
       required: false
     }
   },
-  methods: {
-    disabledLink(menu) {
-      console.log('-----', menu);
-    }
-  }
 };
 </script>
 <template>
@@ -27,7 +22,7 @@ export default {
             :index="menu.name"
           >
             <div class="info">
-              <i class="iconfont" :class="menu.meta.icon"></i>
+              <i class="icon" :class="menu.meta.icon"></i>
               <span>{{ menu.meta.title }}</span>
             </div>
             <span class="bar"></span>
@@ -40,7 +35,7 @@ export default {
       <el-submenu :key="menu.name" :index="menu.name">
         <template slot="title">
           <div class="info">
-            <i class="iconfont" :class="menu.meta.icon"></i>
+            <i class="icon" :class="menu.meta.icon"></i>
             <a>{{ menu.meta.title }}</a>
           </div>
           <span class="bar"></span>

@@ -12,248 +12,242 @@
 }
 
 .icon {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: '#{$icomoon-font-family}' !important;
-  speak: none;
+  font-family: "icons" !important;
+  font-size: 16px;
   font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-minus {
-  &:before {
-    content: $icon-minus; 
-  }
+.icon-github:before {
+  content: "\ea0a";
 }
-.icon-plus {
-  &:before {
-    content: $icon-plus; 
-  }
+
+.icon-docker:before {
+  content: "\e659";
 }
-.icon-circle-plus {
-  &:before {
-    content: $icon-circle-plus; 
-  }
+
+.icon-list-flat:before {
+  content: "\e643";
 }
-.icon-file {
-  &:before {
-    content: $icon-file; 
-  }
+
+.icon-warning:before {
+  content: "\e63a";
 }
-.icon-folder {
-  &:before {
-    content: $icon-folder; 
-  }
+
+.icon-folder:before {
+  content: "\e6c9";
 }
-.icon-list-flat {
-  &:before {
-    content: $icon-list-flat; 
-  }
+
+.icon-checkmark:before {
+  content: "\e604";
 }
-.icon-list-grouped {
-  &:before {
-    content: $icon-list-grouped; 
-  }
+
+.icon-file:before {
+  content: "\e729";
 }
-.icon-close {
-  &:before {
-    content: $icon-close; 
-  }
+
+.icon-minus:before {
+  content: "\e600";
 }
-.icon-x {
-  &:before {
-    content: $icon-x; 
-  }
+
+.icon-close:before {
+  content: "\eb1f";
 }
-.icon-checkmark {
-  &:before {
-    content: $icon-checkmark; 
-  }
+
+.icon-x:before {
+  content: "\e6a4";
 }
-.icon-warning {
-  &:before {
-    content: $icon-warning; 
-  }
+
+.icon-plus:before {
+  content: "\e6cb";
 }
-.icon-info {
-  &:before {
-    content: $icon-info; 
-  }
+
+.icon-info:before {
+  content: "\e60d";
 }
-.icon-error {
-  &:before {
-    content: $icon-error; 
-  }
+
+.icon-circle-plus:before {
+  content: "\e641";
 }
-.icon-chevron-beginning {
-  &:before {
-    content: $icon-chevron-beginning; 
-  }
+
+.icon-copy:before {
+  content: "\e706";
 }
-.icon-chevron-end {
-  &:before {
-    content: $icon-chevron-end; 
-  }
+
+.icon-sort-down:before {
+  content: "\e671";
 }
-.icon-chevron-right {
-  &:before {
-    content: $icon-chevron-right; 
-  }
+
+.icon-sort-up:before {
+  content: "\e674";
 }
-.icon-chevron-left {
-  &:before {
-    content: $icon-chevron-left; 
-  }
+
+.icon-error:before {
+  content: "\e637";
 }
-.icon-chevron-down {
-  &:before {
-    content: $icon-chevron-down; 
-  }
+
+.icon-actions:before {
+  content: "\e7ce";
 }
-.icon-chevron-up {
-  &:before {
-    content: $icon-chevron-up; 
-  }
+
+.icon-trash:before {
+  content: "\e864";
 }
-.icon-spinner {
-  &:before {
-    content: $icon-spinner; 
-  }
+
+.icon-dot:before {
+  content: "\e62f";
 }
-.icon-external-link {
-  &:before {
-    content: $icon-external-link; 
-  }
+
+.icon-upload:before {
+  content: "\e8d8";
 }
-.icon-download {
-  &:before {
-    content: $icon-download; 
-  }
+
+.icon-download:before {
+  content: "\e62b";
 }
-.icon-upload {
-  &:before {
-    content: $icon-upload; 
-  }
+
+.icon-gear:before {
+  content: "\e68b";
 }
-.icon-copy {
-  &:before {
-    content: $icon-copy; 
-  }
+
+.icon-dot-half:before {
+  content: "\e63b";
 }
-.icon-edit {
-  &:before {
-    content: $icon-edit; 
-  }
+
+.icon-dot-open:before {
+  content: "\e612";
 }
-.icon-trash {
-  &:before {
-    content: $icon-trash; 
-  }
+
+.icon-chevron-beginning:before {
+  content: "\e751";
 }
-.icon-delete {
-  &:before {
-    content: $icon-delete; 
-  }
+
+.icon-play:before {
+  content: "\f07e";
 }
-.icon-gear {
-  &:before {
-    content: $icon-gear; 
-  }
+
+.icon-chevron-left:before {
+  content: "\e647";
 }
-.icon-globe {
-  &:before {
-    content: $icon-globe; 
-  }
+
+.icon-spinner:before {
+  content: "\e918";
 }
-.icon-search {
-  &:before {
-    content: $icon-search; 
-  }
+
+.icon-terminal:before {
+  content: "\e921";
 }
-.icon-actions {
-  &:before {
-    content: $icon-actions; 
-  }
+
+.icon-star:before {
+  content: "\edf9";
 }
-.icon-vertical-ellipsis {
-  &:before {
-    content: $icon-vertical-ellipsis; 
-  }
+
+.icon-chevron-down:before {
+  content: "\e6a8";
 }
-.icon-dot-half {
-  &:before {
-    content: $icon-dot-half; 
-  }
+
+.icon-chevron-up:before {
+  content: "\e6a9";
 }
-.icon-dot-open {
-  &:before {
-    content: $icon-dot-open; 
-  }
+
+.icon-user:before {
+  content: "\e609";
 }
-.icon-dot {
-  &:before {
-    content: $icon-dot; 
-  }
+
+.icon-sort:before {
+  content: "\e71c";
 }
-.icon-star-open {
-  &:before {
-    content: $icon-star-open; 
-  }
+
+.icon-globe:before {
+  content: "\e630";
 }
-.icon-star {
-  &:before {
-    content: $icon-star; 
-  }
+
+.icon-search:before {
+  content: "\e621";
 }
-.icon-user {
-  &:before {
-    content: $icon-user; 
-  }
+
+.icon-pause:before {
+  content: "\e601";
 }
-.icon-sort-down {
-  &:before {
-    content: $icon-sort-down; 
-  }
+
+.icon-list-grouped:before {
+  content: "\e63c";
 }
-.icon-sort-up {
-  &:before {
-    content: $icon-sort-up; 
-  }
+
+.icon-chevron_right:before {
+  content: "\e93f";
 }
-.icon-sort {
-  &:before {
-    content: $icon-sort; 
-  }
+
+.icon-chevron-end:before {
+  content: "\e654";
 }
-.icon-terminal {
-  &:before {
-    content: $icon-terminal; 
-  }
+
+.icon-star-open:before {
+  content: "\e60a";
 }
-.icon-pause {
-  &:before {
-    content: $icon-pause; 
-  }
+
+.icon-edit:before {
+  content: "\e602";
 }
-.icon-play {
-  &:before {
-    content: $icon-play; 
-  }
+
+.icon-external-link:before {
+  content: "\e667";
 }
-.icon-docker {
-  &:before {
-    content: $icon-docker; 
-  }
+
+.icon-delete:before {
+  content: "\f07f";
 }
-.icon-github {
-  &:before {
-    content: $icon-github; 
-  }
+
+.icon-earth:before {
+  content: "\e629";
+}
+
+.icon-position:before {
+  content: "\e618";
+}
+
+.icon-system:before {
+  content: "\e61a";
+}
+
+.icon-source:before {
+  content: "\e61b";
+}
+
+.icon-set:before {
+  content: "\e61c";
+}
+
+.icon-dashboad-workload:before {
+  content: "\e61d";
+}
+
+.icon-workload:before {
+  content: "\e608";
+}
+
+.icon-iot-management:before {
+  content: "\e60b";
+}
+
+.icon-edge-ai:before {
+  content: "\e60e";
+}
+
+.icon-mqtt:before {
+  content: "\e613";
+}
+
+.icon-setting:before {
+  content: "\e616";
+}
+
+.icon-global-resource:before {
+  content: "\e603";
+}
+
+.icon-infrastructure:before {
+  content: "\e607";
 }
 

@@ -17,13 +17,10 @@ export const PVC = 'persistentvolumeclaim';
 export const TLS_CERT = 'kubernetes.io/tls';
 export const GATEKEEPER_CONSTRAINT_TEMPLATE = 'templates.gatekeeper.sh.constrainttemplate';
 
-export const K3S = { ADDONS: 'k3s.cattle.io.addons' };
+export const K3S = { ADDON: 'k3s.cattle.io.addon' };
 
-export const NODES = 'nodes';
 export const NAMESPACES = 'namespaces';
-export const PODS = 'pods';
-export const EVENTS = 'events';
-export const COMPONENTS_STATUS = 'componentstatuses';
+export const COMPONENTSTATUS = 'componentstatus'
 export const DEVICE_LINK = 'edge.cattle.io.devicelink';
 export const DEVICE_LINKS = 'edge.cattle.io.devicelinks';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';

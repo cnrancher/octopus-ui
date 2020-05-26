@@ -69,10 +69,6 @@ export const MENUS = [
     },
     children: [
       {
-        path: '/device/template',
-        meta: { title: '设备模板' }
-      },
-      {
         name: 'lot-management/deviceProtocol',
         path: '/deviceProtocol',
         meta:     { title: '设备协议' },
@@ -81,7 +77,11 @@ export const MENUS = [
         name: 'lot-management/device/edge.cattle.io.v1alpha1.devicelink',
         path: '/device/edge.cattle.io.v1alpha1.devicelink',
         meta: { title: '设备列表' }
-      }
+      },
+      {
+        path: '/device/template',
+        meta: { title: '设备模板' }
+      },
     ]
   },
   {

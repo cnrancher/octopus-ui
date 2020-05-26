@@ -1,3 +1,5 @@
+import echarts from 'echarts';
+import { formatFontSize } from '@/utils/units';
 
 export function rightGaugeConfigGenerator(opts) {
   return {
@@ -63,7 +65,7 @@ export function rightGaugeConfigGenerator(opts) {
   };
 }
 
-export function baseGaugeConfigGenerator() {
+export function baseGaugeConfigGenerator(rate) {
   return {
     series: [
       {
@@ -114,7 +116,25 @@ export function baseGaugeConfigGenerator() {
           show:      true,
           lineStyle: {
             width: 10,
-            color: []
+            color: [[
+              rate, new echarts.graphic.LinearGradient(0, rate > 0.5 ? 0 : 1, rate > 0.5 ? 1 : 0, 0, [
+                {
+                  offset: 0.1,
+                  color:  '#33ccff'
+                },
+                {
+                  offset: 0.6,
+                  color:  '#0066ff'
+                },
+                {
+                  offset: 1,
+                  color:  '#423fa9'
+                }
+              ])
+            ],
+            [
+              1, 'rgba(65,62,84,0)'
+            ]]
           }
         },
         // 分隔线样式。
@@ -130,7 +150,34 @@ export function baseGaugeConfigGenerator() {
             fontSize: 20
           }
         },
-        data: []
+        data: [],
+        detail:  {
+          show:         true,
+          offsetCenter: [0, '-4%'],
+          color:        '#423fa9',
+          formatter(param) {
+            return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${params.unit}中的${params.usage}${params.unit}}`;
+          },
+          textStyle: { fontSize: formatFontSize(44) },
+          rich:      {
+            percent: {
+              fontSize:   formatFontSize(40),
+              color:      '#423fa9',
+              fontWeight: 'bold',
+              fontFamily: 'hyzhuzi',
+              height:     60
+            },
+            type: {
+              fontSize: formatFontSize(18),
+              color:    '#000',
+              height:   30
+            },
+            describe: {
+              color:    '#35bfe3',
+              fontSize: formatFontSize(15),
+              height:   20
+            }
+          }},
       }
     ]
   };

@@ -100,8 +100,15 @@ export function parseSi(inValue, { increment = null, allowFractional = true } = 
   return val;
 }
 
+export function formatFontSize(val, initWidth = 1920) {
+  const nowClientWidth = document.documentElement.clientWidth;
+
+  return val * (nowClientWidth / initWidth);
+}
+
 export default {
   exponentNeeded,
   formatSi,
   parseSi,
+  formatFontSize
 };

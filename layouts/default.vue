@@ -246,8 +246,8 @@ export default {
     .outlet {
       display: flex;
       flex-direction: column;
-      padding-bottom: 40px;
       min-height: 100%;
+      padding: 20px 20px 70px 20px;
       margin-bottom: calc(-1 * var(--footer-height) - 1px);
     }
 

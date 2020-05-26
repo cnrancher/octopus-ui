@@ -69,7 +69,7 @@ export default {
         return all
       }, {})
     });
-    console.log('-----hash', hash)
+
     return {
       hash
     }
@@ -78,11 +78,12 @@ export default {
 </script>
 
 <template>
-  <div class="p-20">
+  <div>
     <header>
       <div class="actions">
+        
         <nuxt-link to="create" append tag="button" type="button" class="btn bg-primary">
-          创建
+          添加设备
         </nuxt-link>
 
         <nuxt-link
@@ -91,8 +92,18 @@ export default {
           type="button"
           class="btn bg-primary"
         >
-          编辑 Yaml
+          导入设备YAML
         </nuxt-link>
+
+        <nuxt-link
+          :to="{path: yamlRoute}"
+          tag="button"
+          type="button"
+          class="btn bg-primary"
+        >
+          添加设备模板
+        </nuxt-link>
+
       </div>
     </header>
     <ResourceTable :schema="schema" :rows="hash.devicelink.rows" :headers="headers" />

@@ -113,7 +113,7 @@ export default {
 }; </script>
 
 <template>
-  <div class="p-20">
+  <div>
     <header>
       <BreadCrumbs class="breadcrumbs" :route="route" />
 

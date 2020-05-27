@@ -64,7 +64,7 @@ export default {
 </script>
 
 <template>
-  <div class="p-20">
+  <div>
     <ResourceYaml v-if="asYaml" :obj="model" :value="yaml" :done-route="doneRoute" :for-create="true" />
     <div v-else>
       <header>

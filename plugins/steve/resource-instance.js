@@ -490,7 +490,8 @@ export default {
   },
 
   canViewInApi() {
-    return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
+    // return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
+    return this.hasLink('self')
   },
 
   canYaml() {

@@ -170,20 +170,20 @@ export const actions = {
 
   'ws.resource.create'({ dispatch }, { data }) {
     // console.log('Create', data.type, data.id);
-    console.log('----😄Create', data.type, data)
+    // console.log('----😄Create', data.type, data)
     dispatch('load', { data });
   },
 
   'ws.resource.change'({ dispatch }, { data }) {
     // console.log('Change', data.type, data.id);
-    console.log('----😄Change', data.type, data)
+    // console.log('----😄Change', data.type, data)
     dispatch('load', { data });
   },
 
   'ws.resource.remove'({ getters, commit }, { data }) {
     const type = getters.normalizeType(data.type);
     if ( getters.typeRegistered(type) ) {
-      console.log('----😄remove', data.type, data);
+      // console.log('----😄remove', data.type, data);
       // console.log('Remove', data.type, data.id);
       const obj = getters.byId(data.type, data.id);
 

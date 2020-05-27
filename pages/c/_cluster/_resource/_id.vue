@@ -10,7 +10,5 @@ export default {
 </script>
 
 <template>
-  <div class="p-20">
-    <ResourceDetail v-bind="$data" />
-  </div>
+  <ResourceDetail v-bind="$data" />
 </template>

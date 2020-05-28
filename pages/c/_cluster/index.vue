@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import echarts from 'echarts';
 import _ from 'lodash';
 import { hexbin } from 'd3-hexbin';
-import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from './dashboard-charts';
+import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import { allHash } from '@/utils/promise';
 import { formatFontSize } from '@/utils/units';
 import '@/assets/fonts/hyzhuzi/style.scss';
@@ -26,9 +26,9 @@ function hexbinClassNameGenerator(count) {
 
 function getSystemStatus(name, status) {
   return {
-    name, 
+    name,
     status: status ? 'success' : 'error'
-  }
+  };
 }
 
 // 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
@@ -57,7 +57,8 @@ function formatMemoryValue(memoryValue) {
 
 function formatBarData(array) {
   let max;
-  const sortArray = array.sort((leftItem, rightItem) => rightItem.value - leftItem.value).splice(0, 10)
+  const sortArray = array.sort((leftItem, rightItem) => rightItem.value - leftItem.value).splice(0, 10);
+
   return sortArray.map((item, index) => {
     let percent = 0;
 
@@ -71,7 +72,7 @@ function formatBarData(array) {
     return {
       ...item, value: item.value.toFixed(1), percent
     };
-  })
+  });
 }
 
 export default {
@@ -94,19 +95,19 @@ export default {
         online:  0,
         offline: 0
       },
-      hexbinData:       [],
-      gaugeData:        {},
-      cpuLoadList:      [],
-      memoryLoadList:   [],
-      events:           [],
-      nodesMetricsData: [],
-      nodesData:        [],
-      podsData:         [],
-      devices:          [],
-      podsLoadInfo:     [],
-      datastorage:      [],
-      systemControllers:[],
-      networking:       []
+      hexbinData:        [],
+      gaugeData:         {},
+      cpuLoadList:       [],
+      memoryLoadList:    [],
+      events:            [],
+      nodesMetricsData:  [],
+      nodesData:         [],
+      podsData:          [],
+      devices:           [],
+      podsLoadInfo:      [],
+      datastorage:       [],
+      systemControllers: [],
+      networking:        []
     };
   },
 
@@ -168,7 +169,7 @@ export default {
         networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
         datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),
       });
-      
+
       this.events = hash.event;
       this.nodesData = hash.nodes;
       this.devices = hash.devices;
@@ -186,12 +187,12 @@ export default {
         const params = gaugeData[ecItem];
         const rate = parseFloat(params.percent) / 100;
         const baseOptions = baseGaugeConfigGenerator(rate);
-        
+
         const formatter = (param) => {
-          return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${params.unit}中的${params.usage}${params.unit}}`;
+          return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${ params.unit }中的${ params.usage }${ params.unit }}`;
         };
 
-        baseOptions.series[1].detail.formatter = formatter
+        baseOptions.series[1].detail.formatter = formatter;
 
         const ecDraw = echarts.init(this.$refs[ecItem]);
 
@@ -209,6 +210,7 @@ export default {
       hexbinContainerNames.forEach((ref, index) => {
         const list = hexbinData[index];
         const d3Node = d3.select(this.$refs[ref]);
+
         d3.scaleSequential(d3.interpolateLab('#8276b8', '#4646b0')).domain([0, 20]);
 
         const points = [
@@ -295,6 +297,7 @@ export default {
       nodesData.forEach((nodeItem, nodeIndex) => {
         // 有节点容量capacity和节点可分配资源allocatable
         const { id, status } = nodeItem;
+
         nodesMap[id] = { status };
       });
 
@@ -307,7 +310,7 @@ export default {
           podList: []
         };
       });
-      
+
       podsData.forEach((podItem, podIndex) => {
         const { spec } = podItem;
         const { nodeName } = spec;
@@ -327,20 +330,22 @@ export default {
       let clusterUsedPods = 0;
       // 分别对应CPU，内存和pod
       const hexbinData = [[], [], []];
+
       // 计算单个节点的CPU，内存和pod使用率
       Object.keys(nodesMap).map((name) => {
         let { usage, status, podList } = nodesMap[name]; // eslint-disable-line
         let isReady = '';
-        status.conditions.forEach(item => {
+
+        status.conditions.forEach((item) => {
           if (item.type === 'Ready') {
-            isReady = item.status === 'True'
+            isReady = item.status === 'True';
           }
-        })
+        });
 
         // When node is abnormal   TODO
         if (!podList || !usage) {
           podList = [];
-          usage = { memory: 0, cpu: 0 }
+          usage = { memory: 0, cpu: 0 };
         }
 
         const { cpu, memory, pods } = status.allocatable;
@@ -348,12 +353,13 @@ export default {
         let cpuUsedRate = 0;
         let memoryUsedRate = 0;
         let podsUsedRate = 0;
+
         if (isReady) {
           cpuUsedRate = (formatCPUValue(usage.cpu, 10) / formatCPUValue(cpu, 10) * 100).toFixed(1);
           memoryUsedRate = (formatMemoryValue(usage.memory, 10) / formatMemoryValue(memory, 10) * 100).toFixed(1);
           podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(1);
 
-           // 统计集群总量
+          // 统计集群总量
           clusterCPU += formatCPUValue(cpu, 10);
           clusterMemory += formatMemoryValue(memory, 10);
           clusterPods += parseInt(pods, 10);
@@ -389,35 +395,35 @@ export default {
           name
         };
       });
-      
+
       const clusterCPUUsedRate = (clusterUsedCPU / clusterCPU * 100).toFixed(2);
       const clusterMemoryUsedRate = (clusterUsedMemory / clusterMemory * 100).toFixed(2);
       const clusterPodsUsedRate = (clusterUsedPods / clusterPods * 100).toFixed(2);
 
       const echartInfo = {
         cpuUsedGauge: {
-          type: 'CPU',
-          unit: 'M',
+          type:    'CPU',
+          unit:    'M',
           percent: clusterCPUUsedRate,
-          total: clusterCPUCore * 1000,
-          usage: (clusterUsedCPU / 1000000).toFixed(1)
+          total:   clusterCPUCore * 1000,
+          usage:   (clusterUsedCPU / 1000000).toFixed(1)
         },
         memoryUsedGauge: {
-          type: 'Memory',
-          unit: 'GIB',
+          type:    'Memory',
+          unit:    'GIB',
           percent: clusterMemoryUsedRate,
-          total: (clusterMemory / 1024 / 1024).toFixed(1),
-          usage: (clusterUsedMemory / 1024 / 1024).toFixed(1)
+          total:   (clusterMemory / 1024 / 1024).toFixed(1),
+          usage:   (clusterUsedMemory / 1024 / 1024).toFixed(1)
         },
         podsUsedGauge: {
-          type: 'Pods',
-          unit: '',
+          type:    'Pods',
+          unit:    '',
           percent: clusterPodsUsedRate,
-          total: clusterPods,
-          usage: clusterUsedPods
+          total:   clusterPods,
+          usage:   clusterUsedPods
         },
-      }
-      
+      };
+
       this.drawHexbin(hexbinData);
       this.drawGauge(echartInfo);
     },
@@ -427,14 +433,25 @@ export default {
       let online = 0;
       let offline = 0;
 
-      devices.forEach((deviceItem, deviceIndex) => {
-        const state = deviceItem.metadata.state;
+      devices.forEach((device, index) => {
+        const isOnline = false;
 
-        if (state.name === 'active') {
-          online++;
+        for (let i = 0; i < device?.status?.conditions?.length; i++) {
+          const condition = device.status.conditions[i];
+
+          if (condition.status && condition.status === 'Unknown') {
+            offline++;
+
+            return;
+          } else if (condition.status === 'False') {
+            offline++;
+
+            return;
+          }
         }
+        online++;
       });
-      offline = total - online;
+
       this.iotInfo = {
         total, online, offline
       };
@@ -449,8 +466,8 @@ export default {
         return {
           id:    podIndex, name:  podItem.id, value: cpuUsage
         };
-      })
-        
+      });
+
       const memoryList = podsLoadInfo.map((podItem, podIndex) => {
         const memory = formatMemoryValue(podItem.containers[0].usage.memory);
         const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
@@ -458,10 +475,11 @@ export default {
         return {
           id:    podIndex, name:  podItem.id, value: memoryUsage
         };
-      })
+      });
 
       const memoryLoadList = formatBarData(memoryList);
       const cpuLoadList = formatBarData(cpuList);
+
       this.$set(this.$data, 'cpuLoadList', cpuLoadList);
       this.$set(this.$data, 'memoryLoadList', memoryLoadList);
     },
@@ -470,7 +488,8 @@ export default {
         datastorage, systemControllers, networking, nodesData
       } = this;
       const systemServeives = [];
-      systemServeives.push(getSystemStatus('Datastore', datastorage.health))
+
+      systemServeives.push(getSystemStatus('Datastore', datastorage.health));
 
       let systemControllersStatus = true;
       let networkingStatus = true;
@@ -478,10 +497,11 @@ export default {
 
       systemControllers.forEach((controllerItem, controllerIndex) => {
         const { state } = controllerItem.metadata;
+
         systemControllersStatus &= state.name === 'active';
       });
-     
-      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus))
+
+      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus));
 
       nodesData.forEach((nodeItem, nodeIndex) => {
         networkingStatus &= nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'] !== '';
@@ -495,10 +515,10 @@ export default {
           networkingStatus &= metadata.state.name === 'active';
         }
       });
-      
-      systemServeives.push(getSystemStatus('Networking', networkingStatus))
-      systemServeives.push(getSystemStatus('Nodes', nodesStatus))
-      
+
+      systemServeives.push(getSystemStatus('Networking', networkingStatus));
+      systemServeives.push(getSystemStatus('Nodes', nodesStatus));
+
       this.serviceList = systemServeives;
     }
   }
@@ -632,13 +652,13 @@ export default {
             <DashboardProgressBar
               title="CPU密集型Pod TOP10"
               unit="单位：M"
-              barColor="linear-gradient(90deg, #8e79d9, #7c88f2)"
+              bar-color="linear-gradient(90deg, #8e79d9, #7c88f2)"
               :list="cpuLoadList"
             />
             <DashboardProgressBar
               title="内存密集型Pod TOP10"
               unit="单位：MiB"
-              barColor="linear-gradient(90deg, #2891f4, #4d66fe)"
+              bar-color="linear-gradient(90deg, #2891f4, #4d66fe)"
               :list="memoryLoadList"
             />
           </div>

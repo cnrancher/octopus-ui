@@ -166,9 +166,11 @@ export default {
 
     const res = await dispatch('request', opt);
 
+    console.log('---res load', opt);
     await dispatch('load', { data: res });
 
     out = getters.byId(type, id);
+    console.log(out, 'find out');
 
     return out;
   },

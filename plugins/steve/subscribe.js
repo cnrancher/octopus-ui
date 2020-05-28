@@ -182,6 +182,7 @@ export const actions = {
 
   'ws.resource.remove'({ getters, commit }, { data }) {
     const type = getters.normalizeType(data.type);
+
     if ( getters.typeRegistered(type) ) {
       // console.log('----😄remove', data.type, data);
       // console.log('Remove', data.type, data.id);

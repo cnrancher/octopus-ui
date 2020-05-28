@@ -69,7 +69,9 @@ export default {
       const job = this.batchJob.filter((JOB) => {
         return JOB.id === `kube-system/${ obj.status.jobName }`;
       });
-      console.log('---obj', obj, job)
+
+      console.log('---obj', obj, job);
+
       return job[0] && job[0].status.active === 1 ? 'Active' : 'Error';
     },
     getBarStatus(obj) {

@@ -150,13 +150,13 @@ export function baseGaugeConfigGenerator(rate) {
             fontSize: 20
           }
         },
-        data: [],
+        data:   [],
         detail:  {
           show:         true,
           offsetCenter: [0, '-4%'],
           color:        '#423fa9',
           formatter(param) {
-            return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${params.unit}中的${params.usage}${params.unit}}`;
+            return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${ params.unit }中的${ params.usage }${ params.unit }}`;
           },
           textStyle: { fontSize: formatFontSize(44) },
           rich:      {
@@ -177,7 +177,8 @@ export function baseGaugeConfigGenerator(rate) {
               fontSize: formatFontSize(15),
               height:   20
             }
-          }},
+          }
+        },
       }
     ]
   };

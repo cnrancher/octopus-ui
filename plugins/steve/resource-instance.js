@@ -491,7 +491,7 @@ export default {
 
   canViewInApi() {
     // return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
-    return this.hasLink('self')
+    return this.hasLink('self');
   },
 
   canYaml() {
@@ -711,6 +711,14 @@ export default {
     };
   },
 
+  goToView() {
+    return (moreQuery = {}) => {
+      const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
+
+      this.currentRouter().push({ path: url });
+    };
+  },
+
   goToEditYaml() {
     return () => {
       const url = addParams(this.detailUrl, {
@@ -718,7 +726,6 @@ export default {
         [AS_YAML]: _FLAGGED
       });
 
-      console.log(this.detailUrl, '-----url', url);
       this.currentRouter().push({ path: url });
     };
   },

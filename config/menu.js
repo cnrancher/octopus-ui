@@ -74,8 +74,7 @@ export const MENUS = [
         meta:     { title: '设备协议' },
       },
       {
-        name: 'lot-management/device/edge.cattle.io.v1alpha1.devicelink',
-        path: '/device/edge.cattle.io.v1alpha1.devicelink',
+        path: '/c/local/edge.cattle.io.devicelink',
         meta: { title: '设备列表' }
       },
       {

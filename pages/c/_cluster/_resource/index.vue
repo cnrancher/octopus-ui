@@ -113,7 +113,7 @@ export default {
 }; </script>
 
 <template>
-  <div>
+  <div class="p-20">
     <header>
       <BreadCrumbs class="breadcrumbs" :route="route" />
 
@@ -128,16 +128,26 @@ export default {
           type="button"
           class="btn bg-primary mr-10"
         >
-          Create from YAML
+          {{ resource === 'edge.cattle.io.devicelink' ? '导入设备YAML' : 'Create' }}
         </nuxt-link>
         <nuxt-link
           v-if="hasEditComponent && isCreatable"
           :to="{path: formRoute}"
           tag="button"
           type="button"
+          class="btn bg-primary mr-10"
+        >
+          {{ resource === 'edge.cattle.io.devicelink' ? '添加设备' : 'Create' }}
+        </nuxt-link>
+
+        <nuxt-link
+          v-if="resource === 'edge.cattle.io.devicelink'"
+          :to="{path: '/device/template'}"
+          tag="button"
+          type="button"
           class="btn bg-primary"
         >
-          Create
+          添加设备模板
         </nuxt-link>
       </div>
     </header>

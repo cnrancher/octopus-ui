@@ -59,13 +59,13 @@ export default {
   load(state, { data, ctx, existing }) {
     let type = normalizeType(data.type);
     const keyField = KEY_FIELD_FOR[type] || KEY_FIELD_FOR['default'];
-  
+
     const id = data[keyField];
-  
+
     let cache = registerType(state, type);
-  
+
     let entry;
-  
+
     if ( existing && !existing.id ) {
       // A specific proxy instance to used was passed in (for create -> save),
       // use it instead of making a new proxy
@@ -76,7 +76,7 @@ export default {
       // console.log('### Mutation added from existing proxy', type, id);
     } else {
       entry = cache.map.get(id);
-  
+
       if ( entry ) {
         // There's already an entry in the store, update it
         Object.assign(entry, data);
@@ -89,7 +89,7 @@ export default {
         // console.log('### Mutation', type, id);
       }
     }
-  
+
     if ( data.baseType ) {
       type = normalizeType(data.baseType);
       cache = state.types[type];
@@ -106,7 +106,8 @@ export default {
     const id = obj[keyField];
 
     let entry = state.types[type];
-    console.log('---😂真删除', type, id, obj)
+
+    console.log('---😂真删除', type, id, obj);
     if ( entry ) {
       removeObject(entry.list, obj);
       entry.map.delete(id);

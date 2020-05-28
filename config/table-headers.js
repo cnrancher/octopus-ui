@@ -10,6 +10,16 @@ export const STATE = {
   formatter: 'BadgeStateFormatter',
 };
 
+export const DEVICE_STATE = {
+  name:      'state',
+  labelKey:  'tableHeaders.state',
+  sort:      ['stateSort', 'nameSort'],
+  value:     'stateDisplay',
+  width:     175,
+  default:   'unknown',
+  formatter: 'DeviceStateFormatter',
+};
+
 export const DOWNLOAD = {
   name:          'download',
   labelKey:      'tableHeaders.download',
@@ -32,6 +42,15 @@ export const NAME = {
   formatter:     'LinkDetail',
   width:         200,
   canBeVariable: true,
+};
+
+export const DEVICE_NAME = {
+  name:      'name',
+  label:     '名称',
+  value:     'nameDisplay',
+  sort:      ['nameSort'],
+  formatter: 'LinkModel',
+  width:     200
 };
 
 export const KIND_APIVERSION = {

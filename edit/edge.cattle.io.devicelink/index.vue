@@ -39,12 +39,10 @@ export default {
   mixins:     [createEditView, LoadDeps],
   data() {
     const { devicesType } = this.$store.state;
-
-    if (!this.value.metadata) {
+    if (this.value.metadata) {
       this.$set(this.value, 'metadata', {
         name:        '',
       })
-
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE))
     }
 

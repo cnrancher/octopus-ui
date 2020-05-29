@@ -31,7 +31,7 @@ export const MENUS = [
       },
       {
         name: 'infrastructure/store-category',
-        path: '/c/local/storage.k8s.io.storageclass',
+        path: '/c/local/store',
         meta: { title: '存储类别' }
       }
     ]

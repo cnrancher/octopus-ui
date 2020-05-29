@@ -175,7 +175,7 @@ export default {
     return out;
   },
 
-  load(ctx, { data, existing }) {
+  load(ctx, { data }) {
     const { getters, commit } = ctx;
 
     let type = normalizeType(data.type);
@@ -196,10 +196,9 @@ export default {
       ctx,
       type,
       data,
-      existing
     });
 
-    return getters['byId'](type, data.id || existing.id);
+    return getters['byId'](type, data.id);
   },
 
   loadAll(ctx, { type, data }) {

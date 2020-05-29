@@ -666,12 +666,12 @@ export default {
 
     const currentPath = router.history.current.path; // TODO
 
-    if (currentPath.includes('deviceProtocol')) {
-      route = `deviceProtocol-resource-id`;
+    if (currentPath.includes('device-')) {
+      route = `device-resource-id`;
     }
 
-    if (currentPath.includes('device')) {
-      route = `device-resource-id`;
+    if (currentPath.includes('deviceProtocol-')) {
+      route = `deviceProtocol-resource-id`;
     }
 
     if (currentPath.includes('mqttManagement')) {
@@ -706,7 +706,7 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
-
+      console.log('---goToEdit', url)
       this.currentRouter().push({ path: url });
     };
   },

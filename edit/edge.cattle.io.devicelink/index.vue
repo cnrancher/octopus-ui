@@ -39,7 +39,9 @@ export default {
   mixins:     [createEditView, LoadDeps],
   data() {
     const { devicesType } = this.$store.state;
-    if (this.value.metadata) {
+    const { mode } = this.$route.query;
+
+    if (this.value.metadata && !(mode === 'edit')) {
       this.$set(this.value, 'metadata', {
         name:        '',
       })

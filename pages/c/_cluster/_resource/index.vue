@@ -128,7 +128,7 @@ export default {
           type="button"
           class="btn bg-primary mr-10"
         >
-          {{ resource === 'edge.cattle.io.devicelink' ? '导入设备YAML' : 'Create' }}
+          {{ resource === 'edge.cattle.io.devicelink' ? '导入设备YAML' : 'Create from YAML' }}
         </nuxt-link>
         <nuxt-link
           v-if="hasEditComponent && isCreatable"

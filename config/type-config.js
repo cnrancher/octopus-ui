@@ -225,6 +225,18 @@ export default function(store) {
     },
   });
 
+  virtualType({
+    label:      'Store',
+    namespaced: true,
+    name:       'store',
+    group:      'Cluster',
+    weight:     10,
+    route:      {
+      name:     'c-cluster-resource',
+      params:   { resource: 'store' }
+    },
+  });
+
   // OPA Gatekeeper
 
   ignoreGroup(/^.*\.gatekeeper\.sh$/);

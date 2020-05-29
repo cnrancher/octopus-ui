@@ -54,14 +54,14 @@ export default {
     },
     isShow() {
       this.getCurrentValue();
-
-      return this.$store.state.catalogs.showInfo.isShow;
+      console.log('---this.$store.state.catalogs', this.$store.state.catalogs)
+      return this.$store.state.catalogs?.showInfo.isShow;
     },
   },
   async asyncData({ store, route }) {
     const catalogs = await store.dispatch('management/findAll', { type: CATALOGS, opt: { url: `${ CATALOGS }s` } });
     const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { url: `${ HELM }s` } });
-
+    console.log('请求的结果', catalogs)
     return {
       catalogs,
       helmChart,
@@ -100,7 +100,7 @@ export default {
       });
     },
     async getCurrentValue() {
-      const id = this.$store.state.catalogs.showInfo.id;
+      const id = this.$store.state.catalogs?.showInfo.id;
       const value = await this.$store.dispatch('management/find', { type: CATALOGS, id });
 
       this.currentValue = Object.assign({}, value);

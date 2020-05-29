@@ -23,7 +23,9 @@ export default {
   },
 
   data() {
-    return { headers: [DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE] };
+    return {
+      headers:  [DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE],
+    };
   },
 };
 </script>

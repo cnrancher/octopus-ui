@@ -111,6 +111,11 @@ export const WORKLOAD_TYPES = {
   REPLICATION_CONTROLLER: 'replicationcontroller'
 };
 
+export const STORAGE_CATEGORY = {
+  PERSISTENT_VOLUME:      'persistentvolume',
+  STORAGE_CLASS:          'storage.k8s.io.storageclass'
+};
+
 export const METRIC = { // None
   NODE: 'metrics.k8s.io.nodemetrics',
   POD:  'metrics.k8s.io.podmetrics',

@@ -44,6 +44,12 @@ export default {
       default: value => Number.isInteger(value) ? value : value.toFixed(2)
     }
   },
+  data() {
+    return {
+      chartObj: null,
+      hasDraw:  false
+    };
+  },
   computed: {
     displayUnits() {
       return this.units
@@ -65,6 +71,14 @@ export default {
       };
     }
   },
+  watch: {
+    used() {
+      this.draw();
+    },
+    capacity() {
+      this.draw();
+    }
+  },
   mounted() {
     this.draw();
   },
@@ -75,8 +89,10 @@ export default {
       return val * (nowClientWidth / initWidth);
     },
     draw() {
-      // const rate = this.numberFormatter(this.used || 0);
-      const rate = this.percentageBarValue;
+      if (this.hasDraw && this.chartObj) {
+        this.chartObj.resize();
+      }
+      const rate = this.percentageBarValue / 100;
       const params = this.amountTemplateValues;
       const outer = this;
 
@@ -158,7 +174,7 @@ export default {
               color:        '#423fa9',
               formatter(param) {
                 // return `{percent|${ params[0] }%}\n{type|${ params[1] }}\n{describe|${ params[2] }}`;
-                return `{percent|${ rate }%}\n{type|${ outer.resourceName }}\n{describe|${ outer.t('node.detail.glance.consumptionGauge.amount', params) }}`;
+                return `{percent|${ outer.percentageBarValue.toFixed(1) }%}\n{type|${ outer.resourceName }}\n{describe|${ outer.t('node.detail.glance.consumptionGauge.amount', params) }}`;
               },
               textStyle: { fontSize: this.formatFontSize(16) },
               rich:      {
@@ -166,7 +182,7 @@ export default {
                   fontSize:   this.formatFontSize(40),
                   color:      '#423fa9',
                   fontWeight: 'bold',
-                  fontFamily: 'hyzhuzi',
+                  // fontFamily: 'hyzhuzi',
                   height:     40
                 },
                 type: {
@@ -189,6 +205,8 @@ export default {
 
       ecDraw.setOption(baseOptions);
       // this.gaugeList.push(ecDraw);
+      this.hasDraw = true;
+      this.chartObj = ecDraw;
       setTimeout(() => {
         ecDraw.resize();
       }, 500);

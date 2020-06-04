@@ -664,7 +664,9 @@ $divider-height: 1px;
       }
 
       .actions {
-        padding: 8px 0;
+        padding: 6px 3px;
+        font-size: 1.2em;
+        border-radius: 4px;
       }
 
       A {

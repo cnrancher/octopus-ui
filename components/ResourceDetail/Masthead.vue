@@ -149,5 +149,9 @@ export default {
     & .btn-group {
       margin-right: 5px;
     }
+    &.role-multi-action {
+      font-size: 1.4em;
+      padding: 4px 3px;
+    }
   }
 </style>

@@ -341,7 +341,7 @@ export default {
             v-for="act in availableActions"
             :key="act.action"
             type="button"
-            class="btn bg-primary btn-sm"
+            :class="['btn', `bg-${act.theme || 'primary'}`, 'btn-sm']"
             :disabled="!act.enabled"
             @click="applyTableAction(act)"
           >
@@ -524,7 +524,7 @@ $divider-height: 1px;
 
   > THEAD > TR > TH,
   > TBODY > TR > TD {
-    padding: 0;
+    padding: 0 0 0 10px;
     transition: none;
     word-wrap: break-word;
 
@@ -549,10 +549,10 @@ $divider-height: 1px;
         border-radius: 0;
         outline: none;
         transition: none;
-        color: var(--secondary);
+        color: var(--sortable-table-th);
 
         &.sortable a {
-          color: var(--secondary);
+          color: var(--sortable-table-th);
         }
         font-weight: normal;
 
@@ -584,7 +584,7 @@ $divider-height: 1px;
   }
 
   &.emphasized-body > TBODY > TR > TD {
-    color: var(--body-text);
+    color: var(--sortable-table-td);
   }
 
   &.body-dividers > TBODY > TR > TD {
@@ -643,6 +643,12 @@ $divider-height: 1px;
         z-index: -1;
       }
     }
+    > TR.main-row:nth-child(odd) {
+      background-color: var(--sortable-table-tr);
+    }
+    > TR.main-row:nth-child(even) {
+      background-color: var(--body-bg);
+    }
 
     > TR > TD {
       height: $group-row-height;
@@ -658,7 +664,11 @@ $divider-height: 1px;
       }
 
       .actions {
-        padding: 5px;
+        padding: 8px 0;
+      }
+
+      A {
+        color: var(--sortable-table-td-a);
       }
     }
 

@@ -90,6 +90,5 @@ export default {
 
   .tab-container {
     padding: 20px;
-    background-color: var(--tabbed-container-bg);
   }
 </style>

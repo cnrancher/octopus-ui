@@ -88,7 +88,6 @@ export default {
 
 <template>
   <div>
-    <div class="spacer"></div>
     <ul
       ref="tablist"
       role="tablist"
@@ -146,6 +145,13 @@ export default {
       A {
         display: block;
         padding: 10px 15px;
+        opacity: 0.8;
+        color: var(--sortable-table-th);
+
+        &:hover {
+          opacity: 1;
+          text-decoration: none;
+        }
       }
 
       &:last-child {
@@ -153,14 +159,13 @@ export default {
       }
 
       &.active {
-        background-color: var(--tabbed-container-bg);
-        border-bottom-color: var(--tabbed-container-bg);
+        text-decoration: underline;
+
+        A {
+          color: var(--link-text);
+          opacity: 1;
+        }
       }
     }
-  }
-
-  .tab-container {
-    padding: 20px;
-    background-color: var(--tabbed-container-bg);
   }
 </style>

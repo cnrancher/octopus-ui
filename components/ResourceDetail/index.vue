@@ -293,6 +293,7 @@ export default {
         :value="model"
         :obj="model"
         :yaml="yaml"
+        class="pl-20 pr-20"
       />
     </template>
   </div>

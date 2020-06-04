@@ -38,15 +38,16 @@ export default {
     position: relative;
     top: -5px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 16px;
     transform: ease-in-out-all 1s;
 
     &.icon-star-open {
       color: var(--muted);
     }
 
-    &.icon-star-closed {
-      color: var(--body-text);
+    &.icon-star {
+      color: var(--favorite-on);
+      font-size: 18px;
     }
   }
 </style>

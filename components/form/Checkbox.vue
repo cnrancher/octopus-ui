@@ -116,19 +116,19 @@ export default {
     height: 14px;
     width: 14px;
     background-color: var(--body-bg);
-    border-radius: 2px;
+    border-radius: 3px;
     transition: all 0.3s ease-out;
-    border: 1px solid var(--border);
+    border: 1px solid var(--sortable-table-td);
 }
 
 .checkbox-box input:checked ~ .checkbox-custom {
-    background-color:var(--dropdown-text);
+    background-color:var(--input-checkbox-background);
     border-radius: 3px;
     -webkit-transform: rotate(0deg) scale(1);
     -ms-transform: rotate(0deg) scale(1);
     transform: rotate(0deg) scale(1);
     opacity:1;
-    border: 1px solid var(--input-label);
+    border: 1px solid var(--input-checkbox-background);
     &.indeterminate{
       background-color: transparent;
       border: 1px solid var(--border)
@@ -161,7 +161,7 @@ export default {
   width: 4px;
   height: 10px;
   border: solid;
-  border-color: var(--input-text);
+  border-color: var(--body-bg);
   border-width: 0 2px 2px 0;
   background-color: transparent;
   border-radius: 0;

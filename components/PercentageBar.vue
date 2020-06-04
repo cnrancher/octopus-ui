@@ -27,40 +27,40 @@ export default {
       return formatPercent(this.value);
     },
   },
-  methods: {
-    getTickBackgroundClass(i) {
-      const barPercentage = i / this.ticks;
-      const valuePercentage = Math.round(this.value / this.ticks) * this.ticks / 100;
-
-      if (valuePercentage < barPercentage) {
-        return 'bg-muted';
-      }
-
-      if (barPercentage <= 0.6) {
-        return 'bg-success';
-      }
-
-      if (barPercentage <= 0.8) {
-        return 'bg-info';
-      }
-
-      return 'bg-error';
-    }
-  },
 };
 </script>
 
 <template>
   <span class="percentage-bar">
-    <span class="percentage">{{ formattedValue }}</span>
-    <span class="bar">
-      <span v-for="i in ticks" :key="i" class="tick" :class="getTickBackgroundClass(i)">&nbsp;</span>
+    <span class="outer">
+      <span class="inner" :style="{width: formattedValue}"></span>
     </span>
+    <span class="percentage">{{ formattedValue }}</span>
   </span>
 </template>
 
 <style lang='scss'>
   .percentage-bar {
+    .percentage {
+      width: 32px;
+    }
+    .outer {
+      min-width: 90px;
+      display: inline-block;
+      height: 4px;
+      background-color: #cfd9f7;
+      vertical-align: middle;
+      border-radius: 2px;
+      overflow: hidden;
+      .inner {
+        display: inline-block;
+        background: linear-gradient(90deg, #8b76df, #727bf5);
+        height: 100%;
+        vertical-align: top;
+      }
+    }
+  }
+</style>
     .percentage {
       vertical-align: middle;
       width: 32px;

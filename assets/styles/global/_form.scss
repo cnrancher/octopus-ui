@@ -31,6 +31,12 @@ TEXTAREA,
         background: var(--input-hover-bg);
       }
     }
+
+    &:not(.vs__search):focus {
+      border-color: var(--input-checkbox-background);
+      background-color: var(--input-bg);
+      box-shadow: 1px 1px 5px -1px var(--input-checkbox-background);
+    }
   }
 
   &.view {
@@ -59,6 +65,10 @@ TEXTAREA,
 
   &.no-resize::placeholder {
     padding-top: 8px;
+  }
+
+  &.input-sm {
+    padding: 5px 8px;
   }
 }
 

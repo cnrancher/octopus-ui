@@ -48,12 +48,17 @@ export default {
 
 <template>
   <VStack class="alert" :class="containerClasses" vertical-align="center">
-    <div><i class="icon" :class="iconClasses" /> {{ message }}</div>
+    <div><i class="icon" :class="iconClasses" /> <span class="pl-20">{{ message }}</span></div>
   </VStack>
 </template>
 
 <style lang="scss" scoped>
 .alert-bg-error {
     background-color: rgba(var(--error), 0.5)
+}
+.alert {
+  > DIV > SPAN {
+    color: var(--body-text);
+  }
 }
 </style>

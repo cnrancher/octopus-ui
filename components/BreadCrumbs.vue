@@ -84,7 +84,7 @@ export default {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row p-20">
     <div v-for="(location, i) in crumbLocations" :key="location.name">
       <template v-if="displayName(location)">
         <span v-if="i > 0" class="divider">/</span>
@@ -98,7 +98,12 @@ export default {
 </template>
 
 <style>
-    .breadcrumbs .divider {
-        margin: 0px 5px 0px 5px
-    }
+  .row {
+    box-shadow: 0 1px 4px 0 var(--border);
+    margin-bottom: 0;
+    background-color: var(--header-bg);
+  }
+  .breadcrumbs .divider {
+      margin: 0px 5px 0px 5px
+  }
 </style>

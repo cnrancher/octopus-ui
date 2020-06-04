@@ -113,20 +113,20 @@ export default {
 }; </script>
 
 <template>
-  <div class="p-20">
+  <div>
     <header>
       <BreadCrumbs class="breadcrumbs" :route="route" />
 
-      <h1>
+      <h2 class="p-20">
         {{ typeDisplay }} <Favorite :resource="resource" />
-      </h1>
-      <div class="actions">
+      </h2>
+      <div class="actions p-20">
         <nuxt-link
           v-if="schema && isCreatable"
           :to="{path: yamlRoute}"
           tag="button"
           type="button"
-          class="btn bg-primary mr-10"
+          class="btn bg-primary"
         >
           {{ resource === 'edge.cattle.io.devicelink' ? '导入设备YAML' : 'Create from YAML' }}
         </nuxt-link>
@@ -135,7 +135,7 @@ export default {
           :to="{path: formRoute}"
           tag="button"
           type="button"
-          class="btn bg-primary mr-10"
+          class="btn bg-primary ml-10"
         >
           {{ resource === 'edge.cattle.io.devicelink' ? '添加设备' : 'Create' }}
         </nuxt-link>
@@ -145,7 +145,7 @@ export default {
           :to="{path: '/device/template'}"
           tag="button"
           type="button"
-          class="btn bg-primary"
+          class="btn bg-primary ml-10"
         >
           添加设备模板
         </nuxt-link>
@@ -155,9 +155,16 @@ export default {
       <component
         :is="listComponent"
         v-bind="$data"
+        class="ml-20 mr-20 p-20 card-box-shadow"
       />
     </div>
-    <ResourceTable v-else :schema="schema" :rows="rows" :headers="headers" />
+    <ResourceTable
+      v-else
+      :schema="schema"
+      :rows="rows"
+      :headers="headers"
+      class="ml-20 mr-20 p-20 card-box-shadow"
+    />
   </div>
 </template>
 
@@ -167,11 +174,6 @@ export default {
   }
   H2 {
     position: relative;
-    margin: 0 0 20px 0;
-  }
-  .right-action {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    font-size: 30px;
   }
 </style>

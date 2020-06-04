@@ -447,6 +447,7 @@ export default {
         bulkable:   true,
         enabled:    this.canDelete,
         bulkAction: 'promptRemove',
+        theme:      'error'
       },
       { divider: true },
       {

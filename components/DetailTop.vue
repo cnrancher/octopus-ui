@@ -11,11 +11,14 @@ export default {
 
 <template>
   <div class="detail-top">
-    <div v-for="col in columns" :key="col.title">
-      <label>{{ col.title }}:</label>
-      <slot :name="col.name">
-        <span>{{ col.content || col.content===0 ? col.content : col.fallback || 'n/a' }}</span>
-      </slot>
+    <div v-for="col in columns" :key="col.title" class="detail-top-item">
+      <div class="detail-icon"></div>
+      <div class="detail-content">
+        <label>{{ col.title }}</label><br />
+        <slot :name="col.name">
+          <span>{{ col.content || col.content===0 ? col.content : col.fallback || 'n/a' }}</span>
+        </slot>
+      </div>
     </div>
   </div>
 </template>
@@ -28,28 +31,31 @@ export default {
   .detail-top {
     display: grid;
     grid-template-columns: $default-screen-grid;
-    border-top: solid thin var(--border);
-    border-bottom: solid thin var(--border);
-    padding: 15px 0;
+    grid-gap: 10px;
+    padding: 20px 0;
 
-    & > * {
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
+    .detail-top-item {
+      border: 1px solid var(--border);
+      background-color: var(--body-bg);
+      display: grid;
+      grid-template-columns: 25% 75%;
+      padding: 25px 0;
+      border-radius: 4px;
+      box-shadow: 1px 2px 10px -1px var(--border);
+      .detail-content {
+        text-align: center;
+        & > * {
+          padding: 0 10px;
 
-      & > label {
-        color: var(--input-placeholder);
-        display: flex;
-        padding-right: 5px;
-      }
+          & > label {
+            color: var(--input-placeholder);
+            padding-right: 5px;
+          }
 
-      & > :not(label) {
-        display: flex;
-        flex: 1;
-      }
-
-      & :last-child {
-        padding-right: 0;
+          & :last-child {
+            padding-right: 0;
+          }
+        }
       }
     }
   }

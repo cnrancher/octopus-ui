@@ -244,12 +244,13 @@ export default {
   MAIN {
     grid-area: main;
     overflow: auto;
+    background-color: #f6f7fb;
 
     .outlet {
       display: flex;
       flex-direction: column;
       min-height: 100%;
-      padding: 20px 20px 70px 20px;
+      padding: 0 0 70px;
       margin-bottom: calc(-1 * var(--footer-height) - 1px);
     }
 

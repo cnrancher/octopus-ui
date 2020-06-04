@@ -9,7 +9,7 @@ $darker    : #6C6C76;
 $dark      : #B6B6C2;
 
 //light border and buttons
-$medium    : #DCDEE7;
+$medium    : #DEDEE2;
 
 //light inputs 
 $light     : #EEEFF4;
@@ -20,14 +20,16 @@ $lighter   : #F4F5FA;
 //light body bg
 $lightest  : #FFFFFF;
 
-$primary   : #3D98D3;
+$primary   : #5876f0;
 $secondary : $darker;
 $link      : $primary;
 $disabled  : $dark;
-$success   : #5D995D;
+$success   : #13D8AC;
 $warning   : #DAC342;
-$error     : #F64747;
-$info      : $warning;
+$error     : #fb437b;
+$info      : #178fff;
+//new style but do not confirm it will be used for all
+$new-disabled: #dfe4f8;
 
 $contrasted-dark: $darkest !default;
 $contrasted-light: $lightest !default;
@@ -62,11 +64,12 @@ $selected: rgba($primary, .5);
   --scrollbar-thumb            : #{$dark};
   --scrollbar-thumb-dropdown   : #{$lighter};
   --scrollbar-track            : transparent;
+  --favorite-on                : #fccf0a;
 
-  --header-bg                  : #3797D5;
+  --header-bg                  : #{$lightest};
   --header-logo                : #{$lightest};
   --header-dropdown            : #317DB0;
-  --header-height              : 50px;
+  --header-height              : 60px;
   --nav-width                  : 220px;
   --nav-bg                     : #{$lighter};
   --nav-active                 : var(--primary);
@@ -81,14 +84,17 @@ $selected: rgba($primary, .5);
   --menu-action-text           : #35bfe3;
   --menu-hover-bg              : #3a4364;
 
-  --disabled-bg                : #{$disabled};
+  --disabled-bg                : #{$new-disabled};
   --box-bg                     : #{$lighter};
   --border                     : #{$medium};
   --border-radius              : 2px;
   --outline                    : rgba(244,245,250,0.75);
   --outline-width              : 2px;
 
-  --accent-btn                 : #{rgba($primary, 0.2)};
+  --badge-success-bg           : #b3f0e5;
+
+  --accent-btn                 : #dfe4f8;
+  --accent-btn-text            : #8d93f4;
   --overlay-bg                 : #{rgba($lighter, 0.75)};
   --shadow                     : #{rgba($dark, 0.75)};
 
@@ -116,6 +122,7 @@ $selected: rgba($primary, .5);
   --input-disabled-border      : #{$medium};
   --input-disabled-placeholder : darken($medium, 10%);
   --input-addon-bg             : #{$medium};
+  --input-checkbox-background  : #727bf5;
 
   --progress-bg                : #{$medium};
   --progress-divider           : #{$medium};
@@ -127,6 +134,10 @@ $selected: rgba($primary, .5);
   --sortable-table-top-divider : var(--border);
   --sortable-table-body-divider : #{$darker};
   --sortable-table-selected-bg : #{$light};
+  --sortable-table-th          : #535353;
+  --sortable-table-td          : #7f7f7f;
+  --sortable-table-td-a        : #178fff;
+  --sortable-table-tr          : #f8fafd;
 
   --popover-bg                 : var(--body-bg);
   --popover-border             : var(--border);

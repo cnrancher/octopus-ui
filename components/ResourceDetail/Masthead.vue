@@ -111,7 +111,7 @@ export default {
 <template>
   <header>
     <BreadCrumbs class="breadcrumbs" />
-    <div>
+    <div class="p-20">
       <h1 v-html="h1" />
       <!-- //TODO use  nuxt-link for an internal project detail page once it exists -->
       <div v-if="mode==='view'" class="subheader">
@@ -120,7 +120,7 @@ export default {
         <span v-if="value.description">{{ value.description }}</span>
       </div>
     </div>
-    <div v-if="mode==='view'" class="actions">
+    <div v-if="mode==='view'" class="actions p-20">
       <!-- //TODO remove check for custom detail component once there is a generic detail -->
       <div v-if="hasDetail">
         <ButtonGroup :labels-are-translations="true" :value="asYaml" :options="[{label: 'resourceDetail.masthead.overview', value: false},{label:'resourceDetail.masthead.yaml', value: true }]" @input="toggleYaml" />

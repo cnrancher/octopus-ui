@@ -220,13 +220,13 @@ export default {
       </template>
     </DetailTop>
     <HStack class="glance" :show-dividers="true">
-      <VStack class="alerts" :show-dividers="true" vertical-align="space-evenly">
+      <VStack class="alerts card-box-shadow mr-10" :show-dividers="true" vertical-align="space-evenly">
         <Alert :status="pidPressureStatus" :message="t('node.detail.glance.pidPressure')" />
         <Alert :status="diskPressureStatus" :message="t('node.detail.glance.diskPressure')" />
         <Alert :status="memoryPressureStatus" :message="t('node.detail.glance.memoryPressure')" />
         <Alert :status="kubeletStatus" :message="t('node.detail.glance.kubelet')" />
       </VStack>
-      <HStack class="cluster" horizontal-align="space-evenly">
+      <HStack class="cluster card-box-shadow" horizontal-align="space-evenly">
         <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.cpu')" :capacity="value.cpuCapacity" :used="value.cpuUsage" />
         <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.memory')" :capacity="value.ramCapacity" :used="value.ramUsage" :units="memoryUnits" :number-formatter="memoryFormatter" />
         <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.pods')" :capacity="value.podCapacity" :used="value.podConsumed" />
@@ -301,15 +301,11 @@ $divider-spacing: 20px;
 
   & > * {
     padding: 0 $divider-spacing;
-
-    &:first-child {
-      padding-left: 0;
-    }
   }
 }
 
 .alerts {
-  width: 25%;
+  width: 20%;
   & > * {
     flex: 1;
   }

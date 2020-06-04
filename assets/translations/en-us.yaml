@@ -338,3 +338,27 @@ node:
 
 internalExternalIP:
   none: None
+
+cruStorageClass:
+  provisioner:
+    label: Provisioner
+  pv:
+    title: Persistent Volumes
+    detail: Persistent Volumes provisioned by the current storage class.
+  pvc: Persistent Volume Claim
+  source:
+    label: Volume Plugin
+    title: Plugin Configuration
+    detail: Configure options for the selected volume plugin
+    prompt: Choose a volume plugin...
+  parameters:
+    title: Parameters
+    detail: Configure the provider-specific parameters for the storage class
+    addActionLabel: Add Parameter
+persistentVolumePage:
+  header: Persistent Volumes
+  addActionLabel: Add Volume
+  noData: There are no persistent volumes defined
+  noMatch: No persistent volumes match the current search
+  source:
+    label: Source

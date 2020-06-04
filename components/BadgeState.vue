@@ -21,11 +21,12 @@ export default {
     padding: 5px 5px 5px 0;
     border: 1px solid transparent;
     border-radius: 2px;
+    text-align: center;
 
     // Successful states are de-emphasized by using [text-]color instead of background-color
     &.bg-success {
       color: var(--success);
-      background: transparent;
+      background: var(--badge-success-bg);
     }
   }
 
@@ -34,7 +35,7 @@ export default {
     display: inline-block;
     max-width: 100%;
     position: relative;
-    padding: 1px 10px 1px 0;
+    padding: 2px 3px;
     font-size: 1em;
     max-width: 110px;
     font-size: .85em;

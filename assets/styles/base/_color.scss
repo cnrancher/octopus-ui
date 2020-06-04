@@ -38,9 +38,8 @@
         }
 
         &.btn:hover {
-          color: var(--#{$name}-hover-text);
-          background: var(--#{$name}-hover-bg);
           transition: all 0.3s ease;
+          box-shadow: 0 0 10px -1px var(--#{$name});
         }
 
         &.btn:active {
@@ -59,4 +58,8 @@
 .bg-disabled {
   background-color: var(--disabled-bg) !important;
   color: var(--secondary) !important;
+
+  &:hover {
+    box-shadow: none!important;
+  }
 }

@@ -36,7 +36,7 @@ export default {
 </script>
 
 <template>
-  <Tabbed v-bind="$attrs">
+  <Tabbed v-bind="$attrs" class="mt-20 p-20 card-box-shadow">
     <slot name="before" />
     <Tab name="Labels" label="Labels">
       <KeyValue

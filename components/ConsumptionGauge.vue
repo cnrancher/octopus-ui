@@ -1,16 +1,13 @@
 <script>
-import PercentageBar from '@/components/PercentageBar';
+import echarts from 'echarts';
 import VStack from '@/components/Layout/Stack/VStack';
 
 /**
  * A detailed view of how much a resource is being consumed.
  */
 export default {
-  components: {
-    PercentageBar,
-    VStack
-  },
-  props: {
+  components: { VStack },
+  props:      {
     /**
      * The name of the resource to be displayed.
      */
@@ -67,28 +64,142 @@ export default {
         unit:  this.displayUnits
       };
     }
+  },
+  mounted() {
+    this.draw();
+  },
+  methods: {
+    formatFontSize(val, initWidth = 1920) {
+      const nowClientWidth = document.documentElement.clientWidth;
+
+      return val * (nowClientWidth / initWidth);
+    },
+    draw() {
+      // const rate = this.numberFormatter(this.used || 0);
+      const rate = this.percentageBarValue;
+      const params = this.amountTemplateValues;
+      const outer = this;
+
+      const baseOptions = {
+        series: [
+          {
+            name:        'gauge_sub',
+            type:        'gauge',
+            radius:      '91.5%',
+            center:      ['50%', '58%'],
+            splitNumber: 0, // 刻度数量
+            startAngle:  225,
+            endAngle:    -45,
+            axisLine:    {
+              show:      true,
+              lineStyle: {
+                width: 8,
+                color: [[1, '#e4e9f9']]
+              }
+            },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            axisTick:  { show: false },
+            pointer:   { show: false },
+            title:     { show: false },
+            detail:    { show: false },
+          },
+          {
+            type:        'gauge',
+            radius:      '91.5%',
+            center:      ['50%', '58%'],
+            splitNumber: 0, // 刻度数量
+            startAngle:  225,
+            endAngle:    -45,
+            axisLine:    {
+              show:      true,
+              lineStyle: {
+                width: 8,
+                color: [
+                  [
+                    rate, new echarts.graphic.LinearGradient(0, rate > 0.5 ? 0 : 1, rate > 0.5 ? 1 : 0, 0, [
+                      {
+                        offset: 0.1,
+                        color:  '#33ccff'
+                      },
+                      {
+                        offset: 0.6,
+                        color:  '#0066ff'
+                      },
+                      {
+                        offset: 1,
+                        color:  '#423fa9'
+                      }
+                    ])
+                  ],
+                  [
+                    1, 'rgba(65,62,84,0)'
+                  ]
+                ]
+              }
+            },
+            // 分隔线样式。
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            axisTick:  { show: false },
+            pointer:   { show: false },
+            title:     {
+              show:         true,
+              offsetCenter: [0, '20%'], // x, y，单位px
+              textStyle:    {
+                color:    '#fff',
+                fontSize: 20
+              }
+            },
+            data:   [],
+            detail: {
+              show:         true,
+              offsetCenter: [0, '-5%'],
+              color:        '#423fa9',
+              formatter(param) {
+                // return `{percent|${ params[0] }%}\n{type|${ params[1] }}\n{describe|${ params[2] }}`;
+                return `{percent|${ rate }%}\n{type|${ outer.resourceName }}\n{describe|${ outer.t('node.detail.glance.consumptionGauge.amount', params) }}`;
+              },
+              textStyle: { fontSize: this.formatFontSize(16) },
+              rich:      {
+                percent: {
+                  fontSize:   this.formatFontSize(40),
+                  color:      '#423fa9',
+                  fontWeight: 'bold',
+                  fontFamily: 'hyzhuzi',
+                  height:     40
+                },
+                type: {
+                  fontSize: this.formatFontSize(18),
+                  color:    '#000',
+                  height:   24
+                },
+                describe: {
+                  color:    '#35bfe3',
+                  fontSize: this.formatFontSize(15),
+                  height:   18
+                }
+              }
+            }
+          }
+        ]
+      };
+
+      const ecDraw = echarts.init(this.$refs['gauge']);
+
+      ecDraw.setOption(baseOptions);
+      // this.gaugeList.push(ecDraw);
+      setTimeout(() => {
+        ecDraw.resize();
+      }, 500);
+    }
   }
 };
 </script>
 
 <template>
   <VStack class="consumption-gauge" :show-dividers="true">
-    <VStack class="percentage-bar-container" horizontal-align="center" vertical-align="bottom">
-      <PercentageBar
-        :value="percentageBarValue"
-        :lower-error-bound="0.25"
-        :lower-warning-bound="0.25"
-        :upper-warning-bound="0.7"
-        :upper-error-bound="0.85"
-        :number-of-ticks="13"
-      />
-    </VStack>
-    <VStack class="consumption" horizontal-align="center">
-      <div>{{ resourceName }}</div>
-      <div class="amount">
-        {{ t('node.detail.glance.consumptionGauge.amount', amountTemplateValues) }}
-      </div>
-    </VStack>
+    <div ref="gauge" class="percentage-bar-container"></div>
   </VStack>
 </template>
 
@@ -118,7 +229,7 @@ export default {
 
   .percentage-bar-container {
     padding-bottom: 8px;
-    height: 75%;
+    height: 90%;
     text-align: center;
 
     .percentage-bar {

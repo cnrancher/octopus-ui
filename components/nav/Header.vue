@@ -101,6 +101,7 @@ export default {
       grid-area: top;
       background-color: var(--header-bg);
       padding-top: 8px;
+      border-bottom: 1px solid #dbdbdb;
 
       INPUT[type='search']::placeholder,
       .vs__open-indicator,
@@ -136,10 +137,15 @@ export default {
       grid-area: user;
       background-color: var(--header-bg);
       padding: 5px;
+      border-bottom: 1px solid #dbdbdb;
 
       .user-info {
         display: flex;
         align-items: center;
+
+        img {
+          border-radius: 50%;
+        }
       }
     }
   }

@@ -486,3 +486,19 @@ export const INGRESS_TARGET = {
   formatter: 'IngressTarget',
   sort:      "$['spec']['rules'][0].host",
 };
+
+export const DISPLAY_PVC = {
+  name:           'displayPvc',
+  sort:           ['displayPvc', 'sortName', 'id'],
+  searchField:    'displayPvc',
+  value:          'displayPvc',
+  labelKey:       'cruStorageClass.pvc',
+};
+
+export const DISPLAY_SOURCE = {
+  name:        'source',
+  sort:        ['displaySource', 'name', 'id'],
+  searchField: ['displaySource', 'configName'],
+  labelKey:    'persistentVolumePage.source.label',
+  value:       'displaySource'
+};

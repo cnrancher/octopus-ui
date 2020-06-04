@@ -23,9 +23,11 @@ button,
   border-radius: var(--border-radius);
   color: white;
   display: inline-flex;
+  opacity: 0.9;
 
   &:hover {
-      text-decoration: none;
+    text-decoration: none;
+    opacity: 1;
   }
 
   &.bg-transparent {
@@ -106,11 +108,18 @@ button,
 
 .role-multi-action {
   background: var(--accent-btn);
-  border: solid thin var(--link-text);
-  color: var(--link-text);
+  border: solid thin var(--accent-btn);
+  color: var(--accent-btn-text);
   padding: 8px;
   border-radius: 2px;
   line-height: 0;
+
+  &.btn-sm {
+    padding: 8px;;
+  }
+  &.btn-lg {
+    padding: 13px 4px;
+  }
 }
 
 

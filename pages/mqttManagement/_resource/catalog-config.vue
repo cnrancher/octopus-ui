@@ -1,18 +1,27 @@
 <script>
-import _ from 'lodash';
-import catalogHeader from './header';
+import CatalogHeader from './header';
 import ResourceTable from '@/components/ResourceTable';
-import { CATALOGS, HELM, SCHEMA } from '@/config/types';
+import { CATALOG, NAMESPACE, HELM, SCHEMA } from '@/config/types';
 
 export default {
   components: {
-    catalogHeader,
+    CatalogHeader,
     ResourceTable
   },
   data() {
     return {
+      isEdit:       true,
       search:       '',
-      currentValue: {}
+      currentValue: {},
+      value:        {
+        apiVersion: 'edgeapi.cattle.io/v1alpha1',
+        kind:       'Catalog',
+        metadata:   {
+          name:      '',
+          namespace: 'kube-system'
+        },
+        spec: { url: '' }
+      }
     };
   },
   computed: {
@@ -53,39 +62,77 @@ export default {
       return [STATE, SCOPE, NAME, CATALOG_URL];
     },
     isShow() {
-      this.getCurrentValue();
-      console.log('---this.$store.state.catalogs', this.$store.state.catalogs)
+      if (this.$store.state.catalogs?.showInfo.id) {
+        this.getCurrentValue();
+      }
+
       return this.$store.state.catalogs?.showInfo.isShow;
     },
   },
   async asyncData({ store, route }) {
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOGS, opt: { url: `${ CATALOGS }s` } });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { url: `${ HELM }s` } });
-    console.log('请求的结果', catalogs)
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
+    const helmChart = await store.dispatch('management/findAll', { type: HELM });
+    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
+ 
+    const allNamespace = namespaces?.map( NS => {
+      return {
+        value: NS.id,
+        label: NS.id
+      }
+    })
     return {
       catalogs,
       helmChart,
+      allNamespace
     };
   },
   methods: {
+    goBack() {
+      this.$router.replace('/mqttManagement/edgeapi.cattle.io.catalog');
+    },
+    addCatalog() {
+      this.currentValue = Object.assign({}, this.value);
+      this.isEdit = false;
+      this.$store.commit('catalogs/showModelInfo', {
+        isShow: true,
+        id:     ''
+      }, { root: true });
+    },
     hideModal() {
+      this.isEdit = true;
       this.$store.commit('catalogs/showModelInfo', {
         isShow: false,
         id:     ''
       }, { root: true });
     },
-    update(formName) {
-      console.log(this, '-----', this.currentValue);
+    add(formName) {
       this.$refs[formName].validate( async(valid) => {
         if (valid) {
           const data = await this.$store.dispatch('management/request', {
-            method:  'PUT',
-            headers: {
-              'content-type': 'application/json',
-              accept:         'application/json',
-            },
-            url:  'v1/edgeapi.cattle.io.catalogs/kube-system/my-mqtt',
-            data: this.currentValue,
+            method:  'post',
+            url:    'v1/edgeapi.cattle.io.catalogs',
+            data:   this.currentValue,
+          });
+
+          if (data._status === 201) {
+            this.hideModal();
+            this.$nextTick(() => {
+              this.$refs[formName].resetFields();
+            });
+          }
+        } else {
+          return false;
+        }
+      });
+    },
+    update(formName) {
+      console.log('ths.url', this.currentValue.links.update, this.currentValue.id);
+      this.$refs[formName].validate( async(valid) => {
+        if (valid) {
+          const data = await this.$store.dispatch('management/request', {
+            method:  this.isEdit ? 'PUT' : 'POST',
+            url:    `v1/edgeapi.cattle.io.catalogs/${this.currentValue.id}`,
+            data:   this.currentValue,
           });
 
           if (data._status === 200) {
@@ -101,32 +148,38 @@ export default {
     },
     async getCurrentValue() {
       const id = this.$store.state.catalogs?.showInfo.id;
-      const value = await this.$store.dispatch('management/find', { type: CATALOGS, id });
+      const value = await this.$store.dispatch('management/find', { type: CATALOG, id });
 
       this.currentValue = Object.assign({}, value);
     }
-  }
+  },
 };
 </script>
 
 <template>
   <div class="catalog-config">
-    <catalogHeader>
+    <CatalogHeader>
       <template v-slot:name>
         商店设置
       </template>
-    </catalogHeader>
+
+      <template v-slot:action>
+        <el-button type="primary" @click="addCatalog">
+          添加
+        </el-button>
+      </template>
+    </CatalogHeader>
 
     <ResourceTable :schema="schema" :rows="catalogs" :headers="headers" />
 
-    <nuxt-link to="/mqttManagement/edgeapi.cattle.io.catalog" class="back">
-      <el-button type="primary">
+    <div class="back">
+      <el-button type="primary" @click="goBack">
         返回
       </el-button>
-    </nuxt-link>
+    </div>
 
     <el-dialog
-      title="编辑应用商店"
+      :title="isEdit ? '编辑应用商店' : '添加应用商店'"
       :visible="isShow"
       width="600"
     >
@@ -135,11 +188,31 @@ export default {
         ref="form"
         :model="currentValue"
         class="form-container"
+        label-position="top"
       >
         <el-form-item
           label="名称"
         >
-          <el-input v-model="currentValue.metadata.name" disabled></el-input>
+          <el-input v-model="currentValue.metadata.name" :disabled="isEdit"></el-input>
+        </el-form-item>
+
+        <el-form-item 
+          label="命名空间" 
+        >
+          <el-select
+            v-model="currentValue.metadata.namespace" 
+            filterable
+            allow-create
+            default-first-option 
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in allNamespace"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item
@@ -150,7 +223,8 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="hideModal">取 消</el-button>
-        <el-button type="primary" @click="update('form')">确 定</el-button>
+        <el-button v-if="isEdit" type="primary" @click="update('form')">确 定</el-button>
+        <el-button v-else type="primary" @click="add('form')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -161,13 +235,5 @@ export default {
   margin-top: 30px;
   display: flex;
   justify-content: center;
-}
-</style>
-
-<style lang="scss">
-#mqtt {
-  .el-card__body {
-    cursor: pointer;
-  }
 }
 </style>

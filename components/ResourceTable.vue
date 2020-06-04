@@ -103,7 +103,6 @@ export default {
     group: mapPref(GROUP_RESOURCES),
 
     groupable() {
-      console.log('---ddd', this.$store.getters['isMultipleNamespaces'], this.namespaced)
       return this.$store.getters['isMultipleNamespaces'] && this.namespaced;
     },
 

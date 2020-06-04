@@ -27,9 +27,7 @@ export default {
   },
 
   data() {
-    return {
-      activeName: 'storageclass',
-    };
+    return { activeName: 'storageclass' };
   },
 
   computed: {
@@ -52,6 +50,7 @@ export default {
       persistentvolume: store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.PERSISTENT_VOLUME }),
       storageclass:     store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.STORAGE_CLASS }),
     });
+
     return { resources };
   },
 

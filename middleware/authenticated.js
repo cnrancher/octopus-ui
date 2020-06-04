@@ -68,7 +68,7 @@ export default async function({
 
   try {
     let clusterId = get(route, 'params.cluster') || 'local';
-    console.log('当前路由', route)
+
     if ( clusterId ) {
       // Run them in parallel
       await Promise.all([

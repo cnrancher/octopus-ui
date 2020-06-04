@@ -56,6 +56,7 @@ export default {
         for ( const row of typeRows ) {
           if ( !row.metadata?.ownerReferences ) {
             out.push(row);
+            console.log('000');
           }
         }
       }

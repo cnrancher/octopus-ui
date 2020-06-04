@@ -2,7 +2,7 @@
 import ResourceDetail, { watchQuery, asyncData } from '@/components/ResourceDetail';
 
 export default {
-  name:       'DeviceResourcedId',
+  name:       'MqttResourcedId',
   components: { ResourceDetail },
   asyncData,
   watchQuery,
@@ -10,7 +10,5 @@ export default {
 </script>
 
 <template>
-  <div class="p-20">
-    <ResourceDetail v-bind="_data" />
-  </div>
+  <ResourceDetail v-bind="_data" />
 </template>

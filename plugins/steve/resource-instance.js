@@ -675,7 +675,7 @@ export default {
     }
 
     if (currentPath.includes('mqttManagement')) {
-      route = `mqttManagement-resource-id`;
+      route = `mqttManagement-resource-namespace-id`;
     }
 
     const params = {
@@ -689,6 +689,7 @@ export default {
       params,
     }).href;
 
+    // console.log('----route', route, params, url)
     return url;
   },
 
@@ -706,7 +707,7 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
-      console.log('---goToEdit', url)
+
       this.currentRouter().push({ path: url });
     };
   },
@@ -726,6 +727,7 @@ export default {
         [AS_YAML]: _FLAGGED
       });
 
+      // console.log('---goToEditYaml', url)
       this.currentRouter().push({ path: url });
     };
   },

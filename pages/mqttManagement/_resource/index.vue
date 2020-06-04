@@ -2,86 +2,165 @@
 import _ from 'lodash';
 import CatalogHeader from './header';
 import StatusBar from '@/components/StatusBar';
-import { CATALOGS, HELM, JOB } from '@/config/types';
-
+import ExportPort from '@/components/ExportPort';
+import { CATALOG, HELM, WORKLOAD_TYPES, SERVICE } from '@/config/types';
+import { allHash } from '@/utils/promise';
+import LoadDeps from '@/mixins/load-deps';
 export default {
-  components: { CatalogHeader, StatusBar },
-  data() {
-    return { search: '' };
+  components: {
+    CatalogHeader, StatusBar, ExportPort
   },
+
+  mixins:     [LoadDeps],
+
+  data() {
+    return {
+      search:      '',
+      batchJob:    [],
+      deployment:  [],
+      daemonSet:   [],
+      statefulSet: [],
+      service:     []
+    };
+  },
+
   computed: {
     searchHelmChart() {
-      return this.helmChart.filter( (chart) => {
-        return chart.metadata.name.includes(this.search);
+      return this.filterHelmChart.filter( C => C.metadata.name.includes(this.search) );
+    },
+    filterHelmChart() {
+      const { helmChart, catalogs } = this;
+      const filterHelmChart = helmChart.filter((chart) => {
+        return chart.metadata?.annotations?.['edgeapi.cattle.io/edge-api-server'] === 'true';
       });
+
+      const comppositonHelmChart = filterHelmChart.map((chart) => {
+        chart.chartInfo = catalogs[0].spec.indexFile?.entries[chart.spec.chart] || [];
+
+        return chart;
+      });
+
+      return comppositonHelmChart;
     }
   },
+
   async asyncData({ store, route }) {
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOGS, opt: { url: `${ CATALOGS }s` } });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { url: `${ HELM }s` } });
-    const batchJob = await store.dispatch('management/findAll', { type: JOB, opt: { url: `${ JOB }s` } });
-
-    const filterHelmChart = helmChart.filter((chart) => {
-      return chart.metadata?.annotations?.['edgeapi.cattle.io/edge-api-server'] === 'true';
-    });
-    const comppositonHelmChart = filterHelmChart.map((chart) => {
-      chart.chartInfo = catalogs[0].spec.indexFile.entries[chart.spec.chart] || [];
-
-      return chart;
-    });
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG, opt: { force: true } });
+    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { force: true } });
 
     return {
       catalogs,
-      helmChart: comppositonHelmChart,
-      batchJob
+      helmChart
     };
   },
+
   mounted() {
-    if ( this.helmChart.length === 0 ) {
+    if ( this.filterHelmChart.length === 0 ) {
       this.$router.replace('/mqttManagement/edgeapi.cattle.io.catalog/catalog');
     }
   },
+
+  updated() {
+    if ( this.filterHelmChart.length === 0 ) {
+      this.$router.replace('/mqttManagement/edgeapi.cattle.io.catalog/catalog');
+    }
+  },
+
   methods: {
+    async loadDeps() {
+      const hash = await allHash({
+        deployment:  this.$store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DEPLOYMENT, opt: { force: true } }),
+        daemonSet:   this.$store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DAEMON_SET, opt: { force: true } }),
+        statefulSet: this.$store.dispatch('management/findAll', { type: WORKLOAD_TYPES.STATEFUL_SET, opt: { force: true } }),
+        batchJob:    this.$store.dispatch('management/findAll', { type: WORKLOAD_TYPES.JOB, opt: { force: true } }),
+        service:     this.$store.dispatch('management/findAll', { type: SERVICE, opt: { force: true } }),
+      });
+
+      this.batchJob = hash.batchJob;
+      this.deployment = hash.deployment;
+      this.daemonSet = hash.daemonSet;
+      this.statefulSet = hash.statefulSet;
+      this.service = hash.service;
+    },
     defaultImg() {
       return require(`static/device-default.png`);
     },
     lanuch() {
       this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog/catalog');
     },
-    handermanage() {
+    goToManage() {
       this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog/catalog-config');
     },
     upgradeInfo(chart) {
       const { version } = chart.spec;
-      const allVersion = chart.chartInfo.map((C) => {
-        return C.version;
-      }).sort((a, b) => {
-        return (b).localeCompare(a);
+      const allVersion = _.sortBy(chart.chartInfo, (C) => {
+        return -C.version;
       });
+      const latestVersion = allVersion[0].version;
+      const info = version === latestVersion ? `已经是最新版本` : `有可用更新`;
 
-      if (version === allVersion[0]) {
-        return `已经是最新版本 (${ version })`;
-      } else {
-        return `有可用更新 (${ allVersion[0] })`;
-      }
+      return `${ info } ${ latestVersion }`;
     },
     getStatus(obj) {
-      const job = this.batchJob.filter((JOB) => {
-        return JOB.id === `kube-system/${ obj.status.jobName }`;
-      });
-
-      console.log('---obj', obj, job);
-
-      return job[0] && job[0].status.active === 1 ? 'Active' : 'Error';
+      return obj.metadata?.state?.name ? 'active' : 'Error';
     },
     getBarStatus(obj) {
-      const job = this.batchJob.filter((JOB) => {
-        return JOB.id === `kube-system/${ obj.status.jobName }`;
+      const {
+        batchJob, deployment, daemonSet, statefulSet
+      } = this;
+      const all = [batchJob, deployment, daemonSet, statefulSet];
+      const name = obj.metadata.name;
+      const { chart, targetNamespace } = obj.spec;
+      const out = [];
+      let totalReplicas = 0;
+      let totalReadyReplicas = 0;
+
+      for ( const typeRows of all ) {
+        if ( !typeRows ) {
+          continue;
+        }
+
+        for ( const row of typeRows ) {
+          if ( row.metadata.namespace === targetNamespace && row.metadata?.labels['app.kubernetes.io/instance'] === name && row.metadata?.labels['app.kubernetes.io/name'] === chart) {
+            totalReplicas += row.status.replicas;
+            totalReadyReplicas += row.status.readyReplicas;
+            out.push(row);
+          }
+        }
+      }
+
+      return {
+        num: out.length,
+        totalReplicas,
+        totalReadyReplicas
+      };
+    },
+    portList(chart) {
+      const out = [];
+      const { service } = this;
+      const instance = chart.metadata.name;
+      const { chart: name, targetNamespace: namespace } = chart.spec;
+
+      service.map( (item) => {
+        if (
+          item.metadata?.labels['app.kubernetes.io/instance'] === instance &&
+          item.metadata?.labels['app.kubernetes.io/name'] === name &&
+          item.metadata.namespace === namespace
+        ) {
+          const ports = item.spec.ports;
+
+          if (item.spec.type !== 'ClusterIP') {
+            for (const P of ports) {
+              out.push({
+                port: item.spec.type === 'NodePort' ? P.nodePort : P.port,
+                type: P.protocol
+              });
+            }
+          }
+        }
       });
 
-      console.log(job, 'batchJob-----', obj.status.jobName);
-
-      return job[0] && job[0].status.active === 1 ? 'Success' : 'Error';
+      return out;
     },
     showActions(value, e) {
       this.$store.commit('action-menu/show', {
@@ -89,7 +168,7 @@ export default {
         elem:      e.target,
       });
     },
-  },
+  }
 };
 </script>
 
@@ -101,7 +180,7 @@ export default {
       </template>
 
       <template v-slot:action>
-        <el-button class="refresh" type="primary" icon="el-icon-setting" @click="handermanage">
+        <el-button class="refresh" type="primary" icon="el-icon-setting" @click="goToManage">
           管理
         </el-button>
         <el-button class="refresh" type="primary" @click="lanuch">
@@ -114,9 +193,6 @@ export default {
       <div class="title">
         <div class="name">
           Catalog
-        </div>
-        <div class="fold">
-          折叠
         </div>
       </div>
 
@@ -142,7 +218,9 @@ export default {
             <div class="catalog-info">
               <div class="info">
                 <div class="name">
-                  {{ chart.metadata.name }}
+                  <nuxt-link :to="`/mqttManagement/edgeapi.cattle.io.catalog/create?app=${chart.spec.chart}&mode=edit&id=${chart.id}`">
+                    {{ chart.metadata.name }}
+                  </nuxt-link>
                 </div>
                 <div class="version">
                   <nuxt-link :to="`/mqttManagement/edgeapi.cattle.io.catalog/create?app=${chart.spec.chart}&mode=edit&id=${chart.id}`">
@@ -157,7 +235,10 @@ export default {
                 </div>
               </div>
               <div class="line"></div>
-              <StatusBar :type="getBarStatus(chart)" />
+              <div class="bar">
+                <StatusBar :all-data="getBarStatus(chart)" />
+              </div>
+              <ExportPort :list="portList(chart)" />
             </div>
           </div>
         </el-col>
@@ -235,6 +316,11 @@ export default {
       .line {
         border-top: 2px solid #dde4e6;
         margin: 10px 10px;
+      }
+
+      .bar {
+        display: flex;
+        justify-content: flex-end;
       }
     }
   }

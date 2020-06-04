@@ -137,11 +137,11 @@ export const actions = {
   },
 
   'ws.ping'() {
-    // console.log('WebSocket Ping');
+    console.log('WebSocket Ping'); // eslint-disable-line no-console
   },
 
   'ws.resource.start'({ commit }, msg) {
-    console.log('Resource start:', msg.resourceType); // eslint-disable-line no-console
+    // console.log('Resource start:', msg.resourceType); // eslint-disable-line no-console
     commit('setWatchStarted', msg.resourceType);
   },
 
@@ -169,14 +169,14 @@ export const actions = {
   },
 
   'ws.resource.create'({ dispatch }, { data }) {
-    // console.log('Create', data.type, data.id);
-    // console.log('----😄Create', data.type, data)
+    // console.log('Create', data.type, data.id); // eslint-disable-line no-console
+    // console.log('----😄Create', data.type, data); // eslint-disable-line no-console
     dispatch('load', { data });
   },
 
   'ws.resource.change'({ dispatch }, { data }) {
-    // console.log('Change', data.type, data.id);
-    // console.log('----😄Change', data.type, data)
+    // console.log('Change', data.type, data.id); // eslint-disable-line no-console
+    // console.log('----😄Change', data.type, data); // eslint-disable-line no-console
     dispatch('load', { data });
   },
 
@@ -184,8 +184,8 @@ export const actions = {
     const type = getters.normalizeType(data.type);
 
     if ( getters.typeRegistered(type) ) {
-      // console.log('----😄remove', data.type, data);
-      // console.log('Remove', data.type, data.id);
+      // console.log('----😄remove', data.type, data); // eslint-disable-line no-console
+      // console.log('Remove', data.type, data.id); // eslint-disable-line no-console
       const obj = getters.byId(data.type, data.id);
 
       if ( obj ) {

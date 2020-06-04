@@ -1,10 +1,8 @@
 import Cookies from 'js-cookie';
-import { parse as setCookieParser } from 'set-cookie-parser';
 import { findBy } from '@/utils/array';
 
 const KEY = 'rc_nonce';
 
-const ERR_NONCE = 'nonce';
 const ERR_CLIENT = 'client';
 const ERR_SERVER = 'server';
 

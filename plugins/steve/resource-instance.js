@@ -8,7 +8,6 @@ import {
   AS_YAML, _FLAGGED, _VIEW
 } from '@/config/query-params';
 import { findBy } from '@/utils/array';
-import { DEV } from '@/store/prefs';
 import { addParams } from '@/utils/url';
 import { DESCRIPTION } from '@/config/labels-annotations';
 
@@ -490,7 +489,6 @@ export default {
   },
 
   canViewInApi() {
-    // return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
     return this.hasLink('self');
   },
 
@@ -675,7 +673,7 @@ export default {
     }
 
     if (currentPath.includes('mqttManagement')) {
-      route = `mqttManagement-resource-id`;
+      route = `mqttManagement-resource-namespace-id`;
     }
 
     const params = {
@@ -689,6 +687,7 @@ export default {
       params,
     }).href;
 
+    // console.log('----route', route, params, url)
     return url;
   },
 
@@ -706,7 +705,7 @@ export default {
   goToEdit() {
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
-      console.log('---goToEdit', url)
+
       this.currentRouter().push({ path: url });
     };
   },
@@ -726,6 +725,7 @@ export default {
         [AS_YAML]: _FLAGGED
       });
 
+      // console.log('---goToEditYaml', url)
       this.currentRouter().push({ path: url });
     };
   },

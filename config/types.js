@@ -26,7 +26,7 @@ export const DEVICE_LINKS = 'edge.cattle.io.devicelinks';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';
 export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions';
 export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevice';
-export const CATALOGS = 'edgeapi.cattle.io.catalog';
+export const CATALOG = 'edgeapi.cattle.io.catalog';
 export const HELM = 'helm.cattle.io.helmchart';
 export const JOB = 'batch.job';
 

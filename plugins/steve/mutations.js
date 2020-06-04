@@ -107,7 +107,6 @@ export default {
 
     let entry = state.types[type];
 
-    console.log('---😂真删除', type, id, obj);
     if ( entry ) {
       removeObject(entry.list, obj);
       entry.map.delete(id);

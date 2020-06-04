@@ -5,7 +5,10 @@ export default {
       type:     String,
       required: true
     },
-    value: { type: String }
+    value: {
+      type:     String,
+      required: true
+    }
   }
 };
 </script>

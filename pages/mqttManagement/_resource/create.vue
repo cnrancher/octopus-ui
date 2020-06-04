@@ -1,12 +1,29 @@
 <script>
-/* eslint-disable */
+import jsyaml from 'js-yaml';
 import Collapse from './collapse';
 import CatalogHeader from './header';
 import CodeMirror from '@/components/CodeMirror';
-import YAML from 'json2yaml';
-import DefalutYaml from './value.json'
-import { CATALOGS, HELM, NODE } from '@/config/types';
+import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
+const DefalutYaml = {
+  apiVersion: 'helm.cattle.io/v1',
+  kind:       'HelmChart',
+  metadata:   {
+    annotations: {
+      'edgeapi.cattle.io/edge-api-server': 'true',
+      'edgeapi.cattle.io/owner-name':      'admin'
+    },
+    name:      '',
+    namespace: 'kube-system'
+  },
+  spec: {
+    chart:           '',
+    repo:            'http://charts.cnrancher.cn',
+    version:         '',
+    targetNamespace: 'default',
+    valuesContent:   'replicaCount: 3\nimage:\n  pullPolicy: IfNotPresent\n  repository: emqx/emqx\nresources:\n  limits:\n    cpu: 500m\n    memory: 512Mi\n  requests:\n    cpu: 500m\n    memory: 512Mi\npersistence:\n  accessMode: ReadWriteOnce\n  enabled: false\n  size: 20Mi\nservice.type: ClusterIP\nemqxConfig:\n  EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname\n  EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443\n  EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local\nemqxLicneseSecretName: null\ntolerations: []\nnodeSelector: {}\naffinity: {}\ningress:\n  annotations: {}\n  enabled: false\n  hosts:\n  - chart-example.local\n  path: /\n  tls: []'
+  }
+};
 
 export default {
   components: {
@@ -14,39 +31,26 @@ export default {
     CodeMirror,
     CatalogHeader
   },
-  data() {
-    return {
-      
-    }
-  },
-  mounted() {
-    if (this.mode === 'create') {
-      this.baseValue.spec.version = this.versions[0]
-    }
 
-    if (this.mode === 'edit') {
-      let json = jsyaml.safeLoad(this.yaml);
-      this.baseValue = json;
-      const valuesContent = json.spec.valuesContent;
-      const currentValue = jsyaml.safeDump(valuesContent);
-      this.currentValue = currentValue;
-    }
+  data() {
+    return {};
   },
+
   computed: {
     isEdit() {
-      return this.mode === 'edit'
+      return this.mode === 'edit';
     },
     description() {
       return this.catalogs[this.app][0].description;
     },
     versions() {
-      const versions = this.catalogs[this.app].map( V => {
-        return V.version
-      })
+      const versions = this.catalogs[this.app].map( (V) => {
+        return V.version;
+      });
 
-      return versions.sort(function (a, b) {
+      return versions.sort((a, b) => {
         return (b).localeCompare(a);
-      })
+      });
     },
     cmOptions() {
       const readOnly = false;
@@ -67,12 +71,72 @@ export default {
       };
     },
   },
+
+  async asyncData(ctx) {
+    const { route, store } = ctx;
+    const { id, app, mode } = route.query;
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
+    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
+
+    const list = catalogs[0].spec.indexFile.entries;
+    const ns = namespaces.map((N) => {
+      return { value: N.id };
+    });
+    let yaml = '';
+    let helmChart = {};
+
+    if (mode === 'edit') {
+      helmChart = await store.dispatch('management/find', {
+        type: HELM, opt:  { force: true }, id
+      });
+      yaml = (await helmChart.followLink('view', { headers: { accept: 'application/yaml' } })).data;
+    }
+
+    let jsonData = DefalutYaml;
+    let currentValue = '';
+
+    if (mode === 'create') {
+      jsonData = DefalutYaml;
+      jsonData.spec.chart = app;
+      jsonData.spec.repo = catalogs[0].spec.url;
+      currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
+    }
+
+    return {
+      catalogs:  list,
+      helmChart,
+      baseValue: jsonData,
+      currentValue,
+      ns,
+      id,
+      app,
+      mode,
+      yaml
+    };
+  },
+
+  mounted() {
+    if (this.mode === 'create') {
+      this.baseValue.spec.version = this.versions[0];
+    }
+
+    if (this.mode === 'edit') {
+      const json = jsyaml.safeLoad(this.yaml);
+
+      this.baseValue = json;
+      const valuesContent = json.spec.valuesContent;
+      const currentValue = jsyaml.safeDump(valuesContent);
+
+      this.currentValue = currentValue;
+    }
+  },
   methods: {
     create(formName) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
-      this.baseValue.spec.valuesContent =  currentValue;
 
-      this.$refs[formName].validate( async (valid) => {
+      this.baseValue.spec.valuesContent = currentValue;
+
+      this.$refs[formName].validate( async(valid) => {
         if (valid) {
           const data = await this.$store.dispatch('management/request', {
             method:  'POST',
@@ -80,26 +144,26 @@ export default {
               'content-type': 'application/json',
               accept:         'application/json',
             },
-            url: 'v1/helm.cattle.io.helmcharts',
+            url:  'v1/helm.cattle.io.helmcharts',
             data: this.baseValue,
           });
 
           if (data._status === 201) {
-            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog')
+            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog');
             this.$nextTick(() => {
               this.$refs[formName].resetFields();
             });
           }
-          
         } else {
           return false;
         }
       });
     },
-    async update(formName) {
+    update(formName) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
-      this.baseValue.spec.valuesContent =  currentValue;
-      this.$refs[formName].validate( async (valid) => {
+
+      this.baseValue.spec.valuesContent = currentValue;
+      this.$refs[formName].validate( async(valid) => {
         if (valid) {
           const data = await this.helmChart.followLink('update', {
             method:  'PUT',
@@ -111,12 +175,11 @@ export default {
           });
 
           if (data._status === 200) {
-            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog')
+            this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog');
             this.$nextTick(() => {
               this.$refs[formName].resetFields();
             });
           }
-          
         } else {
           return false;
         }
@@ -192,49 +255,8 @@ export default {
     defaultImg() {
       return require(`static/device-default.png`);
     }
-  },
-  async asyncData(ctx) {
-    const { route, store } = ctx;
-    const { id, app, mode } = route.query;
-    console.log('.------id', id);
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOGS, opt:  { url: `${CATALOGS}s` } });
-    const nodes = await store.dispatch('management/findAll', { type: NODE, opt: { url: NODE } });
-
-    const list = catalogs[0].spec.indexFile.entries;
-    const node = nodes.map(N => {
-      return {
-        value: N.id
-      }
-    })
-    let yaml = ''
-    let helmChart = {}
-    if (mode === 'edit') {
-      helmChart = await store.dispatch('management/find', { type: HELM, opt:  { force: true }, id });
-      yaml = (await helmChart.followLink('view', { headers: { accept: 'application/yaml' } })).data;
-    }
-
-    let jsonData= DefalutYaml;
-    let currentValue = ''
-    if (mode === 'create') {
-      jsonData = DefalutYaml;
-      jsonData.spec.chart = app;
-      jsonData.spec.repo = catalogs[0].spec.url;
-      currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
-    }
-    
-    return {
-      catalogs: list,
-      helmChart,
-      baseValue: jsonData,
-      currentValue,
-      node,
-      id,
-      app,
-      mode,
-      yaml
-    };
   }
-}
+};
 </script>
 
 <template>
@@ -247,10 +269,14 @@ export default {
 
     <div class="box">
       <div class="mqtt-info">
-        <img :src="defaultImg()" alt="">
+        <img v-real-img="catalogs[app][0].icon" :src="defaultImg()" alt="" />
         <div class="introduce">
-          <div class="name">{{ app }}</div>
-          <div class="desc">{{ description }}</div>
+          <div class="name">
+            {{ app }}
+          </div>
+          <div class="desc">
+            {{ description }}
+          </div>
         </div>
       </div>
 
@@ -259,7 +285,8 @@ export default {
           <el-form ref="form" :model="baseValue">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-form-item label="名称"
+                <el-form-item
+                  label="名称"
                   :prop="'metadata.name'"
                   :rules="[
                     { required: true, message: '请输入名称', trigger: 'blur' },
@@ -290,24 +317,28 @@ export default {
               </el-col>
 
               <el-col :span="24">
-                <el-divider content-position="center">命名空间</el-divider>
+                <el-divider content-position="center">
+                  命名空间
+                </el-divider>
               </el-col>
 
               <el-col>
-                <el-form-item label="命名空间"
+                <el-form-item
+                  label="命名空间"
                   :prop="'spec.targetNamespace'"
                   :rules="[
                     { required: true, message: '请选择命名空间', trigger: 'blur' },
                   ]"
                 >
                   <el-select
-                    v-model="baseValue.spec.targetNamespace" 
+                    v-model="baseValue.spec.targetNamespace"
                     class="version"
                     filterable
                     allow-create
+                    :disabled="isEdit"
                   >
                     <el-option
-                      v-for="N in node"
+                      v-for="N in ns"
                       :key="N.value"
                       :label="N.value"
                       :value="N.value"
@@ -319,7 +350,9 @@ export default {
 
               <el-col>
                 <div class="yaml-info">
-                  <div class="desc">粘贴或上传yml/yaml格式的应答参数</div>
+                  <div class="desc">
+                    粘贴或上传yml/yaml格式的应答参数
+                  </div>
                 </div>
 
                 <div class="yaml">
@@ -327,6 +360,7 @@ export default {
                     :value="currentValue"
                     :options="cmOptions"
                     :footer-space="71"
+                    class="fill-window"
                     @onInput="onInput"
                     @onReady="onReady"
                     @onChanges="onChanges"
@@ -336,16 +370,21 @@ export default {
 
               <el-col>
                 <div class="action">
-
                   <template v-if="mode==='create'">
-                    <el-button type="primary" @click="create('form')">启动</el-button>
+                    <el-button type="primary" @click="create('form')">
+                      启动
+                    </el-button>
                   </template>
 
                   <template v-if="mode==='edit'">
-                    <el-button type="primary" @click="update('form')">升级</el-button>
+                    <el-button type="primary" @click="update('form')">
+                      升级
+                    </el-button>
                   </template>
 
-                  <el-button @click="cancel('form')" class="cancel">取消</el-button>
+                  <el-button class="cancel" @click="cancel('form')">
+                    取消
+                  </el-button>
                 </div>
               </el-col>
             </el-row>
@@ -396,10 +435,17 @@ export default {
     }
 
     .yaml {
+      display: flex;
+      flex: 1;
+      height: 500px;
       padding: 0 20px 0 20px;
       margin-bottom: 20px;
     }
-    
+
+    .fill-window {
+      width: 100%;
+    }
+
     .action {
       display: flex;
       justify-content: center;

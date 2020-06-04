@@ -1,17 +1,15 @@
 <script>
 import * as d3 from 'd3';
 import echarts from 'echarts';
-import _ from 'lodash';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import { allHash } from '@/utils/promise';
-import { formatFontSize } from '@/utils/units';
 import '@/assets/fonts/hyzhuzi/style.scss';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 import {
-  NODE, POD, EVENT, COMPONENTSTATUS, METRIC, DEVICE_LINKS, K3S, DEVICE_LINK
+  NODE, POD, EVENT, COMPONENTSTATUS, METRIC, K3S, DEVICE_LINK
 } from '@/config/types';
 
 function hexbinClassNameGenerator(count) {
@@ -434,8 +432,6 @@ export default {
       let offline = 0;
 
       devices.forEach((device, index) => {
-        const isOnline = false;
-
         for (let i = 0; i < device?.status?.conditions?.length; i++) {
           const condition = device.status.conditions[i];
 

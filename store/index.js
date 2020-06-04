@@ -1,6 +1,6 @@
 import Steve from '@/plugins/steve';
 import {
-  COUNT, NAMESPACE, NORMAN, EXTERNAL, MANAGEMENT, CUSTOM
+  COUNT, NAMESPACE, EXTERNAL, MANAGEMENT, CUSTOM
 } from '@/config/types';
 import { CLUSTER as CLUSTER_PREF, NAMESPACE_FILTERS, LAST_NAMESPACE } from '@/store/prefs';
 import { allHash } from '@/utils/promise';
@@ -66,7 +66,7 @@ export const getters = {
 
   isMultipleNamespaces(state, getters) {
     const filters = state.namespaceFilters;
-    
+
     if ( filters.length !== 1 ) {
       return true;
     }
@@ -251,13 +251,9 @@ export const actions = {
     const devicesType = state.devicesType;
 
     Object.values(devicesType).reduce((all, device) => {
-      const type = device.spec.names.kind.toLowerCase();
-      const url = `devices.edge.cattle.io.${ type }`;
+      const type = `devices.edge.cattle.io.${ device.spec.names.kind.toLowerCase() }` ;
 
-      dispatch('management/findAll', {
-        type,
-        opt: { url }
-      });
+      dispatch('management/findAll', { type });
     }, {});
 
     let isRancher = false;

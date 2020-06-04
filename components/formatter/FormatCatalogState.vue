@@ -1,10 +1,6 @@
 <script>
 export default {
-  props: {
-    value: {
-      type:     Object,
-      required: true
-    },
+  props: { // TODO: value is not Object, is undefined
     row: {
       type:     Object,
       required: true
@@ -19,7 +15,7 @@ export default {
   },
   computed: {
     state() {
-      const conditions = this.value?.conditions || [];
+      const conditions = this.col.status?.conditions || [];
 
       return conditions.every(O => O.status === 'True');
     }

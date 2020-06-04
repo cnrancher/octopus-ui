@@ -155,7 +155,7 @@ export function baseGaugeConfigGenerator(rate) {
           show:         true,
           offsetCenter: [0, '-4%'],
           color:        '#423fa9',
-          formatter(param) {
+          formatter(params) {
             return `{percent|${ params.percent }%}\n{type|${ params.type }}\n{describe|已使用${ params.total }${ params.unit }中的${ params.usage }${ params.unit }}`;
           },
           textStyle: { fontSize: formatFontSize(44) },

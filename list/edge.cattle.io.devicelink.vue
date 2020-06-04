@@ -1,10 +1,8 @@
 <script>
 import ResourceTable from '@/components/ResourceTable';
-import Poller from '@/utils/poller';
 import {
   DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE
 } from '@/config/table-headers';
-import { DEVICE_LINK } from '@/config/types';
 
 export default {
   name:       'ListDevice',
@@ -23,9 +21,7 @@ export default {
   },
 
   data() {
-    return {
-      headers:  [DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE],
-    };
+    return { headers: [DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE] };
   },
 };
 </script>

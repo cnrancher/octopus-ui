@@ -1,25 +1,30 @@
 <script>
-import _ from 'lodash';
-import catalogHeader from './header';
-import { CATALOGS, HELM } from '@/config/types';
+import CatalogHeader from './header';
+import DefalutImg from '@/components/DefaultImg';
+import { CATALOG, HELM } from '@/config/types';
 import { filterObj } from '@/utils/object';
 
 export default {
-  components: { catalogHeader },
+  components: {
+    CatalogHeader,
+    DefalutImg
+  },
 
   data() {
     return { search: '' };
   },
+
   computed: {
     newCatalogs() {
       return filterObj(this.catalogs, [this.search], true);
     }
   },
-  async asyncData(ctx) {
-    const { route, store } = ctx;
 
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOGS, opt: { url: `${ CATALOGS }s` } });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { url: `${ HELM }s` } });
+  async asyncData(ctx) {
+    const { store } = ctx;
+
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
+    const helmChart = await store.dispatch('management/findAll', { type: HELM });
     const list = catalogs[0].spec.indexFile.entries;
 
     return {
@@ -27,12 +32,23 @@ export default {
       helmChart
     };
   },
+
   methods: {
     defaultImg() {
       return require(`static/device-default.png`);
     },
-    handlerRefresh() {
-      this.$store.dispatch('management/findAll', { type: CATALOGS, opt: { url: `${ CATALOGS }s/kube-system/mqtt-library?action=refresh`, force: true } });
+    async handlerRefresh() {
+      this.$nuxt.$loading.start();
+
+      await this.$store.dispatch('management/findAll', {
+        type: CATALOG,
+        opt:  {
+          url:   `${ CATALOG }s/kube-system/mqtt-library?action=refresh`,
+          force: true
+        }
+      });
+
+      this.$nuxt.$loading.finish();
     },
   }
 };
@@ -40,7 +56,7 @@ export default {
 
 <template>
   <div id="mqtt" class="p-20">
-    <catalogHeader>
+    <CatalogHeader>
       <template v-slot:name>
         应用列表
       </template>
@@ -51,15 +67,12 @@ export default {
         </el-button>
         <el-input v-model="search" placeholder="搜索"></el-input>
       </template>
-    </catalogHeader>
+    </CatalogHeader>
 
     <div class="cardList">
       <div class="title">
         <div class="name">
           Catalog
-        </div>
-        <div class="fold">
-          折叠
         </div>
       </div>
 
@@ -78,10 +91,7 @@ export default {
             <nuxt-link :to="{path: 'create', query: { app: key, mode: 'create' }}">
               <el-card>
                 <div class="brand">
-                  <img
-                    v-real-img="item[0].icon"
-                    :src="defaultImg()"
-                  />
+                  <DefalutImg :real="item[0].icon" />
                 </div>
 
                 <el-divider></el-divider>

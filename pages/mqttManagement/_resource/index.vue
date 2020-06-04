@@ -29,13 +29,13 @@ export default {
       return this.filterHelmChart.filter( C => C.metadata.name.includes(this.search) );
     },
     filterHelmChart() {
-      const { helmChart } = this;
-      const filterHelmChart = this.helmChart.filter((chart) => {
+      const { helmChart, catalogs } = this;
+      const filterHelmChart = helmChart.filter((chart) => {
         return chart.metadata?.annotations?.['edgeapi.cattle.io/edge-api-server'] === 'true';
       });
 
       const comppositonHelmChart = filterHelmChart.map((chart) => {
-        chart.chartInfo = this.catalogs[0].spec.indexFile?.entries[chart.spec.chart] || [];
+        chart.chartInfo = catalogs[0].spec.indexFile?.entries[chart.spec.chart] || [];
 
         return chart;
       });
@@ -112,7 +112,6 @@ export default {
       const name = obj.metadata.name;
       const { chart, targetNamespace } = obj.spec;
       const out = [];
-      const state = 'Success';
       let totalReplicas = 0;
       let totalReadyReplicas = 0;
 

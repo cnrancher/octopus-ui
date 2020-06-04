@@ -73,13 +73,14 @@ export default {
     const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
     const helmChart = await store.dispatch('management/findAll', { type: HELM });
     const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
- 
-    const allNamespace = namespaces?.map( NS => {
+
+    const allNamespace = namespaces?.map( (NS) => {
       return {
         value: NS.id,
         label: NS.id
-      }
-    })
+      };
+    });
+
     return {
       catalogs,
       helmChart,
@@ -126,12 +127,12 @@ export default {
       });
     },
     update(formName) {
-      console.log('ths.url', this.currentValue.links.update, this.currentValue.id);
+      console.log('ths.url', this.currentValue.links.update, this.currentValue.id); // eslint-disable-line no-console
       this.$refs[formName].validate( async(valid) => {
         if (valid) {
           const data = await this.$store.dispatch('management/request', {
             method:  this.isEdit ? 'PUT' : 'POST',
-            url:    `v1/edgeapi.cattle.io.catalogs/${this.currentValue.id}`,
+            url:    `v1/edgeapi.cattle.io.catalogs/${ this.currentValue.id }`,
             data:   this.currentValue,
           });
 
@@ -196,21 +197,22 @@ export default {
           <el-input v-model="currentValue.metadata.name" :disabled="isEdit"></el-input>
         </el-form-item>
 
-        <el-form-item 
-          label="命名空间" 
+        <el-form-item
+          label="命名空间"
         >
           <el-select
-            v-model="currentValue.metadata.namespace" 
+            v-model="currentValue.metadata.namespace"
             filterable
             allow-create
-            default-first-option 
+            default-first-option
             placeholder="请选择"
           >
             <el-option
               v-for="item in allNamespace"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </el-form-item>

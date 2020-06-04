@@ -11,7 +11,7 @@ import Group from '@/components/nav/Group';
 import Menu from '@/components/nav/Menu';
 import Header from '@/components/nav/Header';
 import { COUNT, SCHEMA } from '@/config/types';
-import { BASIC, FAVORITE, USED } from '@/store/type-map';
+import { FAVORITE, USED } from '@/store/type-map';
 
 export default {
 

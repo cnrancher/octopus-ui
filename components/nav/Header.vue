@@ -2,7 +2,6 @@
 import Identicon from 'identicon.js';
 import { mapState } from 'vuex';
 import NamespaceFilter from './NamespaceFilter';
-import { NORMAN } from '@/config/types';
 import { md5 } from '@/utils/crypto';
 
 export default {

@@ -21,7 +21,7 @@ export default {
   },
 
   async asyncData(ctx) {
-    const { route, store } = ctx;
+    const { store } = ctx;
 
     const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
     const helmChart = await store.dispatch('management/findAll', { type: HELM });
@@ -40,7 +40,7 @@ export default {
     async handlerRefresh() {
       this.$nuxt.$loading.start();
 
-      const data = await this.$store.dispatch('management/findAll', {
+      await this.$store.dispatch('management/findAll', {
         type: CATALOG,
         opt:  {
           url:   `${ CATALOG }s/kube-system/mqtt-library?action=refresh`,

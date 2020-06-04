@@ -1,6 +1,11 @@
 <script>
 export default {
-  props: { real: { type: String } },
+  props: {
+    real: {
+      type:     String,
+      required: true
+    }
+  },
 
   methods: {
     defaultImg() {

@@ -8,7 +8,6 @@ import {
   AS_YAML, _FLAGGED, _VIEW
 } from '@/config/query-params';
 import { findBy } from '@/utils/array';
-import { DEV } from '@/store/prefs';
 import { addParams } from '@/utils/url';
 import { DESCRIPTION } from '@/config/labels-annotations';
 
@@ -490,7 +489,6 @@ export default {
   },
 
   canViewInApi() {
-    // return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
     return this.hasLink('self');
   },
 

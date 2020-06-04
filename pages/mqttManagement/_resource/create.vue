@@ -78,7 +78,6 @@ export default {
     const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
     const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
 
-    console.log('---asyncData报错', catalogs);
     const list = catalogs[0].spec.indexFile.entries;
     const ns = namespaces.map((N) => {
       return { value: N.id };
@@ -102,7 +101,6 @@ export default {
       jsonData.spec.repo = catalogs[0].spec.url;
       currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
     }
-    console.log('----catalogs----', list);
 
     return {
       catalogs:  list,

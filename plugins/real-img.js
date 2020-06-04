@@ -5,7 +5,7 @@ const imageIsExist = function(url) {
     let img = new Image();
 
     img.onload = function() {
-      if (this.complete == true) {
+      if (this.complete === true) {
         resolve(true);
         img = null;
       }

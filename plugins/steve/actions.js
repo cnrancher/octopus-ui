@@ -169,7 +169,7 @@ export default {
     await dispatch('load', { data: res });
 
     out = getters.byId(type, id);
-    console.log(out, 'find out');
+    console.log(out, 'find out'); // eslint-disable-line no-console
 
     return out;
   },

@@ -20,7 +20,7 @@ export default {
     }
   },
   data() {
-    console.log('---current properties', this.properties);
+    console.log('---current properties', this.properties); // eslint-disable-line no-console
     let PropertiesType = {};
 
     if (this.templateProperties.properties) {

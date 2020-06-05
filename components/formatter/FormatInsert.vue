@@ -1,6 +1,10 @@
 <script>
+import LoadDeps from '@/mixins/load-deps';
+
 export default {
-  props: {
+
+  mixins:     [LoadDeps],
+  props:  {
     value: {
       type:     String,
       default: ''
@@ -10,31 +14,49 @@ export default {
       required: true
     },
   },
+
   data() {
-    let deviceValue = null;
+    const { spec: { model: { kind } } } = this.row;
+    const type = `devices.edge.cattle.io.${ kind.toLowerCase() }`;
 
-    if (!this.row.spec) {
-      return { deviceValue: [] };
-    }
-    const deviceType = this.row.spec.model.kind.toLowerCase();
-    const { name } = this.row.metadata;
-    const { list } = this.$store.state.management.types[deviceType] || { list: [] };
-
-    list.forEach((crd) => {
-      if (crd.metadata.name === name) {
-        deviceValue = crd.status?.properties?.[0];
-      }
-    });
-
-    return { deviceValue: deviceValue || [] };
+    return {
+      deviceList: [],
+      type
+    };
   },
+
+  computed: {
+    deviceValue() {
+      return this.deviceList[0]?.status?.properties;
+    },
+    tagValue() {
+      const out = [];
+
+      for (let i = 0; i < this.deviceValue?.length; i++) {
+        if (typeof this.deviceValue[i] === 'object') {
+          out.push( `${ this.deviceValue[i]['name'] }: ${ this.deviceValue[i].value }` );
+        }
+      }
+
+      return out;
+    }
+  },
+
+  methods: {
+    async loadDeps() {
+      const { type } = this;
+      const deviceList = await this.$store.dispatch('management/findAll', { type });
+
+      this.deviceList = deviceList.filter( item => item.id === this.row.id);
+    },
+  }
 };
 </script>
 
 <template>
   <div class="label">
-    <el-tag v-for="(v,k) in deviceValue" :key="k">
-      {{ k }}:{{ v }}
+    <el-tag v-for="(v,k) in tagValue" :key="k">
+      {{ v }}
     </el-tag>
   </div>
 </template>

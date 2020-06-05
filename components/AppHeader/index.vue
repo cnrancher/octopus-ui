@@ -1,14 +1,8 @@
-<script>
-export default {};
-</script>
-
 <template>
   <div id="header">
     <div class="content">
       <div class="left">
-        <div class="name">
-          <slot name="name"></slot>
-        </div>
+        <slot name="name"></slot>
       </div>
 
       <div class="right">
@@ -29,11 +23,8 @@ export default {};
 
     .left {
       flex: 1;
-
-      .name {
-        font-size: 15px;
-        font-weight: 500;
-      }
+      font-size: 15px;
+      font-weight: 500;
     }
 
     .right {

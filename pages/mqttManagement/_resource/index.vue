@@ -1,11 +1,12 @@
 <script>
 import _ from 'lodash';
-import CatalogHeader from './header';
-import StatusBar from '@/components/StatusBar';
-import ExportPort from '@/components/ExportPort';
-import { CATALOG, HELM, WORKLOAD_TYPES, SERVICE } from '@/config/types';
 import { allHash } from '@/utils/promise';
 import LoadDeps from '@/mixins/load-deps';
+import StatusBar from '@/components/StatusBar';
+import ExportPort from '@/components/ExportPort';
+import CatalogHeader from '@/components/AppHeader';
+import { CATALOG, HELM, WORKLOAD_TYPES, SERVICE } from '@/config/types';
+
 export default {
   components: {
     CatalogHeader, StatusBar, ExportPort
@@ -111,7 +112,6 @@ export default {
       const all = [batchJob, deployment, daemonSet, statefulSet];
       const name = obj.metadata.name;
       const { chart, targetNamespace } = obj.spec;
-      const out = [];
       let totalReplicas = 0;
       let totalReadyReplicas = 0;
 
@@ -124,13 +124,11 @@ export default {
           if ( row.metadata.namespace === targetNamespace && row.metadata?.labels['app.kubernetes.io/instance'] === name && row.metadata?.labels['app.kubernetes.io/name'] === chart) {
             totalReplicas += row.status.replicas;
             totalReadyReplicas += row.status.readyReplicas;
-            out.push(row);
           }
         }
       }
 
       return {
-        num: out.length,
         totalReplicas,
         totalReadyReplicas
       };

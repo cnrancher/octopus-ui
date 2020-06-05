@@ -38,7 +38,7 @@ export default {
         <span v-for="i in totalReadyReplicas" :key="i" class="bg-success" :class="{'hasLeftRadius': i === 1 && noReady === 0, 'hashRightRadius': i === totalReadyReplicas }"></span>
       </template>
     </div>
-    <span class="num">{{ num }}</span>
+    <span class="num">{{ totalReplicas }}</span>
   </div>
 </template>
 

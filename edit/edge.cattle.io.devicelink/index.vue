@@ -1,28 +1,25 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
-import LoadDeps from '@/mixins/load-deps';
-import AddTable from './AddTable';
-import Footer from '@/components/form/Footer';
-import BluethoothModel from './BluethoothModel';
-import ModbusModel from './ModbusModel';
-import OpcUaModel from './OpcUaModel';
-import CustomModel from './custom/CustomModel';
-import KeyValue from '@/components/form/KeyValue';
-import CustomTemplate from './custom/templates';
-import { allHash } from '@/utils/promise';
-import { NODE, CUSTOM, NAMESPACES } from '@/config/types';
-import { get } from '@/utils/object';
-
-import { 
+import {
   BLUE_THOOTH_DEVICE,
   MODBUS_DEVICE_RTU,
   MODBUS_DEVICE_TCP,
   OPC_UA_DEVICE,
-  customDevice
+  customDevice,
 } from './defaultYaml';
-import { parity, dataBits, deviceDefaultInfo } from '@/config/map';
 import { BluethoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
+import { allHash } from '@/utils/promise';
+import LoadDeps from '@/mixins/load-deps';
+import Footer from '@/components/form/Footer';
+import KeyValue from '@/components/form/KeyValue';
+import AddTable from '@/edit/edge.cattle.io.devicelink/AddTable';
+import BluethoothModel from '@/edit/edge.cattle.io.devicelink/BluethoothModel';
+import ModbusModel from '@/edit/edge.cattle.io.devicelink/ModbusModel';
+import OpcUaModel from '@/edit/edge.cattle.io.devicelink/OpcUaModel';
+import CustomModel from '@/edit/edge.cattle.io.devicelink/custom/CustomModel';
+import CustomTemplate from '@/edit/edge.cattle.io.devicelink/custom/templates';
+import { NODE, NAMESPACES } from '@/config/types';
+import { parity, dataBits, deviceDefaultInfo } from '@/config/map';
 import createEditView from '@/mixins/create-edit-view';
 
 export default {
@@ -42,10 +39,8 @@ export default {
     const { mode } = this.$route.query;
 
     if (this.value.metadata && !(mode === 'edit')) {
-      this.$set(this.value, 'metadata', {
-        name:        '',
-      })
-      this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE))
+      this.$set(this.value, 'metadata', { name: '' });
+      this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
 
     const validateAccessConfig = (rule, value, callback) => {
@@ -64,15 +59,15 @@ export default {
       BluethoothDeviceHeader,
       ModbusDeviceHeader,
       OPCUADeviceHeader,
-      activeNames: [],
-      dialogVisible: false,
-      editRowIndex: -1,
-      transferMode: 'rtu',
-      allNodes: [],
-      allNamespace: [],
-      templateProtocol: {},
+      activeNames:        [],
+      dialogVisible:      false,
+      editRowIndex:       -1,
+      transferMode:       'tcp',
+      allNodes:           [],
+      allNamespace:       [],
+      templateProtocol:   {},
       templateProperties: {},
-      rules: {
+      rules:              {
         'metadata.name': [
           { required: true, message: '请输入名称' }
         ],
@@ -80,7 +75,9 @@ export default {
           { required: true, message: '请输入命名空间' }
         ],
         'spec.adaptor.node': [
-          { required: true, message: '请选择节点', trigger: 'change' }
+          {
+            required: true, message:  '请选择节点', trigger:  'change'
+          }
         ],
         'spec.template.spec.name': [
           { required: true, message: '请输入设备名称' }
@@ -94,13 +91,54 @@ export default {
       }
     };
   },
+  computed: {
+    // transferMode: {
+    //   get(){
+    //     if (this.value.spec.template.spec.protocol?.tcp) {
+    //       return 'tcp';
+    //     } else if (this.value.spec.template.spec.protocol?.rtu) {
+    //       return 'rtu';
+    //     }
+    //     return 'rtu';
+    //   },
+    //   set(v){
+    //     return v;
+    //   }
+    // },
+    isModeReady() {
+      return !!this.value.spec.template.spec.protocol?.tcp || !!this.value.spec.template.spec.protocol?.rtu;
+    },
+    currentHeader() {
+      const kind = this.value.spec.model.kind;
+      let headers = [];
+
+      if (kind === 'ModbusDevice') {
+        headers = ModbusDeviceHeader;
+      } else if (kind === 'BluetoothDevice') {
+        headers = BluethoothDeviceHeader;
+      } else if (kind === 'OPCUADevice') {
+        headers = OPCUADeviceHeader;
+      } else {
+        headers = CUSTOMDeviceHeader;
+      }
+
+      return headers;
+    },
+  },
+  mounted() {
+    console.log('----😄isModeReady', this.isModeReady, _.clone(this.value), this.transferMode); // eslint-disable-line no-console
+  },
+  updated() {
+    console.log('updated----😄isModeReady', this.isModeReady, _.clone(this.value), this.transferMode); // eslint-disable-line no-console
+  },
   methods: {
     enable(buttonCb) {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.save(buttonCb);
         } else {
-          buttonCb(false)
+          buttonCb(false);
+
           return false;
         }
       });
@@ -110,19 +148,20 @@ export default {
         nodes:      this.$store.dispatch('management/findAll', { type: NODE, opt: { url: NODE } }),
         namespaces:  this.$store.dispatch('management/findAll', { type: NAMESPACES, opt: { url: NAMESPACES } }),
       });
-      const nodes = hash.nodes?.map(node => {
+      const nodes = hash.nodes?.map((node) => {
         return {
           value: node.id,
           label: node.id
-        }
-      })
+        };
+      });
 
-      const namespaces = hash.namespaces?.map( NS => {
+      const namespaces = hash.namespaces?.map( (NS) => {
         return {
           value: NS.id,
           label: NS.id
-        }
-      })
+        };
+      });
+
       this.allNodes = nodes;
       this.allNamespace = namespaces;
     },
@@ -140,75 +179,56 @@ export default {
     },
     edit(index) {
       this.editRowIndex = index;
-      this.dialogVisible = true
+      this.dialogVisible = true;
     },
     deleteRow(index) {
       this.value.spec.template.spec.properties.splice(index, 1);
     },
-    async changeKind(value) {
+    changeKind(value) {
       this.transferMode = 'rtu';
-      if(value === 'ModbusDevice') {
+      if (value === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
       } else if (value === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
       } else {
-        const resource = this.devicesType.filter(D => {
+        const resource = this.devicesType.filter((D) => {
           if (D.spec.names.kind === value) {
-            return  D
+            return D;
           }
-        })
+        });
         const kind = resource[0].spec.names.kind;
         const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
         const templateSpec = _.cloneDeep(customDevice);
-        templateSpec.adaptor.name = `adaptors.edge.cattle.io/${kind.toLowerCase()}`;
+
+        templateSpec.adaptor.name = `adaptors.edge.cattle.io/${ kind.toLowerCase() }`;
         templateSpec.model.kind = kind;
         templateSpec.template.spec = spec;
         this.$set(this, 'templateProtocol', _.cloneDeep(spec.protocol));
         this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items));
-        console.log(templateSpec, 'ajax******', resource, spec, spec.protocol);
+        console.log(templateSpec, 'ajax******', resource, spec, spec.protocol); // eslint-disable-line no-console
       }
     },
     changeTransferMode(mode) {
-      mode === 'rtu' ?
-        this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU)):
-        this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
+      console.log(mode, '----changeTransferMode', _.cloneDeep(MODBUS_DEVICE_RTU)); // eslint-disable-line no-console
+      mode === 'rtu'
+        ? this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
+        : this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
     },
     validatorMacAddress(ule, value, callback) {
-      let regex = "(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})";
-      let regexp = new RegExp(regex);
+      const regex = '(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})';
+      const regexp = new RegExp(regex);
+
       if (!regexp.test(value)) {
         return false;
       }
+
       return true;
     },
     getDeviceLabel(device) {
       return deviceDefaultInfo[device.spec.names.kind]?.label || device.spec.names.kind;
     }
-  },
-  computed: {
-    isModeReady() {
-      const config = this.value.spec.template.spec.protocol;
-      if (config) {
-        return Object.keys(config).includes(this.transferMode) ? true : false;
-      }
-      return false
-    },
-    currentHeader() {
-      const kind = this.value.spec.model.kind;
-      let  headers = [];
-      if (kind === 'ModbusDevice') {
-        headers = ModbusDeviceHeader;
-      } else if (kind === 'BluetoothDevice') {
-        headers = BluethoothDeviceHeader;
-      } else if (kind === 'OPCUADevice') {
-        headers = OPCUADeviceHeader;
-      } else {
-        headers = CUSTOMDeviceHeader;
-      }
-      return headers
-    },
   }
 };
 </script>
@@ -216,9 +236,11 @@ export default {
 <template>
   <div class="form">
     <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="100px">
-      <el-row :gutter='60'>
-        <el-col :span='24'>
-          <div class="moduleName">基础配置</div>
+      <el-row :gutter="60">
+        <el-col :span="24">
+          <div class="moduleName">
+            基础配置{{ transferMode }}
+          </div>
         </el-col>
 
         <el-col :span="12">
@@ -230,17 +252,18 @@ export default {
         <el-col :span="12">
           <el-form-item label="命名空间" prop="metadata.namespace">
             <el-select
-              v-model="value.metadata.namespace" 
+              v-model="value.metadata.namespace"
               filterable
               allow-create
-              default-first-option 
+              default-first-option
               placeholder="请选择"
             >
               <el-option
                 v-for="item in allNamespace"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+              >
               </el-option>
             </el-select>
           </el-form-item>
@@ -267,17 +290,20 @@ export default {
                 v-for="item in allNodes"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+              >
               </el-option>
             </el-select>
-          </el-form-item> 
+          </el-form-item>
         </el-col>
 
-        <el-col :span='24'>
-          <div class="moduleName">设备标签</div>
+        <el-col :span="24">
+          <div class="moduleName">
+            设备标签
+          </div>
         </el-col>
 
-        <el-col :span='24' class="top">
+        <el-col :span="24" class="top">
           <el-form-item label="">
             <KeyValue
               key="labels"
@@ -285,8 +311,8 @@ export default {
               :value-multiline="false"
               :pad-left="false"
               :as-map="true"
-              valueLabel="值"
-              keyLabel="键"
+              value-label="值"
+              key-label="键"
               :read-allowed="false"
               add-label="添加设备标签"
               :protip="false"
@@ -294,8 +320,10 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span='24'>
-          <div class="moduleName">访问配置</div>
+        <el-col :span="24">
+          <div class="moduleName">
+            访问配置
+          </div>
         </el-col>
 
         <template v-if="value.spec.model.kind === 'BluetoothDevice'">
@@ -311,35 +339,39 @@ export default {
             </el-form-item>
           </el-col>
         </template>
-        
-        <template 
+
+        <template
           v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocol"
         >
           <el-col :span="12" class="topMargin">
-            <el-form-item label="传输模式" required>
+            <el-form-item label="传输模式">
               <el-radio-group v-model="transferMode" @change="changeTransferMode">
-                <el-radio-button label="rtu">RTU</el-radio-button>
-                <el-radio-button label="tcp">TCP</el-radio-button>
+                <el-radio-button label="rtu">
+                  RTU
+                </el-radio-button>
+                <el-radio-button label="tcp">
+                  TCP
+                </el-radio-button>
               </el-radio-group>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="SlaveID">
-              <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
+            <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="SlaveID">
+              <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
             </el-form-item>
           </el-col>
 
           <template v-if="transferMode === 'rtu' && isModeReady">
             <el-col :span="12">
-              <el-form-item label="串口" required>
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="串口" required>
                 <el-input v-model="value.spec.template.spec.protocol[transferMode].serialPort"></el-input>
               </el-form-item>
             </el-col>
 
-            <el-col :span='24'>
+            <el-col :span="24">
               <el-collapse v-model="activeNames">
-                <el-collapse-item  name="3" class="optional">
+                <el-collapse-item name="3" class="optional">
                   <template slot="title">
                     <template v-if="activeNames.length <= 0">
                       <i class="el-icon-caret-right"></i>可选rtu配置
@@ -348,30 +380,34 @@ export default {
                       <i class="el-icon-caret-bottom"></i>可选rtu配置
                     </template>
                   </template>
-                  <el-col :span='12'>
-                    <el-form-item label="baudRate">
+                  <el-col :span="12">
+                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="baudRate">
                       <el-input v-model="value.spec.template.spec.protocol[transferMode].baudRate"></el-input>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="11" :push="1">
-                    <el-form-item label="dataBits">
+                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="dataBits">
                       <el-select v-model="value.spec.template.spec.protocol[transferMode].dataBits" clearable>
                         <el-option
-                          v-for="item in dataBits" :key="item.value" 
-                          :label="item.label"      :value="item.value"
+                          v-for="item in dataBits"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
                         >
                         </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
 
-                  <el-col :span='12'>
-                    <el-form-item label="parity">
+                  <el-col :span="12">
+                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="parity">
                       <el-select v-model="value.spec.template.spec.protocol[transferMode].parity" clearable>
-                        <el-option 
-                          v-for="item in parity" :key="item.value"
-                          :label="item.label" :value="item.value"
+                        <el-option
+                          v-for="item in parity"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
                         >
                         </el-option>
                       </el-select>
@@ -379,37 +415,35 @@ export default {
                   </el-col>
 
                   <el-col :span="11" :push="1">
-                    <el-form-item label="stopBits">
+                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="stopBits">
                       <el-select v-model="value.spec.template.spec.protocol[transferMode].stopBits" clearable>
                         <el-option label="1" value="1"></el-option>
                         <el-option label="2" value="2"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-
                 </el-collapse-item>
               </el-collapse>
             </el-col>
           </template>
 
           <template v-else>
-            <el-col :span='12'>
-              <el-form-item label="IP" required>
+            <el-col :span="12">
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="IP" required>
                 <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].ip"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="12">
-              <el-form-item label="Port" required>
-                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].port"></el-input>
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="Port" required>
+                <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].port"></el-input>
               </el-form-item>
             </el-col>
           </template>
-          
         </template>
 
         <template v-else-if="value.spec.model.kind === 'OPCUADevice' && value.spec.template.spec.protocol">
-          <el-col :span='12'>
+          <el-col :span="12">
             <el-form-item label="URL" required>
               <el-input v-model="value.spec.template.spec.protocol.url"></el-input>
             </el-form-item>
@@ -429,18 +463,20 @@ export default {
         </template>
 
         <template v-else>
-          <CustomTemplate 
-            :templateProtocol="templateProtocol"
-            :value="value"
+          <CustomTemplate
             :key="value.spec.model.kind"
+            :template-protocol="templateProtocol"
+            :value="value"
           />
         </template>
 
-        <el-col :span='24'>
-          <div class="moduleName">属性配置</div>
+        <el-col :span="24">
+          <div class="moduleName">
+            属性配置
+          </div>
         </el-col>
 
-        <el-col :span='24'>
+        <el-col :span="24">
           <el-form-item label="设备属性">
             <span>
               <i class="el-icon-warning"></i>
@@ -449,21 +485,20 @@ export default {
 
             <AddTable
               :headers="currentHeader"
-              :properties="value.spec.template.spec.properties" 
-              @editRow='edit($event)'
-              @deleteRow='deleteRow($event)'
+              :properties="value.spec.template.spec.properties"
+              @editRow="edit($event)"
+              @deleteRow="deleteRow($event)"
             />
 
             <div class="spacer"></div>
 
             <el-button
               type="primary"
-              icon="el-icon-circle-plus-outline" 
+              icon="el-icon-circle-plus-outline"
               @click="addAttribute"
             >
               新增属性
             </el-button>
-
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -471,42 +506,42 @@ export default {
         </el-col>
       </el-row>
     </el-form>
-    
+
     <template v-if="dialogVisible">
       <BluethoothModel
         v-if="value.spec.model.kind === 'BluetoothDevice'"
-        @addProperties = "addProperties($event)" 
-        @hideDialog = "hideDialog($event)"
-        :editRowIndex = "editRowIndex"
-        :device= "value"
-        :visible = 'dialogVisible'
+        :edit-row-index="editRowIndex"
+        :device="value"
+        :visible="dialogVisible"
+        @addProperties="addProperties($event)"
+        @hideDialog="hideDialog($event)"
       />
       <ModbusModel
         v-else-if="value.spec.model.kind === 'ModbusDevice'"
-        @addProperties = "addProperties($event)" 
-        @hideDialog = "hideDialog($event)"
-        :visible = 'dialogVisible'
-        :editRowIndex = "editRowIndex"
-        :device= "value"
+        :visible="dialogVisible"
+        :edit-row-index="editRowIndex"
+        :device="value"
+        @addProperties="addProperties($event)"
+        @hideDialog="hideDialog($event)"
       />
 
       <OpcUaModel
         v-else-if="value.spec.model.kind === 'OPCUADevice'"
-        @addProperties = "addProperties($event)" 
-        @hideDialog = "hideDialog($event)"
-        :visible = 'dialogVisible'
-        :editRowIndex = "editRowIndex"
-        :device= "value"
+        :visible="dialogVisible"
+        :edit-row-index="editRowIndex"
+        :device="value"
+        @addProperties="addProperties($event)"
+        @hideDialog="hideDialog($event)"
       />
 
       <CustomModel
         v-else
-        @addProperties = "addProperties($event)" 
-        @hideDialog = "hideDialog($event)"
-        :visible = 'dialogVisible'
-        :templateProperties="templateProperties"
-        :editRowIndex = "editRowIndex"
-        :device= "value"
+        :visible="dialogVisible"
+        :template-properties="templateProperties"
+        :edit-row-index="editRowIndex"
+        :device="value"
+        @addProperties="addProperties($event)"
+        @hideDialog="hideDialog($event)"
       />
     </template>
   </div>

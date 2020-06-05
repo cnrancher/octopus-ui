@@ -1,5 +1,5 @@
 <script>
-import CatalogHeader from './header';
+import CatalogHeader from '@/components/AppHeader';
 import ResourceTable from '@/components/ResourceTable';
 import { CATALOG, NAMESPACE, HELM, SCHEMA } from '@/config/types';
 

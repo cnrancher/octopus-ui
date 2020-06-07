@@ -50,7 +50,7 @@ const nodeID = {
   width:      220,
 };
 
-export const BluethoothDeviceHeader = [
+export const BluetoothDeviceHeader = [
   name,
   accessMode,
   description,

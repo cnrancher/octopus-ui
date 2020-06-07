@@ -2,7 +2,6 @@
 import LoadDeps from '@/mixins/load-deps';
 
 export default {
-
   mixins:     [LoadDeps],
   props:  {
     value: {
@@ -21,23 +20,20 @@ export default {
 
     return {
       deviceList: [],
-      type
+      device: [],
+      type,
     };
   },
 
   computed: {
-    deviceValue() {
-      return this.deviceList[0]?.status?.properties;
-    },
     tagValue() {
       const out = [];
-
-      for (let i = 0; i < this.deviceValue?.length; i++) {
-        if (typeof this.deviceValue[i] === 'object') {
-          out.push( `${ this.deviceValue[i]['name'] }: ${ this.deviceValue[i].value }` );
+      const deviceValue = this.device[0]?.status?.properties;
+      for (let i = 0; i < deviceValue?.length; i++) {
+        if (typeof deviceValue[i] === 'object') {
+          out.push( `${ deviceValue[i]['name'] }: ${ deviceValue[i].value }` );
         }
       }
-
       return out;
     }
   },
@@ -46,9 +42,17 @@ export default {
     async loadDeps() {
       const { type } = this;
       const deviceList = await this.$store.dispatch('management/findAll', { type });
-
-      this.deviceList = deviceList.filter( item => item.id === this.row.id);
+      this.deviceList = deviceList;
     },
+  },
+  watch: {
+    deviceList: {
+      handler(newName, oldName) {
+        this.device = this.deviceList.filter( item => item.id === this.row.id);
+      },
+      immediate: true,
+      deep: true
+    }
   }
 };
 </script>

@@ -7,13 +7,14 @@ import {
   OPC_UA_DEVICE,
   customDevice,
 } from './defaultYaml';
-import { BluethoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
+import { BluetoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
+import { validatorMacAddress, validateAccessConfig } from '@/edit/edge.cattle.io.devicelink/rules';
 import { allHash } from '@/utils/promise';
 import LoadDeps from '@/mixins/load-deps';
 import Footer from '@/components/form/Footer';
 import KeyValue from '@/components/form/KeyValue';
 import AddTable from '@/edit/edge.cattle.io.devicelink/AddTable';
-import BluethoothModel from '@/edit/edge.cattle.io.devicelink/BluethoothModel';
+import BluethoothModel from '@/edit/edge.cattle.io.devicelink/BluetoothModel';
 import ModbusModel from '@/edit/edge.cattle.io.devicelink/ModbusModel';
 import OpcUaModel from '@/edit/edge.cattle.io.devicelink/OpcUaModel';
 import CustomModel from '@/edit/edge.cattle.io.devicelink/custom/CustomModel';
@@ -43,26 +44,20 @@ export default {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
 
-    const validateAccessConfig = (rule, value, callback) => {
-      if (this.value.spec.template.spec.macAddress && this.value.spec.template.spec.namespace) {
-        callback(new Error('name 或 macAddress不能同时为空'));
-      } else {
-        callback();
-      }
-    };
-
     return {
       deviceDefaultInfo,
       devicesType,
       parity,
       dataBits,
-      BluethoothDeviceHeader,
-      ModbusDeviceHeader,
-      OPCUADeviceHeader,
+      headers: {
+        BluetoothDeviceHeader,
+        ModbusDeviceHeader,
+        OPCUADeviceHeader
+      },
+      tempSpec: {},
       activeNames:        [],
       dialogVisible:      false,
       editRowIndex:       -1,
-      transferMode:       'tcp',
       allNodes:           [],
       allNamespace:       [],
       templateProtocol:   {},
@@ -76,7 +71,7 @@ export default {
         ],
         'spec.adaptor.node': [
           {
-            required: true, message:  '请选择节点', trigger:  'change'
+            required: true, message:  '请选择节点'
           }
         ],
         'spec.template.spec.name': [
@@ -92,44 +87,37 @@ export default {
     };
   },
   computed: {
-    // transferMode: {
-    //   get(){
-    //     if (this.value.spec.template.spec.protocol?.tcp) {
-    //       return 'tcp';
-    //     } else if (this.value.spec.template.spec.protocol?.rtu) {
-    //       return 'rtu';
-    //     }
-    //     return 'rtu';
-    //   },
-    //   set(v){
-    //     return v;
-    //   }
-    // },
     isModeReady() {
       return !!this.value.spec.template.spec.protocol?.tcp || !!this.value.spec.template.spec.protocol?.rtu;
     },
+    isCustomProtocol() {
+      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
+      const kind = this.value.spec.model.kind;
+      return deviceProtocol.includes(kind)
+    },
     currentHeader() {
       const kind = this.value.spec.model.kind;
-      let headers = [];
-
-      if (kind === 'ModbusDevice') {
-        headers = ModbusDeviceHeader;
-      } else if (kind === 'BluetoothDevice') {
-        headers = BluethoothDeviceHeader;
-      } else if (kind === 'OPCUADevice') {
-        headers = OPCUADeviceHeader;
+      if (this.isCustomProtocol) {
+        const headerName = `${kind}Header`;
+        return this.headers[headerName];
       } else {
-        headers = CUSTOMDeviceHeader;
+        return CUSTOMDeviceHeader;
       }
-
-      return headers;
     },
-  },
-  mounted() {
-    console.log('----😄isModeReady', this.isModeReady, _.clone(this.value), this.transferMode); // eslint-disable-line no-console
-  },
-  updated() {
-    console.log('updated----😄isModeReady', this.isModeReady, _.clone(this.value), this.transferMode); // eslint-disable-line no-console
+    transferMode: {
+      get() {
+        if (this.value.spec.template.spec.protocol?.tcp) {
+          return 'tcp';
+        } else if (this.value.spec.template.spec.protocol?.rtu) {
+          return 'rtu';
+        }
+        return 'rtu';
+      },
+      set(v) {
+        this.changeTransferMode(v);
+        return v;
+      }
+    },
   },
   methods: {
     enable(buttonCb) {
@@ -185,7 +173,6 @@ export default {
       this.value.spec.template.spec.properties.splice(index, 1);
     },
     changeKind(value) {
-      this.transferMode = 'rtu';
       if (value === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
@@ -211,20 +198,15 @@ export default {
       }
     },
     changeTransferMode(mode) {
-      console.log(mode, '----changeTransferMode', _.cloneDeep(MODBUS_DEVICE_RTU)); // eslint-disable-line no-console
-      mode === 'rtu'
+      const tempSpec = _.cloneDeep(this.value.spec);
+      if (Object.keys(this.tempSpec).length > 0) {
+        this.$set(this.value, 'spec', _.cloneDeep(this.tempSpec));
+      } else {
+        mode === 'rtu'
         ? this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
         : this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
-    },
-    validatorMacAddress(ule, value, callback) {
-      const regex = '(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})';
-      const regexp = new RegExp(regex);
-
-      if (!regexp.test(value)) {
-        return false;
       }
-
-      return true;
+      this.tempSpec = tempSpec;
     },
     getDeviceLabel(device) {
       return deviceDefaultInfo[device.spec.names.kind]?.label || device.spec.names.kind;
@@ -235,12 +217,10 @@ export default {
 
 <template>
   <div class="form">
-    <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="100px">
+    <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="120px">
       <el-row :gutter="60">
-        <el-col :span="24">
-          <div class="moduleName">
-            基础配置{{ transferMode }}
-          </div>
+        <el-col :span="24" class="moduleName">
+          基础配置
         </el-col>
 
         <el-col :span="12">
@@ -297,10 +277,8 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="24">
-          <div class="moduleName">
-            设备标签
-          </div>
+        <el-col :span="24" class="moduleName">
+          设备标签
         </el-col>
 
         <el-col :span="24" class="top">
@@ -320,10 +298,8 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="24">
-          <div class="moduleName">
-            访问配置
-          </div>
+        <el-col :span="24" class="moduleName">
+          访问配置
         </el-col>
 
         <template v-if="value.spec.model.kind === 'BluetoothDevice'">
@@ -345,7 +321,7 @@ export default {
         >
           <el-col :span="12" class="topMargin">
             <el-form-item label="传输模式">
-              <el-radio-group v-model="transferMode" @change="changeTransferMode">
+              <el-radio-group v-model="transferMode">
                 <el-radio-button label="rtu">
                   RTU
                 </el-radio-button>
@@ -470,10 +446,8 @@ export default {
           />
         </template>
 
-        <el-col :span="24">
-          <div class="moduleName">
-            属性配置
-          </div>
+        <el-col :span="24" class="moduleName">
+          属性配置
         </el-col>
 
         <el-col :span="24">
@@ -550,10 +524,13 @@ export default {
 <style lang="scss" scoped>
 .form {
   width: 1000px;
+  margin: 30px;
 
   .moduleName {
+    display: block;
     font-size: 18px;
-    margin: 20px 0;
+    margin-bottom: 30px;
+    margin-left: -30px;
   }
 
   .top {
@@ -573,16 +550,9 @@ export default {
 </style>
 
 <style lang="scss">
-.el-collapse-item__header {
-  font-weight: bold;
-  font-size: 18px;
-  background-color: #f6f7fb;
-}
-.el-collapse-item__wrap {
-  background-color: #f6f7fb;
-  padding-left: 20px;
-}
-.el-collapse-item__arrow {
-  font-size: 0px;
+.form {
+  .el-select {
+    display: block;
+  }
 }
 </style>

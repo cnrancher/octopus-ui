@@ -73,6 +73,9 @@ export default {
       immediate: true
     }
   },
+  updated() {
+    console.log('---this.localDevice', this.localDevice)
+  },
   methods: {
     add(formName) {
       this.$refs[formName].validate((valid) => {
@@ -180,7 +183,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="访问模式">
-        <el-select v-model="localDevice.spec.template.spec.properties[index].readOnly" placeholder="请选择">
+        <el-select v-model="localDevice.spec.template.spec.properties[index].readOnly" placeholder="请选择" disabled>
           <el-option label="读/写" :value="false"></el-option>
           <el-option label="只读" :value="true"></el-option>
         </el-select>

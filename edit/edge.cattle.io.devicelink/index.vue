@@ -8,7 +8,7 @@ import {
   customDevice,
 } from './defaultYaml';
 import { BluetoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
-import { validatorMacAddress, validateAccessConfig } from '@/edit/edge.cattle.io.devicelink/rules';
+import { validatorMacAddress, validateIP } from '@/edit/edge.cattle.io.devicelink/rules';
 import { allHash } from '@/utils/promise';
 import LoadDeps from '@/mixins/load-deps';
 import Footer from '@/components/form/Footer';
@@ -42,6 +42,15 @@ export default {
     if (this.value.metadata && !(mode === 'edit')) {
       this.$set(this.value, 'metadata', { name: '' });
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
+    }
+
+
+    const validateAccessConfig = (rule, value, callback) => {
+      if (this.value.spec.template.spec.macAddress && this.value.spec.template.spec.namespace) {
+        callback(new Error('name 或 macAddress不能同时为空'));
+      } else {
+        callback();
+      }
     }
 
     return {
@@ -79,10 +88,16 @@ export default {
         ],
         'spec.template.spec.macAddress': [
           { validator: validateAccessConfig, trigger: 'blur' }
-        ],
-        'value.spec.template.spec.protocol.rtu.slaveID': [
+        ], 
+        'spec.template.spec.protocol.rtu.slaveID': [
           { required: true, message: '请输入SlaveID' }
-        ]
+        ],
+        'spec.template.spec.protocol.tcp.ip': [
+          { required: true, validator: validateIP, trigger: ['blur', 'change'] }
+        ],
+        'spec.template.spec.protocol.tcp.port': [
+          { required: true, message: '请输入port' }
+        ],
       }
     };
   },
@@ -219,9 +234,7 @@ export default {
   <div class="form">
     <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="120px">
       <el-row :gutter="60">
-        <el-col :span="24" class="moduleName">
-          基础配置
-        </el-col>
+        <el-col :span="24" class="moduleName">基础配置</el-col>
 
         <el-col :span="12">
           <el-form-item label="名称" prop="metadata.name">
@@ -277,9 +290,7 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="24" class="moduleName">
-          设备标签
-        </el-col>
+        <el-col :span="24" class="moduleName">设备标签</el-col>
 
         <el-col :span="24" class="top">
           <el-form-item label="">
@@ -298,19 +309,17 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="24" class="moduleName">
-          访问配置
-        </el-col>
+        <el-col :span="24" class="moduleName">访问配置</el-col>
 
         <template v-if="value.spec.model.kind === 'BluetoothDevice'">
           <el-col :span="12">
-            <el-form-item label="蓝牙设备名称" prop="spec.template.spec.name">
+            <el-form-item label="蓝牙设备名称" prop="spec.template.spec.name" key="deviceName">
               <el-input v-model="value.spec.template.spec.name"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="Mac Address" prop="spec.template.spec.macAddress">
+            <el-form-item label="Mac Address" prop="spec.template.spec.macAddress" key="macAddress">
               <el-input v-model="value.spec.template.spec.macAddress"></el-input>
             </el-form-item>
           </el-col>
@@ -333,14 +342,14 @@ export default {
           </el-col>
 
           <el-col :span="12">
-            <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="SlaveID">
+            <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" :prop="'spec.template.spec.protocol.'+ transferMode +'.slaveID'" label="SlaveID">
               <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
             </el-form-item>
           </el-col>
 
           <template v-if="transferMode === 'rtu' && isModeReady">
             <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="串口" required>
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="串口" required key="serialPort">
                 <el-input v-model="value.spec.template.spec.protocol[transferMode].serialPort"></el-input>
               </el-form-item>
             </el-col>
@@ -405,13 +414,13 @@ export default {
 
           <template v-else>
             <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="IP" required>
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="IP" prop="spec.template.spec.protocol.tcp.ip">
                 <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].ip"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="Port" required>
+              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="Port" prop="spec.template.spec.protocol.tcp.port">
                 <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].port"></el-input>
               </el-form-item>
             </el-col>
@@ -446,9 +455,7 @@ export default {
           />
         </template>
 
-        <el-col :span="24" class="moduleName">
-          属性配置
-        </el-col>
+        <el-col :span="24" class="moduleName">属性配置</el-col>
 
         <el-col :span="24">
           <el-form-item label="设备属性">

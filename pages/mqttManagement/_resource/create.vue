@@ -1,7 +1,7 @@
 <script>
 import jsyaml from 'js-yaml';
-import Collapse from './collapse';
-import CatalogHeader from './header';
+import Collapse from '@/components/Collapse';
+import CatalogHeader from '@/components/AppHeader';
 import CodeMirror from '@/components/CodeMirror';
 import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
@@ -282,6 +282,10 @@ export default {
 
       <div class="config">
         <Collapse>
+          <template v-slot:title>
+            <span class="type">配置选项</span>
+            <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
+          </template>
           <el-form ref="form" :model="baseValue">
             <el-row :gutter="20">
               <el-col :span="12">

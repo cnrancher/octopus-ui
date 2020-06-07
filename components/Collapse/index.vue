@@ -1,11 +1,3 @@
-<script>
-export default {
-  data() {
-    return {};
-  }
-};
-</script>
-
 <template>
   <div id="collapse">
     <div class="collapse-header">
@@ -13,8 +5,7 @@ export default {
         <i class="el-icon-caret-bottom"></i>
       </div>
       <div class="title">
-        <span class="type">配置选项</span>
-        <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
+        <slot name="title"></slot>
       </div>
     </div>
     <div class="content">

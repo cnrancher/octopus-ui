@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import { get } from '@/utils/object';
 import createEditView from '@/mixins/create-edit-view';
 import DetailTop from '@/components/DetailTop';

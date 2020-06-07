@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     findDevice(id) {
-      const name = 'device-resource-id';
+      const name = `c-cluster-resource-id`;
       const params = {
         resource:  this.row.type,
         namespace: this.row.metadata && this.row.metadata.namespace,

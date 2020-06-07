@@ -15,8 +15,16 @@ export default {
       default: () => {}
     },
   },
-  computed: {
-    status() {
+  data() {
+    return {
+      status: {
+        label: '',
+        bgColor: ''
+      }
+    }
+  },
+  methods: {
+    getStatus() {
       let label = 'Active';
       let bgColor = 'green';
 
@@ -35,6 +43,15 @@ export default {
         label,
         bgColor
       };
+    }
+  },
+  watch: {
+    row: {
+      handler(newName, oldName) {
+        this.status = this.getStatus();
+      },
+      immediate: true,
+      deep: true
     }
   }
 };

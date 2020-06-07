@@ -22,7 +22,6 @@ export const K3S = { ADDON: 'k3s.cattle.io.addon' };
 export const NAMESPACES = 'namespaces';
 export const COMPONENTSTATUS = 'componentstatus';
 export const DEVICE_LINK = 'edge.cattle.io.devicelink';
-export const DEVICE_LINKS = 'edge.cattle.io.devicelinks';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';
 export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions';
 export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevice';

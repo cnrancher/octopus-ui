@@ -1,5 +1,5 @@
 <script>
-import CatalogHeader from './header';
+import CatalogHeader from '@/components/AppHeader';
 import DefalutImg from '@/components/DefaultImg';
 import { CATALOG, HELM } from '@/config/types';
 import { filterObj } from '@/utils/object';

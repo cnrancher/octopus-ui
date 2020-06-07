@@ -18,32 +18,10 @@ export default {
   data() {
     return {
       status: {
-        label: '',
+        label:   '',
         bgColor: ''
       }
-    }
-  },
-  methods: {
-    getStatus() {
-      let label = 'Active';
-      let bgColor = 'green';
-
-      for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
-        const condition = this.row.status.conditions[i];
-
-        if (condition.status && condition.status === 'Unknown') {
-          bgColor = 'yellow';
-        } else if (condition.status === 'False') {
-          bgColor = 'red';
-        }
-        label = `${ condition.type }:${ condition.status }`;
-      }
-
-      return {
-        label,
-        bgColor
-      };
-    }
+    };
   },
   watch: {
     row: {
@@ -51,7 +29,36 @@ export default {
         this.status = this.getStatus();
       },
       immediate: true,
-      deep: true
+      deep:      true
+    }
+  },
+  methods: {
+    getStatus() {
+      let label = 'Active';
+      let bgColor = 'green';
+      let isActive = true;
+
+      for (let i = 0; i < this.row?.status?.conditions?.length; i++) {
+        const condition = this.row.status.conditions[i];
+
+        if (condition.status && condition.status === 'Unknown') {
+          bgColor = 'yellow';
+          isActive = false;
+        } else if (condition.status === 'False') {
+          bgColor = 'red';
+          isActive = false;
+        }
+        label = `${ condition.type }:${ condition.status }`;
+      }
+
+      if (isActive) {
+        label = 'Active'
+      }
+
+      return {
+        label,
+        bgColor
+      };
     }
   }
 };

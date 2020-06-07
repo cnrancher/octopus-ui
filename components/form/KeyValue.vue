@@ -422,9 +422,12 @@ export default {
     </div>
     <div v-if="showAdd || showRead" class="footer">
       <slot v-if="showAdd" name="add">
-        <button type="button" class="btn role-tertiary add" @click="add()">
+        <el-button
+          type="primary"
+          @click="add()"
+        >
           {{ addLabel }}
-        </button>
+        </el-button>
         <slot name="moreAdd" :rows="rows" />
       </slot>
       <button v-if="showRead" type="button" class="btn role-tertiary read-from-file" @click="readFromFile">

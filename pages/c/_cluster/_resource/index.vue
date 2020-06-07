@@ -140,7 +140,7 @@ export default {
           {{ resource === 'edge.cattle.io.devicelink' ? '添加设备' : 'Create' }}
         </nuxt-link>
 
-        <nuxt-link
+        <!-- <nuxt-link
           v-if="resource === 'edge.cattle.io.devicelink'"
           :to="{path: '/device/template'}"
           tag="button"
@@ -148,7 +148,7 @@ export default {
           class="btn bg-primary ml-10"
         >
           添加设备模板
-        </nuxt-link>
+        </nuxt-link> -->
       </div>
     </header>
     <div v-if="hasListComponent">

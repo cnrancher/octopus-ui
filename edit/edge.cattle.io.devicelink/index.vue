@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 import _ from 'lodash';
 import {
   BLUE_THOOTH_DEVICE,
@@ -8,7 +9,7 @@ import {
   customDevice,
 } from './defaultYaml';
 import { BluetoothDeviceHeader, ModbusDeviceHeader, OPCUADeviceHeader, CUSTOMDeviceHeader } from './type-header';
-import { validatorMacAddress, validateAccessConfig } from '@/edit/edge.cattle.io.devicelink/rules';
+import { validatorMacAddress, validateIP } from '@/edit/edge.cattle.io.devicelink/rules';
 import { allHash } from '@/utils/promise';
 import LoadDeps from '@/mixins/load-deps';
 import Footer from '@/components/form/Footer';
@@ -40,11 +41,20 @@ export default {
     const { mode } = this.$route.query;
 
     if (this.value.metadata && !(mode === 'edit')) {
-      this.$set(this.value, 'metadata', { name: '' });
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
 
+    const validateAccessConfig = (rule, value, callback) => {
+      if (this.value.spec.template.spec.macAddress && this.value.spec.template.spec.namespace) {
+        callback(new Error('name 或 macAddress不能同时为空'));
+      } else {
+        callback();
+      }
+    };
+
     return {
+      activeName: 'second',
+      isChoose: true,
       deviceDefaultInfo,
       devicesType,
       parity,
@@ -54,8 +64,8 @@ export default {
         ModbusDeviceHeader,
         OPCUADeviceHeader
       },
-      tempSpec: {},
-      activeNames:        [],
+      tempSpec:           {},
+      activeNames:        ['1'],
       dialogVisible:      false,
       editRowIndex:       -1,
       allNodes:           [],
@@ -70,9 +80,7 @@ export default {
           { required: true, message: '请输入命名空间' }
         ],
         'spec.adaptor.node': [
-          {
-            required: true, message:  '请选择节点'
-          }
+          { required: true, message: '请选择节点' }
         ],
         'spec.template.spec.name': [
           { required: true, message: '请输入设备名称' }
@@ -80,9 +88,20 @@ export default {
         'spec.template.spec.macAddress': [
           { validator: validateAccessConfig, trigger: 'blur' }
         ],
-        'value.spec.template.spec.protocol.rtu.slaveID': [
+        'spec.template.spec.protocol.rtu.slaveID': [
           { required: true, message: '请输入SlaveID' }
-        ]
+        ],
+        'spec.template.spec.protocol.tcp.slaveID': [
+          { required: true, message: '请输入SlaveID' }
+        ],
+        'spec.template.spec.protocol.tcp.ip': [
+          {
+            required:  true, validator: validateIP, trigger:   ['blur', 'change']
+          }
+        ],
+        'spec.template.spec.protocol.tcp.port': [
+          { required: true, message: '请输入port' }
+        ],
       }
     };
   },
@@ -93,12 +112,15 @@ export default {
     isCustomProtocol() {
       const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
       const kind = this.value.spec.model.kind;
-      return deviceProtocol.includes(kind)
+
+      return deviceProtocol.includes(kind);
     },
     currentHeader() {
       const kind = this.value.spec.model.kind;
+
       if (this.isCustomProtocol) {
-        const headerName = `${kind}Header`;
+        const headerName = `${ kind }Header`;
+
         return this.headers[headerName];
       } else {
         return CUSTOMDeviceHeader;
@@ -111,10 +133,12 @@ export default {
         } else if (this.value.spec.template.spec.protocol?.rtu) {
           return 'rtu';
         }
+
         return 'rtu';
       },
       set(v) {
         this.changeTransferMode(v);
+
         return v;
       }
     },
@@ -123,6 +147,14 @@ export default {
     enable(buttonCb) {
       this.$refs['form'].validate((valid) => {
         if (valid) {
+          if (!this.isChoose && this.value.spec.template.spec.protocol.rtu) {
+         
+            Vue.delete(this.value.spec.template.spec.protocol.rtu, 'baudRate');
+            Vue.delete(this.value.spec.template.spec.protocol.rtu, 'dataBits');
+            Vue.delete(this.value.spec.template.spec.protocol.rtu, 'parity');
+            Vue.delete(this.value.spec.template.spec.protocol.rtu, 'stopBits');
+          }
+
           this.save(buttonCb);
         } else {
           buttonCb(false);
@@ -173,6 +205,7 @@ export default {
       this.value.spec.template.spec.properties.splice(index, 1);
     },
     changeKind(value) {
+      const node = this.value.spec.adaptor.node;
       if (value === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
@@ -196,16 +229,19 @@ export default {
         this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items));
         console.log(templateSpec, 'ajax******', resource, spec, spec.protocol); // eslint-disable-line no-console
       }
+      this.$set(this.value.spec.adaptor, 'node', node)
     },
     changeTransferMode(mode) {
       const tempSpec = _.cloneDeep(this.value.spec);
+      const node = this.value.spec.adaptor.node;
       if (Object.keys(this.tempSpec).length > 0) {
         this.$set(this.value, 'spec', _.cloneDeep(this.tempSpec));
       } else {
         mode === 'rtu'
-        ? this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
-        : this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
+          ? this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
+          : this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
       }
+      this.$set(this.value.spec.adaptor, 'node', node);
       this.tempSpec = tempSpec;
     },
     getDeviceLabel(device) {
@@ -219,13 +255,10 @@ export default {
   <div class="form">
     <el-form ref="form" label-position="left" :rules="rules" :model="value" label-width="120px">
       <el-row :gutter="60">
-        <el-col :span="24" class="moduleName">
-          基础配置
-        </el-col>
 
         <el-col :span="12">
           <el-form-item label="名称" prop="metadata.name">
-            <el-input v-model="value.metadata.name"></el-input>
+            <el-input v-model="value.metadata.name" :disabled="isEdit"></el-input>
           </el-form-item>
         </el-col>
 
@@ -237,6 +270,7 @@ export default {
               allow-create
               default-first-option
               placeholder="请选择"
+              :disabled="isEdit"
             >
               <el-option
                 v-for="item in allNamespace"
@@ -251,7 +285,7 @@ export default {
 
         <el-col :span="12">
           <el-form-item label="设备类型" required>
-            <el-select v-model="value.spec.model.kind" @change="changeKind">
+            <el-select v-model="value.spec.model.kind" :disabled="isEdit" @change="changeKind">
               <el-option
                 v-for="device in devicesType"
                 :key="device.spec.names.kind"
@@ -277,204 +311,188 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="24" class="moduleName">
-          设备标签
-        </el-col>
+        <el-col :span="24">
+          <el-card class="configuration">
+            <el-tabs v-model="activeName">
+              <el-tab-pane label="访问配置" name="second">
+                <template v-if="value.spec.model.kind === 'BluetoothDevice'">
+                  <el-col :span="12">
+                    <el-form-item key="deviceName" label="蓝牙设备名称" prop="spec.template.spec.name">
+                      <el-input v-model="value.spec.template.spec.name"></el-input>
+                    </el-form-item>
+                  </el-col>
 
-        <el-col :span="24" class="top">
-          <el-form-item label="">
-            <KeyValue
-              key="labels"
-              v-model="value.spec.template.metadata.labels"
-              :value-multiline="false"
-              :pad-left="false"
-              :as-map="true"
-              value-label="值"
-              key-label="键"
-              :read-allowed="false"
-              add-label="添加设备标签"
-              :protip="false"
-            />
-          </el-form-item>
-        </el-col>
+                  <el-col :span="12">
+                    <el-form-item key="macAddress" label="Mac Address" prop="spec.template.spec.macAddress">
+                      <el-input v-model="value.spec.template.spec.macAddress"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </template>
 
-        <el-col :span="24" class="moduleName">
-          访问配置
-        </el-col>
+                <template
+                  v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocol"
+                >
+                  <el-col :span="12">
+                    <el-form-item label="传输模式">
+                      <el-radio-group v-model="transferMode" class="subtract">
+                        <el-radio-button label="rtu">RTU</el-radio-button>
+                        <el-radio-button label="tcp">TCP</el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                  </el-col>
 
-        <template v-if="value.spec.model.kind === 'BluetoothDevice'">
-          <el-col :span="12">
-            <el-form-item label="蓝牙设备名称" prop="spec.template.spec.name">
-              <el-input v-model="value.spec.template.spec.name"></el-input>
-            </el-form-item>
-          </el-col>
+                  <el-col :span="12">
+                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" :prop="'spec.template.spec.protocol.'+ transferMode +'.slaveID'" label="SlaveID">
+                      <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
+                    </el-form-item>
+                  </el-col>
 
-          <el-col :span="12">
-            <el-form-item label="Mac Address" prop="spec.template.spec.macAddress">
-              <el-input v-model="value.spec.template.spec.macAddress"></el-input>
-            </el-form-item>
-          </el-col>
-        </template>
+                  <template v-if="transferMode === 'rtu' && isModeReady">
+                    <el-col :span="12">
+                      <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" key="serialPort" label="串口" required>
+                        <el-input v-model="value.spec.template.spec.protocol[transferMode].serialPort"></el-input>
+                      </el-form-item>
+                    </el-col>
 
-        <template
-          v-else-if="value.spec.model.kind === 'ModbusDevice' && value.spec.template.spec.protocol"
-        >
-          <el-col :span="12" class="topMargin">
-            <el-form-item label="传输模式">
-              <el-radio-group v-model="transferMode">
-                <el-radio-button label="rtu">
-                  RTU
-                </el-radio-button>
-                <el-radio-button label="tcp">
-                  TCP
-                </el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
+                    <el-col :span="24">
+                      <el-checkbox v-model="isChoose">添加RTU高级配置</el-checkbox>
+                    </el-col>
+                    
+                    <template v-if="isChoose">
+                      <el-col :span="12">
+                        <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="baudRate">
+                          <el-input v-model.number="value.spec.template.spec.protocol[transferMode].baudRate"></el-input>
+                        </el-form-item>
+                      </el-col>
 
-          <el-col :span="12">
-            <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="SlaveID">
-              <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"></el-input>
-            </el-form-item>
-          </el-col>
+                      <el-col :span="12">
+                        <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="dataBits">
+                          <el-select v-model.number="value.spec.template.spec.protocol[transferMode].dataBits" clearable>
+                            <el-option
+                              v-for="item in dataBits"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
-          <template v-if="transferMode === 'rtu' && isModeReady">
-            <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="串口" required>
-                <el-input v-model="value.spec.template.spec.protocol[transferMode].serialPort"></el-input>
-              </el-form-item>
-            </el-col>
+                      <el-col :span="12">
+                        <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="parity">
+                          <el-select v-model="value.spec.template.spec.protocol[transferMode].parity" clearable>
+                            <el-option
+                              v-for="item in parity"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            >
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
-            <el-col :span="24">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item name="3" class="optional">
-                  <template slot="title">
-                    <template v-if="activeNames.length <= 0">
-                      <i class="el-icon-caret-right"></i>可选rtu配置
-                    </template>
-                    <template v-else>
-                      <i class="el-icon-caret-bottom"></i>可选rtu配置
+                      <el-col :span="12">
+                        <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="stopBits">
+                          <el-select v-model.number="value.spec.template.spec.protocol[transferMode].stopBits" clearable>
+                            <el-option label="1" value="1"></el-option>
+                            <el-option label="2" value="2"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                     </template>
                   </template>
+
+                  <template v-else>
+                    <el-col :span="12">
+                      <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="IP" prop="spec.template.spec.protocol.tcp.ip">
+                        <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].ip"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :span="12">
+                      <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="Port" prop="spec.template.spec.protocol.tcp.port">
+                        <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].port"></el-input>
+                      </el-form-item>
+                    </el-col>
+                  </template>
+                </template>
+
+                <template v-else-if="value.spec.model.kind === 'OPCUADevice' && value.spec.template.spec.protocol">
                   <el-col :span="12">
-                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="baudRate">
-                      <el-input v-model="value.spec.template.spec.protocol[transferMode].baudRate"></el-input>
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="11" :push="1">
-                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="dataBits">
-                      <el-select v-model="value.spec.template.spec.protocol[transferMode].dataBits" clearable>
-                        <el-option
-                          v-for="item in dataBits"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        >
-                        </el-option>
-                      </el-select>
+                    <el-form-item label="URL" required>
+                      <el-input v-model="value.spec.template.spec.protocol.url"></el-input>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="12">
-                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="parity">
-                      <el-select v-model="value.spec.template.spec.protocol[transferMode].parity" clearable>
-                        <el-option
-                          v-for="item in parity"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        >
-                        </el-option>
-                      </el-select>
+                    <el-form-item label="username">
+                      <el-input v-model="value.spec.template.spec.protocol.username"></el-input>
                     </el-form-item>
                   </el-col>
 
-                  <el-col :span="11" :push="1">
-                    <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="stopBits">
-                      <el-select v-model="value.spec.template.spec.protocol[transferMode].stopBits" clearable>
-                        <el-option label="1" value="1"></el-option>
-                        <el-option label="2" value="2"></el-option>
-                      </el-select>
+                  <el-col :span="12">
+                    <el-form-item label="password">
+                      <el-input v-model="value.spec.template.spec.protocol.password"></el-input>
                     </el-form-item>
                   </el-col>
-                </el-collapse-item>
-              </el-collapse>
-            </el-col>
-          </template>
+                </template>
 
-          <template v-else>
-            <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="IP" required>
-                <el-input v-if="isModeReady" v-model="value.spec.template.spec.protocol[transferMode].ip"></el-input>
-              </el-form-item>
-            </el-col>
+                <template v-else>
+                  <CustomTemplate
+                    :key="value.spec.model.kind"
+                    :template-protocol="templateProtocol"
+                    :value="value"
+                  />
+                </template>
+              </el-tab-pane>
 
-            <el-col :span="12">
-              <el-form-item v-if="value.spec.template.spec.protocol[transferMode]" label="Port" required>
-                <el-input v-if="isModeReady" v-model.number="value.spec.template.spec.protocol[transferMode].port"></el-input>
-              </el-form-item>
-            </el-col>
-          </template>
-        </template>
+              <el-tab-pane label="设备属性" name="third">
+                <el-col :span="24">
+                  <span>
+                    <i class="el-icon-warning"></i>
+                    注意：设备属性会明文展示所输入信息，请不要填入敏感信息，如涉及敏感信息，请先加密，请防止信息泄露。
+                  </span>
 
-        <template v-else-if="value.spec.model.kind === 'OPCUADevice' && value.spec.template.spec.protocol">
-          <el-col :span="12">
-            <el-form-item label="URL" required>
-              <el-input v-model="value.spec.template.spec.protocol.url"></el-input>
-            </el-form-item>
-          </el-col>
+                  <AddTable
+                    :headers="currentHeader"
+                    :properties="value.spec.template.spec.properties"
+                    @editRow="edit($event)"
+                    @deleteRow="deleteRow($event)"
+                  />
 
-          <el-col :span="12">
-            <el-form-item label="username">
-              <el-input v-model="value.spec.template.spec.protocol.username"></el-input>
-            </el-form-item>
-          </el-col>
+                  <div class="spacer"></div>
 
-          <el-col :span="12">
-            <el-form-item label="password">
-              <el-input v-model="value.spec.template.spec.protocol.password"></el-input>
-            </el-form-item>
-          </el-col>
-        </template>
+                  <el-button
+                    type="primary"
+                    icon="el-icon-circle-plus-outline"
+                    @click="addAttribute"
+                  >
+                    新增属性
+                  </el-button>
+                </el-col>
+              </el-tab-pane>
 
-        <template v-else>
-          <CustomTemplate
-            :key="value.spec.model.kind"
-            :template-protocol="templateProtocol"
-            :value="value"
-          />
-        </template>
+              <el-tab-pane label="设备标签" name="fourth">
+                <KeyValue
+                  key="labels"
+                  v-model="value.spec.template.metadata.labels"
+                  :value-multiline="false"
+                  :pad-left="false"
+                  :as-map="true"
+                  value-label="值"
+                  key-label="键"
+                  :read-allowed="false"
+                  add-label="添加设备标签"
+                  :protip="false"
+                />
+              </el-tab-pane>
 
-        <el-col :span="24" class="moduleName">
-          属性配置
+            </el-tabs>
+          </el-card>
         </el-col>
 
-        <el-col :span="24">
-          <el-form-item label="设备属性">
-            <span>
-              <i class="el-icon-warning"></i>
-              注意：设备属性会明文展示所输入信息，请不要填入敏感信息，如涉及敏感信息，请先加密，请防止信息泄露。
-            </span>
-
-            <AddTable
-              :headers="currentHeader"
-              :properties="value.spec.template.spec.properties"
-              @editRow="edit($event)"
-              @deleteRow="deleteRow($event)"
-            />
-
-            <div class="spacer"></div>
-
-            <el-button
-              type="primary"
-              icon="el-icon-circle-plus-outline"
-              @click="addAttribute"
-            >
-              新增属性
-            </el-button>
-          </el-form-item>
-        </el-col>
         <el-col :span="24">
           <Footer :mode="mode" :errors="errors" @save="enable" @done="done" />
         </el-col>
@@ -523,22 +541,12 @@ export default {
 
 <style lang="scss" scoped>
 .form {
-  width: 1000px;
-  margin: 30px;
-
-  .moduleName {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 30px;
-    margin-left: -30px;
+  .configuration {
+    margin-top: 30px;
   }
 
-  .top {
-    margin-top: -50px;
-  }
-
-  .topMargin {
-    margin-top: -1px;
+  .subtract {
+    height: 31px;
   }
 
   .optional {

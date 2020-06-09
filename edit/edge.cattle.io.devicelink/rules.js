@@ -17,4 +17,4 @@ export function validateIP(rule, value, callback) {
   } else {
     callback(new Error('请输入合法ip!'));
   }
-}
+} 

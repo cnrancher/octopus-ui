@@ -9,8 +9,12 @@ export default {
     fisrtLayer: {
       type:     Boolean,
       required: false
+    },
+    isExactActive: {
+      type:     Boolean,
+      required: false
     }
-  },
+  }
 };
 </script>
 <template>
@@ -23,7 +27,7 @@ export default {
           >
             <div class="info">
               <i class="icon" :class="menu.meta.icon"></i>
-              <span>{{ menu.meta.title }}</span>
+              <span class="text">{{ menu.meta.title }}</span>
             </div>
             <span class="bar"></span>
           </el-menu-item>
@@ -32,11 +36,11 @@ export default {
     </template>
 
     <template v-else>
-      <el-submenu :key="menu.name" :index="menu.name">
+      <el-submenu :key="menu.name" :index="menu.name" :class="{'is-exact-active': isExactActive}">
         <template slot="title">
           <div class="info">
             <i class="icon" :class="menu.meta.icon"></i>
-            <a>{{ menu.meta.title }}</a>
+            <a class="text">{{ menu.meta.title }}</a>
           </div>
           <span class="bar"></span>
         </template>
@@ -55,7 +59,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-  .iconfont{
+  .icon {
     font-size: 20px;
     // margin-right: 20px;
     color: var(--menu-text);
@@ -74,6 +78,18 @@ export default {
   .el-submenu__title, .el-menu-item {
     display: flex;
     justify-content: space-between;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .icon {
+      color: var(--menu-text);
+      margin-right: 24px;
+    }
 
     .bar {
       width: 4px;
@@ -83,21 +99,26 @@ export default {
   }
 
   .nuxt-link-active {
-
-    .el-menu-item {
-
-      background-color: var(--menu-hover-bg) !important;
-      .iconfont {
-        color: var(--menu-action-text) !important;
-      }
-
-      .bar {
-        background-color: var(--menu-action-text) !important;
-      }
+    &:hover {
+      text-decoration: none;
     }
     .is-active {
       background-color: var(--menu-hover-bg) !important;
-      .iconfont {
+      .icon {
+        color: var(--menu-action-text) !important;
+      }
+      .text {
+        color: var(--menu-text);
+      }
+    }
+  }
+
+  .nuxt-link-exact-active  {
+    .el-menu-item {
+      font-weight: bold;
+      opacity: 1;
+      background-color: var(--menu-hover-bg) !important;
+      .icon {
         color: var(--menu-action-text) !important;
       }
     }
@@ -106,12 +127,15 @@ export default {
 
 <style lang="scss">
 .el-menu {
+  A:hover {
+    text-decoration: none;
+  }
   .el-submenu__icon-arrow {
     margin-top: -3px !important;
   }
 
   .el-menu-item.is-active {
-    .iconfont {
+    .icon {
       color: var(--menu-text);
     }
   }
@@ -119,7 +143,7 @@ export default {
   .el-submenu.is-active.is-opened {
     .el-submenu__title {
       background-color: var(--menu-hover-bg) !important;
-      .iconfont {
+      .icon {
         color: var(--menu-action-text) !important;
       }
       .bar {
@@ -130,19 +154,19 @@ export default {
       .is-active {
         background-color: transparent !important;
       }
-      .iconfont {
+      .icon {
         color: var(--menu-text) !important;
       }
     }
   }
 
   .el-menu-item, .el-submenu__title {
-     display: flex;
+    display: flex;
     justify-content: space-between;
 
     &:hover, &:focus {
       background-color: transparent;
-      .iconfont {
+      .icon {
         color: var(--menu-text);
       }
     }
@@ -155,10 +179,26 @@ export default {
     span {
       font-size: 16px;
     }
-
   }
 
   .el-submenu {
+    .el-submenu__title {
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+        font-weight: bold;
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+
+    &.is-active {
+      .el-submenu__title {
+        opacity: 1;
+        font-weight: bold;
+      }
+    }
     .el-menu-item {
       padding: 0 42px !important;
       height: 40px;
@@ -185,6 +225,9 @@ export default {
         background-color: var(--menu-second-bg) !important;
       }
     }
+    .text {
+      color: var(--menu-text);
+    }
   }
 
   .el-menu {
@@ -204,6 +247,20 @@ export default {
           font-size: 14px;
         }
       }
+    }
+  }
+  .is-exact-active {
+    .el-submenu__title {
+      opacity: 1;
+      font-weight: bold;
+      background-color: var(--menu-hover-bg) !important;
+      .icon {
+        color: var(--menu-action-text) !important;
+      }
+    }
+
+    .bar {
+      background-color: var(--menu-action-text) !important;
     }
   }
 }

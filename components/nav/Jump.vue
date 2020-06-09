@@ -88,15 +88,18 @@ export default {
 
 <template>
   <div>
-    <input
-      ref="input"
-      v-model="value"
-      :placeholder="placeholder"
-      class="search"
-      @focus="focused"
-      @blur="blurred"
-      @keyup.esc="hide"
-    />
+    <div class="search-wrapper">
+      <input
+        ref="input"
+        v-model="value"
+        :placeholder="placeholder"
+        class="search"
+        type="search"
+        @focus="focused"
+        @blur="blurred"
+        @keyup.esc="hide"
+      />
+    </div>
     <div v-if="isFocused" class="results">
       <div v-for="g in groups" :key="g.name" class="package">
         <Group
@@ -118,17 +121,29 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-  .search {
-    position: relative;
+  .search-wrapper {
+    margin: 0 8px;
+    .search {
+      position: relative;
+      width: 100%;
+      background-color: #434966;
+      border-color: var(--input-checkbox-background);
+      opacity: 0.8;
+      &:hover {
+        background-color: #434966;
+        opacity: 1;
+      }
+    }
   }
 
   .results {
     position: absolute;
-    top: 44px;
+    top: 170px;
     left: 10px;
     right: 10px;
     bottom: 10px;
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 1;
     background: var(--box-bg);
     border: solid var(--border) thin;

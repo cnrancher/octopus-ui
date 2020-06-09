@@ -88,10 +88,15 @@ export default {
     font-size: 12px;
     position: relative;
     cursor: pointer;
-    color: var(--input-label);
+    color: var(--menu-text);
 
     > H6 {
       color: var(--body-text);
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+        font-weight: bold;
+      }
     }
 
     > A {
@@ -101,16 +106,24 @@ export default {
 
   .body ::v-deep UL {
     margin-left: 10px;
+    .header {
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+      }
+    }
+    .expanded .header {
+      opacity: 1;
+    }
   }
 
   .accordion {
     &.depth-0 {
       > .header {
         padding: 10px 0;
-        border-top: solid thin var(--border);
 
         > H6 {
-          font-size: 14px;
+          font-size: 16px;
           text-transform: none;
         }
 
@@ -161,6 +174,14 @@ export default {
 
     + I {
       color: var(--body-text);
+    }
+  }
+  .expanded {
+    .header {
+      > H6 {
+        opacity: 1;
+        font-weight: bold;
+      }
     }
   }
 </style>

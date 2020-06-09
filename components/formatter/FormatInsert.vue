@@ -20,7 +20,7 @@ export default {
 
     return {
       deviceList: [],
-      device: [],
+      device:     [],
       type,
     };
   },
@@ -29,21 +29,15 @@ export default {
     tagValue() {
       const out = [];
       const deviceValue = this.device[0]?.status?.properties;
+
       for (let i = 0; i < deviceValue?.length; i++) {
         if (typeof deviceValue[i] === 'object') {
           out.push( `${ deviceValue[i]['name'] }: ${ deviceValue[i].value }` );
         }
       }
+
       return out;
     }
-  },
-
-  methods: {
-    async loadDeps() {
-      const { type } = this;
-      const deviceList = await this.$store.dispatch('management/findAll', { type });
-      this.deviceList = deviceList;
-    },
   },
   watch: {
     deviceList: {
@@ -51,8 +45,17 @@ export default {
         this.device = this.deviceList.filter( item => item.id === this.row.id);
       },
       immediate: true,
-      deep: true
+      deep:      true
     }
+  },
+
+  methods: {
+    async loadDeps() {
+      const { type } = this;
+      const deviceList = await this.$store.dispatch('management/findAll', { type });
+
+      this.deviceList = deviceList;
+    },
   }
 };
 </script>

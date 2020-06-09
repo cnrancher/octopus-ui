@@ -34,9 +34,9 @@ export const MODBUS_DEVICE_RTU = {
           slaveID:    '',
           serialPort: '',
           baudRate:   '',
-          dataBits:   '',
-          parity:     '',
-          stopBits:   ''
+          dataBits:   8,
+          parity:     'E',
+          stopBits:   1
         }
       },
       properties: []
@@ -59,7 +59,6 @@ export const MODBUS_DEVICE_TCP = {
       protocol: {
         tcp: {
           slaveID:    '',
-          serialPort: '',
           ip:         '',
           port:       ''
         }
@@ -101,7 +100,7 @@ export const customDevice = {
     kind:       ''
   },
   template: {
-    metadata: { labels: { wj: 'test1' } },
+    metadata: { labels: { wj: '' } },
     spec:     {
       protocol:   {},
       properties: []

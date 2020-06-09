@@ -81,21 +81,21 @@ export const opcTypeOption = [{
 }];
 
 export const register = [{
-  value:    'CoilRegister',
-  label:    '线圈寄存器',
-  readOnly: false,
-}, {
   value:    'DiscreteInputRegister',
-  label:    '离散输入寄存器',
+  label:    '离散输入',
   readOnly: true
 }, {
-  value:    'HoldingRegister',
-  label:    '保持寄存器',
+  value:    'CoilRegister',
+  label:    '线圈输出',
   readOnly: false
 }, {
   value:    'InputRegister',
   label:    '输入寄存器',
   readOnly: true
+}, {
+  value:    'HoldingRegister',
+  label:    '持有寄存器',
+  readOnly: false
 }];
 
 export const deviceDefaultInfo = {

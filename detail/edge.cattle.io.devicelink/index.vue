@@ -18,7 +18,7 @@ export default {
 
     const {
       spec:     { model: { apiVersion, kind } },
-      status:   { adaptor: { node } },
+      status:   { nodeHostName },
       metadata: { name, namespace, creationTimestamp }
     } = this.value;
 
@@ -30,7 +30,7 @@ export default {
       creationTimestamp,
       apiVersion,
       kind,
-      node,
+      node: nodeHostName,
       activeName: 'second',
       rows,
       properties,

@@ -1,18 +1,20 @@
 <script>
 /* eslint-disable */
 import _ from 'lodash';
+import SelectKeyValue from '@/components/SelectKeyValue';
 import { typeOption, register } from '@/config/map'
 
 const properties = {
   name:        '',
   description: '',
-  value:       'true',
+  value:       '',
   dataType:    'boolean',
   readOnly:    true,
   visitor:     {
-    register: 'CoilRegister',
+    register: 'DiscreteInputRegister',
     offset:   '',
     quantity: '',
+    orderOfOperations: []
   }
 };
 
@@ -27,6 +29,9 @@ export default {
       default: false
     },
     editRowIndex: { type: Number }
+  },
+  components: {
+    SelectKeyValue
   },
   data() {
     return {
@@ -99,12 +104,17 @@ export default {
       this.$emit('hideDialog', false);
     },
     changeRegister(value) {
+      const index = this.index;
+      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '')
       this.register.forEach((item) => {
         if (item.value === value) {
-          const index = this.index
           this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
         }
       });
+    },
+    changeDataType() {
+      const index = this.index;
+      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '')
     }
   }
 };
@@ -137,7 +147,7 @@ export default {
           { required: true, message: '请输入描述', trigger: 'blur' },
         ]"
       >
-        <el-input 
+        <el-input
           v-model="localDevice.spec.template.spec.properties[index].description" 
           maxlength="256"
           show-word-limit
@@ -148,7 +158,7 @@ export default {
       <el-row type='flex' justify="space-between">
         <el-col :span="15">
           <el-form-item label="类型">
-            <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" :disabled="disableType" placeholder="请选择">
+            <el-select v-model="localDevice.spec.template.spec.properties[index].dataType" placeholder="请选择" @change="changeDataType">
               <el-option
                 v-for="item in typeOption"
                 :key="item.value"
@@ -161,15 +171,14 @@ export default {
         </el-col>
 
         <el-col :span="9">
-          <h1>{{localDevice.spec.template.spec.properties.dataType}}</h1>
           <template v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'">
-            <el-select v-model="localDevice.spec.template.spec.properties[index].value" placeholder="请选择">
+            <el-select v-model="localDevice.spec.template.spec.properties[index].value" placeholder="请选择" key="select" :disabled="localDevice.spec.template.spec.properties[index].readOnly">
               <el-option label="false" value="false"></el-option>
               <el-option label="true"  value="true"></el-option>
             </el-select>
           </template>
           <template v-else>
-            <el-input v-model="localDevice.spec.template.spec.properties[index].value"></el-input>
+            <el-input v-model="localDevice.spec.template.spec.properties[index].value" key="input" :disabled="localDevice.spec.template.spec.properties[index].readOnly"></el-input>
           </template>
         </el-col>
       </el-row>
@@ -195,6 +204,10 @@ export default {
 
       <el-form-item label="寄存器的个数 ">
         <el-input v-model.number="localDevice.spec.template.spec.properties[index].visitor.quantity"></el-input>
+      </el-form-item>
+
+      <el-form-item label="Operations">
+        <SelectKeyValue :value="localDevice.spec.template.spec.properties[index].visitor.orderOfOperations" />
       </el-form-item>
    
     </el-form>

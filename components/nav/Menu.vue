@@ -6,10 +6,30 @@ export default {
   name:       'Menu',
   components: { MenuItem },
   data() {
-    return {
-      MENUS,
-      openeds: [],
-    };
+    return { MENUS };
+  },
+  computed: {
+    currentMenuName() {
+      const currentPath = this.$route.path || '';
+      let out = '';
+
+      MENUS.forEach((menuItem) => {
+        if (menuItem.children) {
+          const currentSubmenuItem = menuItem.children.filter(submenuItem => currentPath === submenuItem.path);
+
+          if (currentSubmenuItem.length > 0) {
+            out = menuItem.name;
+          }
+        } else if (currentPath === menuItem.path) {
+          out = menuItem.name;
+        }
+      });
+
+      return out;
+    },
+    openeds() {
+      return [this.currentMenuName];
+    }
   },
   methods: {
     closeAll() {
@@ -21,15 +41,16 @@ export default {
 
 <template>
   <div class="menu">
-    <div class="menu-top hand" @click="closeAll">
+    <!-- <div class="menu-top hand" @click="closeAll">
       <img src="~/assets/images/menu-logo.png" alt="">
-    </div>
-    <el-menu default-active="/global-overview" :default-openeds="openeds">
+    </div> -->
+    <el-menu default-active="infrastructure" :default-openeds="openeds">
       <MenuItem
         v-for="menu in MENUS"
         :key="menu.name"
         :menu="menu"
         :fisrt-layer="true"
+        :is-exact-active="currentMenuName === menu.name"
       />
     </el-menu>
   </div>

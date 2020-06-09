@@ -13,6 +13,11 @@ import Header from '@/components/nav/Header';
 import { COUNT, SCHEMA } from '@/config/types';
 import { FAVORITE, USED } from '@/store/type-map';
 
+const PACKAGE_TITLE_MAP = {
+  'in-use':  '已使用的资源',
+  starred:  '关注资源'
+};
+
 export default {
 
   components: {
@@ -114,7 +119,14 @@ export default {
         addObjects(out, more);
       }
 
-      this.groups = out;
+      this.groups = out.map((groupItem) => {
+        const label = groupItem.label.toLowerCase();
+
+        return {
+          ...groupItem,
+          displayLabel: PACKAGE_TITLE_MAP[label] || groupItem.label
+        };
+      });
     },
 
     isExpanded(name) {
@@ -156,9 +168,12 @@ export default {
 
     <nav v-if="clusterReady">
       <div class="logo" alt="Logo" />
+      <p class="nav-title">
+        OCTOPUS
+      </p>
       <Jump class="mt-10 mb-10" />
       <Menu />
-      <div v-for="g in groups" :key="g.name" class="package">
+      <div v-for="(g, gIndex) in groups" :key="g.name" class="package pl-20 pr-20" :class="{'package-line': 0 === gIndex}">
         <Group
           :key="g.name"
           id-prefix=""
@@ -169,7 +184,7 @@ export default {
         >
           <template slot="accordion">
             <h6 style="color: #fff">
-              {{ g.label }}
+              {{ g.displayLabel }}
             </h6>
           </template>
         </Group>
@@ -214,11 +229,20 @@ export default {
       position: relative;
       // background-color: var(--nav-bg);
       background-color: var(--menu-bg);
-      padding: 0 10px;
       overflow-y: auto;
+
+      .nav-title {
+        text-align: center;
+        color: var(--header-logo);
+        padding-bottom: 20px;
+      }
 
       .package .depth-0.expanded > .body {
         margin-bottom: 20px;
+      }
+
+      .package-line {
+        border-top: 2px solid #12152d;
       }
 
       .header {

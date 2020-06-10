@@ -110,6 +110,14 @@ export const WORKLOAD_TYPES = {
   REPLICATION_CONTROLLER: 'replicationcontroller'
 };
 
+export const DEVICE_PROTOCOL = {
+  CUSTOM:                     'apiextensions.k8s.io.customresourcedefinition',
+  DAEMONSET:                  'apps.daemonset',
+  DEPLOYMENT:                 'apps.deployment',
+  RBAC_CLUSTERROLEBINDING:    'rbac.authorization.k8s.io.clusterrolebinding',
+  RBAC_CLUSTERROLEL:          'rbac.authorization.k8s.io.clusterrole'
+}
+
 export const STORAGE_CATEGORY = {
   PERSISTENT_VOLUME:      'persistentvolume',
   STORAGE_CLASS:          'storage.k8s.io.storageclass'

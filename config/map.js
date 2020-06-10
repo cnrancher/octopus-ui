@@ -58,14 +58,14 @@ export const opcTypeOption = [{
   value: 'int64',
   label: 'int64'
 }, {
-  value: 'unit16',
-  label: 'unit16'
+  value: 'uint16',
+  label: 'uint16'
 }, {
-  value: 'unit32',
-  label: 'unit32'
+  value: 'uint32',
+  label: 'uint32'
 }, {
-  value: 'unit64',
-  label: 'unit64'
+  value: 'uint64',
+  label: 'uint64'
 }, {
   value: 'string',
   label: 'string'
@@ -78,6 +78,12 @@ export const opcTypeOption = [{
 }, {
   value: 'boolean',
   label: 'boolean'
+}, {
+  value: 'datetime',
+  label: 'datetime'
+}, {
+  value: 'byteString',
+  label: 'byteString'
 }];
 
 export const register = [{

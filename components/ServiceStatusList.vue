@@ -2,14 +2,26 @@
 
 function getItemClassname(status) {
   switch (status) {
-  case 'success':
-    return 'dashboard-icon-tick';
-  case 'error':
-    return 'dashboard-icon-error';
-  case 'unknown':
-    return 'dashboard-icon-question';
-  default:
-    return 'dashboard-icon-question';
+    case 'success':
+      return {
+        icon: 'icon-system-active',
+        type: 'active'
+      };
+    case 'error':
+      return {
+        icon: 'icon-system-error',
+        type: 'error'
+      };
+    case 'unknown':
+      return {
+        icon: 'icon-system-question',
+        type: 'question'
+      };
+    default:
+      return {
+        icon: 'icon-system-question',
+        type: 'question'
+      };
   }
 }
 
@@ -41,14 +53,22 @@ export default {
 
 <template>
   <ul class="dashboard-service">
-    <li v-for="statusItem in list" :key="statusItem.name" :class="statusItem.classname">
-      <i></i>
+    <li v-for="statusItem in list" :key="statusItem.name" :class="statusItem.classname.type">
+      <span class="type">
+        <i :class="['icon', statusItem.classname.icon]"></i>
+      </span>
       <span>{{ statusItem.name }}</span>
     </li>
   </ul>
 </template>
 
 <style lang="scss" scoped>
+  .type-bg {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+
   .dashboard-service {
     display: grid;
     grid-template-columns: repeat(4, 21%);
@@ -59,53 +79,54 @@ export default {
     margin: 1.45vw 0 1.25vw;
     li {
       list-style: none;
-      min-height: 40px;
       background-color: #ddd;
       min-width: 228px;
-      line-height: 1;
       color: #454545;
       border-top-left-radius: 10px;
       border-bottom-left-radius: 10px;
+      overflow: hidden;
+      display: flex;
       i {
-        width: 42px;
-        height: 42px;
-        line-height: 2.6;
+        line-height: 40px;
         color: #fff;
-        display: inline-block;
-        vertical-align: middle;
+        font-size: 16px;
         text-align: center;
         font-style: normal;
-        border-top-left-radius: 10px;
-        border-bottom-left-radius: 10px;
       }
       span {
-        line-height: 1;
-        padding-left: 10px;
+        line-height: 40px;
         font-size: 17px;
         font-weight: bold;
-        display: inline-block;
         vertical-align: middle;
+        text-align: center;
       }
     }
+
     li:last-child {
       margin-right: 0;
     }
-    .dashboard-icon-tick {
+
+    .active {
       border: 1px solid #8dc449;
-      i {
-        background: url('~assets/images/dashboard-tick.png') no-repeat center #8dc449;
+      .type {
+        @extend .type-bg;
+        background-color: #8dc449;
       }
     }
-    .dashboard-icon-question {
+
+    .question {
       border: 1px solid #fac40f;
-      i {
-        background: url('~assets/images/dashboard-question.png') no-repeat center #fac40f;
+      .type {
+        @extend .type-bg;
+        background-color: #fac40f;
       }
     }
-    .dashboard-icon-error {
+
+    .error {
       border: 1px solid #ee5558;
-      i {
-        background: url('~assets/images/dashboard-fork.png') no-repeat center #ee5558;
+      .type {
+        @extend .type-bg;
+        background-color: #ee5558;
       }
     }
   }

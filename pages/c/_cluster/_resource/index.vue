@@ -75,7 +75,7 @@ export default {
     const hasListComponent = store.getters['type-map/hasCustomList'](resource);
     const hasEditComponent = store.getters['type-map/hasCustomEdit'](resource);
     const schema = store.getters['cluster/schemaFor'](resource);
-
+    console.log('----hasListComponent', hasListComponent, schema, resource)
     let foundData = false;
     let rows;
     let more = {};
@@ -99,7 +99,7 @@ export default {
     if ( !foundData ) {
       rows = await store.dispatch('cluster/findAll', { type: resource });
     }
-
+    console.log('----schema', schema)
     return {
       schema,
       hasListComponent,

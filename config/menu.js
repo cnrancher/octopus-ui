@@ -70,7 +70,7 @@ export const MENUS = [
     children: [
       {
         name: 'lot-management/deviceProtocol',
-        path: '/deviceProtocol',
+        path: '/c/local/deviceprotocol',
         meta:     { title: '设备协议' },
       },
       {

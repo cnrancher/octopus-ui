@@ -9,7 +9,7 @@ const schema = {
   id:         'deviceprotocol',
   type:       SCHEMA,
   attributes: {
-    kind:       'deviceprotocol',
+    kind:       'DeviceProtocol',
     namespaced: true
   },
   metadata: { name: 'deviceprotocol' },
@@ -34,7 +34,7 @@ export default {
     return {
       devicesType,
       defaultDevice,
-      language
+      language,
     }
   },
 
@@ -42,6 +42,9 @@ export default {
     defaultImg(kind) {
       const iconUrl = deviceDefaultInfo[kind]?.icon || deviceDefaultInfo.default.icon;
       return require(`static/${ iconUrl }`);
+    },
+    hasInsert(out, crd) {
+      return out.find( (C) => C.metadata.uid === crd.metadata.uid )
     }
   },
 
@@ -64,17 +67,15 @@ export default {
 
     rows() {
       const out = [];
-      console.log('---devicesType', this.devicesType, this.resources)
       const custom = this.resources.custom;
       for (const typeDevice of custom) {
         if (typeDevice.metadata.annotations?.['devices.edge.cattle.io/enable'] === 'true') {
-          console.log(typeDevice, '----typeDevice')
           typeDevice.customId = typeDevice.spec.names.kind;
           out.push(typeDevice);
 
-          // add daemoset... ...this.resources.daemonset, ...this.resources.deployment, ...this.resources.rbacClusterRolebinding, 
-          for (const crd of this.resources.rbacClusterRole) {
-            if (crd.metadata.labels?.['app.kubernetes.io/name'] === typeDevice.metadata.labels?.['app.kubernetes.io/name']) {
+          // add daemoset... , 
+          for (const crd of [...this.resources.rbacClusterRole, ...this.resources.daemonset, ...this.resources.deployment, ...this.resources.rbacClusterRolebinding]) {
+            if (crd.metadata.labels?.['app.kubernetes.io/name'] === typeDevice.metadata.labels?.['app.kubernetes.io/name'] && !this.hasInsert(out, crd)) {
               crd.customId = typeDevice.spec.names.kind;
               out.push(crd)
             }
@@ -85,7 +86,6 @@ export default {
       return out;
     },
     groupBy() {
-      // The value of the preference is "namespace" but we take that to mean group by project here...
       return 'customId';
     },
   },

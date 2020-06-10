@@ -8,7 +8,7 @@ const properties = {
   description: '',
   value:       '',
   dataType:    '',
-  readOnly:    'false',
+  readOnly:    false,
   visitor:     {
     nodeID:   '',
     browseName: '',
@@ -65,6 +65,10 @@ export default {
       },
       immediate: true
     }
+  },
+  updated() {
+    const index = this.index;
+    console.log('---', index, this.localDevice.spec.template.spec.properties[index])
   },
   methods: {
     add(formName) {
@@ -137,8 +141,8 @@ export default {
 
       <el-form-item label="readOnly">
         <el-select v-model="localDevice.spec.template.spec.properties[index].readOnly" placeholder="请选择">
-          <el-option label="读/写" value="false"></el-option>
-          <el-option label="只读" value="true"></el-option>
+          <el-option label="读/写" :value="false"></el-option>
+          <el-option label="只读" :value="true"></el-option>
         </el-select>
       </el-form-item>
 
@@ -157,17 +161,17 @@ export default {
           </el-form-item>
         </el-col>
 
-        <el-col :span="9" v-if="localDevice.spec.template.spec.properties[index].readOnly === 'false'">
+        <el-col :span="9" v-if="localDevice.spec.template.spec.properties[index].readOnly === false">
           <h1>{{localDevice.spec.template.spec.properties.dataType}}</h1>
-          <template v-if="localDevice.spec.template.spec.properties.dataType === 'boolean'">
-            <el-select v-model="localDevice.spec.template.spec.properties.value" placeholder="请选择">
+          <template v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'">
+            <el-select v-model="localDevice.spec.template.spec.properties[index].value" placeholder="请选择" key="selectDataType">
               <el-option label="false" value="false"></el-option>
               <el-option label="true" value="true"></el-option>
             </el-select>
           </template>
           
           <template v-else>
-            <el-input v-model="localDevice.spec.template.spec.properties[index].value"></el-input>
+            <el-input v-model="localDevice.spec.template.spec.properties[index].value" key="inputDataType"></el-input>
           </template>
         </el-col>
       </el-row>

@@ -669,7 +669,7 @@ export default {
       route = `device-resource-id`;
     }
 
-    if (currentPath.includes('deviceProtocol')) {
+    if (currentPath.includes('deviceProtocol-')) {
       route = `deviceProtocol-resource-id`;
     }
 
@@ -688,6 +688,7 @@ export default {
       params,
     }).href;
 
+    // console.log('----route', route, params, url)
     return url;
   },
 
@@ -725,6 +726,7 @@ export default {
         [AS_YAML]: _FLAGGED
       });
 
+      // console.log('---goToEditYaml', url)
       this.currentRouter().push({ path: url });
     };
   },

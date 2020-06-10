@@ -42,6 +42,7 @@ export default function(store) {
     NAMESPACE,
     NODE,
     'workload',
+    'deviceprotocol',
     'gatekeeper',
     'gatekeeper-constraints',
     'gatekeeper-templates',
@@ -222,6 +223,18 @@ export default function(store) {
     route:      {
       name:     'c-cluster-resource',
       params:   { resource: 'workload' }
+    },
+  });
+  
+  virtualType({
+    label:      'deviceProtocol',
+    namespaced: true,
+    name:       'deviceprotocol',
+    group:      'Cluster',
+    weight:     10,
+    route:      {
+      name:     'c-cluster-resource',
+      params:   { resource: 'deviceprotocol' }
     },
   });
 

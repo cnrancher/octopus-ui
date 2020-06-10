@@ -72,6 +72,8 @@ export default {
 
         if (schema) {
           return this.$store.getters['type-map/pluralLabelFor'](schema);
+        } else {
+          return resourceType
         }
       } else if (lastPiece === 'cluster') {
         return this.cluster.nameDisplay;

@@ -75,7 +75,7 @@ export default {
     const hasListComponent = store.getters['type-map/hasCustomList'](resource);
     const hasEditComponent = store.getters['type-map/hasCustomEdit'](resource);
     const schema = store.getters['cluster/schemaFor'](resource);
-    console.log('----hasListComponent', hasListComponent, schema, resource)
+
     let foundData = false;
     let rows;
     let more = {};
@@ -99,7 +99,7 @@ export default {
     if ( !foundData ) {
       rows = await store.dispatch('cluster/findAll', { type: resource });
     }
-    console.log('----schema', schema)
+
     return {
       schema,
       hasListComponent,
@@ -140,15 +140,15 @@ export default {
           {{ resource === 'edge.cattle.io.devicelink' ? '添加设备' : 'Create' }}
         </nuxt-link>
 
-        <!-- <nuxt-link
-          v-if="resource === 'edge.cattle.io.devicelink'"
-          :to="{path: '/device/template'}"
+        <nuxt-link
+          v-if="resource === 'deviceprotocol'"
+          :to="{name: 'c-cluster-resource-createprotocol'}"
           tag="button"
           type="button"
           class="btn bg-primary ml-10"
         >
-          添加设备模板
-        </nuxt-link> -->
+          Create from YAML
+        </nuxt-link>
       </div>
     </header>
     <div v-if="hasListComponent">

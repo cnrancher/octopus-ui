@@ -45,6 +45,20 @@ export default {
     },
     hasInsert(out, crd) {
       return out.find( (C) => C.metadata.uid === crd.metadata.uid )
+    },
+    getDeviceInfo(out) {
+      let desc = '';
+      let icon = '';
+      out.forEach( CRD => {
+        if (CRD.kind === 'CustomResourceDefinition') {
+          icon = CRD.metadata.annotations['devices.edge.cattle.io/icon'];
+          desc = CRD.metadata.annotations['devices.edge.cattle.io/description'];
+        }
+      });
+      return {
+        desc,
+        icon
+      }
     }
   },
 
@@ -118,5 +132,45 @@ export default {
     key-field="_key"
     v-on="$listeners"
   >
+    <template #group-header="{group}">
+      <tr class="group-row">
+        <td :colspan="4">
+          <div class="group-tab">
+            <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
+            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="ellipsis">{{ group.ref }} : {{ getDeviceInfo(group.rows).desc }}</div>
+          </div>
+        </td>
+      </tr>
+    </template>
   </SortableTable>
 </template>
+
+<style lang="scss" scoped>
+.deviceImg {
+  height: 20px;
+}
+.group-tab {
+  display: flex !important;
+  align-items: center;
+
+  img {
+    margin-right: 20px;
+    margin-top: 0px !important;
+  }
+
+  .ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+  }
+}
+</style>
+
+<style lang="scss">
+.tooltip.tooltipDevice {
+  .tooltip-inner {
+    width: 500px !important;
+  }
+}
+</style>

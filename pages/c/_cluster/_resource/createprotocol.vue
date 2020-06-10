@@ -7,8 +7,7 @@ import BreadCrumbs from '@/components/BreadCrumbs';
 import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
 const DefalutYaml = {
-  apiVersion: 'helm.cattle.io/v1',
-  kind:       'HelmChart',
+  apiVersion: 'apiextensions.k8s.io/v1',
 };
 
 export default {

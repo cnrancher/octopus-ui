@@ -4,19 +4,19 @@ import VStack from '@/components/Layout/Stack/VStack';
 const STATUS_CLASS_MAP = {
   success: {
     container: 'text-success',
-    icon:      'icon-checkmark'
+    icon:      '#icon-circle-active'
   },
   warning: {
     container: 'text-warning',
-    icon:      'icon-x'
+    icon:      '#icon-circle-error'
   },
   info: {
     container: 'text-info',
-    icon:      'icon-x'
+    icon:      '#icon-circle-error'
   },
   error: {
     container: 'alert-bg-error text-error',
-    icon:      'icon-x'
+    icon:      '#icon-circle-error'
   }
 };
 
@@ -48,7 +48,13 @@ export default {
 
 <template>
   <VStack class="alert" :class="containerClasses" vertical-align="center">
-    <div><i class="icon" :class="iconClasses" /> <span class="pl-20">{{ message }}</span></div>
+    <div>
+      <i class="icon" :class="iconClasses" />
+      <svg class="icon" aria-hidden="true">
+        <use :xlink:href="iconClasses"></use>
+      </svg>
+      <span class="pl-20">{{ message }}</span>
+    </div>
   </VStack>
 </template>
 
@@ -59,6 +65,13 @@ export default {
 .alert {
   > DIV > SPAN {
     color: var(--body-text);
+  }
+  .icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
   }
 }
 </style>

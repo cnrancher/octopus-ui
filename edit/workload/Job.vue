@@ -15,6 +15,10 @@ export default {
         return {};
       }
     },
+    mode: {
+      type:     String,
+      required: true,
+    },
     type: {
       type:    String,
       default: WORKLOAD_TYPES.JOB
@@ -93,7 +97,7 @@ export default {
   <form @input="update">
     <div class="row">
       <div class="col span-6">
-        <UnitInput v-model="completions" :suffix="completions===1 ? 'Time' : 'Times'">
+        <UnitInput v-model="completions" :mode="mode" :suffix="completions===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
               Completions
@@ -103,7 +107,7 @@ export default {
         </UnitInput>
       </div>
       <div class="col span-6">
-        <UnitInput v-model="parallelism" class="col span-6" :suffix="parallelism===1 ? 'Time' : 'Times'">
+        <UnitInput v-model="parallelism" :mode="mode" class="col span-6" :suffix="parallelism===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
               Parallelism
@@ -115,7 +119,7 @@ export default {
     </div>
     <div class="row">
       <div class="col span-6">
-        <UnitInput v-model="backOffLimit" :suffix="backOffLimit===1 ? 'Time' : 'Times'">
+        <UnitInput v-model="backOffLimit" :mode="mode" :suffix="backOffLimit===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
               Back Off Limit
@@ -125,7 +129,7 @@ export default {
         </UnitInput>
       </div>
       <div class="col span-6">
-        <UnitInput v-model="activeDeadlineSeconds" :suffix="activeDeadlineSeconds===1 ? 'Second' : 'Seconds'">
+        <UnitInput v-model="activeDeadlineSeconds" :mode="mode" :suffix="activeDeadlineSeconds===1 ? 'Second' : 'Seconds'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
               Active Deadline
@@ -138,7 +142,7 @@ export default {
     <template v-if="isCronJob">
       <div class="row">
         <div class="col span-6">
-          <LabeledInput v-model="successfulJobsHistoryLimit">
+          <LabeledInput v-model="successfulJobsHistoryLimit" :mode="mode">
             <template v-slot:label>
               <label :style="{'color':'var(--input-label)'}">
                 Successful Job History Limit
@@ -148,7 +152,7 @@ export default {
           </LabeledInput>
         </div>
         <div class="col span-6">
-          <LabeledInput v-model="failedJobsHistoryLimit">
+          <LabeledInput v-model="failedJobsHistoryLimit" :mode="mode">
             <template v-slot:label>
               <label :style="{'color':'var(--input-label)'}">
                 Failed Job History Limit

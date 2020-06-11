@@ -4,6 +4,10 @@ export default {
     columns: {
       type:    Array,
       default: () => []
+    },
+    gridNum: {
+      type:    Number,
+      default: 4
     }
   }
 };
@@ -12,11 +16,15 @@ export default {
 <template>
   <div class="detail-top">
     <div v-for="col in columns" :key="col.title" class="detail-top-item">
-      <div class="detail-icon"></div>
+      <div class="detail-icon">
+        <svg class="icon" aria-hidden="true">
+          <use :xlink:href="col.icon"></use>
+        </svg>
+      </div>
       <div class="detail-content">
         <label>{{ col.title }}</label><br />
         <slot :name="col.name">
-          <span>{{ col.content || col.content===0 ? col.content : col.fallback || 'n/a' }}</span>
+          <span>{{ col.content || col.content === 0 ? col.content : col.fallback || 'n/a' }}</span>
         </slot>
       </div>
     </div>
@@ -26,7 +34,7 @@ export default {
 <style lang="scss" scoped>
   $sm-screen-grid: 1fr;
   $md-screen-grid: 1fr 1fr;
-  $default-screen-grid: 1fr 1fr 1fr 1fr 1fr;
+  $default-screen-grid: 1fr 1fr 1fr 1fr;
 
   .detail-top {
     display: grid;
@@ -38,23 +46,34 @@ export default {
       border: 1px solid var(--border);
       background-color: var(--body-bg);
       display: grid;
-      grid-template-columns: 25% 75%;
+      grid-template-columns: 20% 80%;
       padding: 25px 0;
       border-radius: 4px;
       box-shadow: 1px 2px 10px -1px var(--border);
+      .detail-icon {
+        text-align: center;
+        .icon {
+          width: 3em;
+          height: 3em;
+          vertical-align: -0.15em;
+          fill: currentColor;
+          overflow: hidden;
+        }
+      }
       .detail-content {
         text-align: center;
         & > * {
           padding: 0 10px;
-
-          & > label {
-            color: var(--input-placeholder);
-            padding-right: 5px;
-          }
+          line-height: 1.5;
+          color: var(--detail-top-label);
 
           & :last-child {
             padding-right: 0;
           }
+        }
+        LABEL {
+          color: var(--body-text);
+          padding-right: 5px;
         }
       }
     }

@@ -82,7 +82,7 @@ export default {
 
     &:hover {
       opacity: 1;
-      font-weight: bold;
+      font-weight: var(--nav-font-weight);
       text-decoration: none;
     }
 
@@ -115,7 +115,7 @@ export default {
 
   .nuxt-link-exact-active  {
     .el-menu-item {
-      font-weight: bold;
+      font-weight: var(--nav-font-weight);
       opacity: 1;
       background-color: var(--menu-hover-bg) !important;
       .icon {
@@ -186,7 +186,7 @@ export default {
       opacity: 0.8;
       &:hover {
         opacity: 1;
-        font-weight: bold;
+        font-weight: var(--nav-font-weight);
         a {
           text-decoration: none;
         }
@@ -196,7 +196,7 @@ export default {
     &.is-active {
       .el-submenu__title {
         opacity: 1;
-        font-weight: bold;
+        font-weight: var(--nav-font-weight);
       }
     }
     .el-menu-item {
@@ -252,7 +252,7 @@ export default {
   .is-exact-active {
     .el-submenu__title {
       opacity: 1;
-      font-weight: bold;
+      font-weight: var(--nav-font-weight);
       background-color: var(--menu-hover-bg) !important;
       .icon {
         color: var(--menu-action-text) !important;

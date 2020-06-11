@@ -75,10 +75,13 @@ export default {
 
 <template>
   <div v-if="isViewing" :class="{'labeled-input': true, [mode]: true, disabled}">
-    <label>
-      {{ label }}
-      <span v-if="required && !value" class="required">*</span>
-    </label>
+    <slot name="label">
+      <label v-if="i18nLabel" k-t="i18nLabel" />
+      <label v-else>
+        {{ label }}
+        <span v-if="required && !value" class="required">*</span>
+      </label>
+    </slot>
     <label v-if="!!(this.$slots.corner || [])[0]" class="corner">
       <slot name="corner" />
     </label>

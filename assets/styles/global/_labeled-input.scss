@@ -42,7 +42,7 @@
     font-size: 14px;
     display: block;
     width: 100%;
-    z-index: 2;
+    z-index: 1;
   }
 
   SELECT.empty {
@@ -60,7 +60,7 @@
     border: none;
     background-color: transparent;
     outline: 0;
-    box-shadow: none;
+    box-shadow: none!important;
     padding: 17px 0 0 0;
     line-height: 1.25rem;
   }

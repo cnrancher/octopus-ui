@@ -121,7 +121,7 @@ export default {
 <style lang="scss" scoped>
   .tabs {
     list-style-type: none;
-    margin: 0;
+    margin: 0 0 40px 0;
     padding: 0;
 
     &:focus {
@@ -144,7 +144,7 @@ export default {
 
       A {
         display: block;
-        padding: 10px 15px;
+        padding: 10px;
         opacity: 0.8;
         color: var(--sortable-table-th);
 
@@ -159,11 +159,11 @@ export default {
       }
 
       &.active {
-        text-decoration: underline;
 
         A {
           color: var(--link-text);
           opacity: 1;
+          border-bottom: 1px solid var(--link-text);
         }
       }
     }

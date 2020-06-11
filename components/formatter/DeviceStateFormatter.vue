@@ -70,7 +70,7 @@ export default {
   </span>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "~assets/styles/base/_mixins.scss";
 
   .badge-state {

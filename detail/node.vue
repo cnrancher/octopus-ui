@@ -148,19 +148,23 @@ export default {
       return [
         {
           title:   this.t('node.detail.detailTop.ipAddress'),
-          name:    'ip-address'
+          name:    'ip-address',
+          icon:    '#icon-ip'
         },
         {
           title:   this.t('node.detail.detailTop.version'),
-          content:  this.value.version
+          content:  this.value.version,
+          icon:    '#icon-version',
         },
         {
           title:   this.t('node.detail.detailTop.os'),
-          content:  this.value.status.nodeInfo.osImage
+          content:  this.value.status.nodeInfo.osImage,
+          icon:    '#icon-sys'
         },
         {
           title:   this.t('node.detail.detailTop.containerRuntime'),
-          name:    'container-runtime'
+          name:    'container-runtime',
+          icon:    '#icon-time-create'
         },
       ];
     }
@@ -242,6 +246,7 @@ export default {
             :row-actions="false"
             :table-actions="false"
             :search="false"
+            :use-events-table="true"
           />
         </Tab>
         <Tab name="info" :label="t('node.detail.tab.info')">

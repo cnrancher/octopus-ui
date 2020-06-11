@@ -211,6 +211,11 @@ export default {
     showHeaders: {
       type:    Boolean,
       default: true
+    },
+
+    useEventsTable: {
+      type:    Boolean,
+      dafault: false
     }
 
   },
@@ -298,7 +303,8 @@ export default {
       return {
         'top-divider':     this.topDivider,
         'emphasized-body': this.emphasizedBody,
-        'body-dividers':   this.bodyDividers
+        'body-dividers':   this.bodyDividers,
+        'events-table':    this.useEventsTable
       };
     }
   },
@@ -643,12 +649,6 @@ $divider-height: 1px;
         z-index: -1;
       }
     }
-    > TR.main-row:nth-child(odd) {
-      background-color: var(--sortable-table-tr);
-    }
-    > TR.main-row:nth-child(even) {
-      background-color: var(--body-bg);
-    }
 
     > TR > TD {
       height: $group-row-height;
@@ -699,6 +699,17 @@ $divider-height: 1px;
     > TR > TD.no-results {
       padding: 20px;
       color: var(--muted);
+    }
+  }
+  
+  &.events-table {
+    > TBODY {
+      > TR.main-row:nth-child(odd) {
+        background-color: var(--sortable-table-tr);
+      }
+      > TR.main-row:nth-child(even) {
+        background-color: var(--body-bg);
+      }
     }
   }
 

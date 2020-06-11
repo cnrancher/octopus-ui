@@ -95,7 +95,7 @@ export default {
       opacity: 0.8;
       &:hover {
         opacity: 1;
-        font-weight: bold;
+        font-weight: var(--nav-font-weight);
       }
     }
 
@@ -180,7 +180,7 @@ export default {
     .header {
       > H6 {
         opacity: 1;
-        font-weight: bold;
+        font-weight: var(--nav-font-weight);
       }
     }
   }

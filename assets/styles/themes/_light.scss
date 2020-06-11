@@ -73,6 +73,7 @@ $selected: rgba($primary, .5);
   --nav-width                  : 220px;
   --nav-bg                     : #{$lighter};
   --nav-active                 : var(--primary);
+  --nav-font-weight            : 500;
   --footer-bg                  : transparent;
   --footer-height              : 50px;
 
@@ -145,7 +146,7 @@ $selected: rgba($primary, .5);
   --popover-border-radius      : var(--border-radius);
   --tooltip-bg                 : #{$primary};
   --tooltip-border             : var(--border);
-  --tooltip-text               : var(--body-text);
+  --tooltip-text               : #{$light};
 
   --tabbed-border              : #{$medium};
   --tabbed-container-bg        : #{$lighter};
@@ -184,4 +185,6 @@ $selected: rgba($primary, .5);
   --logs-highlight             : var(--wm-body-bg);
   --logs-highlight-bg          : var(--warning);
   --logs-text                  : var(--body-text);
+
+  --detail-top-label           : #{$darker};
 }

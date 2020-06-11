@@ -202,6 +202,7 @@ module.exports = {
     { src: '~/plugins/js-yaml', ssr: false },
     { src: '~/plugins/resize', ssr: false },
     { src: '~/plugins/shortkey', ssr: false },
+    '~/assets/fonts/icons/iconfont',
 
     // First-party
     '~/plugins/i18n',

@@ -3,7 +3,7 @@
   z-index: 10000;
 
   .tooltip-inner {
-    background: var(--tooltip-bg);
+    background: var(--menu-bg);
     color: var(--tooltip-text);
     border-radius: 6px;
     padding: 20px;
@@ -16,7 +16,7 @@
     border-style: solid;
     position: absolute;
     margin: 5px;
-    border-color: var(--tooltip-bg);
+    border-color: var(--menu-bg);
     z-index: 1;
   }
 

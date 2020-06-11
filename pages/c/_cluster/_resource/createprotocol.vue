@@ -71,7 +71,7 @@ export default {
         for (let i = 0; i < arr.length; i++) {
           const json = jsyaml.safeLoad(arr[i]);
           const kind = json.kind.toLowerCase();
-          console.log('----this.api', kind, this.api[kind])
+
           const data = await this.$store.dispatch('management/request', {
             method:  'POST',
             headers: {
@@ -81,10 +81,11 @@ export default {
             url:  `v1/${this.api[kind]}`,
             data: json,
           });
-          setTimeout(() => {
+
+          if (i === arr.length - 1) {
             buttonDone(true);
             this.done()
-          }, 2000)
+          }
         }
       } catch (err) {
         if ( err && err.response && err.response.data ) {
@@ -103,7 +104,10 @@ export default {
       }
     },
     done() {
-      this.$router.go(-1);
+      this.$router.replace({
+        name:   'c-cluster-resource',
+        params: { resource: 'deviceprotocol' }
+      });
     },
     onInput(value) {
       this.currentValue = value;

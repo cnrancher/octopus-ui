@@ -137,7 +137,7 @@ export default {
         <td :colspan="4">
           <div class="group-tab">
             <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
-            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="ellipsis">{{ group.ref }} : {{ getDeviceInfo(group.rows).desc }}</div>
+            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">{{ group.ref }} <i class="el-icon-info"></i></div>
           </div>
         </td>
       </tr>
@@ -157,12 +157,12 @@ export default {
     margin-right: 20px;
     margin-top: 0px !important;
   }
-
-  .ellipsis {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    word-break: break-all;
+  .name {
+    display: flex;
+    align-items: center;
+    i {
+      margin-top: 0px !important;
+    }
   }
 }
 </style>

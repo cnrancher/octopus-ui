@@ -42,12 +42,12 @@ export default {
       { value: 'fieldRef', label: 'Field' },
       { value: 'secretRef', label: 'Secret' }];
 
-    let type = Object.keys((this.row.valueFrom || {}))[0];
+    let type = this.row.secretRef ? 'secretRef' : Object.keys((this.row.valueFrom))[0];
 
     let refName;
     let name;
     let fieldPath;
-    let referenced = {};
+    let referenced;
     let key;
 
     switch (type) {
@@ -63,33 +63,19 @@ export default {
       type = Object.keys(this.row.valueFrom)[0];
       key = this.row.valueFrom[type].key || '';
       refName = this.row.valueFrom[type].name;
-      if (!refName.includes('/')) {
-        refName = `${ this.namespace }/${ refName }`;
-      }
-
-      this.getReferenced(refName, CONFIG_MAP);
       break;
     case 'secretRef':
       name = this.row.prefix;
       type = 'secretRef';
       refName = this.row[type].name;
-      if (!refName.includes('/')) {
-        refName = `${ this.namespace }/${ refName }`;
-      }
-      this.getReferenced(refName, SECRET);
       break;
     case 'secretKeyRef':
       name = this.row.name;
       type = Object.keys(this.row.valueFrom)[0];
       key = this.row.valueFrom[type].key || '';
       refName = this.row.valueFrom[type].name;
-      if (!refName.includes('/')) {
-        refName = `${ this.namespace }/${ refName }`;
-      }
-      this.getReferenced(refName, SECRET);
       break;
     case 'fieldRef':
-      referenced = {};
       fieldPath = get(this.row.valueFrom, `${ type }.fieldPath`) || '';
       name = this.row.name;
       break;
@@ -98,7 +84,7 @@ export default {
     }
 
     return {
-      typeOpts, type, refName, referenced, secrets:    this.allSecrets, keys:       [], key, fieldPath, name
+      typeOpts, type, refName, referenced: refName, secrets: this.allSecrets, keys: [], key, fieldPath, name
     };
   },
   computed: {
@@ -122,31 +108,34 @@ export default {
         return [];
       }
     },
-    referencedID: {
-      get() {
-        return this.referenced.id;
-      },
-      set(neu) {
-        this.referenced = { id: neu };
-      }
-    }
   },
+
   watch: {
     type() {
-      this.referenced = {};
+      this.referenced = null;
     },
 
     referenced(neu, old) {
-      if (Object.keys(old).length) {
+      if (old) {
         this.key = '';
       }
       if (neu) {
         if (neu.type === SECRET || neu.type === CONFIG_MAP) {
           this.keys = Object.keys(neu.data);
         }
+        this.refName = neu?.metadata?.name;
       }
     },
   },
+
+  mounted() {
+    const typeSelect = this.$refs.typeSelect;
+
+    if (typeSelect && this.mode === 'create') {
+      typeSelect.open();
+    }
+  },
+
   methods: {
     async  getReferenced(name, type) {
       const resource = await this.$store.dispatch('cluster/find', { id: name, type });
@@ -155,7 +144,7 @@ export default {
     },
 
     updateRow() {
-      const out = { name: this.name };
+      const out = { name: this.name || this.refName };
       const old = { ...this.row };
 
       switch (this.type) {
@@ -163,14 +152,14 @@ export default {
       case 'secretKeyRef':
         out.valueFrom = {
           [this.type]: {
-            key:      this.key, name:     this.referencedID, optional: false
+            key: this.key, name: this.refName, optional: false
           }
         };
         break;
       case 'resourceFieldRef':
         out.valueFrom = {
           [this.type]: {
-            containerName: this.refName, divisor:       0, resource:      this.key
+            containerName: this.refName, divisor: 0, resource: this.key
           }
         };
         break;
@@ -180,17 +169,18 @@ export default {
       default:
         delete out.name;
         out.prefix = this.name;
-        out[this.type] = { name: this.referencedID, optional: false };
+        out[this.type] = { name: this.refName, optional: false };
       }
       this.$emit('input', { value: out, old });
-    }
+    },
+
   }
 };
 </script>
 
 <template>
   <div class="row" @input="updateRow">
-    <div class="col span-2">
+    <div class="col span-5-of-23">
       <LabeledSelect
         ref="typeSelect"
         v-model="type"
@@ -203,55 +193,58 @@ export default {
       />
     </div>
     <template v-if="type === 'configMapKeyRef' || type === 'secretRef' || type === 'secretKeyRef'">
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledSelect
           v-model="referenced"
           :options="sourceOptions"
           :multiple="false"
           label="Source"
           option-label="metadata.name"
+          option-key
           :mode="mode"
           @input="updateRow"
         />
       </div>
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledSelect
-          v-model="key"
-          :disabled="type==='secretRef'"
-          :options="keys"
+          ref="typeSelect"
+          v-model="type"
           :multiple="false"
-          label="Key"
+          :options="typeOpts"
           :mode="mode"
+          option-label="label"
           @input="updateRow"
         />
       </div>
     </template>
     <template v-else-if="type==='resourceFieldRef'">
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledInput v-model="refName" label="Source" placeholder="e.g. my-container" :mode="mode" />
       </div>
 
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledInput v-model="key" label="Key" placeholder="e.g. requests.cpu" :mode="mode" />
       </div>
     </template>
     <template v-else>
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledInput v-model="fieldPath" label="Source" placeholder="e.g. requests.cpu" :mode="mode" />
       </div>
 
-      <div class="col span-3">
+      <div class="col span-5-of-23">
         <LabeledInput value="n/a" label="Key" placeholder="e.g. requests.cpu" disabled :mode="mode" />
       </div>
     </template>
-    <div class="col">
-      as
+    <div class="col span-1-of-23">
+      <div id="as">
+        as
+      </div>
     </div>
-    <div class="col span-3">
+    <div class="col span-5-of-23">
       <LabeledInput v-model="name" label="Prefix or Alias" :mode="mode" />
     </div>
-    <div class="col span-1">
-      <button v-if="mode!=='view'" type="button" class="btn btn-sm role-link" @click="$emit('input', { value:null })">
+    <div class="col span-2-of-23">
+      <button v-if="mode!=='view'" id="remove" type="button" class="btn btn-sm role-link" @click="$emit('input', { value:null })">
         remove
       </button>
     </div>
@@ -263,4 +256,12 @@ export default {
     display: flex;
     align-items: center;
   }
+
+  #as {
+    text-align:center;
+  }
+  #remove{
+    padding: 0px;
+  }
+
 </style>

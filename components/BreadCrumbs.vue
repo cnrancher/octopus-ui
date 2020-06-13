@@ -86,7 +86,7 @@ export default {
 </script>
 
 <template>
-  <div class="row p-20">
+  <div class="row pl-20 pt-10 pb-10">
     <div v-for="(location, i) in crumbLocations" :key="location.name">
       <template v-if="displayName(location)">
         <span v-if="i > 0" class="divider">/</span>
@@ -99,7 +99,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
   .row {
     box-shadow: 0 1px 4px 0 var(--border);
     margin-bottom: 0;

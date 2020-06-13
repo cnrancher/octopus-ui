@@ -2842,6 +2842,11 @@
     mustache "^2.3.0"
     stack-trace "0.0.10"
 
+"@popperjs/core@^2.4.0":
+  version "2.4.2"
+  resolved "https://registry.npm.taobao.org/@popperjs/core/download/@popperjs/core-2.4.2.tgz?cache=0&sync_timestamp=1591770324317&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40popperjs%2Fcore%2Fdownload%2F%40popperjs%2Fcore-2.4.2.tgz#7c6dc4ecef16149fd7a736710baa1b811017fdca"
+  integrity sha1-fG3E7O8WFJ/XpzZxC6obgRAX/co=
+
 "@reach/router@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@reach/router/-/router-1.2.1.tgz#34ae3541a5ac44fa7796e5506a5d7274a162be4e"

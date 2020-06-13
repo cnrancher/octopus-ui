@@ -9,12 +9,17 @@ export default {
       type:    Number,
       default: 4
     }
+  },
+  computed: {
+    gridClass() {
+      return `detail-grid-${ this.gridNum }`;
+    }
   }
 };
 </script>
 
 <template>
-  <div class="detail-top">
+  <div class="detail-top" :class="gridClass">
     <div v-for="col in columns" :key="col.title" class="detail-top-item">
       <div class="detail-icon">
         <svg class="icon" aria-hidden="true">
@@ -40,21 +45,21 @@ export default {
     display: grid;
     grid-template-columns: $default-screen-grid;
     grid-gap: 10px;
-    padding: 20px 0;
+    padding: 0;
 
     .detail-top-item {
       border: 1px solid var(--border);
       background-color: var(--body-bg);
       display: grid;
-      grid-template-columns: 20% 80%;
+      grid-template-columns: 30% 70%;
       padding: 25px 0;
       border-radius: 4px;
       box-shadow: 1px 2px 10px -1px var(--border);
       .detail-icon {
         text-align: center;
         .icon {
-          width: 3em;
-          height: 3em;
+          width: 4em;
+          height: 4em;
           vertical-align: -0.15em;
           fill: currentColor;
           overflow: hidden;
@@ -74,7 +79,18 @@ export default {
         LABEL {
           color: var(--body-text);
           padding-right: 5px;
+          margin: 0;
+          font-size: 18px;
         }
+        SPAN, A {
+          font-size: 16px;
+        }
+      }
+    }
+    &.detail-grid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+      .detail-top-item {
+        grid-template-columns: 20% 80%;
       }
     }
   }
@@ -94,6 +110,9 @@ export default {
   @media only screen and (min-width: map-get($breakpoints, '--viewport-9')) {
     .detail-top {
       grid-template-columns: $default-screen-grid;
+      &.detail-grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
     }
   }
 

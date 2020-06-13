@@ -121,7 +121,7 @@ export default {
 </script>
 
 <template>
-  <div @input="update">
+  <div class="pl-10" @input="update">
     <div class="row">
       <div class="col span-6">
         <RadioGroup

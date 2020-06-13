@@ -47,6 +47,7 @@ export default {
         :pad-left="false"
         :read-allowed="false"
         :protip="false"
+        class="pl-10"
       />
     </Tab>
     <Tab name="annotations" label="Annotations">
@@ -58,6 +59,7 @@ export default {
         :pad-left="false"
         :read-allowed="false"
         :protip="false"
+        class="pl-10"
       />
     </Tab>
     <slot name="after" />

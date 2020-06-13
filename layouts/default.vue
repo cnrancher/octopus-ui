@@ -288,7 +288,6 @@ export default {
       grid-template-areas:  "breadcrumbs breadcrumbs"
                             "title actions";
       grid-template-columns: "auto min-content";
-      margin-bottom: 20px;
 
       H1 {
         grid-area: title;

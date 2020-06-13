@@ -690,6 +690,7 @@ $divider-height: 1px;
     > TR.group-row > TD,
     > TR.total > TD {
       height: $group-row-height;
+      padding-left: 0;
     }
 
     > TR.total > TD {

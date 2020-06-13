@@ -94,7 +94,7 @@ export default {
 </script>
 
 <template>
-  <form @input="update">
+  <form class="pl-10" @input="update">
     <div class="row">
       <div class="col span-6">
         <UnitInput v-model="completions" :mode="mode" :suffix="completions===1 ? 'Time' : 'Times'">

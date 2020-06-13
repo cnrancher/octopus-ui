@@ -8,7 +8,7 @@ import CRUWorkload from '@/edit/workload';
 import Date from '@/components/formatter/Date';
 import LoadDeps from '@/mixins/load-deps';
 import { allHash } from '@/utils/promise';
-import WorkloadPorts from '@/edit/workload/WorkloadPorts';
+import WorkloadPorts from '@/components/form/WorkloadPorts';
 
 export default {
   components: {
@@ -128,31 +128,37 @@ export default {
       return [
         {
           title:   'Image',
-          content: this.container.image
+          content: this.container.image,
+          icon:    '#icon-image'
         },
         {
           title:   'Type',
-          content:  this.value._type ? this.value._type : this.value.type
+          content:  this.value._type ? this.value._type : this.value.type,
+          icon:    '#icon-type'
         },
         {
           title:    'Config Scale',
           content:  get(this.value, 'spec.replicas'),
-          fallback: 0
+          fallback: 0,
+          icon:     '#icon-config-num'
 
         },
         {
           title:    'Ready Scale',
           content:  get(this.value, 'status.readyReplicas'),
-          fallback: 0
+          fallback: 0,
+          icon:     '#icon-usable'
         },
         {
           title:    'Pod Restarts',
           content:  this.podRestarts,
-          fallback: 0
+          fallback: 0,
+          icon:     '#icon-restart'
         },
         {
           title:   'Created',
-          name:  'created'
+          name:  'created',
+          icon:  '#icon-time-create'
         },
       ];
     },
@@ -233,17 +239,17 @@ export default {
 <template>
   <CRUWorkload :value="value" :mode="mode">
     <template v-if="mode==='view'" #top>
-      <DetailTop :columns="detailTopColumns">
+      <DetailTop :columns="detailTopColumns" :grid-num="3">
         <template v-slot:created>
           <Date :value="value.metadata.creationTimestamp" />
         </template>
       </DetailTop>
-      <div class="row mt-20">
+      <div class="row">
         <WorkloadPorts :value="container.ports" mode="view" />
       </div>
-      <div class="row mt-20">
+      <div class="p-20 card-box-shadow">
         <div class="col span-12">
-          <h3>
+          <h3 class="mb-20">
             Pods
           </h3>
           <ResourceTable

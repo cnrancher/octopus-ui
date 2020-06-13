@@ -44,6 +44,7 @@ TEXTAREA,
   &.view {
     border: none;
     background-color: transparent;
+    padding-left: 0;
   }
 
   &::placeholder {
@@ -82,7 +83,7 @@ FORM {
   LABEL {
     color: var(--input-label);
     display: inline-block;
-    // margin: $spacing 0 $spacing 0;  TODO
+    margin: $spacing 0 $spacing 0;
     font-size: 12px;
 
     &.radio, &.checkbox {

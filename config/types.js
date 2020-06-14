@@ -116,7 +116,7 @@ export const DEVICE_PROTOCOL = {
   DEPLOYMENT:                 'apps.deployment',
   RBAC_CLUSTERROLEBINDING:    'rbac.authorization.k8s.io.clusterrolebinding',
   RBAC_CLUSTERROLEL:          'rbac.authorization.k8s.io.clusterrole'
-}
+};
 
 export const STORAGE_CATEGORY = {
   PERSISTENT_VOLUME:      'persistentvolume',

@@ -2,26 +2,26 @@
 
 function getItemClassname(status) {
   switch (status) {
-    case 'success':
-      return {
-        icon: 'icon-system-active',
-        type: 'active'
-      };
-    case 'error':
-      return {
-        icon: 'icon-system-error',
-        type: 'error'
-      };
-    case 'unknown':
-      return {
-        icon: 'icon-system-question',
-        type: 'question'
-      };
-    default:
-      return {
-        icon: 'icon-system-question',
-        type: 'question'
-      };
+  case 'success':
+    return {
+      icon: 'icon-system-active',
+      type: 'active'
+    };
+  case 'error':
+    return {
+      icon: 'icon-system-error',
+      type: 'error'
+    };
+  case 'unknown':
+    return {
+      icon: 'icon-system-question',
+      type: 'question'
+    };
+  default:
+    return {
+      icon: 'icon-system-question',
+      type: 'question'
+    };
   }
 }
 

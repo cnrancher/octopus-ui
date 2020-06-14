@@ -258,6 +258,7 @@ export default {
         [this.valueName]: value,
         binary,
       });
+
       this.queueUpdate();
       this.$nextTick(() => {
         this.$refs.key.focus();

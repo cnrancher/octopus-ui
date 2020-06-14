@@ -702,7 +702,7 @@ $divider-height: 1px;
       color: var(--muted);
     }
   }
-  
+
   &.events-table {
     > TBODY {
       > TR.main-row:nth-child(odd) {

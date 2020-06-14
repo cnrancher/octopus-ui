@@ -35,31 +35,7 @@ export default {
       devicesType,
       defaultDevice,
       language,
-    }
-  },
-
-  methods: {
-    defaultImg(kind) {
-      const iconUrl = deviceDefaultInfo[kind]?.icon || deviceDefaultInfo.default.icon;
-      return require(`static/${ iconUrl }`);
-    },
-    hasInsert(out, crd) {
-      return out.find( (C) => C.metadata.uid === crd.metadata.uid )
-    },
-    getDeviceInfo(out) {
-      let desc = '';
-      let icon = '';
-      out.forEach( CRD => {
-        if (CRD.kind === 'CustomResourceDefinition') {
-          icon = CRD.metadata.annotations['devices.edge.cattle.io/icon'];
-          desc = CRD.metadata.annotations['devices.edge.cattle.io/description'];
-        }
-      });
-      return {
-        desc,
-        icon
-      }
-    }
+    };
   },
 
   computed: {
@@ -82,16 +58,17 @@ export default {
     rows() {
       const out = [];
       const custom = this.resources.custom;
+
       for (const typeDevice of custom) {
         if (typeDevice.metadata.annotations?.['devices.edge.cattle.io/enable'] === 'true') {
           typeDevice.customId = typeDevice.spec.names.kind;
           out.push(typeDevice);
 
-          // add daemoset... , 
+          // add daemoset... ,
           for (const crd of [...this.resources.rbacClusterRole, ...this.resources.daemonset, ...this.resources.deployment, ...this.resources.rbacClusterRolebinding]) {
             if (crd.metadata.labels?.['app.kubernetes.io/name'] === typeDevice.metadata.labels?.['app.kubernetes.io/name'] && !this.hasInsert(out, crd)) {
               crd.customId = typeDevice.spec.names.kind;
-              out.push(crd)
+              out.push(crd);
             }
           }
         }
@@ -116,6 +93,33 @@ export default {
     return { resources };
   },
 
+  methods: {
+    defaultImg(kind) {
+      const iconUrl = deviceDefaultInfo[kind]?.icon || deviceDefaultInfo.default.icon;
+
+      return require(`static/${ iconUrl }`);
+    },
+    hasInsert(out, crd) {
+      return out.find( C => C.metadata.uid === crd.metadata.uid );
+    },
+    getDeviceInfo(out) {
+      let desc = '';
+      let icon = '';
+
+      out.forEach( (CRD) => {
+        if (CRD.kind === 'CustomResourceDefinition') {
+          icon = CRD.metadata.annotations['devices.edge.cattle.io/icon'];
+          desc = CRD.metadata.annotations['devices.edge.cattle.io/description'];
+        }
+      });
+
+      return {
+        desc,
+        icon
+      };
+    }
+  },
+
   typeDisplay({ store }) {
     return store.getters['type-map/pluralLabelFor'](schema);
   },
@@ -137,7 +141,9 @@ export default {
         <td :colspan="4">
           <div class="group-tab">
             <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
-            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">{{ group.ref }} <i class="el-icon-info"></i></div>
+            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">
+              {{ group.ref }} <i class="el-icon-info"></i>
+            </div>
           </div>
         </td>
       </tr>

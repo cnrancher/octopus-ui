@@ -73,7 +73,7 @@ export default {
         if (schema) {
           return this.$store.getters['type-map/pluralLabelFor'](schema);
         } else {
-          return resourceType
+          return resourceType;
         }
       } else if (lastPiece === 'cluster') {
         return this.cluster.nameDisplay;
@@ -99,13 +99,13 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
   .row {
     box-shadow: 0 1px 4px 0 var(--border);
     margin-bottom: 0;
     background-color: var(--header-bg);
   }
   .breadcrumbs .divider {
-      margin: 0px 5px 0px 5px
+    margin: 0px 5px 0px 5px
   }
 </style>

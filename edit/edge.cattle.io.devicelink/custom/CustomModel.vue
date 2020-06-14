@@ -25,10 +25,10 @@ export default {
   },
   data() {
     console.log('------this.templateProperties', this.templateProperties.properties);
-    console.log('------editRowIndex-----', this.editRowIndex)
+    console.log('------editRowIndex-----', this.editRowIndex);
     const { required } = this.templateProperties;
     const properties = this.translationProperties(this.templateProperties.properties);
-    console.log('-----properties', properties)
+    console.log('-----properties', properties);
     return {
       localDevice:   _.cloneDeep(this.device),
       index: 0,
@@ -47,7 +47,7 @@ export default {
     device: {
       handler(newVal, oldVal) {
         const length = this.device.spec.template.spec.properties.length;
-        this.localDevice = _.cloneDeep(newVal)
+        this.localDevice = _.cloneDeep(newVal);
         if (length <= 0) {
           this.localDevice.spec.template.spec.properties.push(_.cloneDeep(this.properties));
         }
@@ -85,19 +85,12 @@ export default {
       return obj
     },
     add(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          const properties = this.localDevice.spec.template.spec.properties;
-
-          this.$emit('addProperties', _.cloneDeep(properties));
-          this.$nextTick(() => {
-            this.$refs[formName].resetFields();
-            this.$emit('hideDialog', false);
-          });
-        } else {
-          return false;
-        }
-      });
+      const properties = this.localDevice.spec.template.spec.properties;
+      console.log('-----应该有的值', properties)
+      // this.$emit('addProperties', _.cloneDeep(properties));
+      // this.$nextTick(() => {
+      //   this.$emit('hideDialog', false);
+      // });
     },
     hide(formName) {
       if (this.$refs[formName] !== undefined) {
@@ -116,6 +109,7 @@ export default {
   }
 };
 </script>
+
 <template>
   <el-dialog
     :visible.sync="showModel"
@@ -127,14 +121,13 @@ export default {
   >
     <header slot="title"><span class="icon"></span>添加新属性</header>
 
-    <el-form ref="form" class="form-container" label-width="130px" label-position="right" :model="localDevice">
-      <TemplateForm
-        :templateProperties="templateProperties"
-        :localDevice="localDevice"
-        :properties="properties"
-        :index="index"
-      />
-    </el-form>
+    <TemplateForm
+      :templateProperties="templateProperties"
+      :localDevice="localDevice"
+      :properties="properties"
+      :index="index"
+    />
+
     <span slot="footer" class="dialog-footer">
       <el-button @click="hide('form')">取 消</el-button>
       <el-button type="primary" @click="add('form')">确 定</el-button>
@@ -143,9 +136,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.flex {
-  display: flex;
-}
 header {
   display: flex;
   align-items: center;
@@ -160,11 +150,5 @@ header {
     height: 18px;
     background-image: linear-gradient(#030b56, #1144d4);
   }
-}
-
-.form-container {
-  width: 580px;
-  margin: auto;
-  padding-right: 66px;
 }
 </style>

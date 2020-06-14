@@ -1,6 +1,15 @@
 <script>
+import LabeledInput from '@/components/form/LabeledInput';
+import LabeledSelect from '@/components/form/LabeledSelect';
+
 export default {
   name:  'TemplateForm',
+
+  components: {
+    LabeledInput,
+    LabeledSelect
+  },
+
   props: {
     templateProperties: {
       type:    Object,
@@ -13,14 +22,10 @@ export default {
     properties: {
       type:    Object,
       default: () => {}
-    },
-    index: {
-      type:    Number,
-      default: 0
     }
   },
+
   data() {
-    console.log('---current properties', this.properties); // eslint-disable-line no-console
     let PropertiesType = {};
 
     if (this.templateProperties.properties) {
@@ -33,46 +38,57 @@ export default {
 
     return {
       PropertiesType,
-      localProperties: this.properties
     };
-  }
+  },
 };
 </script>
 
 <template>
-  <div>
-    <template v-for="(v, key) in localProperties">
-      <template v-if="typeof localProperties[key] === 'object'">
-        <template-form
-          :key="key"
-          :template-properties="PropertiesType[key]"
-          :properties="localProperties[key]"
-        />
+  <div class="model">
+    <template v-for="(v, key) in properties">
+      <template v-if="typeof properties[key] === 'object'">
+        <div :key="key" class="span-12"> 
+          <template-form
+            :properties="properties[key]"
+            :template-properties="PropertiesType[key]"
+          />
+        </div>
       </template>
 
       <template v-else>
+
         <template v-if="PropertiesType[key].enum">
-          <el-form-item :key="key" :label="key">
-            <el-select v-model="localProperties[key]">
-              <el-option
-                v-for="label in PropertiesType[key].enum"
-                :key="label"
-                :label="label"
-                :value="label"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <div class="span-6" :key="key">
+            <LabeledSelect
+              :label="key"
+              v-model="properties[key]"
+              :options="PropertiesType[key].enum"
+            />
+          </div>
         </template>
+
         <template v-else>
-          <el-form-item
-            :key="key"
-            :label="key"
-          >
-            <el-input v-model="localProperties[key]"></el-input>
-          </el-form-item>
+          <div class="span-6" :key="key">
+            <LabeledInput
+              v-model="properties[key]"
+              :label="key"
+            />
+          </div>
         </template>
+  
       </template>
     </template>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.model {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+}
+
+.span-6 {
+  margin-bottom: 20px !important;
+}
+</style>

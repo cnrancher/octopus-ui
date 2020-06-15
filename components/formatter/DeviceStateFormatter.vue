@@ -52,7 +52,7 @@ export default {
       }
 
       if (isActive) {
-        label = 'Active'
+        label = 'Active';
       }
 
       return {

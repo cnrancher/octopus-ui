@@ -1,4 +1,20 @@
-export const accessMode = [{
+export const booleanType = [{
+  label: 'False',
+  value: false
+}, {
+  label: 'True',
+  value: true
+}];
+
+export const READ_ONLY = [{
+  label: '读/写',
+  value: false
+}, {
+  label: '只读',
+  value: true
+}];
+
+export const accessModeList = [{
   label: 'NotifyOnly',
   value: 'NotifyOnly'
 }, {
@@ -122,5 +138,19 @@ export const deviceDefaultInfo = {
     label: 'defalut'
   }
 };
+
+export const operatorList = [{
+  label: 'Add',
+  value: 'Add'
+}, {
+  label: 'Subtract',
+  value: 'Subtract'
+}, {
+  label: 'Multiply',
+  value: 'Multiply'
+}, {
+  label: 'Divide',
+  value: 'Divide'
+}];
 
 export const defaultDevice = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];

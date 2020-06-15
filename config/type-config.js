@@ -225,7 +225,7 @@ export default function(store) {
       params:   { resource: 'workload' }
     },
   });
-  
+
   virtualType({
     label:      'deviceProtocol',
     namespaced: true,

@@ -152,7 +152,8 @@ export default {
         :visible="dialogVisible"
         :template-properties="templateProperties"
         :edit-row-index="editRowIndex"
-        :device="value"
+        :value="value"
+        :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
       />

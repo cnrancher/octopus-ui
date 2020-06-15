@@ -155,8 +155,8 @@ export default {
         console.log('----resource 自定义设备用到的spec', spec);
 
         this.$set(this.value, 'spec', _.cloneDeep(customDevice));
-        this.$set(this.value, 'spec.adaptor.name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
-        this.$set(this.value, 'spec.model.kind', kind);
+        this.$set(this.value.spec.adaptor, 'name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
+        this.$set(this.value.spec.model, 'kind', kind);
 
         this.$set(this, 'templateProtocol', _.cloneDeep(spec.protocol));
         this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items) || []);

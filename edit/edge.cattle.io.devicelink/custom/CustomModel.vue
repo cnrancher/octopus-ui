@@ -10,7 +10,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    device: {
+    value: {
       type:    Object,
       default: () => {}
     },
@@ -18,55 +18,51 @@ export default {
       type:    Boolean,
       default: false
     },
-    editRowIndex: { type: Number }
+    dialogModel:  {
+      type:     String,
+      required: true
+    },
+    editRowIndex: { 
+      type: Number,
+      required: true
+    },
   },
+
   components: {
     TemplateForm
   },
+
   data() {
-    console.log('------this.templateProperties', this.templateProperties.properties);
-    console.log('------editRowIndex-----', this.editRowIndex);
-    const { required } = this.templateProperties;
-    const properties = this.translationProperties(this.templateProperties.properties);
+    let properties = this.translationProperties(this.templateProperties.properties);
+
+    const localDevice = _.cloneDeep(this.value);
+    let index = 0;
+
+    if (this.dialogModel === 'create') {
+      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+      index = localDevice.spec.template.spec.properties.length - 1;
+    } else {
+      index = this.editRowIndex;
+      properties = localDevice.spec.template.spec.properties[index]
+    }
+
     console.log('-----properties', properties);
     return {
-      localDevice:   _.cloneDeep(this.device),
-      index: 0,
+      localDevice,
+      index,
       properties,
       opcTypeOption,
       register,
       activeNames: []
     };
   },
+  
   computed: {
     showModel() {
       return this.visible;
     },
   },
-  watch: {
-    device: {
-      handler(newVal, oldVal) {
-        const length = this.device.spec.template.spec.properties.length;
-        this.localDevice = _.cloneDeep(newVal);
-        if (length <= 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(this.properties));
-        }
-      },
-      deep: true,
-    },
-    editRowIndex: {
-      handler() {
-        if (this.editRowIndex < 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(this.properties));
-          const length = this.localDevice.spec.template.spec.properties.length;
-          this.index = length - 1;
-        } else {
-          this.index = this.editRowIndex;
-        }
-      },
-      immediate: true
-    }
-  },
+
   methods: {
     translationProperties(properties) {
       let keys = Object.keys(properties);
@@ -85,12 +81,14 @@ export default {
       return obj
     },
     add(formName) {
+      const index = this.index;
+      this.localDevice.spec.template.spec.properties.splice(index, 1, this.properties)
       const properties = this.localDevice.spec.template.spec.properties;
-      console.log('-----应该有的值', properties)
-      // this.$emit('addProperties', _.cloneDeep(properties));
-      // this.$nextTick(() => {
-      //   this.$emit('hideDialog', false);
-      // });
+      console.log('-----this.properties 000', this.properties)
+      this.$emit('addProperties', _.cloneDeep(properties));
+      this.$nextTick(() => {
+        this.$emit('hideDialog', false);
+      });
     },
     hide(formName) {
       if (this.$refs[formName] !== undefined) {
@@ -117,7 +115,6 @@ export default {
     width="822px"
     class="popUp"
     :before-close="hide"
-    v-if="localDevice.spec.template.spec.properties.length"
   >
     <header slot="title"><span class="icon"></span>添加新属性</header>
 
@@ -125,7 +122,6 @@ export default {
       :templateProperties="templateProperties"
       :localDevice="localDevice"
       :properties="properties"
-      :index="index"
     />
 
     <span slot="footer" class="dialog-footer">

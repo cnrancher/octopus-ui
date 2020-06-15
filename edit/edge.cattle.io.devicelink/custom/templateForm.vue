@@ -35,7 +35,7 @@ export default {
     } else {
       PropertiesType = this.templateProperties;
     }
-
+    console.log('----loc, tem', this.localDevice, this.templateProperties)
     return { PropertiesType };
   },
 };

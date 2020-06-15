@@ -213,7 +213,7 @@ export default {
           </Tab>
 
           <Tab label="MQTT" name="mqtt">
-            <!-- <MqttConfig :value="value" /> -->
+            <MqttConfig :value="value" />
           </Tab>
         </template>
       </ResourceTabs>

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import { accessMode, operatorList } from '@/config/map';
+import { accessModeList, operatorList } from '@/config/map';
 
 const properties = {
   name: '',
@@ -35,65 +35,42 @@ export default {
       type:     Object,
       required: true,
     },
-    device: {
-      type: Object,
-      default: () => { }
-    },
     visible: {
       type: Boolean,
       default: false
     },
     editRowIndex: {
       type: Number
+    },
+    dialogModel: {
+      type: String,
+      required: true
     }
   },
 
   data () {
-    const localDevice = _.cloneDeep(this.device);
+    const localDevice = _.cloneDeep(this.value);
+    let index = 0;
+    if (this.dialogModel === 'create') {
+      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+      index = localDevice.spec.template.spec.properties.length - 1;
+    } else {
+      index = this.editRowIndex;
+    }
 
     return {
       operatorList,
-      accessMode,
+      accessModeList,
       localDevice,
-      index: 0,
-      porpLength: false,
+      index
     };
   },
-  computed: {
-    
-  },
-  watch: {
-    localDevice: {
-      handler(newVal, oldVal) {
-        this.porpLength = this.localDevice.spec.template.spec.properties.length;
-      },
-      deep: true,
-      immediate: true
-    },
-    device: {
-      handler (newVal, oldVal) {
-        const length = this.device.spec.template.spec.properties.length;
-        this.$set(this, 'localDevice', _.cloneDeep(this.device));
-      },
-      deep: true,
-      immediate: true
-    },
-    editRowIndex: {
-      handler (newVal, oldVal) {
-        if (this.editRowIndex < 0) { 
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-          const length = this.localDevice.spec.template.spec.properties.length;
-          this.index = length - 1;
-        } else {
-          this.index = this.editRowIndex;
-        }
-      },
-      immediate: true
-    }
-  },
 
-  mounted() {
-    console.log('----*----', this.localDevice.spec, this.localDevice.spec.template.spec.properties[this.index], this.index)
+  computed: {
+    accessMode() {
+      const { index } = this;
+      return this.localDevice.spec.template.spec.properties[index].accessMode;
+    }
   },
 
   methods: {
@@ -151,7 +128,7 @@ export default {
           key="accessMode"
           v-model="localDevice.spec.template.spec.properties[index].accessMode" 
           label="accessMode" 
-          :options="accessMode" 
+          :options="accessModeList" 
         />
       </div>
 
@@ -165,10 +142,7 @@ export default {
       </div>
     </div>
 
-    <template 
-      v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadOnly' || 
-      localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'"
-    >
+    <template v-if="accessMode === 'ReadOnly' || accessMode === 'ReadWrite'">
       <div class="row">
         <div class="col span-6">
           <LabeledInput
@@ -195,7 +169,7 @@ export default {
       </div>
     </template>
 
-    <template v-if="localDevice.spec.template.spec.properties[index].accessMode !== 'NotifyOnly'">
+    <template v-if="accessMode !== 'NotifyOnly'">
       <div class="row">
         <KeyValue
           key="operationType"
@@ -223,7 +197,7 @@ export default {
       </div>
     </template>
 
-    <template v-if="localDevice.spec.template.spec.properties[index].accessMode === 'ReadWrite'">
+    <template v-if="accessMode === 'ReadWrite'">
 
       <div class="row">
         <div class="col span-6">

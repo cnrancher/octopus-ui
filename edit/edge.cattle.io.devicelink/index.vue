@@ -139,6 +139,7 @@ export default {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
+        console.log('---blu', this.value)
       } else if (value === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
         console.log('----opc', _.cloneDeep(OPC_UA_DEVICE))

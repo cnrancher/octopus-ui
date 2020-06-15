@@ -261,7 +261,7 @@ export default {
 
       this.queueUpdate();
       this.$nextTick(() => {
-        this.$refs.key.focus();
+        // this.$refs.key.focus();
       });
     },
 

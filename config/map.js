@@ -14,7 +14,7 @@ export const READ_ONLY = [{
   value: true
 }];
 
-export const accessMode = [{
+export const accessModeList = [{
   label: 'NotifyOnly',
   value: 'NotifyOnly'
 }, {

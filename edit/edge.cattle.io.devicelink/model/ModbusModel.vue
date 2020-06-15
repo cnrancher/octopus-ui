@@ -5,7 +5,7 @@ import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
 import ButtonGroup from '@/components/ButtonGroup';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import { typeOption, register } from '@/config/map'
+import { typeOption, register, operatorList, booleanType } from '@/config/map'
 
 const properties = {
   name:        '',
@@ -21,31 +21,9 @@ const properties = {
   }
 };
 
-const options = [{
-  label: 'Add',
-  value: 'Add'
-}, {
-  label: 'Subtract',
-  value: 'Subtract'
-}, {
-  label: 'Multiply',
-  value: 'Multiply'
-}, {
-  label: 'Divide',
-  value: 'Divide'
-}];
-
-const opteionBoolean =[{
-  label: 'false',
-  value: 'false'
-}, {
-  label: 'true',
-  value: 'true'
-}]
-
 export default {
   props: {
-    device: {
+    value: {
       type:    Object,
       default: () => {}
     },
@@ -53,27 +31,45 @@ export default {
       type:    Boolean,
       default: false
     },
-    editRowIndex: { type: Number }
+    dialogModel: {
+      type: String,
+      required: true
+    },
+    editRowIndex: {
+      type:     Number,
+      required: true
+    },
   },
+
   components: {
     KeyValue,
     LabeledInput,
     LabeledSelect,
     ButtonGroup
   },
+
   data() {
+    const localDevice = _.cloneDeep(this.value);
+    let index = 0;
+    if (this.dialogModel === 'create') {
+      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+      index = localDevice.spec.template.spec.properties.length - 1;
+    } else {
+      index = this.editRowIndex;
+    }
+
     return {
-      opteionBoolean,
-      options,
-      localDevice:   _.cloneDeep(this.device),
-      index: 0,
+      booleanType,
+      operatorList,
+      localDevice,
+      index,
       newProperties: properties,
       typeOption,
       register,
       activeNames: [],
-      porpLength: false,
     };
   },
+
   computed: {
     showModel() {
       return this.visible;
@@ -85,38 +81,7 @@ export default {
       return type === 'CoilRegister' || type === 'DiscreteInputRegister';
     },
   },
-  watch: {
-    localDevice: {
-      handler(newVal, oldVal) {
-        this.porpLength = this.localDevice.spec.template.spec.properties.length;
-      },
-      deep: true,
-      immediate: true
-    },
-    device: {
-      handler (newVal, oldVal) {
-        const length = this.device.spec.template.spec.properties.length;
-        this.$set(this, 'localDevice', _.cloneDeep(this.device));
-      },
-      deep: true,
-      immediate: true
-    },
-    editRowIndex: {
-      handler() {
-        if (this.editRowIndex < 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-          const length = this.localDevice.spec.template.spec.properties.length;
-          this.index = length - 1;
-        } else {
-          this.index = this.editRowIndex;
-        }
-      },
-      immediate: true
-    }
-  },
-  mounted() {
-    console.log('---this.localDevice', this.localDevice)
-  },
+
   methods: {
     changedRef(row, val, which) {
       delete row.operationRef;
@@ -125,24 +90,13 @@ export default {
       delete row.binary;
     },
     add(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          const properties = this.localDevice.spec.template.spec.properties;
-
-          this.$emit('addProperties', _.cloneDeep(properties));
-          this.$nextTick(() => {
-            this.$refs[formName].resetFields();
-            this.$emit('hideDialog', false);
-          });
-        } else {
-          return false;
-        }
+      const properties = this.localDevice.spec.template.spec.properties;
+      this.$emit('addProperties', _.cloneDeep(properties));
+      this.$nextTick(() => {
+        this.$emit('hideDialog', false);
       });
     },
     hide(formName) {
-      if (this.$refs[formName] !== undefined) {
-        this.$refs[formName].resetFields();
-      }
       this.$emit('hideDialog', false);
     },
     changeRegister(value) {
@@ -161,6 +115,7 @@ export default {
   }
 };
 </script>
+
 <template>
   <el-dialog
     :visible.sync="showModel"
@@ -168,7 +123,7 @@ export default {
     width="822px"
     class="popUp"
     :before-close="hide"
-    v-if="porpLength"
+    v-if="visible"
   >
     <header slot="title"><span class="icon"></span>添加新属性</header>
 
@@ -198,7 +153,8 @@ export default {
       <div class="col span-6">
         <LabeledSelect  
           v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'" 
-          v-model="localDevice.spec.template.spec.properties[index].value" label="类型" :options="opteionBoolean"
+          v-model="localDevice.spec.template.spec.properties[index].value" label="类型" 
+          :options="booleanType"
           :disabled="localDevice.spec.template.spec.properties[index].readOnly"
         />
 
@@ -256,7 +212,7 @@ export default {
       <template #key="{row}">
         <span>
           <select v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')" ref="operation">
-            <option v-for="opt in options" :key="opt.value" :value="opt.value">
+            <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>
@@ -272,9 +228,6 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.flex {
-  display: flex;
-}
 header {
   display: flex;
   align-items: center;
@@ -289,17 +242,5 @@ header {
     height: 18px;
     background-image: linear-gradient(#030b56, #1144d4);
   }
-}
-
-.form-container {
-  width: 580px;
-  margin: auto;
-  padding-right: 66px;
-}
-</style>
-
-<style lang='scss'>
-.el-radio-button--small .el-radio-button__inner {
-  padding: 9px 14px;
 }
 </style>

@@ -264,6 +264,11 @@ export default {
       });
     },
 
+    // @TODO planB to fix that input element can't be focused by unknown reason which were created by add new line.
+    forceInputFocus(e) {
+      e.target && e.target.focus();
+    },
+
     remove(row) {
       const idx = this.rows.indexOf(row);
 
@@ -390,6 +395,7 @@ export default {
               v-model="row[keyName]"
               :placeholder="keyPlaceholder"
               @input="queueUpdate"
+              @click="forceInputFocus"
             />
           </slot>
         </td>
@@ -427,6 +433,7 @@ export default {
               autocapitalize="off"
               spellcheck="false"
               @input="queueUpdate"
+              @click="forceInputFocus"
             />
           </slot>
         </td>

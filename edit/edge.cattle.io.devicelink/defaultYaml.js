@@ -32,23 +32,10 @@ export const BLUE_THOOTH_DEVICE = {
               keyFilePem:         '',
               insecureSkipVerify: false
             },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
             store:           {
               type:            'memory',
               direcotryPrefix: '/var/run/octopus/mqtt',
             },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
           },
           message: {
             topic: {
@@ -60,7 +47,6 @@ export const BLUE_THOOTH_DEVICE = {
             payloadEncode: 'raw',
             qos:           0,
             retained:      true,
-            waitTimeout:   'string'
           }
         }
       },
@@ -107,23 +93,10 @@ export const MODBUS_DEVICE_RTU = {
               keyFilePem:         '',
               insecureSkipVerify: false
             },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
             store:           {
               type:            'memory',
               direcotryPrefix: '/var/run/octopus/mqtt',
             },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
           },
           message: {
             topic: {
@@ -135,7 +108,6 @@ export const MODBUS_DEVICE_RTU = {
             payloadEncode: 'raw',
             qos:           0,
             retained:      true,
-            waitTimeout:   'string'
           }
         }
       },
@@ -188,23 +160,10 @@ export const MODBUS_DEVICE_TCP = {
               keyFilePem:         '',
               insecureSkipVerify: false
             },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
             store:           {
               type:            'memory',
               direcotryPrefix: '/var/run/octopus/mqtt',
             },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
           },
           message: {
             topic: {
@@ -216,7 +175,6 @@ export const MODBUS_DEVICE_TCP = {
             payloadEncode: 'raw',
             qos:           0,
             retained:      true,
-            waitTimeout:   'string'
           }
         }
       },
@@ -266,23 +224,10 @@ export const OPC_UA_DEVICE = {
               keyFilePem:         '',
               insecureSkipVerify: false
             },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
             store:           {
               type:            'memory',
               direcotryPrefix: '/var/run/octopus/mqtt',
             },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
           },
           message: {
             topic: {
@@ -294,7 +239,6 @@ export const OPC_UA_DEVICE = {
             payloadEncode: 'raw',
             qos:           0,
             retained:      true,
-            waitTimeout:   'string'
           }
         }
       },
@@ -342,23 +286,10 @@ export const customDevice = {
               keyFilePem:         '',
               insecureSkipVerify: false
             },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
             store:           {
               type:            'memory',
               direcotryPrefix: '/var/run/octopus/mqtt',
             },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
           },
           message: {
             topic: {
@@ -370,7 +301,6 @@ export const customDevice = {
             payloadEncode: 'raw',
             qos:           0,
             retained:      true,
-            waitTimeout:   'string'
           }
         }
       },

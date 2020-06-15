@@ -136,7 +136,7 @@ export default {
     key-field="_key"
     v-on="$listeners"
   >
-    <template #group-header="{group}">
+    <template #group-by="{group}">
       <tr class="group-row">
         <td :colspan="4">
           <div class="group-tab">

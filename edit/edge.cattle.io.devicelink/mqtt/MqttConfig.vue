@@ -5,12 +5,12 @@ import LabeledSelect from '@/components/form/LabeledSelect';
 import { booleanType } from '@/config/map';
 
 export default {
-
   components: {
     LabeledInput,
     LabeledSelect,
     Checkbox
   },
+
   props: {
     value: {
       type:     Object,
@@ -22,7 +22,7 @@ export default {
     return {
       isShowBasicAuth:    false,
       isUsePrefixTopic:   false,
-      isSkipVerify:       true,
+      isSkipVerify:       false,
       isSetLastWillTopic: true,
     };
   },
@@ -79,7 +79,7 @@ export default {
 
       <div class="col span-6">
         <LabeledSelect
-          v-model="value.spec.template.spec.extension.mqtt.client.protocolVersion"
+          v-model.number="value.spec.template.spec.extension.mqtt.client.protocolVersion"
           label="protocolVersion"
           :options="versionList"
         />
@@ -127,7 +127,7 @@ export default {
     <div v-if="isUsePrefixTopic" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
+          v-model="value.spec.template.spec.extension.mqtt.message.topic.prefix"
           label="Prefix Name"
         />
       </div>
@@ -161,7 +161,7 @@ export default {
 
         <div class="col span-6">
           <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.message.qos"
+            v-model.number="value.spec.template.spec.extension.mqtt.message.qos"
             label="QoS"
             :options="qosList"
           />
@@ -267,7 +267,7 @@ export default {
 
           <div class="col span-6">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.will.qos"
+              v-model.number="value.spec.template.spec.extension.mqtt.client.will.qos"
               label="QoS"
               :options="qosList"
             />

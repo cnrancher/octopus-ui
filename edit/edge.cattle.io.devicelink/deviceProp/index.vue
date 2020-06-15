@@ -11,6 +11,47 @@ import {
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
 
+const extension = {
+  mqtt: {
+    client: {
+      server:          '',
+      protocolVersion: 1,
+      will:            {
+        topicName:      '',
+        payloadEncode:  'raw',
+        qos:            0,
+        payloadContent: '',
+        retained:       false
+      },
+      basicAuth: {
+        name:      '',
+        passsword: ''
+      },
+      tlsConfig: {
+        caFilePem:          '',
+        certFilePem:        '',
+        keyFilePem:         '',
+        insecureSkipVerify: false
+      },
+      store:           {
+        type:            'memory',
+        direcotryPrefix: '/var/run/octopus/mqtt',
+      },
+    },
+    message: {
+      topic: {
+        name:   '',
+        prefix: '',
+        with:   'nn'
+      },
+      topicName:     '',
+      payloadEncode: 'raw',
+      qos:           0,
+      retained:      true,
+    }
+  }
+}
+
 export default {
   components: {
     AddTable,
@@ -32,6 +73,10 @@ export default {
   },
 
   data() {
+    if (!this.value.spec.template.spec.extension) {
+      this.$set(this.value.spec.template.spec, 'extension', extension);
+    }
+    
     return {
       headers: {
         BluetoothDeviceHeader,

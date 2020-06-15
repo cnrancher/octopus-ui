@@ -177,7 +177,9 @@ export default {
     <div class="row">
       <div class="col span-6">
         <!-- 寄存器类型 -->
-        <ButtonGroup v-model="localDevice.spec.template.spec.properties[index].visitor.register" :options="register" @input="changeRegister" />
+        <div class="center">
+          <ButtonGroup v-model="localDevice.spec.template.spec.properties[index].visitor.register" :options="register" @input="changeRegister" />
+        </div>
       </div>
 
       <div class="col span-6">
@@ -208,11 +210,14 @@ export default {
       </div>
     </div>
 
+    <el-divider>Property Operation</el-divider>
+
     <KeyValue
       key="operationType"
       v-model="localDevice.spec.template.spec.properties[index].visitor.orderOfOperations"
       key-name="operationType"
       value-name="operationValue"
+      key-label="Operation"
       :pad-left="false"
       :as-map="false"
       :read-allowed="false"
@@ -254,5 +259,9 @@ header {
 }
 .bigInput {
   height: 50px;
+}
+.center {
+  display: flex;
+  align-items: center;
 }
 </style>

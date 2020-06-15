@@ -53,9 +53,8 @@ export default {
     if (this.value.metadata && !(mode === _EDIT)) {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
-    
+
     return {
-      node: this.value.spec.adaptor.node,
       isChoose: true,
       devicesType,
       tempSpec:           {},
@@ -87,11 +86,7 @@ export default {
       return deviceProtocol.includes(kind);
     },
   },
-  watch: {
-    node(newV) {
-      this.value.spec.adaptor.node = newV;
-    }
-  },
+
   methods: {
     preventSubmit(e) {
       e.preventDefault(); // prevent form jumps (click add props)
@@ -123,7 +118,6 @@ export default {
         };
       });
 
-      this.node = nodes[0].value;
       const namespaces = hash.namespaces?.map( (NS) => {
         return {
           value: NS.id,
@@ -135,6 +129,7 @@ export default {
       this.allNamespace = namespaces;
     },
     changeKind(value) {
+      const node = this.value.spec.adaptor.node;
       if (value === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
@@ -161,8 +156,7 @@ export default {
         this.$set(this, 'templateProtocol', _.cloneDeep(spec.protocol));
         this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items) || []);
       }
-
-      const node = this.value.spec.adaptor.node;
+ 
       this.$set(this.value.spec.adaptor, 'node', node)
     },
   }
@@ -180,7 +174,7 @@ export default {
         </NameNsDescription>
         <div class="row">
           <div class="col span-4">
-            <LabeledSelect v-model="node" label="节点" :options="allNodes" />
+            <LabeledSelect v-model="value.spec.adaptor.node" label="节点" :options="allNodes" />
           </div>
           <div class="col span-4" />
         </div>
@@ -219,7 +213,7 @@ export default {
           </Tab>
 
           <Tab label="MQTT" name="mqtt">
-            <MqttConfig :value="value" />
+            <!-- <MqttConfig :value="value" /> -->
           </Tab>
         </template>
       </ResourceTabs>

@@ -150,7 +150,7 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.startIndex"
+            v-model.number="localDevice.spec.template.spec.properties[index].visitor.dataConverter.startIndex"
             label="startIndex"
           />
         </div>
@@ -191,6 +191,7 @@ export default {
                 ref="operation"
                 v-model="row.operationType"
                 @input="changedRef(row, $event.target.value, 'operation')"
+                class="bigInput"
               >
                 <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
                   {{ opt.label }}
@@ -248,5 +249,8 @@ header {
     height: 18px;
     background-image: linear-gradient(#030b56, #1144d4);
   }
+}
+.bigInput {
+  height: 50px;
 }
 </style>

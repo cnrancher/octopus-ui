@@ -38,16 +38,16 @@ export const parity = [{
 
 export const dataBits = [{
   label: '5',
-  value: '5'
+  value: 5
 }, {
   label: '6',
-  value: '6'
+  value: 6
 }, {
   label: '7',
-  value: '7'
+  value: 7
 }, {
   label: '8',
-  value: '8'
+  value: 8
 }];
 
 export const typeOption = [{

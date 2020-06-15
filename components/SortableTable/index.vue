@@ -6,10 +6,10 @@ import selection from './selection';
 import sorting from './sorting';
 import paging from './paging';
 import grouping from './grouping';
-import Checkbox from '@/components/form/Checkbox';
-import { removeObject } from '@/utils/array';
-import { get } from '@/utils/object';
 import { dasherize } from '@/utils/string';
+import { get, clone } from '@/utils/object';
+import { removeObject } from '@/utils/array';
+import Checkbox from '@/components/form/Checkbox';
 
 // @TODO:
 // Fixed header/scrolling
@@ -198,6 +198,14 @@ export default {
     },
 
     /**
+     * Allows you to hide the no rows messaging.
+     */
+    showNoRows: {
+      type:    Boolean,
+      default: true
+    },
+
+    /**
      * Allows you to override the default translation text of no search data view
      */
     noDataKey: {
@@ -211,11 +219,6 @@ export default {
     showHeaders: {
       type:    Boolean,
       default: true
-    },
-
-    useEventsTable: {
-      type:    Boolean,
-      dafault: false
     }
 
   },
@@ -272,6 +275,21 @@ export default {
         }
       }
 
+      // If all columns have a width, try to remove it from a column that can be variable (name)
+      const missingWidth = out.find(x => !x.width);
+
+      if ( !missingWidth ) {
+        const variable = out.find(x => x.canBeVariable);
+
+        if ( variable ) {
+          const neu = clone(variable);
+
+          delete neu.width;
+
+          out.splice(out.indexOf(variable), 1, neu);
+        }
+      }
+
       return out;
     },
 
@@ -303,8 +321,7 @@ export default {
       return {
         'top-divider':     this.topDivider,
         'emphasized-body': this.emphasizedBody,
-        'body-dividers':   this.bodyDividers,
-        'events-table':    this.useEventsTable
+        'body-dividers':   this.bodyDividers
       };
     }
   },
@@ -347,7 +364,7 @@ export default {
             v-for="act in availableActions"
             :key="act.action"
             type="button"
-            :class="['btn', `bg-${act.theme || 'primary'}`, 'btn-sm']"
+            class="btn bg-primary btn-sm"
             :disabled="!act.enabled"
             @click="applyTableAction(act)"
           >
@@ -389,7 +406,7 @@ export default {
         <slot name="no-rows">
           <tr>
             <td :colspan="fullColspan" class="no-rows">
-              <t :k="noRowsKey" />
+              <t v-if="showNoRows" :k="noRowsKey" />
             </td>
           </tr>
         </slot>
@@ -405,12 +422,14 @@ export default {
       </tbody>
 
       <tbody v-for="group in groupedRows" :key="group.key" :class="{ group: groupBy }">
-        <slot v-if="groupBy" name="group-header" :group="group">
+        <slot v-if="groupBy" name="group-row" :group="group" :fullColspan="fullColspan">
           <tr class="group-row">
             <td :colspan="fullColspan">
-              <div class="group-tab">
-                {{ group.ref }}
-              </div>
+              <slot name="group-by" :group="group">
+                <div v-trim-whitespace class="group-tab">
+                  {{ group.ref }}
+                </div>
+              </slot>
             </td>
           </tr>
         </slot>
@@ -418,7 +437,7 @@ export default {
           <slot name="main-row" :row="row">
             <tr :key="get(row,keyField)" class="main-row">
               <td v-show="tableActions" class="row-check" align="middle">
-                <Checkbox type="checkbox" :data-node-id="get(row,keyField)" :value="tableSelected.includes(row)" />
+                <Checkbox class="selection-checkbox" type="checkbox" :data-node-id="get(row,keyField)" :value="tableSelected.includes(row)" />
               </td>
               <td v-if="subExpandColumn" class="row-expand" align="middle">
                 <i data-title="Toggle Expand" :class="{icon: true, 'icon-chevron-right': true, 'icon-chevron-down': !!expanded[get(row, keyField)]}" />
@@ -518,6 +537,10 @@ $group-row-height: 40px;
 $group-separation: 40px;
 $divider-height: 1px;
 
+$separator: 20;
+$remove: 75;
+$spacing: 10px;
+
 .sortable-table {
   position: relative;
   table-layout: fixed;
@@ -530,7 +553,7 @@ $divider-height: 1px;
 
   > THEAD > TR > TH,
   > TBODY > TR > TD {
-    padding: 0 0 0 10px;
+    padding: 0;
     transition: none;
     word-wrap: break-word;
 
@@ -555,10 +578,10 @@ $divider-height: 1px;
         border-radius: 0;
         outline: none;
         transition: none;
-        color: var(--sortable-table-th);
+        color: var(--secondary);
 
         &.sortable a {
-          color: var(--sortable-table-th);
+          color: var(--secondary);
         }
         font-weight: normal;
 
@@ -590,7 +613,7 @@ $divider-height: 1px;
   }
 
   &.emphasized-body > TBODY > TR > TD {
-    color: var(--sortable-table-td);
+    color: var(--body-text);
   }
 
   &.body-dividers > TBODY > TR > TD {
@@ -634,6 +657,10 @@ $divider-height: 1px;
         display: inline-block;
         z-index: z-index('tableGroup');
         min-width: $group-row-height * 1.8;
+
+        > SPAN {
+          color: var(--sortable-table-group-label);
+        }
       }
 
       .group-tab:after {
@@ -664,13 +691,7 @@ $divider-height: 1px;
       }
 
       .actions {
-        padding: 6px 3px;
-        font-size: 1.2em;
-        border-radius: 4px;
-      }
-
-      A {
-        color: var(--sortable-table-td-a);
+        padding: 5px;
       }
     }
 
@@ -690,7 +711,6 @@ $divider-height: 1px;
     > TR.group-row > TD,
     > TR.total > TD {
       height: $group-row-height;
-      padding-left: 0;
     }
 
     > TR.total > TD {
@@ -700,17 +720,6 @@ $divider-height: 1px;
     > TR > TD.no-results {
       padding: 20px;
       color: var(--muted);
-    }
-  }
-
-  &.events-table {
-    > TBODY {
-      > TR.main-row:nth-child(odd) {
-        background-color: var(--sortable-table-tr);
-      }
-      > TR.main-row:nth-child(even) {
-        background-color: var(--body-bg);
-      }
     }
   }
 
@@ -742,9 +751,8 @@ $divider-height: 1px;
   }
 
   .no-rows {
-    height: auto;
     padding: $group-row-height;
-    color: var(--disabled-bg);
+    color: var(--disabled-bg) !important;
     text-align: center;
   }
 
@@ -752,6 +760,37 @@ $divider-height: 1px;
   TH[align=center], TD[align=center] { text-align: center; }
   TH[align=right], TD[align=right] { text-align: right; }
 }
+
+ .for-inputs{
+   & TABLE.sortable-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: $spacing;
+
+    >TBODY>TR>TD, >THEAD>TR>TH {
+      padding-right: $spacing;
+      padding-bottom: $spacing;
+
+      &:last-of-type {
+        padding-right: 0;
+      }
+    }
+
+    >TBODY>TR:first-of-type>TD {
+      padding-top: $spacing;
+    }
+
+    >TBODY>TR:last-of-type>TD {
+      padding-bottom: 0;
+    }
+  }
+
+    &.edit, &.create, &.clone {
+     TABLE.sortable-table>THEAD>TR>TH {
+      border-color: transparent;
+      }
+    }
+  }
 
 .sortable-table-header {
   position: relative;

@@ -84,7 +84,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.protocol[transferMode].slaveID"
+          v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"
           label="SlaveID"
           mode="create"
         />
@@ -113,7 +113,7 @@ export default {
 
         <div class="col span-6">
           <LabeledInput
-            v-model="value.spec.template.spec.protocol[transferMode].port"
+            v-model.number="value.spec.template.spec.protocol[transferMode].port"
             label="Port"
             mode="create"
           />

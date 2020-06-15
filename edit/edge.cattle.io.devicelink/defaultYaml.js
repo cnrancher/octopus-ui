@@ -166,60 +166,60 @@ export const MODBUS_DEVICE_TCP = {
   template: {
     metadata: { labels: {} },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 1,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              passsword: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false
-            },
-            configBasicAuth: true,
-            configTLS:       true,
-            cleanSession:    true,
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-            resumeSubs:           true,
-            connectTimeout:       'string',
-            keepAlive:            'string',
-            pingTimeout:          'string',
-            order:                true,
-            writeTimeout:         'string',
-            autoReconnect:        true,
-            maxReconnectInterval: 1,
-            messageChannelDepth:  1,
-            // httpHeaders: "<map[string][]string>"
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-            waitTimeout:   'string'
-          }
-        }
-      },
+      // extension: {
+      //   mqtt: {
+      //     client: {
+      //       server:          '',
+      //       protocolVersion: 1,
+      //       will:            {
+      //         topicName:      '',
+      //         payloadEncode:  'raw',
+      //         qos:            0,
+      //         payloadContent: '',
+      //         retained:       false
+      //       },
+      //       basicAuth: {
+      //         name:      '',
+      //         passsword: ''
+      //       },
+      //       tlsConfig: {
+      //         caFilePem:          '',
+      //         certFilePem:        '',
+      //         keyFilePem:         '',
+      //         insecureSkipVerify: false
+      //       },
+      //       configBasicAuth: true,
+      //       configTLS:       true,
+      //       cleanSession:    true,
+      //       store:           {
+      //         type:            'memory',
+      //         direcotryPrefix: '/var/run/octopus/mqtt',
+      //       },
+      //       resumeSubs:           true,
+      //       connectTimeout:       'string',
+      //       keepAlive:            'string',
+      //       pingTimeout:          'string',
+      //       order:                true,
+      //       writeTimeout:         'string',
+      //       autoReconnect:        true,
+      //       maxReconnectInterval: 1,
+      //       messageChannelDepth:  1,
+      //       // httpHeaders: "<map[string][]string>"
+      //     },
+      //     message: {
+      //       topic: {
+      //         name:   '',
+      //         prefix: '',
+      //         with:   'nn'
+      //       },
+      //       topicName:     '',
+      //       payloadEncode: 'raw',
+      //       qos:           0,
+      //       retained:      true,
+      //       waitTimeout:   'string'
+      //     }
+      //   }
+      // },
       protocol: {
         tcp: {
           slaveID:    '',

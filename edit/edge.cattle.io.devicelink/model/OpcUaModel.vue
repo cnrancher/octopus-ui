@@ -215,6 +215,6 @@ header {
   }
 }
 .bigInput {
-  height: 55px;
+  height: 50px;
 }
 </style>

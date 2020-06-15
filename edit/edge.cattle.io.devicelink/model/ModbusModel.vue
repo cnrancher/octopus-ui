@@ -167,7 +167,7 @@ export default {
         <LabeledInput
           v-else
           v-model="localDevice.spec.template.spec.properties[index].value"
-          label=""
+          label="值"
           mode="create"
           :disabled="localDevice.spec.template.spec.properties[index].readOnly"
         />
@@ -193,7 +193,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].visitor.offset"
+          v-model.number="localDevice.spec.template.spec.properties[index].visitor.offset"
           label="寄存器偏移地址"
           mode="create"
         />
@@ -201,7 +201,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].visitor.quantity"
+          v-model.number="localDevice.spec.template.spec.properties[index].visitor.quantity"
           label="寄存器的个数"
           mode="create"
         />
@@ -220,7 +220,7 @@ export default {
     >
       <template #key="{row}">
         <span>
-          <select ref="operation" v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')">
+          <select class="bigInput" ref="operation" v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')">
             <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
@@ -251,5 +251,8 @@ header {
     height: 18px;
     background-image: linear-gradient(#030b56, #1144d4);
   }
+}
+.bigInput {
+  height: 50px;
 }
 </style>

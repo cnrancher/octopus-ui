@@ -60,10 +60,6 @@ export default {
       const requiredArr = this.templateProtocol.required || [];
       return requiredArr.includes(key);
     },
-
-    isFirstDeep() {
-
-    }
   }
 }
 </script>

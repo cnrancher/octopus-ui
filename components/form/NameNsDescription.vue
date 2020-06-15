@@ -29,7 +29,7 @@ export default {
       type:    Array,
       default: () => []
     },
-    extraDetailColumns: {
+    detailTopColumns: {
       type:    Array,
       default: () => []
     },
@@ -62,7 +62,6 @@ export default {
     if ( this.namespaced && !metadata.namespace ) {
       metadata.namespace = this.$store.getters['defaultNamespace'];
     }
-
     const description = metadata.annotations?.[DESCRIPTION];
 
     return {
@@ -75,19 +74,6 @@ export default {
   computed: {
     nameDisabled() {
       return this.mode === _EDIT && !this.nameEditable;
-    },
-
-    detailTopColumns() {
-      const { metadata = {} } = this.value;
-
-      return [
-        metadata.name
-          ? {
-            title:   'Name',
-            content: metadata.name
-          } : null,
-        ...this.extraDetailColumns
-      ].filter(c => c);
     },
 
     namespaces() {
@@ -103,8 +89,8 @@ export default {
       return out;
     },
 
-    notView() {
-      return this.mode !== _VIEW;
+    isView() {
+      return this.mode === _VIEW;
     },
 
     colSpan() {
@@ -148,7 +134,8 @@ export default {
 
 <template>
   <div>
-    <div v-if="notView" class="row">
+    <DetailTop v-if="isView" :columns="detailTopColumns" />
+    <div v-else class="row">
       <div :class="{col: true, [colSpan]: true}">
         <slot name="namespace">
           <InputWithSelect
@@ -159,7 +146,7 @@ export default {
             select-label="Namespace"
             :text-value="name"
             :text-required="true"
-            select-value="default"
+            :select-value="namespace"
             :mode="mode"
             :disabled="nameDisabled"
             @input="changeNameAndNamespace($event)"
@@ -191,6 +178,5 @@ export default {
         </slot>
       </div>
     </div>
-    <DetailTop v-else :columns="detailTopColumns" />
   </div>
 </template>

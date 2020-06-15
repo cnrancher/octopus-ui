@@ -1,5 +1,4 @@
 <script>
-import _ from 'lodash';
 import LabeledInput from '@/components/form/LabeledInput';
 
 export default {

@@ -23,7 +23,7 @@ export default {
   },
 
   props: {
-    device: {
+    value: {
       type:    Object,
       default: () => {}
     },
@@ -34,14 +34,26 @@ export default {
     editRowIndex: {
       type:     Number,
       required: true
-    }
+    },
+    dialogModel: {
+      type:     String,
+      required: true
+    },
   },
 
   data() {
-    const localDevice = _.cloneDeep(this.device);
+    const localDevice = _.cloneDeep(this.value);
+    let index = 0;
+
+    if (this.dialogModel === 'create') {
+      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
+      index = localDevice.spec.template.spec.properties.length - 1;
+    } else {
+      index = this.editRowIndex;
+    }
 
     return {
-      index:         0,
+      index,
       register,
       booleanType,
       READ_ONLY,
@@ -56,37 +68,6 @@ export default {
     propLength() {
       return this.localDevice.spec.template.spec.properties.length;
     }
-  },
-
-  watch: {
-    device: {
-      handler(newVal, oldVal) {
-        const length = this.device.spec.template.spec.properties.length;
-
-        this.localDevice = _.cloneDeep(newVal);
-        if (length <= 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-        }
-      },
-      deep: true,
-    },
-    editRowIndex: {
-      handler() {
-        if (this.editRowIndex < 0) {
-          this.localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-          const length = this.localDevice.spec.template.spec.properties.length;
-
-          this.index = length - 1;
-        } else {
-          this.index = this.editRowIndex;
-        }
-      },
-      immediate: true
-    }
-  },
-
-  updated() {
-    console.log('----false', this.localDevice.spec.template.spec.properties[this.index].value);
   },
 
   methods: {
@@ -234,6 +215,6 @@ header {
   }
 }
 .bigInput {
-  height: 55px;
+  height: 50px;
 }
 </style>

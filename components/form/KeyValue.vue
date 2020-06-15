@@ -59,7 +59,7 @@ export default {
     },
     keyLabel: {
       type:    String,
-      default: 'Key',
+      default: '',
     },
     keyPlaceholder: {
       type:    String,
@@ -214,7 +214,7 @@ export default {
       const out = [
         {
           name:  'key',
-          label: 'Key',
+          label: this.keyLabel || 'Key',
           value: this.keyName,
         },
         {

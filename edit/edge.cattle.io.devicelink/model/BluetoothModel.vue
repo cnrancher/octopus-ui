@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
@@ -7,16 +6,16 @@ import LabeledSelect from '@/components/form/LabeledSelect';
 import { accessModeList, operatorList } from '@/config/map';
 
 const properties = {
-  name: '',
+  name:        '',
   description: '',
-  accessMode: 'ReadOnly',
-  visitor: {
+  accessMode:  'ReadOnly',
+  visitor:     {
     characteristicUUID: '',
-    defaultValue: '',
-    dataConverter: {
-      startIndex: '',
-      endIndex: '',
-      shiftRight: '',
+    defaultValue:       '',
+    dataConverter:      {
+      startIndex:        '',
+      endIndex:          '',
+      shiftRight:        '',
       orderOfOperations: []
     },
     dataWrite: {}
@@ -36,21 +35,23 @@ export default {
       required: true,
     },
     visible: {
-      type: Boolean,
+      type:    Boolean,
       default: false
     },
-    editRowIndex: {
-      type: Number
+    editRowIndex: { 
+      type: Number,
+      required: true
     },
-    dialogModel: {
-      type: String,
+    dialogModel:  {
+      type:     String,
       required: true
     }
   },
 
-  data () {
+  data() {
     const localDevice = _.cloneDeep(this.value);
     let index = 0;
+
     if (this.dialogModel === 'create') {
       localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
       index = localDevice.spec.template.spec.properties.length - 1;
@@ -69,18 +70,19 @@ export default {
   computed: {
     accessMode() {
       const { index } = this;
+
       return this.localDevice.spec.template.spec.properties[index].accessMode;
     }
   },
 
   methods: {
-    add (formName) {
-      let properties = this.localDevice.spec.template.spec.properties;
-      
+    add(formName) {
+      const properties = this.localDevice.spec.template.spec.properties;
+
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$emit('hideDialog', false);
     },
-    hide () {
+    hide() {
       this.$emit('hideDialog', false);
     },
     changedRef(row, val, which) {
@@ -94,14 +96,16 @@ export default {
 </script>
 <template>
   <el-dialog
+    v-if="localDevice"
     :visible.sync="visible"
     :close-on-click-modal="false"
     width="1000px"
     :before-close="hide"
-    v-if="localDevice"
   >
-    <header slot="title"><span class="icon"></span>添加新属性</header>
-    
+    <header slot="title">
+      <span class="icon"></span>添加新属性
+    </header>
+
     <div class="row">
       <div class="col span-6">
         <LabeledInput
@@ -126,9 +130,9 @@ export default {
       <div class="col span-6">
         <LabeledSelect
           key="accessMode"
-          v-model="localDevice.spec.template.spec.properties[index].accessMode" 
-          label="accessMode" 
-          :options="accessModeList" 
+          v-model="localDevice.spec.template.spec.properties[index].accessMode"
+          label="accessMode"
+          :options="accessModeList"
         />
       </div>
 
@@ -146,15 +150,15 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            label="startIndex"
             v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.startIndex"
+            label="startIndex"
           />
         </div>
 
         <div class="col span-6">
           <LabeledInput
-            label="endIndex"
             v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.endIndex"
+            label="endIndex"
           />
         </div>
       </div>
@@ -162,8 +166,8 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            label="shiftRight"
             v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.shiftRight"
+            label="shiftRight"
           />
         </div>
       </div>
@@ -183,9 +187,10 @@ export default {
         >
           <template #key="{row}">
             <span>
-              <select 
-                v-model="row.operationType" 
-                @input="changedRef(row, $event.target.value, 'operation')" ref="operation"
+              <select
+                ref="operation"
+                v-model="row.operationType"
+                @input="changedRef(row, $event.target.value, 'operation')"
               >
                 <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
                   {{ opt.label }}
@@ -198,12 +203,11 @@ export default {
     </template>
 
     <template v-if="accessMode === 'ReadWrite'">
-
       <div class="row">
         <div class="col span-6">
-          <LabeledInput 
-            v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue" 
-            label="defaultValue" 
+          <LabeledInput
+            v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue"
+            label="defaultValue"
           />
         </div>
       </div>
@@ -220,10 +224,9 @@ export default {
           :protip="false"
         />
       </div>
-     
     </template>
-    
-    <span class="dialog-footer" slot="footer">
+
+    <span slot="footer" class="dialog-footer">
       <el-button @click="hide">取 消</el-button>
       <el-button type="primary" @click="add">确 定</el-button>
     </span>

@@ -58,7 +58,6 @@ export default {
 
   methods: {
     changeTransferMode(mode) {
-      console.log('---mode', mode);
       const tempSpec = _.cloneDeep(this.value.spec);
       const node = this.value.spec.adaptor.node;
 

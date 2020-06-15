@@ -36,9 +36,7 @@ export default {
       PropertiesType = this.templateProperties;
     }
 
-    return {
-      PropertiesType,
-    };
+    return { PropertiesType };
   },
 };
 </script>
@@ -47,7 +45,7 @@ export default {
   <div class="model">
     <template v-for="(v, key) in properties">
       <template v-if="typeof properties[key] === 'object'">
-        <div :key="key" class="span-12"> 
+        <div :key="key" class="span-12">
           <template-form
             :properties="properties[key]"
             :template-properties="PropertiesType[key]"
@@ -56,26 +54,24 @@ export default {
       </template>
 
       <template v-else>
-
         <template v-if="PropertiesType[key].enum">
-          <div class="span-6" :key="key">
+          <div :key="key" class="span-6">
             <LabeledSelect
-              :label="key"
               v-model="properties[key]"
+              :label="key"
               :options="PropertiesType[key].enum"
             />
           </div>
         </template>
 
         <template v-else>
-          <div class="span-6" :key="key">
+          <div :key="key" class="span-6">
             <LabeledInput
               v-model="properties[key]"
               :label="key"
             />
           </div>
         </template>
-  
       </template>
     </template>
   </div>

@@ -36,7 +36,7 @@ export default {
       required: true
     },
     dialogModel: {
-      type: String,
+      type:     String,
       required: true
     },
   },
@@ -44,6 +44,7 @@ export default {
   data() {
     const localDevice = _.cloneDeep(this.value);
     let index = 0;
+
     if (this.dialogModel === 'create') {
       localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
       index = localDevice.spec.template.spec.properties.length - 1;

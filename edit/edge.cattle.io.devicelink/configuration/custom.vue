@@ -2,9 +2,7 @@
 import CustomTemplate from '@/edit/edge.cattle.io.devicelink/custom/templates';
 
 export default {
-  components: {
-    CustomTemplate
-  },
+  components: { CustomTemplate },
 
   props: {
     value: {
@@ -12,15 +10,13 @@ export default {
       required: true,
     },
     templateProtocol: {
-      type: Object,
+      type:    Object,
       default: () => {}
     },
   },
 
   data() {
-    return {
-
-    }
+    return {};
   },
 };
 </script>

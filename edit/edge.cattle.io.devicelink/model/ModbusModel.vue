@@ -1,11 +1,10 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
 import ButtonGroup from '@/components/ButtonGroup';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import { typeOption, register, operatorList, booleanType } from '@/config/map'
+import { typeOption, register, operatorList, booleanType } from '@/config/map';
 
 const properties = {
   name:        '',
@@ -14,14 +13,21 @@ const properties = {
   dataType:    'boolean',
   readOnly:    true,
   visitor:     {
-    register: 'DiscreteInputRegister',
-    offset:   '',
-    quantity: '',
+    register:          'DiscreteInputRegister',
+    offset:            '',
+    quantity:          '',
     orderOfOperations: []
   }
 };
 
 export default {
+
+  components: {
+    KeyValue,
+    LabeledInput,
+    LabeledSelect,
+    ButtonGroup
+  },
   props: {
     value: {
       type:    Object,
@@ -32,7 +38,7 @@ export default {
       default: false
     },
     dialogModel: {
-      type: String,
+      type:     String,
       required: true
     },
     editRowIndex: {
@@ -41,16 +47,10 @@ export default {
     },
   },
 
-  components: {
-    KeyValue,
-    LabeledInput,
-    LabeledSelect,
-    ButtonGroup
-  },
-
   data() {
     const localDevice = _.cloneDeep(this.value);
     let index = 0;
+
     if (this.dialogModel === 'create') {
       localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
       index = localDevice.spec.template.spec.properties.length - 1;
@@ -66,7 +66,7 @@ export default {
       newProperties: properties,
       typeOption,
       register,
-      activeNames: [],
+      activeNames:   [],
     };
   },
 
@@ -91,6 +91,7 @@ export default {
     },
     add(formName) {
       const properties = this.localDevice.spec.template.spec.properties;
+
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {
         this.$emit('hideDialog', false);
@@ -101,7 +102,8 @@ export default {
     },
     changeRegister(value) {
       const index = this.index;
-      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '')
+
+      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '');
       this.register.forEach((item) => {
         if (item.value === value) {
           this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
@@ -110,7 +112,8 @@ export default {
     },
     changeDataType() {
       const index = this.index;
-      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '')
+
+      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '');
     }
   }
 };
@@ -118,14 +121,16 @@ export default {
 
 <template>
   <el-dialog
+    v-if="visible"
     :visible.sync="showModel"
     :close-on-click-modal="false"
     width="822px"
     class="popUp"
     :before-close="hide"
-    v-if="visible"
   >
-    <header slot="title"><span class="icon"></span>添加新属性</header>
+    <header slot="title">
+      <span class="icon"></span>添加新属性
+    </header>
 
     <div class="row">
       <div class="col span-6">
@@ -151,9 +156,10 @@ export default {
       </div>
 
       <div class="col span-6">
-        <LabeledSelect  
-          v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'" 
-          v-model="localDevice.spec.template.spec.properties[index].value" label="类型" 
+        <LabeledSelect
+          v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'"
+          v-model="localDevice.spec.template.spec.properties[index].value"
+          label="类型"
           :options="booleanType"
           :disabled="localDevice.spec.template.spec.properties[index].readOnly"
         />
@@ -168,14 +174,17 @@ export default {
       </div>
     </div>
 
-    <div class="row"> 
-      <div class="col span-6"> <!-- 寄存器类型 -->
+    <div class="row">
+      <div class="col span-6">
+        <!-- 寄存器类型 -->
         <ButtonGroup v-model="localDevice.spec.template.spec.properties[index].visitor.register" :options="register" @input="changeRegister" />
       </div>
 
       <div class="col span-6">
-        <LabeledSelect  
-          v-model="localDevice.spec.template.spec.properties[index].readOnly" label="访问模式" :options="[{label: '读/写', value: false}, {label: '只读', value: true}]"
+        <LabeledSelect
+          v-model="localDevice.spec.template.spec.properties[index].readOnly"
+          label="访问模式"
+          :options="[{label: '读/写', value: false}, {label: '只读', value: true}]"
           disabled
         />
       </div>
@@ -198,7 +207,7 @@ export default {
         />
       </div>
     </div>
-    
+
     <KeyValue
       key="operationType"
       v-model="localDevice.spec.template.spec.properties[index].visitor.orderOfOperations"
@@ -211,7 +220,7 @@ export default {
     >
       <template #key="{row}">
         <span>
-          <select v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')" ref="operation">
+          <select ref="operation" v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')">
             <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>

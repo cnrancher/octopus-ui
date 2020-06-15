@@ -13,10 +13,10 @@ export const BLUE_THOOTH_DEVICE = {
       extension: {
         mqtt: {
           client: {
-            server:          'string',
+            server:          '',
             protocolVersion: 1,
             will:            {
-              topicName:      '$will',
+              topicName:      '',
               payloadEncode:  'raw',
               qos:            0,
               payloadContent: '',
@@ -64,9 +64,11 @@ export const BLUE_THOOTH_DEVICE = {
           }
         }
       },
-      name:       '',
-      macAddress: '',
-      properties: []
+      properties: [],
+      protocol:   {
+        name:       '',
+        macAddress: ''
+      }
     }
   }
 };
@@ -86,10 +88,10 @@ export const MODBUS_DEVICE_RTU = {
       extension: {
         mqtt: {
           client: {
-            server:          'string',
+            server:          '',
             protocolVersion: 1,
             will:            {
-              topicName:      '$will',
+              topicName:      '',
               payloadEncode:  'raw',
               qos:            0,
               payloadContent: '',
@@ -167,10 +169,10 @@ export const MODBUS_DEVICE_TCP = {
       extension: {
         mqtt: {
           client: {
-            server:          'string',
+            server:          '',
             protocolVersion: 1,
             will:            {
-              topicName:      '$will',
+              topicName:      '',
               payloadEncode:  'raw',
               qos:            0,
               payloadContent: '',
@@ -245,10 +247,10 @@ export const OPC_UA_DEVICE = {
       extension: {
         mqtt: {
           client: {
-            server:          'string',
+            server:          '',
             protocolVersion: 1,
             will:            {
-              topicName:      '$will',
+              topicName:      '',
               payloadEncode:  'raw',
               qos:            0,
               payloadContent: '',
@@ -321,10 +323,10 @@ export const customDevice = {
       extension: {
         mqtt: {
           client: {
-            server:          'string',
+            server:          '',
             protocolVersion: 1,
             will:            {
-              topicName:      '$will',
+              topicName:      '',
               payloadEncode:  'raw',
               qos:            0,
               payloadContent: '',

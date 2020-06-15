@@ -4,8 +4,8 @@ import ModbusModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
 import BluethoothModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
 import CustomModel from '@/edit/edge.cattle.io.devicelink/custom/CustomModel';
 import AddTable from '@/edit/edge.cattle.io.devicelink/deviceProp/AddTable';
-import { 
-  BluetoothDeviceHeader, 
+import {
+  BluetoothDeviceHeader,
   ModbusDeviceHeader,
   OPCUADeviceHeader,
   CUSTOMDeviceHeader
@@ -26,7 +26,7 @@ export default {
       required: true,
     },
     templateProperties: {
-      type: Object,
+      type:    Object,
       default: () => {}
     },
   },
@@ -40,8 +40,8 @@ export default {
       },
       dialogVisible:      false,
       editRowIndex:       0,
-      dialogModel: 'create'
-    }
+      dialogModel:   'create'
+    };
   },
 
   computed: {
@@ -56,6 +56,7 @@ export default {
 
       if (this.isCustomProtocol) {
         const headerName = `${ kind }Header`;
+
         return this.headers[headerName];
       } else {
         return CUSTOMDeviceHeader;
@@ -88,7 +89,7 @@ export default {
       this.value.spec.template.spec.properties.push(...row);
     },
   }
-}
+};
 </script>
 
 <template>
@@ -117,11 +118,11 @@ export default {
 
     <template v-if="dialogVisible">
       <BluethoothModel
-        :value="value"
         v-if="value.spec.model.kind === 'BluetoothDevice'"
+        :value="value"
         :edit-row-index="editRowIndex"
         :visible="dialogVisible"
-        :dialogModel="dialogModel"
+        :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
       />
@@ -131,7 +132,7 @@ export default {
         :visible="dialogVisible"
         :edit-row-index="editRowIndex"
         :value="value"
-        :dialogModel="dialogModel"
+        :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
       />
@@ -141,7 +142,7 @@ export default {
         :visible="dialogVisible"
         :edit-row-index="editRowIndex"
         :value="value"
-        :dialogModel="dialogModel"
+        :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
       />

@@ -1,6 +1,5 @@
 <script>
 import LabeledInput from '@/components/form/LabeledInput';
-import ButtonGroup from '@/components/ButtonGroup';
 import Checkbox from '@/components/form/Checkbox';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import { booleanType } from '@/config/map';
@@ -125,34 +124,33 @@ export default {
       />
     </div>
 
-    <div v-if="isUsePrefixTopic">
-      <div v-if="isUsePrefixTopic" class="row">
-        <div class="col span-6">
-          <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
-            label="Prefix Name"
-          />
-        </div>
-
-        <div class="col span-6">
-          <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.message.topic.with"
-            label="Prefix mode"
-            :options="topicWithList"
-          />
-        </div>
+    <div v-if="isUsePrefixTopic" class="row">
+      <div class="col span-6">
+        <LabeledInput
+          v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
+          label="Prefix Name"
+        />
       </div>
 
-      <div v-if="!isUsePrefixTopic" class="row">
-        <div class="col span-6">
-          <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
-            label="Topic Name"
-          />
-        </div>
+      <div class="col span-6">
+        <LabeledSelect
+          v-model="value.spec.template.spec.extension.mqtt.message.topic.with"
+          label="Prefix mode"
+          :options="topicWithList"
+        />
       </div>
+    </div>
 
-      <div class="row">
+    <div v-if="!isUsePrefixTopic" class="row">
+      <div class="col span-6">
+        <LabeledInput
+          v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
+          label="Topic Name"
+        />
+      </div>
+    </div>
+
+    <div class="row">
         <div class="col span-6">
           <LabeledSelect
             v-model="value.spec.template.spec.extension.mqtt.message.payloadEncode"
@@ -169,7 +167,6 @@ export default {
           />
         </div>
       </div>
-    </div>
 
     <el-divider></el-divider>
 
@@ -182,7 +179,8 @@ export default {
       />
     </div>
 
-    <div v-if="isSkipVerify">
+    <div class="advanced" v-if="isSkipVerify">
+
       <div class="row">
         <div class="col span-6">
           <LabeledSelect
@@ -200,6 +198,7 @@ export default {
             v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePem"
             label="Cert File Pem"
             placeholder="请输入Cert File Pem"
+            type="multiline"
             class="largeHeight"
           />
         </div>
@@ -209,6 +208,7 @@ export default {
             v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePem"
             label="Key File Pem"
             class="largeHeight"
+            type="multiline"
             placeholder="请输入Key File Pem"
           />
         </div>
@@ -220,91 +220,93 @@ export default {
             v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.caFilePem"
             label="CA File Pem (optional)"
             class="largeHeight"
+            type="multiline"
             placeholder="请输入CA File Pem"
           />
         </div>
       </div>
-    </div>
 
-    <el-divider></el-divider>
+      <el-divider></el-divider>
 
-    <div>
-      <Checkbox
-        v-model="isSetLastWillTopic"
-        class="checkbox"
-        label="Set Last Will Topic"
-        type="checkbox"
-      />
-    </div>
+      <div>
+        <Checkbox
+          v-model="isSetLastWillTopic"
+          class="checkbox"
+          label="Set Last Will Topic"
+          type="checkbox"
+        />
+      </div>
 
-    <div v-if="isSetLastWillTopic">
-      <div class="row">
-        <div class="col span-6">
-          <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.client.will.topicName"
-            label="Topic Name (optional)"
-            placeholder="请输入topicName"
-          />
+      <div v-if="isSetLastWillTopic">
+        <div class="row">
+          <div class="col span-6">
+            <LabeledInput
+              v-model="value.spec.template.spec.extension.mqtt.client.will.topicName"
+              label="Topic Name (optional)"
+              placeholder="default $will"
+            />
+          </div>
+
+          <div class="col span-6">
+            <LabeledInput
+              v-model="value.spec.template.spec.extension.mqtt.client.will.payloadContent"
+              label="Payload Content*"
+              placeholder="请输入Payload Content"
+            />
+          </div>
         </div>
 
-        <div class="col span-6">
-          <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.client.will.payloadContent"
-            label="Payload Content*"
-            placeholder="请输入Payload Content"
-          />
+        <div class="row">
+          <div class="col span-6">
+            <LabeledSelect
+              v-model="value.spec.template.spec.extension.mqtt.client.will.payloadEncode"
+              label="Payload Encode"
+              :options="payloadEncodeList"
+            />
+          </div>
+
+          <div class="col span-6">
+            <LabeledSelect
+              v-model="value.spec.template.spec.extension.mqtt.client.will.qos"
+              label="QoS"
+              :options="qosList"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col span-6">
+            <LabeledSelect
+              v-model="value.spec.template.spec.extension.mqtt.client.will.retained"
+              label="Retained"
+              :options="booleanType"
+              required
+            />
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col span-6">
-          <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.client.will.payloadEncode"
-            label="Payload Encode"
-            :options="payloadEncodeList"
-          />
-        </div>
-
-        <div class="col span-6">
-          <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.client.will.qos"
-            label="QoS"
-            :options="qosList"
-          />
-        </div>
-      </div>
+      <el-divider></el-divider>
 
       <div class="row">
         <div class="col span-6">
           <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.client.will.retained"
-            label="Retained"
-            :options="booleanType"
+            v-model="value.spec.template.spec.extension.mqtt.client.store.type"
+            label="Store Type"
+            :options="storeTypeList"
+            required
+          />
+        </div>
+
+        <div v-if="value.spec.template.spec.extension.mqtt.client.store.type === 'file'" class="col span-6">
+          <LabeledInput
+            v-model="value.spec.template.spec.extension.mqtt.client.store.direcotryPrefix"
+            label="Direcotry Prefix"
             required
           />
         </div>
       </div>
-    </div>
 
-    <el-divider></el-divider>
-
-    <div class="row">
-      <div class="col span-6">
-        <LabeledSelect
-          v-model="value.spec.template.spec.extension.mqtt.client.store.type"
-          label="Store Type"
-          :options="storeTypeList"
-          required
-        />
-      </div>
-
-      <div v-if="value.spec.template.spec.extension.mqtt.client.store.type === 'file'" class="col span-6">
-        <LabeledInput
-          v-model="value.spec.template.spec.extension.mqtt.client.store.direcotryPrefix"
-          label="Direcotry Prefix"
-          required
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -312,5 +314,8 @@ export default {
 <style lang="scss" scoped>
 .largeHeight {
   height: 120px;
+}
+.advanced {
+  margin-left: 30px;
 }
 </style>

@@ -214,12 +214,12 @@ export default {
       const out = [
         {
           name:  'key',
-          label: this.keyLabel || 'Key',
+          label: this.t('tableHeaders.key'),
           value: this.keyName,
         },
         {
           name:  'value',
-          label: 'Value',
+          label: this.t('tableHeaders.value'),
           value: this.valueName,
         }
       ];
@@ -598,7 +598,6 @@ export default {
 
 .no-rows {
   padding: 40px;
-  color: var(--disabled-bg);
   text-align: center;
 }
 </style>

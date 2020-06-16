@@ -38,11 +38,6 @@ export default {
     description: {
       type:    String,
       default: '',
-    },
-
-    forLiveness: {
-      type:     Boolean,
-      required: true,
     }
   },
 

@@ -105,7 +105,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="card-box-shadow">
     <table v-if="rows.length" class="fixed">
       <thead>
         <tr>

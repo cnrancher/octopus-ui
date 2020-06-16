@@ -1,7 +1,7 @@
 import IntlMessageFormat from 'intl-messageformat';
 import { LOCALE } from '@/config/cookies';
 import { get } from '@/utils/object';
-import en from '@/assets/translations/en-us.yaml';
+import zh from '@/assets/translations/zh-hans.yaml';
 
 const translationContext = require.context('@/assets/translations', true, /.*/);
 
@@ -14,11 +14,11 @@ export const state = function() {
   const available = translationContext.keys().map(path => path.replace(/^.*\/([^\/]+)\.[^.]+$/, '$1'));
 
   const out = {
-    default:      'en-us',
+    default:      'zh-hans',
     selected:     null,
     previous:     null,
     available,
-    translations: { 'en-us': en },
+    translations: { 'zh-hans': zh },
   };
 
   return out;
@@ -150,10 +150,10 @@ export const actions = {
       try {
         await dispatch('load', locale);
       } catch (e) {
-        if ( locale !== 'en-us' ) {
+        if ( locale !== 'zh-hans' ) {
           // Try to show something...
 
-          commit('setSelected', 'en-us');
+          commit('setSelected', 'zh-hans');
 
           return;
         }

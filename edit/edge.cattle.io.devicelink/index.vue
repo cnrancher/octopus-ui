@@ -49,6 +49,7 @@ export default {
   data() {
     const { devicesType } = this.$store.state;
     const { mode } = this.$route.query;
+    console.log('------edit form value', _.cloneDeep(this.value))
 
     if (this.value.metadata && !(mode === _EDIT)) {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
@@ -93,11 +94,14 @@ export default {
       return false;
     },
     enable(buttonCb) {
-      if (!this.isChoose && this.value.spec.template.spec.protocol.rtu) { // Delete unwanted data
-        Vue.delete(this.value.spec.template.spec.protocol.rtu, 'baudRate');
-        Vue.delete(this.value.spec.template.spec.protocol.rtu, 'dataBits');
-        Vue.delete(this.value.spec.template.spec.protocol.rtu, 'parity');
-        Vue.delete(this.value.spec.template.spec.protocol.rtu, 'stopBits');
+      const errors = this.$refs.mqttConfig.deleteUnuseProp();
+      this.errors = errors
+      // if (!this.isChoose && this.value.spec.template.spec.protocol.rtu) { // Delete unwanted data
+      if (!errors.length) {
+        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'baudRate');
+        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'dataBits');
+        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'parity');
+        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'stopBits');
 
         this.save(buttonCb);
       } else {
@@ -147,7 +151,7 @@ export default {
 
         const kind = resource[0].spec.names.kind;
         const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
-        console.log('----resource 自定义设备用到的spec', spec);
+        console.log('----resource 自定义设备用到的spec----', spec);
 
         this.$set(this.value, 'spec', _.cloneDeep(customDevice));
         this.$set(this.value.spec.adaptor, 'name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
@@ -213,12 +217,12 @@ export default {
           </Tab>
 
           <Tab label="MQTT" name="mqtt">
-            <MqttConfig :value="value" />
+            <MqttConfig :value="value" ref='mqttConfig' />
           </Tab>
         </template>
       </ResourceTabs>
 
-      <Footer v-if="mode!= 'view'" :errors="errors" :mode="mode" @save="save" @done="done" />
+      <Footer v-if="mode!= 'view'" :errors="errors" :mode="mode" @save="enable" @done="done" />
 
     </form>
   </div>

@@ -61,13 +61,13 @@ export default {
 
       for (const typeDevice of custom) {
         if (typeDevice.metadata.annotations?.['devices.edge.cattle.io/enable'] === 'true') {
-          typeDevice.customId = typeDevice.spec.names.kind;
+          typeDevice.customId = typeDevice.metadata.labels?.['app.kubernetes.io/name'];
           out.push(typeDevice);
 
           // add daemoset... ,
           for (const crd of [...this.resources.rbacClusterRole, ...this.resources.daemonset, ...this.resources.deployment, ...this.resources.rbacClusterRolebinding]) {
             if (crd.metadata.labels?.['app.kubernetes.io/name'] === typeDevice.metadata.labels?.['app.kubernetes.io/name'] && !this.hasInsert(out, crd)) {
-              crd.customId = typeDevice.spec.names.kind;
+              crd.customId = crd.metadata.labels?.['app.kubernetes.io/name'];
               out.push(crd);
             }
           }
@@ -140,7 +140,12 @@ export default {
       <tr class="group-row">
         <td :colspan="4">
           <div class="group-tab">
-            <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
+            <template v-if="getDeviceInfo(group.rows).icon">
+              <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
+            </template>
+            <div v-else class="img">
+              <i class="icon icon-custom-iot-three" />
+            </div>
             <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">
               {{ group.ref }} <i class="el-icon-info"></i>
             </div>
@@ -159,10 +164,20 @@ export default {
   display: flex !important;
   align-items: center;
 
-  img {
+  img, .img {
     margin-right: 20px;
     margin-top: 0px !important;
+
+    i {
+      margin-top: 0px !important;
+      font-size: 25px;
+    }
   }
+
+  .img {
+    display: flex;
+  }
+
   .name {
     display: flex;
     align-items: center;

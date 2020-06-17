@@ -20,10 +20,16 @@ export default {
     const query = { [AS_YAML]: _FLAGGED };
 
     const hasListComponent = this.$store.getters['type-map/hasCustomList'](resource);
+    const hasHeaderComponent = this.$store.getters['type-map/hasCustomHeader'](resource);
     let listComponent;
+    let headerComponent;
 
     if ( hasListComponent ) {
       listComponent = this.$store.getters['type-map/importList'](resource);
+    }
+
+    if ( hasHeaderComponent ) {
+      headerComponent = this.$store.getters['type-map/importHeader'](resource);
     }
 
     const yamlRoute = this.$router.resolve({
@@ -35,6 +41,7 @@ export default {
     return {
       route:   this.$route,
       listComponent,
+      headerComponent,
       formRoute,
       yamlRoute,
       AS_YAML,
@@ -74,6 +81,7 @@ export default {
     const resource = params.resource;
     const hasListComponent = store.getters['type-map/hasCustomList'](resource);
     const hasEditComponent = store.getters['type-map/hasCustomEdit'](resource);
+    const hasHeaderComponent = store.getters['type-map/hasCustomHeader'](resource);
     const schema = store.getters['cluster/schemaFor'](resource);
 
     let foundData = false;
@@ -103,6 +111,7 @@ export default {
     return {
       schema,
       hasListComponent,
+      hasHeaderComponent,
       hasEditComponent,
       resource,
       rows,
@@ -120,37 +129,41 @@ export default {
       <h2 class="p-20">
         {{ typeDisplay }} <Favorite :resource="resource" />
       </h2>
+      
       <div class="actions p-20">
-        <nuxt-link
-          v-if="schema && isCreatable"
-          :to="{path: yamlRoute}"
-          tag="button"
-          type="button"
-          class="btn bg-primary"
-        >
-          {{ resource === 'edge.cattle.io.devicelink' ? '导入设备YAML' : 'Create from YAML' }}
-        </nuxt-link>
-        <nuxt-link
-          v-if="hasEditComponent && isCreatable"
-          :to="{path: formRoute}"
-          tag="button"
-          type="button"
-          class="btn bg-primary ml-10"
-        >
-          {{ resource === 'edge.cattle.io.devicelink' ? '添加设备' : 'Create' }}
-        </nuxt-link>
+        <template v-if="hasHeaderComponent">
+          <component
+            :is="headerComponent"
+            v-bind="$data"
+            class="ml-20 mr-20 p-20"
+          />
+        </template>
 
-        <nuxt-link
-          v-if="resource === 'deviceprotocol'"
-          :to="{name: 'c-cluster-resource-createprotocol'}"
-          tag="button"
-          type="button"
-          class="btn bg-primary ml-10"
-        >
-          Create from YAML
-        </nuxt-link>
+        <template v-else>
+          <nuxt-link
+            v-if="schema && isCreatable"
+            :to="{path: yamlRoute}"
+            tag="button"
+            type="button"
+            class="btn bg-primary"
+          >
+            Create from YAML
+          </nuxt-link>
+
+          <nuxt-link
+            v-if="hasEditComponent && isCreatable"
+            :to="{path: formRoute}"
+            tag="button"
+            type="button"
+            class="btn bg-primary ml-10"
+          >
+            Create
+          </nuxt-link>
+        </template>
       </div>
+      
     </header>
+    
     <div v-if="hasListComponent">
       <component
         :is="listComponent"

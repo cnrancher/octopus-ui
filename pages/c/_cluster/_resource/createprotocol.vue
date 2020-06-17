@@ -1,14 +1,10 @@
 <script>
-/* eslint-disable */
 import jsyaml from 'js-yaml';
 import CodeMirror from '@/components/CodeMirror';
 import Footer from '@/components/form/Footer';
 import BreadCrumbs from '@/components/BreadCrumbs';
-import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
-const DefalutYaml = {
-  apiVersion: 'apiextensions.k8s.io/v1',
-};
+const DefalutYaml = { apiVersion: 'apiextensions.k8s.io/v1' };
 
 export default {
   components: {
@@ -21,7 +17,7 @@ export default {
     return {
       route:   this.$route,
       errors:       null,
-      api: {
+      api:    {
         customresourcedefinition:   'apiextensions.k8s.io.customresourcedefinition',
         daemonset:                  'apps.daemonset',
         deployment:                 'apps.deployment',
@@ -52,17 +48,12 @@ export default {
     },
   },
 
-  async asyncData(ctx) {
-    let jsonData = DefalutYaml;
-    let currentValue = jsyaml.safeDump(jsonData);
+  asyncData(ctx) {
+    const currentValue = jsyaml.safeDump(DefalutYaml);
 
-    return {
-      currentValue
-    };
+    return { currentValue };
   },
-  mounted() {
-    
-  },
+
   methods: {
     async save(buttonDone) {
       const arr = this.currentValue.split('---');
@@ -78,13 +69,13 @@ export default {
               'content-type': 'application/json',
               accept:         'application/json',
             },
-            url:  `v1/${this.api[kind]}`,
+            url:  `v1/${ this.api[kind] }`,
             data: json,
           });
 
           if (i === arr.length - 1) {
             buttonDone(true);
-            this.done()
+            this.done();
           }
         }
       } catch (err) {
@@ -191,7 +182,7 @@ export default {
       @onReady="onReady"
       @onChanges="onChanges"
     />
-    
+
     <Footer
       mode="create"
       :errors="errors"

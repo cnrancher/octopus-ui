@@ -184,6 +184,7 @@ export const state = function() {
       ignore:       {},
       list:         {},
       detail:       {},
+      header:       {},
       edit:         {},
       componentFor: {},
     },
@@ -638,6 +639,27 @@ export const getters = {
     };
   },
 
+  hasCustomHeader(state, getters) {
+    return (rawType) => {
+      const type = getters.componentFor(rawType);
+
+      const cache = state.cache.header;
+
+      if ( cache[type] !== undefined ) {
+        return cache[type];
+      }
+
+      try {
+        require.resolve(`@/header/${ type }`);
+        cache[type] = true;
+      } catch (e) {
+        cache[type] = false;
+      }
+
+      return cache[type];
+    };
+  },
+
   hasCustomDetail(state, getters) {
     return (rawType) => {
       const type = getters.componentFor(rawType);
@@ -684,6 +706,14 @@ export const getters = {
       const type = getters.componentFor(rawType);
 
       return () => import(`@/list/${ type }`);
+    };
+  },
+
+  importHeader(state, getters) {
+    return (rawType) => {
+      const type = getters.componentFor(rawType);
+
+      return () => import(`@/header/${ type }`);
     };
   },
 

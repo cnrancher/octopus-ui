@@ -23,7 +23,9 @@ export default {
   },
 
   data() {
-    const protocol = this.templateProtocol.properties;
+    //  location: 'living_room' 
+    console.log('-----this.templateProtocol', this.templateProtocol)
+    const protocol = this.templateProtocol.properties || {};
     const properties = {};
     const keys = Object.keys(protocol);
 

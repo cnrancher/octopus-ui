@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import OpcUaModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
 import ModbusModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
 import BluethoothModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
@@ -11,11 +12,11 @@ import {
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
 
-const extension = {
+const _extension = {
   mqtt: {
     client: {
       server:          '',
-      protocolVersion: 1,
+      protocolVersion: 3,
       will:            {
         topicName:      '',
         payloadEncode:  'raw',
@@ -25,13 +26,26 @@ const extension = {
       },
       basicAuth: {
         name:      '',
-        passsword: ''
+        password: ''
       },
       tlsConfig: {
         caFilePem:          '',
         certFilePem:        '',
         keyFilePem:         '',
-        insecureSkipVerify: false
+        insecureSkipVerify: false,
+        serverName:         '',
+        caFilePEMRef: {
+          item: '',
+          name: ''
+        },
+        certFilePEMRef: {
+          item: '',
+          name: ''
+        },
+        keyFilePEMRef: {
+          item: '',
+          name: ''
+        }
       },
       store:           {
         type:            'memory',
@@ -50,7 +64,7 @@ const extension = {
       retained:      true,
     }
   }
-}
+};
 
 export default {
   components: {
@@ -73,10 +87,12 @@ export default {
   },
 
   data() {
-    if (!this.value.spec.template.spec.extension) {
-      this.$set(this.value.spec.template.spec, 'extension', extension);
+    const extension = this.value.spec.template.spec.extension
+    if (!extension) {
+      this.$set(this.value.spec.template.spec, 'extension', _extension);
     }
-    
+    this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
+
     return {
       headers: {
         BluetoothDeviceHeader,

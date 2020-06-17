@@ -38,8 +38,8 @@ export default {
       type:    Boolean,
       default: false
     },
-    editRowIndex: { 
-      type: Number,
+    editRowIndex: {
+      type:     Number,
       required: true
     },
     dialogModel:  {
@@ -190,8 +190,8 @@ export default {
               <select
                 ref="operation"
                 v-model="row.operationType"
-                @input="changedRef(row, $event.target.value, 'operation')"
                 class="bigInput"
+                @input="changedRef(row, $event.target.value, 'operation')"
               >
                 <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
                   {{ opt.label }}

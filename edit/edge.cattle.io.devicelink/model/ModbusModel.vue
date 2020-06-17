@@ -175,9 +175,9 @@ export default {
     </div>
 
     <div class="row">
-      <div class="col span-6">
+      <div class="col span-6 center">
         <!-- 寄存器类型 -->
-        <div class="center">
+        <div>
           <ButtonGroup v-model="localDevice.spec.template.spec.properties[index].visitor.register" :options="register" @input="changeRegister" />
         </div>
       </div>

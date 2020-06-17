@@ -21,6 +21,7 @@ export default {
   },
 
   data() {
+    console.log('------value modbus', _.clone(this.value))
     return {
       stopBits: [
         { label: 1, value: 1 },

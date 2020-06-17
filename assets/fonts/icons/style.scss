@@ -26,8 +26,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-github:before {
-  content: "\ea0a";
+.icon-custom-iot:before {
+  content: "\e627";
+}
+
+.icon-custom-iot-two:before {
+  content: "\e6a0";
+}
+
+.icon-custom-iot-three:before {
+  content: "\e605";
 }
 
 .icon-create-time:before {

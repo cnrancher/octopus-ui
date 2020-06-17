@@ -7,14 +7,15 @@ export const BLUE_THOOTH_DEVICE = {
     apiVersion: 'devices.edge.cattle.io/v1alpha1',
     kind:       'BluetoothDevice'
   },
-  template: {
+  references: [],
+  template:   {
     metadata: { labels: { } },
     spec:     {
       extension: {
         mqtt: {
           client: {
             server:          '',
-            protocolVersion: 1,
+            protocolVersion: 3,
             will:            {
               topicName:      '',
               payloadEncode:  'raw',
@@ -24,13 +25,26 @@ export const BLUE_THOOTH_DEVICE = {
             },
             basicAuth: {
               name:      '',
-              passsword: ''
+              password: ''
             },
             tlsConfig: {
               caFilePem:          '',
               certFilePem:        '',
               keyFilePem:         '',
-              insecureSkipVerify: false
+              insecureSkipVerify: false,
+              serverName:         '',
+              caFilePEMRef:       {
+                item: '',
+                name: ''
+              },
+              certFilePEMRef: {
+                item: '',
+                name: ''
+              },
+              keyFilePEMRef: {
+                item: '',
+                name: ''
+              }
             },
             store:           {
               type:            'memory',
@@ -68,14 +82,15 @@ export const MODBUS_DEVICE_RTU = {
     apiVersion: 'devices.edge.cattle.io/v1alpha1',
     kind:       'ModbusDevice'
   },
-  template: {
+  references: [],
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
         mqtt: {
           client: {
             server:          '',
-            protocolVersion: 1,
+            protocolVersion: 3,
             will:            {
               topicName:      '',
               payloadEncode:  'raw',
@@ -85,13 +100,26 @@ export const MODBUS_DEVICE_RTU = {
             },
             basicAuth: {
               name:      '',
-              passsword: ''
+              password: ''
             },
             tlsConfig: {
               caFilePem:          '',
               certFilePem:        '',
               keyFilePem:         '',
-              insecureSkipVerify: false
+              insecureSkipVerify: false,
+              serverName:         '',
+              caFilePEMRef:       {
+                item: '',
+                name: ''
+              },
+              certFilePEMRef: {
+                item: '',
+                name: ''
+              },
+              keyFilePEMRef: {
+                item: '',
+                name: ''
+              }
             },
             store:           {
               type:            'memory',
@@ -135,14 +163,15 @@ export const MODBUS_DEVICE_TCP = {
     apiVersion: 'devices.edge.cattle.io/v1alpha1',
     kind:       'ModbusDevice'
   },
-  template: {
+  references: [],
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
         mqtt: {
           client: {
             server:          '',
-            protocolVersion: 1,
+            protocolVersion: 3,
             will:            {
               topicName:      '',
               payloadEncode:  'raw',
@@ -152,13 +181,26 @@ export const MODBUS_DEVICE_TCP = {
             },
             basicAuth: {
               name:      '',
-              passsword: ''
+              password: ''
             },
             tlsConfig: {
               caFilePem:          '',
               certFilePem:        '',
               keyFilePem:         '',
-              insecureSkipVerify: false
+              insecureSkipVerify: false,
+              serverName:         '',
+              caFilePEMRef:       {
+                item: '',
+                name: ''
+              },
+              certFilePEMRef: {
+                item: '',
+                name: ''
+              },
+              keyFilePEMRef: {
+                item: '',
+                name: ''
+              }
             },
             store:           {
               type:            'memory',
@@ -199,14 +241,15 @@ export const OPC_UA_DEVICE = {
     apiVersion: 'devices.edge.cattle.io/v1alpha1',
     kind:       'OPCUADevice'
   },
-  template: {
+  references: [],
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
         mqtt: {
           client: {
             server:          '',
-            protocolVersion: 1,
+            protocolVersion: 3,
             will:            {
               topicName:      '',
               payloadEncode:  'raw',
@@ -216,13 +259,26 @@ export const OPC_UA_DEVICE = {
             },
             basicAuth: {
               name:      '',
-              passsword: ''
+              password: ''
             },
             tlsConfig: {
               caFilePem:          '',
               certFilePem:        '',
               keyFilePem:         '',
-              insecureSkipVerify: false
+              insecureSkipVerify: false,
+              serverName:         '',
+              caFilePEMRef:       {
+                item: '',
+                name: ''
+              },
+              certFilePEMRef: {
+                item: '',
+                name: ''
+              },
+              keyFilePEMRef: {
+                item: '',
+                name: ''
+              }
             },
             store:           {
               type:            'memory',
@@ -261,14 +317,15 @@ export const customDevice = {
     apiVersion: 'devices.edge.cattle.io/v1alpha1',
     kind:       ''
   },
-  template: {
+  references: [],
+  template:   {
     metadata: { labels: { wj: '' } },
     spec:     {
       extension: {
         mqtt: {
           client: {
             server:          '',
-            protocolVersion: 1,
+            protocolVersion: 3,
             will:            {
               topicName:      '',
               payloadEncode:  'raw',
@@ -278,13 +335,26 @@ export const customDevice = {
             },
             basicAuth: {
               name:      '',
-              passsword: ''
+              password: ''
             },
             tlsConfig: {
               caFilePem:          '',
               certFilePem:        '',
               keyFilePem:         '',
-              insecureSkipVerify: false
+              insecureSkipVerify: false,
+              serverName:         '',
+              caFilePEMRef:       {
+                item: '',
+                name: ''
+              },
+              certFilePEMRef: {
+                item: '',
+                name: ''
+              },
+              keyFilePEMRef: {
+                item: '',
+                name: ''
+              }
             },
             store:           {
               type:            'memory',

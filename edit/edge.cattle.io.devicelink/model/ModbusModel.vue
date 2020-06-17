@@ -225,7 +225,7 @@ export default {
     >
       <template #key="{row}">
         <span>
-          <select class="bigInput" ref="operation" v-model="row.operationType" @input="changedRef(row, $event.target.value, 'operation')">
+          <select ref="operation" v-model="row.operationType" class="bigInput" @input="changedRef(row, $event.target.value, 'operation')">
             <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>

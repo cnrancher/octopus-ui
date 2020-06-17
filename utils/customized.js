@@ -239,6 +239,26 @@ export function hasCustomDetail(rawType) {
   }
 }
 
+export function hasCustomHeader(rawType) {
+  const type = _normalizeType(rawType);
+  const cache = _cache.header;
+
+  if ( cache[type] !== undefined ) {
+    return cache[type];
+  }
+
+  try {
+    require.resolve(`@/header/${ type }`);
+    cache[type] = true;
+
+    return true;
+  } catch (e) {
+    cache[type] = false;
+
+    return false;
+  }
+}
+
 export function hasCustomEdit(rawType) {
   const type = _normalizeType(rawType);
   const cache = _cache.edit;
@@ -275,6 +295,12 @@ export function importEdit(rawType) {
   const type = _normalizeType(rawType);
 
   return () => import(`@/edit/${ type }`);
+}
+
+export function importHeader(rawType) {
+  const type = _normalizeType(rawType);
+
+  return () => import(`@/header/${ type }`);
 }
 
 // ----------------------------------------------------------------------------
@@ -380,6 +406,7 @@ const _cache = {
   list:       {},
   detail:     {},
   edit:       {},
+  header:     {}
 };
 
 function _applyMapping(obj, mappings, keyField, cache) {

@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import OpcUaModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
 import ModbusModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
 import BluethoothModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
@@ -10,12 +11,13 @@ import {
   OPCUADeviceHeader,
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
+import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
-const extension = {
+const _extension = {
   mqtt: {
     client: {
       server:          '',
-      protocolVersion: 1,
+      protocolVersion: 3,
       will:            {
         topicName:      '',
         payloadEncode:  'raw',
@@ -25,13 +27,26 @@ const extension = {
       },
       basicAuth: {
         name:      '',
-        passsword: ''
+        password: ''
       },
       tlsConfig: {
         caFilePem:          '',
         certFilePem:        '',
         keyFilePem:         '',
-        insecureSkipVerify: false
+        insecureSkipVerify: false,
+        serverName:         '',
+        caFilePEMRef:       {
+          item: '',
+          name: ''
+        },
+        certFilePEMRef: {
+          item: '',
+          name: ''
+        },
+        keyFilePEMRef: {
+          item: '',
+          name: ''
+        }
       },
       store:           {
         type:            'memory',
@@ -50,7 +65,7 @@ const extension = {
       retained:      true,
     }
   }
-}
+};
 
 export default {
   components: {
@@ -66,17 +81,38 @@ export default {
       type:     Object,
       required: true,
     },
-    templateProperties: {
-      type:    Object,
-      default: () => {}
-    },
+    mode: {
+      type:     String,
+    }
   },
 
   data() {
-    if (!this.value.spec.template.spec.extension) {
-      this.$set(this.value.spec.template.spec, 'extension', extension);
+    const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
+    const kind = this.value.spec.model.kind;
+    let isCustomProtocol = deviceProtocol.includes(kind);
+    const { devicesType } = this.$store.state;
+    const extension = this.value.spec.template.spec.extension;
+
+    if (!extension) {
+      this.$set(this.value.spec.template.spec, 'extension', _extension);
     }
-    
+    this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
+    console.log('--------pazzzzzzz', this.value.spec.template.spec);
+
+    const value = this.value.spec.model.kind;
+    const resource = devicesType.filter((D) => {
+      if (D.spec.names.kind === value) {
+        return D;
+      }
+    });
+
+    const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
+    if (!isCustomProtocol) {
+      this.$set(this.value, 'spec', _.cloneDeep(customDevice));
+    }
+    console.log('----resource 自定义设备用到的spec----', spec, resource);
+    const templateProperties = spec.properties?.items || [];
+
     return {
       headers: {
         BluetoothDeviceHeader,
@@ -85,27 +121,24 @@ export default {
       },
       dialogVisible:      false,
       editRowIndex:       0,
-      dialogModel:   'create'
+      dialogModel:   'create',
+      templateProperties,
+      isCustomProtocol
     };
   },
 
   computed: {
-    isCustomProtocol() {
+    currentHeader() {
       const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
       const kind = this.value.spec.model.kind;
+      const isCustomProtocol = deviceProtocol.includes(kind);
 
-      return deviceProtocol.includes(kind);
-    },
-    currentHeader() {
-      const kind = this.value.spec.model.kind;
-
-      if (this.isCustomProtocol) {
+      if (isCustomProtocol) {
         const headerName = `${ kind }Header`;
 
         return this.headers[headerName];
-      } else {
-        return CUSTOMDeviceHeader;
       }
+      return CUSTOMDeviceHeader;
     },
   },
 

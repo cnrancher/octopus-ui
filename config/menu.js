@@ -77,21 +77,12 @@ export const MENUS = [
         path: '/c/local/edge.cattle.io.devicelink',
         meta: { title: '设备列表' }
       },
-      // {
-      //   path: '/device/template',
-      //   meta: { title: '设备模板' }
-      // },
+      {
+        path: '/c/local/edgeapi.cattle.io.devicetemplate',
+        meta: { title: '设备模板' }
+      },
     ]
   },
-  // {
-  //   name: 'edge-ai',
-  //   path: '/edge-ai',
-  //   meta: {
-  //     title:    '边缘 AI',
-  //     icon:     'icon-edge-ai',
-  //     disabled: true
-  //   }
-  // },
   {
     name: 'mqttManagement',
     path: '/mqttManagement/edgeapi.cattle.io.catalog',

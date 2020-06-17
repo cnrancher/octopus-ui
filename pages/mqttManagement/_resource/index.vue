@@ -141,7 +141,7 @@ export default {
 
       service.map( (item) => {
         if (
-          item.metadata?.labels['app.kubernetes.io/instance'] === instance &&
+          item.metadata?.labels?.['app.kubernetes.io/instance'] === instance &&
           item.metadata?.labels['app.kubernetes.io/name'] === name &&
           item.metadata.namespace === namespace
         ) {

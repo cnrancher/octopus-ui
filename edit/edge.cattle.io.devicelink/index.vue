@@ -11,7 +11,7 @@ import {
 } from './defaultYaml';
 import { allHash } from '@/utils/promise';
 import { NODE, NAMESPACES } from '@/config/types';
-import { _EDIT } from '@/config/query-params';
+import { _EDIT, _CREATE } from '@/config/query-params';
 
 import LoadDeps from '@/mixins/load-deps';
 import createEditView from '@/mixins/create-edit-view';
@@ -45,16 +45,16 @@ export default {
     CustomTemplate,
     LabeledSelect
   },
+
   mixins:     [createEditView, LoadDeps],
+
   data() {
     const { devicesType } = this.$store.state;
-    const { mode } = this.$route.query;
-    console.log('------edit form value', _.cloneDeep(this.value))
 
-    if (this.value.metadata && !(mode === _EDIT)) {
+    if (this.value.metadata && !(this.mode === _EDIT)) {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
-
+    console.log('----aaa', this.mode, this.value)
     return {
       isChoose: true,
       devicesType,
@@ -64,10 +64,9 @@ export default {
       editRowIndex:       -1,
       allNodes:           [],
       allNamespace:       [],
-      templateProtocol:   {},
-      templateProperties: {},
     };
   },
+
   computed: {
     isEdit() {
       return this.mode === _EDIT;
@@ -80,12 +79,6 @@ export default {
     isModeReady() {
       return !!this.value.spec.template.spec.protocol?.tcp || !!this.value.spec.template.spec.protocol?.rtu;
     },
-    isCustomProtocol() {
-      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
-      const kind = this.value.spec.model.kind;
-
-      return deviceProtocol.includes(kind);
-    },
   },
 
   methods: {
@@ -95,7 +88,7 @@ export default {
     },
     enable(buttonCb) {
       const errors = this.$refs.mqttConfig.deleteUnuseProp();
-      this.errors = errors
+      this.errors = errors;
       // if (!this.isChoose && this.value.spec.template.spec.protocol.rtu) { // Delete unwanted data
       if (!errors.length) {
         // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'baudRate');
@@ -133,34 +126,26 @@ export default {
       this.allNamespace = namespaces;
     },
     changeKind(value) {
-      const node = this.value.spec.adaptor.node;
       if (value === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
       } else if (value === 'BluetoothDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
-        console.log('---blu', this.value)
       } else if (value === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
-        console.log('----opc', _.cloneDeep(OPC_UA_DEVICE))
       } else {
+        this.$set(this.value, 'spec', _.cloneDeep(customDevice));
+
         const resource = this.devicesType.filter((D) => {
           if (D.spec.names.kind === value) {
             return D;
           }
         });
-
         const kind = resource[0].spec.names.kind;
-        const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
-        console.log('----resource 自定义设备用到的spec----', spec);
-
-        this.$set(this.value, 'spec', _.cloneDeep(customDevice));
         this.$set(this.value.spec.adaptor, 'name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
         this.$set(this.value.spec.model, 'kind', kind);
-
-        this.$set(this, 'templateProtocol', _.cloneDeep(spec.protocol));
-        this.$set(this, 'templateProperties', _.cloneDeep(spec.properties.items) || []);
       }
- 
+
+      const node = this.value.spec.adaptor.node;
       this.$set(this.value.spec.adaptor, 'node', node)
     },
   }
@@ -173,7 +158,7 @@ export default {
       <slot :value="value" name="top">
         <NameNsDescription v-model="value" :mode="mode" :extra-columns="['type']">
           <template v-slot:type>
-            <LabeledSelect v-model="value.spec.model.kind" label="设备类型" :options="deviceType" @input="changeKind" />
+            <LabeledSelect v-model="value.spec.model.kind" label="设备类型" :options="deviceType" :disabled="isEdit" @input="changeKind" />
           </template>
         </NameNsDescription>
         <div class="row">
@@ -202,18 +187,12 @@ export default {
             </template>
 
             <template v-else>
-              <CustomConfig 
-                :value="value"
-                :template-protocol="templateProtocol"
-              />
+              <CustomConfig :value="value" :mode="mode" />
             </template>
           </Tab>
 
           <Tab label="设备属性" name="prop">
-            <DeviceProp
-              :value="value" 
-              :template-properties="templateProperties" 
-            />
+            <DeviceProp :value="value" />
           </Tab>
 
           <Tab label="MQTT" name="mqtt">
@@ -222,7 +201,7 @@ export default {
         </template>
       </ResourceTabs>
 
-      <Footer v-if="mode!= 'view'" :errors="errors" :mode="mode" @save="enable" @done="done" />
+      <Footer :errors="errors" :mode="mode" @save="enable" @done="done" />
 
     </form>
   </div>

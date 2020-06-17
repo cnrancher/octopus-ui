@@ -129,7 +129,7 @@ export default {
       <h2 class="p-20">
         {{ typeDisplay }} <Favorite :resource="resource" />
       </h2>
-      
+
       <div class="actions p-20">
         <template v-if="hasHeaderComponent">
           <component
@@ -161,9 +161,8 @@ export default {
           </nuxt-link>
         </template>
       </div>
-      
     </header>
-    
+
     <div v-if="hasListComponent">
       <component
         :is="listComponent"

@@ -8,7 +8,7 @@ export const BLUE_THOOTH_DEVICE = {
     kind:       'BluetoothDevice'
   },
   references: [],
-  template: {
+  template:   {
     metadata: { labels: { } },
     spec:     {
       extension: {
@@ -33,7 +33,7 @@ export const BLUE_THOOTH_DEVICE = {
               keyFilePem:         '',
               insecureSkipVerify: false,
               serverName:         '',
-              caFilePEMRef: {
+              caFilePEMRef:       {
                 item: '',
                 name: ''
               },
@@ -83,7 +83,7 @@ export const MODBUS_DEVICE_RTU = {
     kind:       'ModbusDevice'
   },
   references: [],
-  template: {
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
@@ -108,7 +108,7 @@ export const MODBUS_DEVICE_RTU = {
               keyFilePem:         '',
               insecureSkipVerify: false,
               serverName:         '',
-              caFilePEMRef: {
+              caFilePEMRef:       {
                 item: '',
                 name: ''
               },
@@ -164,7 +164,7 @@ export const MODBUS_DEVICE_TCP = {
     kind:       'ModbusDevice'
   },
   references: [],
-  template: {
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
@@ -189,7 +189,7 @@ export const MODBUS_DEVICE_TCP = {
               keyFilePem:         '',
               insecureSkipVerify: false,
               serverName:         '',
-              caFilePEMRef: {
+              caFilePEMRef:       {
                 item: '',
                 name: ''
               },
@@ -242,7 +242,7 @@ export const OPC_UA_DEVICE = {
     kind:       'OPCUADevice'
   },
   references: [],
-  template: {
+  template:   {
     metadata: { labels: {} },
     spec:     {
       extension: {
@@ -267,7 +267,7 @@ export const OPC_UA_DEVICE = {
               keyFilePem:         '',
               insecureSkipVerify: false,
               serverName:         '',
-              caFilePEMRef: {
+              caFilePEMRef:       {
                 item: '',
                 name: ''
               },
@@ -318,7 +318,7 @@ export const customDevice = {
     kind:       ''
   },
   references: [],
-  template: {
+  template:   {
     metadata: { labels: { wj: '' } },
     spec:     {
       extension: {
@@ -343,7 +343,7 @@ export const customDevice = {
               keyFilePem:         '',
               insecureSkipVerify: false,
               serverName:         '',
-              caFilePEMRef: {
+              caFilePEMRef:       {
                 item: '',
                 name: ''
               },

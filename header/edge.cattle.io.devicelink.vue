@@ -1,6 +1,6 @@
 <script>
 export default {
- props: {
+  props: {
     yamlRoute: {
       type:     String,
       required: true,
@@ -13,9 +13,9 @@ export default {
   },
 
   data() {
-    return {}
+    return {};
   }
-}
+};
 </script>
 
 <template>

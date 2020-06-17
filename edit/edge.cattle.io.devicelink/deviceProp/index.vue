@@ -11,6 +11,7 @@ import {
   OPCUADeviceHeader,
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
+import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
 const _extension = {
   mqtt: {
@@ -34,7 +35,7 @@ const _extension = {
         keyFilePem:         '',
         insecureSkipVerify: false,
         serverName:         '',
-        caFilePEMRef: {
+        caFilePEMRef:       {
           item: '',
           name: ''
         },
@@ -80,18 +81,37 @@ export default {
       type:     Object,
       required: true,
     },
-    templateProperties: {
-      type:    Object,
-      default: () => {}
-    },
+    mode: {
+      type:     String,
+    }
   },
 
   data() {
-    const extension = this.value.spec.template.spec.extension
+    const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
+    const kind = this.value.spec.model.kind;
+    let isCustomProtocol = deviceProtocol.includes(kind);
+    const { devicesType } = this.$store.state;
+    const extension = this.value.spec.template.spec.extension;
+
     if (!extension) {
       this.$set(this.value.spec.template.spec, 'extension', _extension);
     }
     this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
+    console.log('--------pazzzzzzz', this.value.spec.template.spec);
+
+    const value = this.value.spec.model.kind;
+    const resource = devicesType.filter((D) => {
+      if (D.spec.names.kind === value) {
+        return D;
+      }
+    });
+
+    const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
+    if (!isCustomProtocol) {
+      this.$set(this.value, 'spec', _.cloneDeep(customDevice));
+    }
+    console.log('----resource 自定义设备用到的spec----', spec, resource);
+    const templateProperties = spec.properties?.items || [];
 
     return {
       headers: {
@@ -101,27 +121,24 @@ export default {
       },
       dialogVisible:      false,
       editRowIndex:       0,
-      dialogModel:   'create'
+      dialogModel:   'create',
+      templateProperties,
+      isCustomProtocol
     };
   },
 
   computed: {
-    isCustomProtocol() {
+    currentHeader() {
       const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
       const kind = this.value.spec.model.kind;
+      const isCustomProtocol = deviceProtocol.includes(kind);
 
-      return deviceProtocol.includes(kind);
-    },
-    currentHeader() {
-      const kind = this.value.spec.model.kind;
-
-      if (this.isCustomProtocol) {
+      if (isCustomProtocol) {
         const headerName = `${ kind }Header`;
 
         return this.headers[headerName];
-      } else {
-        return CUSTOMDeviceHeader;
       }
+      return CUSTOMDeviceHeader;
     },
   },
 

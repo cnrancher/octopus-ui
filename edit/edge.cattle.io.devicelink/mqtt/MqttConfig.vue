@@ -36,7 +36,7 @@ export default {
     }
 
     if (mqtt.client.will.topicName) {
-      isSetLastWillTopic = true
+      isSetLastWillTopic = true;
     }
 
     if (mqtt.message.topic.name) {
@@ -122,16 +122,15 @@ export default {
             value: K
           };
         });
-      })
+      });
 
-      return data[0] || []
+      return data[0] || [];
     },
     deleteUnuseProp() {
-      const {
-        isShowBasicAuth, isUsePrefixTopic, isSetLastWillTopic
-      } = this;
+      const { isShowBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
       const Vauth = this.validateBasicAuth();
       const Vprefix = this.validatePrefix();
+
       this.addReferences();
 
       console.log('-----Vauth', Vauth, Vprefix);
@@ -151,8 +150,7 @@ export default {
           errors.push('请输入name 或 password!');
         }
       } else {
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.client.basicAuth, 'name');
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.client.basicAuth, 'password');
+        Vue.delete(this.value.spec.template.spec.extension.mqtt.client, 'basicAuth');
       }
 
       return errors;
@@ -177,20 +175,19 @@ export default {
     },
     addReferences() {
       const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.value.spec.template.spec.extension.mqtt.client;
-      const arr = [caFilePEMRef, certFilePEMRef, keyFilePEMRef]
+      const arr = [caFilePEMRef, certFilePEMRef, keyFilePEMRef];
       const filterArr = _.uniqBy(arr, 'name');
-      const references = filterArr.map( O => {
+      const references = filterArr.map( (O) => {
         return {
-          name: O.name,
-          secret: {
-            name: O.name
-          }
-        }
-      })
+          name:   O.name,
+          secret: { name: O.name }
+        };
+      });
+
       this.$set(this.value.spec, 'references', references);
     },
     clearData(type) {
-      this.value.spec.template.spec.extension.mqtt.client.tlsConfig[type].item = ''
+      this.value.spec.template.spec.extension.mqtt.client.tlsConfig[type].item = '';
     }
   },
 };
@@ -335,9 +332,9 @@ export default {
               v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePEMRef.name"
               label="Cert File Pem"
               :options="this.secretList"
-              @input="clearData('certFilePEMRef')"
               :clearable="true"
               required
+              @input="clearData('certFilePEMRef')"
             />
           </div>
 
@@ -355,8 +352,8 @@ export default {
               v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
               label="Key File Pem"
               :options="this.secretList"
-              @input="clearData('keyFilePEMRef')"
               required
+              @input="clearData('keyFilePEMRef')"
             />
           </div>
 

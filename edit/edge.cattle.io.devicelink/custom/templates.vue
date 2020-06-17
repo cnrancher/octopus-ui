@@ -19,14 +19,17 @@ export default {
     value: {
       type: Object,
       default: () => {}
+    },
+    mode: { 
+      type: String, 
+      default: 'edit'
     }
   },
 
   data() {
-    //  location: 'living_room' 
-    console.log('-----this.templateProtocol', this.templateProtocol)
+    const _protocol = this.value.spec.template.spec.protocol
     const protocol = this.templateProtocol.properties || {};
-    const properties = {};
+    let properties = {};
     const keys = Object.keys(protocol);
 
     keys.forEach((key) => {
@@ -51,8 +54,9 @@ export default {
       }
     })
     
+    properties = _.merge(properties, _protocol)
     this.$set(this.value.spec.template.spec, 'protocol', _.cloneDeep(properties));
-    console.log('处理后的properties', properties)
+    console.log('处理后的properties', properties, _protocol)
     return {
       properties,
     }

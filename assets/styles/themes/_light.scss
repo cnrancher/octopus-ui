@@ -93,6 +93,8 @@ $selected: rgba($primary, .5);
   --outline-width              : 2px;
 
   --badge-success-bg           : #dff2e7;
+  --badge-error-bg             : #{$error};
+  --badge-warning-bg           : #{$warning};
 
   --accent-btn                 : #dfe4f8;
   --accent-btn-text            : #8d93f4;

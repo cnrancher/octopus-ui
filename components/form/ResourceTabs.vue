@@ -38,7 +38,7 @@ export default {
 <template>
   <Tabbed v-bind="$attrs" class="mt-20 p-20 card-box-shadow">
     <slot name="before" />
-    <Tab name="Labels" label="Labels">
+    <Tab name="Labels" :label="t('common.labels')">
       <KeyValue
         key="labels"
         v-model="labels"
@@ -50,7 +50,7 @@ export default {
         class="pl-10"
       />
     </Tab>
-    <Tab name="annotations" label="Annotations">
+    <Tab name="annotations" :label="t('common.annotations')">
       <KeyValue
         key="annotations"
         v-model="annotations"

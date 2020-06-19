@@ -1,5 +1,5 @@
 <script>
-import { STATE, AGE, NAMESPACE_NAME, TYPE } from '@/config/table-headers';
+import { STATE, AGE, NAMESPACE_NAME, TYPE, WORKLOAD_ENDPOINTS } from '@/config/table-headers';
 import ResourceTable from '@/components/ResourceTable';
 import { WORKLOAD_TYPES, SCHEMA } from '@/config/types';
 
@@ -35,12 +35,7 @@ export default {
         STATE,
         TYPE,
         NAMESPACE_NAME,
-        {
-          name:      'endpoints',
-          label:     'Endpoints',
-          formatter: 'Endpoints',
-          value:     "$['metadata']['annotations']['field.cattle.io/publicEndpoints']"
-        },
+        WORKLOAD_ENDPOINTS,
         AGE,
       ];
     },

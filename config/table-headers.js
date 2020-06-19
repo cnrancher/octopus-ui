@@ -214,6 +214,13 @@ export const ENDPOINTS = {
   align:     'center',
 };
 
+export const WORKLOAD_ENDPOINTS = {
+  name:      'endpoints',
+  labelKey:  'tableHeaders.endpoints',
+  formatter: 'Endpoints',
+  value:     "$['metadata']['annotations']['field.cattle.io/publicEndpoints']"
+};
+
 export const SCALE = {
   name:      'scale',
   labelKey:  'tableHeaders.scale',

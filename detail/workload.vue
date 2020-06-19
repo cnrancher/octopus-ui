@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import { get } from '@/utils/object';
 import { STATE, NAME, NODE, POD_IMAGES } from '@/config/table-headers';
 import { POD, WORKLOAD_TYPES } from '@/config/types';
@@ -6,9 +7,7 @@ import ResourceTable from '@/components/ResourceTable';
 import DetailTop from '@/components/DetailTop';
 import CRUWorkload from '@/edit/workload';
 import Date from '@/components/formatter/Date';
-import LoadDeps from '@/mixins/load-deps';
 import { allHash } from '@/utils/promise';
-import WorkloadPorts from '@/components/form/WorkloadPorts';
 
 export default {
   components: {
@@ -16,9 +15,7 @@ export default {
     DetailTop,
     Date,
     ResourceTable,
-    WorkloadPorts,
   },
-  mixins:     [LoadDeps],
   props:      {
     value: {
       type:    Object,
@@ -29,6 +26,33 @@ export default {
     mode: {
       type:    String,
       default: 'view'
+    }
+  },
+
+  async fetch() {
+    // find all pods to filter by ownerRef
+    // in case of deployment, pods are owned by related replicaset, so get replicasets
+    // in case of cronjob, pods are owned by job
+    if (this.value.type === WORKLOAD_TYPES.DEPLOYMENT) {
+      const hash = await allHash({
+        replicasets: this.$store.dispatch('cluster/findAll', { type: WORKLOAD_TYPES.REPLICA_SET }),
+        pods:        this.$store.dispatch('cluster/findAll', { type: POD }),
+      });
+
+      this.allPods = hash.pods;
+      this.allReplicasets = hash.replicasets;
+    } else if (this.value.type === WORKLOAD_TYPES.CRON_JOB) {
+      const hash = await allHash({
+        jobs: this.$store.dispatch('cluster/findAll', { type: WORKLOAD_TYPES.JOB }),
+        pods:        this.$store.dispatch('cluster/findAll', { type: POD }),
+      });
+
+      this.allPods = hash.pods;
+      this.allJobs = hash.jobs;
+    } else {
+      const pods = await this.$store.dispatch('cluster/findAll', { type: POD });
+
+      this.allPods = pods;
     }
   },
 
@@ -80,8 +104,8 @@ export default {
       container
     };
   },
-  computed:   {
 
+  computed:   {
     pods() {
       if (this.value.type === WORKLOAD_TYPES.DEPLOYMENT) {
         const replicaset = this.filterResourcesByOwner(this.allReplicasets, this.name )[0];
@@ -127,36 +151,36 @@ export default {
     detailTopColumns() {
       return [
         {
-          title:   'Image',
+          title:   this.t('workload.detailTop.image'),
           content: this.container.image,
           icon:    '#icon-image'
         },
         {
-          title:   'Type',
+          title:    this.t('workload.detailTop.type'),
           content:  this.value._type ? this.value._type : this.value.type,
           icon:    '#icon-type'
         },
         {
-          title:    'Config Scale',
+          title:    this.t('workload.detailTop.configScale'),
           content:  get(this.value, 'spec.replicas'),
           fallback: 0,
           icon:     '#icon-config-num'
 
         },
         {
-          title:    'Ready Scale',
+          title:    this.t('workload.detailTop.readyScale'),
           content:  get(this.value, 'status.readyReplicas'),
           fallback: 0,
           icon:     '#icon-usable'
         },
         {
-          title:    'Pod Restarts',
+          title:    this.t('workload.detailTop.podRestarts'),
           content:  this.podRestarts,
           fallback: 0,
           icon:     '#icon-restart'
         },
         {
-          title:   'Created',
+          title:  this.t('workload.detailTop.created'),
           name:  'created',
           icon:  '#icon-time-create'
         },
@@ -205,33 +229,6 @@ export default {
         }).length);
       });
     },
-
-    // find all pods to filter by ownerRef
-    // in case of deployment, pods are owned by related replicaset, so get replicasets
-    // in case of cronjob, pods are owned by job
-    async loadDeps() {
-      if (this.value.type === WORKLOAD_TYPES.DEPLOYMENT) {
-        const hash = await allHash({
-          replicasets: this.$store.dispatch('cluster/findAll', { type: WORKLOAD_TYPES.REPLICA_SET }),
-          pods:        this.$store.dispatch('cluster/findAll', { type: POD }),
-        });
-
-        this.allPods = hash.pods;
-        this.allReplicasets = hash.replicasets;
-      } else if (this.value.type === WORKLOAD_TYPES.CRON_JOB) {
-        const hash = await allHash({
-          jobs: this.$store.dispatch('cluster/findAll', { type: WORKLOAD_TYPES.JOB }),
-          pods:        this.$store.dispatch('cluster/findAll', { type: POD }),
-        });
-
-        this.allPods = hash.pods;
-        this.allJobs = hash.jobs;
-      } else {
-        const pods = await this.$store.dispatch('cluster/findAll', { type: POD });
-
-        this.allPods = pods;
-      }
-    },
   },
 };
 </script>
@@ -244,10 +241,7 @@ export default {
           <Date :value="value.metadata.creationTimestamp" />
         </template>
       </DetailTop>
-      <div class="row">
-        <WorkloadPorts :value="container.ports" mode="view" />
-      </div>
-      <div class="p-20 card-box-shadow">
+      <div class="p-20 card-box-shadow mt-10">
         <div class="col span-12">
           <h3 class="mb-20">
             Pods

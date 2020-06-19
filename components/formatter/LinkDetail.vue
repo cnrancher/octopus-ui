@@ -11,10 +11,6 @@ export default {
       type:     Object,
       required: true
     },
-    col: {
-      type:     Object,
-      required: true
-    },
     opts: {
       type:    Object,
       default: null,
@@ -27,7 +23,7 @@ export default {
         return get(this.row, this.opts.reference);
       }
 
-      return this.row?.detailUrl;
+      return this.row?.detailLocation;
     },
   }
 };

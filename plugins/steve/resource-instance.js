@@ -1,14 +1,16 @@
 import Vue from 'vue';
+import jsyaml from 'js-yaml';
+import { cleanForNew } from './normalize';
 import { sortableNumericSuffix } from '@/utils/sort';
 import { generateZip, downloadFile } from '@/utils/download';
-import { ucFirst } from '@/utils/string';
+import { escapeHtml, ucFirst } from '@/utils/string';
 import { eachLimit } from '@/utils/promise';
 import {
   MODE, _EDIT, _CLONE,
-  AS_YAML, _FLAGGED, _VIEW
+  AS_YAML, _FLAGGED, _VIEW,
 } from '@/config/query-params';
 import { findBy } from '@/utils/array';
-import { addParams } from '@/utils/url';
+import { DEV } from '@/store/prefs';
 import { DESCRIPTION } from '@/config/labels-annotations';
 
 const REMAP_STATE = { disabled: 'inactive' };
@@ -28,6 +30,7 @@ const STATES = {
   backedup:       { color: 'success', icon: 'backup' },
   bound:          { color: 'success', icon: 'dot' },
   building:       { color: 'success', icon: 'dot-open' },
+  cordoned:       { color: 'info', icon: 'tag' },
   created:        { color: 'info', icon: 'tag' },
   creating:       { color: 'info', icon: 'tag' },
   deactivating:   { color: 'info', icon: 'adjust' },
@@ -85,7 +88,7 @@ export default {
   _key() {
     const m = this.metadata;
 
-    if (m) {
+    if ( m ) {
       return m.uid || `${ m.namespace ? `${ m.namespace }:` : '' }${ m.name }`;
     }
 
@@ -105,7 +108,7 @@ export default {
   typeDisplay() {
     const schema = this.schema;
 
-    if (schema) {
+    if ( schema ) {
       return this.$rootGetters['type-map/singularLabelFor'](schema);
     }
 
@@ -124,7 +127,7 @@ export default {
     const namespace = this.metadata.namespace;
     const name = this.metadata.name || this.id;
 
-    if (namespace) {
+    if ( namespace ) {
       return `${ namespace }:${ name }`;
     }
 
@@ -143,23 +146,36 @@ export default {
     return this.metadata?.namespace;
   },
 
+  groupByLabel() {
+    const name = this.metadata?.namespace;
+    let out;
+
+    if ( name ) {
+      out = this.$rootGetters['i18n/t']('resourceTable.groupLabel.namespace', { name: escapeHtml(name) });
+    } else {
+      out = this.$rootGetters['i18n/t']('resourceTable.groupLabel.notInANamespace');
+    }
+
+    return out;
+  },
+
   description() {
     return this.metadata?.annotations?.[DESCRIPTION];
   },
 
   setLabel() {
     return (key, val) => {
-      if (val) {
-        if (!this.metadata) {
+      if ( val ) {
+        if ( !this.metadata ) {
           this.metadata = {};
         }
 
-        if (!this.metadata.labels) {
+        if ( !this.metadata.labels ) {
           this.metadata.labels = {};
         }
 
         Vue.set(this.metadata.labels, key, val);
-      } else if (this.metadata?.labels) {
+      } else if ( this.metadata?.labels ) {
         Vue.set(this.metadata.labels, key, undefined);
         delete this.metadata.labels[key];
       }
@@ -168,21 +184,25 @@ export default {
 
   setAnnotation() {
     return (key, val) => {
-      if (val) {
-        if (!this.metadata) {
+      if ( val ) {
+        if ( !this.metadata ) {
           this.metadata = {};
         }
 
-        if (!this.metadata.annotations) {
+        if ( !this.metadata.annotations ) {
           this.metadata.annotations = {};
         }
 
         Vue.set(this.metadata.annotations, key, val);
-      } else if (this.metadata?.annotations) {
+      } else if ( this.metadata?.annotations ) {
         Vue.set(this.metadata.annotations, key, undefined);
         delete this.metadata.annotations[key];
       }
     };
+  },
+
+  highlightBadge() {
+    return false;
   },
 
   // You can override the state by providing your own state (and possibly reading metadata.state)
@@ -192,67 +212,69 @@ export default {
 
   // You can override the displayed by providing your own stateDisplay (and possibly reading _stateDisplay)
   stateDisplay() {
-    return this._stateDisplay;
+    return this._stateDisplay(this.state);
   },
 
   _stateDisplay() {
-    const state = this.state;
+    return (state) => {
+      if ( REMAP_STATE[state] ) {
+        return REMAP_STATE[state];
+      }
 
-    if (REMAP_STATE[state]) {
-      return REMAP_STATE[state];
-    }
-
-    return state.split(/-/).map(ucFirst).join('-');
+      return state.split(/-/).map(ucFirst).join('-');
+    };
   },
 
   stateColor() {
-    if (this.metadata?.state?.error) {
-      return 'text-error';
-    }
+    return (state) => {
+      if ( state?.error ) {
+        return 'text-error';
+      }
 
-    const key = (this.state || '').toLowerCase();
-    let color;
+      const key = (state || '').toLowerCase();
+      let color;
 
-    if (STATES[key] && STATES[key].color) {
-      color = this.maybeFn(STATES[key].color);
-    }
+      if ( STATES[key] && STATES[key].color ) {
+        color = this.maybeFn(STATES[key].color);
+      }
 
-    if (!color) {
-      color = DEFAULT_COLOR;
-    }
+      if ( !color ) {
+        color = DEFAULT_COLOR;
+      }
 
-    return `text-${ color }`;
+      return `text-${ color }`;
+    };
   },
 
   stateBackground() {
-    return this.stateColor.replace('text-', 'bg-');
+    return this.stateColor(this.state).replace('text-', 'bg-');
   },
 
   stateIcon() {
     let trans = false;
     let error = false;
 
-    if (this.metadata && this.metadata.state) {
+    if ( this.metadata && this.metadata.state ) {
       trans = this.metadata.state.transitioning;
       error = this.metadata.state.error;
     }
 
-    if (trans) {
+    if ( trans ) {
       return 'icon icon-spinner icon-spin';
     }
 
-    if (error) {
+    if ( error ) {
       return 'icon icon-error';
     }
 
     const key = (this.state || '').toLowerCase();
     let icon;
 
-    if (STATES[key] && STATES[key].icon) {
+    if ( STATES[key] && STATES[key].icon ) {
       icon = this.maybeFn(STATES[key].icon);
     }
 
-    if (!icon) {
+    if ( !icon ) {
       icon = DEFAULT_ICON;
     }
 
@@ -269,19 +291,19 @@ export default {
 
   waitForTestFn() {
     return (fn, msg, timeoutMs, intervalMs) => {
-      console.log(msg); // eslint-disable-line no-console
+      console.log('Starting wait for', msg); // eslint-disable-line no-console
 
-      if (!timeoutMs) {
+      if ( !timeoutMs ) {
         timeoutMs = DEFAULT_WAIT_TMIMEOUT;
       }
 
-      if (!intervalMs) {
+      if ( !intervalMs ) {
         intervalMs = DEFAULT_WAIT_INTERVAL;
       }
 
       return new Promise((resolve, reject) => {
         // Do a first check immediately
-        if (fn.apply(this)) {
+        if ( fn.apply(this) ) {
           console.log('Wait for', msg, 'done immediately'); // eslint-disable-line no-console
           resolve(this);
         }
@@ -294,7 +316,7 @@ export default {
         }, timeoutMs);
 
         const interval = setInterval(() => {
-          if (fn.apply(this)) {
+          if ( fn.apply(this) ) {
             console.log('Wait for', msg, 'done'); // eslint-disable-line no-console
             clearInterval(interval);
             clearTimeout(timeout);
@@ -311,7 +333,7 @@ export default {
     return (state, timeout, interval) => {
       return this.waitForTestFn(() => {
         return (this.state || '').toLowerCase() === state.toLowerCase();
-      }, `Wait for state=${ state }`, timeout, interval);
+      }, `state=${ state }`, timeout, interval);
     };
   },
 
@@ -319,7 +341,7 @@ export default {
     return () => {
       return this.waitForTestFn(() => {
         return !this.transitioning;
-      }, 'Wait for transition completion');
+      }, 'transition completion');
     };
   },
 
@@ -327,23 +349,23 @@ export default {
     return (name) => {
       return this.waitForTestFn(() => {
         return this.hasAction(name);
-      }, `Wait for action=${ name }`);
+      }, `action=${ name }`);
     };
   },
 
   hasCondition() {
     return (condition, withStatus = 'True') => {
-      if (!this.status || !this.status.conditions) {
+      if ( !this.status || !this.status.conditions ) {
         return false;
       }
 
       const entry = findBy((this.status.conditions || []), 'type', condition);
 
-      if (!entry) {
+      if ( !entry ) {
         return false;
       }
 
-      if (!withStatus) {
+      if ( !withStatus ) {
         return true;
       }
 
@@ -355,7 +377,7 @@ export default {
     return (name, withStatus = 'True', timeoutMs = DEFAULT_WAIT_TMIMEOUT, intervalMs = DEFAULT_WAIT_INTERVAL) => {
       return this.waitForTestFn(() => {
         return this.hasCondition(name, withStatus);
-      }, `Wait for condition ${ name }=${ withStatus }`, timeoutMs, intervalMs);
+      }, `condition ${ name }=${ withStatus }`, timeoutMs, intervalMs);
     };
   },
 
@@ -367,7 +389,7 @@ export default {
     // Remove disabled items and consecutive dividers
     let last = null;
     const out = all.filter((item) => {
-      if (item.enabled === false) {
+      if ( item.enabled === false ) {
         return false;
       }
 
@@ -380,12 +402,12 @@ export default {
     });
 
     // Remove dividers at the beginning
-    while (out.length && out[0].divider) {
+    while ( out.length && out[0].divider ) {
       out.shift();
     }
 
     // Remove dividers at the end
-    while (out.length && out[out.length - 1].divider) {
+    while ( out.length && out[out.length - 1].divider ) {
       out.pop();
     }
 
@@ -403,13 +425,13 @@ export default {
         action:  'goToEdit',
         label:   'Edit as Form',
         icon:    'icon icon-fw icon-edit',
-        enabled: this.canUpdate && this.canCustomEdit,
+        enabled:  this.canUpdate && this.canCustomEdit,
       },
       {
         action:  'goToClone',
         label:   'Clone as Form',
         icon:    'icon icon-fw icon-copy',
-        enabled: this.canCreate && this.canCustomEdit,
+        enabled:  this.canCreate && this.canCustomEdit,
       },
       { divider: true },
       {
@@ -428,7 +450,7 @@ export default {
         action:  'cloneYaml',
         label:   'Clone as YAML',
         icon:    'icon icon-fw icon-copy',
-        enabled: this.canCreate && this.canYaml,
+        enabled:  this.canCreate && this.canYaml,
       },
       {
         action:     'download',
@@ -447,14 +469,13 @@ export default {
         bulkable:   true,
         enabled:    this.canDelete,
         bulkAction: 'promptRemove',
-        theme:      'error'
       },
       { divider: true },
       {
         action:  'viewInApi',
         label:   'View in API',
         icon:    'icon icon-fw icon-external-link',
-        enabled: this.canViewInApi,
+        enabled:  this.canViewInApi,
       }
     ];
 
@@ -463,7 +484,7 @@ export default {
 
   maybeFn() {
     return (val) => {
-      if (typeof val === 'function') {
+      if ( typeof val === 'function' ) {
         return val(this);
       }
 
@@ -486,11 +507,11 @@ export default {
   },
 
   canCreate() {
-    return (this.schema?.attributes?.verbs || []).includes('create') && this.$rootGetters['type-map/isCreatable'](this.type);
+    return this.$rootGetters['type-map/isCreatable'](this.type);
   },
 
   canViewInApi() {
-    return this.hasLink('self');
+    return this.hasLink('self') && this.$rootGetters['prefs/get'](DEV);
   },
 
   canYaml() {
@@ -513,15 +534,15 @@ export default {
 
   followLink() {
     return (linkName, opt = {}) => {
-      if (!opt.url) {
+      if ( !opt.url ) {
         opt.url = (this.links || {})[linkName];
       }
 
-      if (opt.urlSuffix) {
+      if ( opt.urlSuffix ) {
         opt.url += opt.urlSuffix;
       }
 
-      if (!opt.url) {
+      if ( !opt.url ) {
         throw new Error(`Unknown link ${ linkName } on ${ this.type } ${ this.id }`);
       }
 
@@ -545,7 +566,7 @@ export default {
 
   doAction() {
     return (actionName, body, opt = {}) => {
-      if (!opt.url) {
+      if ( !opt.url ) {
         opt.url = this.actionLinkFor(actionName);
       }
 
@@ -560,7 +581,7 @@ export default {
 
   patch() {
     return (data, opt = {}) => {
-      if (!opt.url) {
+      if ( !opt.url ) {
         opt.url = this.linkFor('self');
       }
 
@@ -576,48 +597,54 @@ export default {
   save() {
     return async(opt = {}) => {
       delete this.__rehydrate;
+      const forNew = !this.id;
 
-      if (!opt.url) {
-        if (this.id) {
-          opt.url = this.linkFor('update') || this.linkFor('self');
-        } else {
+      if ( !opt.url ) {
+        if ( forNew ) {
           const schema = this.$getters['schemaFor'](this.type);
           let url = schema.linkFor('collection');
 
-          if (schema.attributes && schema.attributes.namespaced) {
+          if ( schema.attributes && schema.attributes.namespaced ) {
             url += `/${ this.metadata.namespace }`;
           }
 
           opt.url = url;
+        } else {
+          opt.url = this.linkFor('update') || this.linkFor('self');
         }
       }
 
-      if (!opt.method) {
-        opt.method = (this.id ? 'put' : 'post');
+      if ( !opt.method ) {
+        opt.method = ( forNew ? 'post' : 'put' );
       }
 
-      if (!opt.headers) {
+      if ( !opt.headers ) {
         opt.headers = {};
       }
 
-      if (!opt.headers['content-type']) {
+      if ( !opt.headers['content-type'] ) {
         opt.headers['content-type'] = 'application/json';
       }
 
-      if (!opt.headers['accept']) {
+      if ( !opt.headers['accept'] ) {
         opt.headers['accept'] = 'application/json';
       }
 
       // @TODO remove this once the API maps steve _type <-> k8s type in both directions
-      if (this._type) {
-        this.type = this._type;
-      }
+      opt.data = { ...this };
 
-      opt.data = this;
+      if (opt?.data._type) {
+        opt.data.type = opt.data._type;
+      }
 
       const res = await this.$dispatch('request', opt);
 
-      await this.$dispatch('load', { data: res, existing: this });
+      // console.log('### Resource Save', this.type, this.id);
+
+      // Steve sometimes returns Table responses instead of the resource you just saved.. ignore
+      if ( res && res.kind !== 'Table') {
+        await this.$dispatch('load', { data: res, existing: (forNew ? this : undefined ) });
+      }
 
       return this;
     };
@@ -625,7 +652,7 @@ export default {
 
   remove() {
     return (opt = {}) => {
-      if (!opt.url) {
+      if ( !opt.url ) {
         opt.url = (this.links || {})['self'];
       }
 
@@ -639,7 +666,7 @@ export default {
 
   currentRoute() {
     return () => {
-      if (process.server) {
+      if ( process.server ) {
         return this.$rootState.$route;
       } else {
         return window.$nuxt.$route;
@@ -649,7 +676,7 @@ export default {
 
   currentRouter() {
     return () => {
-      if (process.server) {
+      if ( process.server ) {
         return this.$rootState.$router;
       } else {
         return window.$nuxt.$router;
@@ -657,100 +684,87 @@ export default {
     };
   },
 
-  detailUrl() {
-    const router = this.currentRouter();
+  detailLocation() {
     const schema = this.$getters['schemaFor'](this.type);
 
-    let route = `c-cluster-resource${ schema?.attributes?.namespaced ? '-namespace' : '' }-id`;
-
-    const currentPath = router.history.current.path; // TODO
-
-    if (currentPath.includes('device-')) {
-      route = `device-resource-id`;
-    }
-
-    if (currentPath.includes('deviceProtocol-')) {
-      route = `deviceProtocol-resource-id`;
-    }
-
-    if (currentPath.includes('mqttManagement')) {
-      route = `mqttManagement-resource-namespace-id`;
-    }
-
-    const params = {
-      resource:  this.type,
-      namespace: this.metadata && this.metadata.namespace,
-      id:        this.metadata.name
+    return {
+      name:   `c-cluster-resource${ schema?.attributes?.namespaced ? '-namespace' : '' }-id`,
+      params: {
+        resource:  this.type,
+        namespace: this.metadata && this.metadata.namespace,
+        id:        this.metadata.name
+      }
     };
-
-    const url = router.resolve({
-      name: route,
-      params,
-    }).href;
-
-    // console.log('----route', route, params, url)
-    return url;
   },
 
   goToClone() {
     return (moreQuery = {}) => {
-      const url = addParams(this.detailUrl, {
+      const location = this.detailLocation;
+
+      location.query = {
+        ...location.query,
         [MODE]: _CLONE,
         ...moreQuery
-      });
+      };
 
-      this.currentRouter().push({ path: url });
+      this.currentRouter().push(location);
     };
   },
 
   goToEdit() {
     return (moreQuery = {}) => {
-      const url = addParams(this.detailUrl, { [MODE]: _EDIT, ...moreQuery });
+      const location = this.detailLocation;
 
-      this.currentRouter().push({ path: url });
-    };
-  },
+      location.query = {
+        ...location.query,
+        [MODE]: _EDIT,
+        ...moreQuery
+      };
 
-  goToView() {
-    return (moreQuery = {}) => {
-      const url = addParams(this.detailUrl, { [MODE]: _VIEW, ...moreQuery });
-
-      this.currentRouter().push({ path: url });
+      this.currentRouter().push(location);
     };
   },
 
   goToEditYaml() {
     return () => {
-      const url = addParams(this.detailUrl, {
-        [MODE]:    _EDIT,
-        [AS_YAML]: _FLAGGED
-      });
+      const location = this.detailLocation;
 
-      // console.log('---goToEditYaml', url)
-      this.currentRouter().push({ path: url });
+      location.query = {
+        ...location.query,
+        [MODE]:      _EDIT,
+        [AS_YAML]: _FLAGGED
+      };
+
+      this.currentRouter().push(location);
     };
   },
 
   goToViewYaml() {
     return () => {
-      const url = addParams(this.detailUrl, {
-        [MODE]:    _VIEW,
-        [AS_YAML]: _FLAGGED
-      });
+      const location = this.detailLocation;
 
-      this.currentRouter().push({ path: url });
+      location.query = {
+        ...location.query,
+        [MODE]:      _VIEW,
+        [AS_YAML]: _FLAGGED
+      };
+
+      this.currentRouter().push(location);
     };
   },
 
   cloneYaml() {
     return (moreQuery = {}) => {
-      const url = addParams(this.detailUrl, {
-        [MODE]:    _CLONE,
+      const location = this.detailLocation;
+
+      location.query = {
+        ...location.query,
+        [MODE]:      _CLONE,
         [AS_YAML]: _FLAGGED,
         ...moreQuery
-      });
+      };
 
-      this.currentRouter().push({ path: url });
+      this.currentRouter().push(location);
     };
   },
 
@@ -768,11 +782,11 @@ export default {
       const files = {};
       const names = [];
 
-      for (const item of items) {
+      for ( const item of items ) {
         let name = `${ item.nameDisplay }.yaml`;
         const i = 2;
 
-        while (names.includes(name)) {
+        while ( names.includes(name) ) {
           name = `${ item.nameDisplay }_${ i }.yaml`;
         }
 
@@ -782,7 +796,7 @@ export default {
       await eachLimit(items, 10, (item, idx) => {
         const link = item.hasLink('rioview') ? 'rioview' : 'view';
 
-        return item.followLink(link, { headers: { accept: 'application/yaml' } }).then((data) => {
+        return item.followLink(link, { headers: { accept: 'application/yaml' } } ).then((data) => {
           files[`resources/${ names[idx] }`] = data;
         });
       });
@@ -805,7 +819,7 @@ export default {
     };
   },
 
-  applyDefaults() {
+  applyDefaults(/* mode */) {
     return () => {
       return this;
     };
@@ -813,7 +827,7 @@ export default {
 
   urlFromAttrs() {
     const schema = this.$getters['schemaFor'](this.type);
-    const { metadata: { namespace = 'default' } } = this;
+    const { metadata:{ namespace = 'default' } } = this;
     let url = schema.links.collection;
 
     const attributes = schema?.attributes;
@@ -826,5 +840,47 @@ export default {
     url = `${ url.slice(0, url.indexOf('/v1')) }/apis/${ group }/namespaces/${ namespace }/${ resource }`;
 
     return url;
+  },
+
+  // convert yaml to object, clean for new if creating/cloning
+  // map _type to type
+  cleanYaml() {
+    return (yaml, mode = 'edit') => {
+      try {
+        const obj = jsyaml.safeLoad(yaml);
+
+        if (mode !== 'edit') {
+          cleanForNew(obj);
+        }
+
+        if (obj._type) {
+          obj.type = obj._type;
+          delete obj._type;
+        }
+        const out = jsyaml.safeDump(obj, { skipInvalid: true });
+
+        return out;
+      } catch (e) {
+        return null;
+      }
+    };
+  },
+
+  yamlForSave() {
+    return (yaml) => {
+      try {
+        const obj = jsyaml.safeLoad(yaml);
+
+        if (obj) {
+          if (this._type) {
+            obj._type = obj.type;
+          }
+
+          return jsyaml.safeDump(obj);
+        }
+      } catch (e) {
+        return null;
+      }
+    };
   }
 };

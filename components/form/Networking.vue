@@ -141,7 +141,7 @@ export default {
 };
 </script>
 <template>
-  <div class="pl-10">
+  <div>
     <div class="row">
       <div class="col span-6">
         <LabeledSelect

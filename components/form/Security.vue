@@ -100,7 +100,7 @@ export default {
 </script>
 
 <template>
-  <div class="pl-10" @input="update">
+  <div @input="update">
     <div class="row mb-20">
       <div class="col span-6">
         <h4>

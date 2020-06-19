@@ -26,15 +26,13 @@ export default {
 
     placeholder: {
       type:    String,
-      default: null
+      default: ''
+    },
+    hideLabel: {
+      type:    Boolean,
+      default: false,
     }
 
-  },
-
-  data() {
-    const actualPlaceholder = this.hidePlaceholder ? '' : this.placeholder;
-
-    return { actualPlaceholder };
   },
 
   computed: {
@@ -62,22 +60,19 @@ export default {
 
     onFocus() {
       this.onFocusLabeled();
-      this.actualPlaceholder = '';
     },
 
     onBlur() {
       this.onBlurLabeled();
-      this.actualPlaceholder = `${ this.placeholder }`;
     }
   }
 };
 </script>
 
 <template>
-  <div v-if="isViewing" :class="{'labeled-input': true, [mode]: true, disabled}">
-    <slot name="label">
-      <label v-if="i18nLabel" k-t="i18nLabel" />
-      <label v-else>
+  <div v-if="isViewing" :class="{'labeled-input': true, [mode]: true, disabled, 'hide-label': hideLabel}">
+    <slot v-if="!hideLabel" name="label">
+      <label>
         {{ label }}
         <span v-if="required && !value" class="required">*</span>
       </label>
@@ -92,14 +87,13 @@ export default {
         <slot name="suffix" />
       </span>
       <span v-else>
-        <t k="generic.na" raw="true" />
+        <t k="generic.na" :raw="true" />
       </span>
     </div>
   </div>
   <div v-else :class="{'labeled-input': true, raised, focused, [mode]: true, disabled}">
     <slot name="label">
-      <label v-if="i18nLabel" k-t="i18nLabel" />
-      <label v-else>
+      <label>
         {{ label }}
         <span v-if="required && !value" class="required">*</span>
       </label>
@@ -123,7 +117,7 @@ export default {
         v-bind="$attrs"
         :disabled="disabled"
         :value="value"
-        :placeholder="actualPlaceholder"
+        :placeholder="placeholder"
         @input="$emit('input', $event)"
         @focus="onFocus"
         @blur="onBlur"
@@ -135,7 +129,7 @@ export default {
         :disabled="disabled"
         :type="type"
         :value="value"
-        :placeholder="actualPlaceholder"
+        :placeholder="placeholder"
         autocomplete="off"
         @input="$emit('input', $event.target.value)"
         @focus="onFocus"
@@ -145,3 +139,12 @@ export default {
     <slot name="suffix" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .hide-label {
+    padding-top: 0;
+    > DIV {
+      padding-top: 0!important;
+    }
+  }
+</style>

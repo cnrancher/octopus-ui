@@ -241,6 +241,7 @@ export default {
         <Tab name="conditions" :label="t('node.detail.tab.conditions')">
           <SortableTable
             key-field="_key"
+            class="pl-10"
             :headers="conditionsTableHeaders"
             :rows="conditionsTableRows"
             :row-actions="false"
@@ -252,6 +253,7 @@ export default {
         <Tab name="info" :label="t('node.detail.tab.info')">
           <SortableTable
             key-field="_key"
+            class="pl-10"
             :headers="infoTableHeaders"
             :rows="infoTableRows"
             :row-actions="false"
@@ -263,6 +265,7 @@ export default {
         <Tab name="address" :label="t('node.detail.tab.address')">
           <SortableTable
             key-field="_key"
+            class="pl-10"
             :headers="addressTableHeaders"
             :rows="addressTableRows"
             :row-actions="false"
@@ -273,6 +276,7 @@ export default {
         <Tab name="images" :label="t('node.detail.tab.images')">
           <SortableTable
             key-field="_key"
+            class="pl-10"
             :headers="imageTableHeaders"
             :rows="imageTableRows"
             :row-actions="false"
@@ -282,6 +286,7 @@ export default {
         <Tab name="taints" :label="t('node.detail.tab.taints')">
           <SortableTable
             key-field="_key"
+            class="pl-10"
             :headers="taintTableHeaders"
             :rows="taintTableRows"
             :row-actions="false"

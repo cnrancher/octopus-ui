@@ -3,6 +3,7 @@ import { CONFIG_MAP, SECRET, NAMESPACE } from '@/config/types';
 import { get } from '@/utils/object';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import LabeledInput from '@/components/form/LabeledInput';
+import { _EDIT } from '@/config/query-params';
 
 export default {
   components: {
@@ -42,7 +43,15 @@ export default {
       { value: 'fieldRef', label: 'Field' },
       { value: 'secretRef', label: 'Secret' }];
 
-    let type = this.row.secretRef ? 'secretRef' : Object.keys((this.row.valueFrom))[0];
+    let type;
+
+    if (this.row.secretRef) {
+      type = 'secretRef';
+    } else if (this.row.valueFrom) {
+      type = Object.keys((this.row.valueFrom))[0];
+    } else {
+      type = Object.keys(this.row)[0];
+    }
 
     let refName;
     let name;
@@ -84,7 +93,15 @@ export default {
     }
 
     return {
-      typeOpts, type, refName, referenced: refName, secrets:    this.allSecrets, keys:       [], key, fieldPath, name
+      typeOpts,
+      type,
+      refName,
+      referenced: refName,
+      secrets:    this.allSecrets,
+      keys:       [],
+      key,
+      fieldPath,
+      name
     };
   },
   computed: {
@@ -108,6 +125,10 @@ export default {
         return [];
       }
     },
+
+    hideLabel() {
+      return this.mode !== _EDIT;
+    }
   },
 
   watch: {
@@ -189,6 +210,7 @@ export default {
         label="Type"
         :mode="mode"
         option-label="label"
+        :hide-label="hideLabel"
         @input="updateRow"
       />
     </div>
@@ -202,6 +224,7 @@ export default {
           option-label="metadata.name"
           option-key
           :mode="mode"
+          :hide-label="hideLabel"
           @input="updateRow"
         />
       </div>
@@ -213,35 +236,44 @@ export default {
           :options="typeOpts"
           :mode="mode"
           option-label="label"
+          :hide-label="hideLabel"
           @input="updateRow"
         />
       </div>
     </template>
     <template v-else-if="type==='resourceFieldRef'">
       <div class="col span-5-of-23">
-        <LabeledInput v-model="refName" label="Source" placeholder="e.g. my-container" :mode="mode" />
+        <LabeledInput v-model="refName" label="Source" placeholder="e.g. my-container" :mode="mode" :hide-label="hideLabel" />
       </div>
 
       <div class="col span-5-of-23">
-        <LabeledInput v-model="key" label="Key" placeholder="e.g. requests.cpu" :mode="mode" />
+        <LabeledInput v-model="key" label="Key" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
       </div>
     </template>
     <template v-else>
       <div class="col span-5-of-23">
-        <LabeledInput v-model="fieldPath" label="Source" placeholder="e.g. requests.cpu" :mode="mode" />
+        <LabeledInput v-model="fieldPath" label="Source" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
       </div>
 
       <div class="col span-5-of-23">
-        <LabeledInput value="n/a" label="Key" placeholder="e.g. requests.cpu" disabled :mode="mode" />
+        <LabeledInput
+          value="n/a"
+          label="Key"
+          placeholder="e.g. requests.cpu"
+          disabled
+          :mode="mode"
+          :hide-label="hideLabel"
+          :class="{'hide-background': hideLabel}"
+        />
       </div>
     </template>
     <div class="col span-1-of-23">
-      <div id="as">
+      <div id="as" :class="{'pb-10': hideLabel}">
         as
       </div>
     </div>
     <div class="col span-5-of-23">
-      <LabeledInput v-model="name" label="Prefix or Alias" :mode="mode" />
+      <LabeledInput v-model="name" label="Prefix or Alias" :mode="mode" :hide-label="hideLabel" />
     </div>
     <div class="col span-2-of-23">
       <button v-if="mode!=='view'" id="remove" type="button" class="btn btn-sm role-link" @click="$emit('input', { value:null })">
@@ -255,6 +287,10 @@ export default {
   .row{
     display: flex;
     align-items: center;
+
+    .hide-background {
+      background: none!important;
+    }
   }
 
   #as {

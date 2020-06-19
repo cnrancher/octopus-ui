@@ -109,7 +109,7 @@ export default {
 </script>
 
 <template>
-  <div class="pl-10" @input="update">
+  <div @input="update">
     <div>
       <h3>Node Scheduling</h3>
       <h4 v-if="isView" class="mt-10 mb-10">

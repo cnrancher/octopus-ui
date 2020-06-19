@@ -36,6 +36,7 @@ module.exports = {
     'vue/html-self-closing':    'off',
     'vue/no-v-html':            'off',
     'wrap-iife':                'off',
+    'import/order':             'off',
 
     'array-bracket-spacing':          'warn',
     'arrow-parens':                   'warn',

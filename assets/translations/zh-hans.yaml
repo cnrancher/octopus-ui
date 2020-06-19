@@ -71,10 +71,10 @@ containerResourceLimit:
   label: Container Default Resource Limit
   helpText: Configure how much of the resources the container can consume by default.
   helpTextDetail: The amount of resources the container can consume by default.
-  requestsCpu: CPU Reservation
-  requestsMemory: Memory Reservation
-  limitsCpu: CPU Limit
-  limitsMemory: Memory Limit
+  requestsCpu: CPU预留
+  requestsMemory: 内存预留
+  limitsCpu: CPU限制
+  limitsMemory: 内存限制
   cpuPlaceholder: e.g. 1000
   memPlaceholder: e.g. 128
 
@@ -371,25 +371,32 @@ persistentVolumePage:
 workload:
   container:
     titles:
-      ports: Ports
-      command: Command
-      resources: Resources
-      healthCheck: Health Check
-      securityContext: Security Context
+      ports: 端口
+      command: 命令
+      resources: 资源
+      healthCheck: 健康检查
+      securityContext: 安全上下文
+      environmentVariables: 环境变量
+      requestHeaders: 请求头
     name: Container Name
     image: Container Image
     imagePullPolicy: Image Pull Policy
     ports:
-      containerPort: Private Container Port
+      containerPort: 容器端口
       hostPort: Public Host Port
-      protocol: Protocol
-      name: Name
+      protocol: 协议
+      name: 名称
     command:
-      command: Entrypoint
-      args: Arguments
-      workingDir: WorkingDir
-      env: Environment Variables
+      command: 入口
+      args: 参数
+      workingDir: 工作目录
+      env: 环境变量
+      stdin: 标准输入
       addFromResource: Add from Resource
+      type: 类型
+      source: 资源
+      key: 键
+      prefixOfAlias: 前缀或别名
     healthcheck:
       readinessProbe: Readiness Probe
       livenessProbe: Liveness Probe
@@ -397,32 +404,35 @@ workload:
       livenessTip: Containers will be restarted when this check is failing.  Not recommended for most uses.
       readinessTip: Containers will be removed from service endpoints when this check is failing.  Recommended.
       startupTip: Containers will wait until this check succeeds before attempting other health checks.
-      checkInterval: Check Interval
-      successThreshold: Success Threshold
-      failureThreshold: Failure Threshold
-      initialDelay: Initial Delay
-      timeout: Timeout
+      checkInterval: 检查周期
+      successThreshold: 健康阈值
+      failureThreshold: 不健康阈值
+      initialDelay: 运行多少时间后开始检测
+      timeout: 超时时间
       httpGet:
-        port: Check Port
-        path: Request Path
-        headers: Request Headers
+        port: 检查端口
+        path: 请求路径
+        headers: 请求头
       command:
         command: Command to run
+      readinessCheck: 就绪状态检查
+      livenessCheck: 存活状态检查
+      startupCheck: 启动检查
+      type: 类型
     security:
-      privileged: Privileged
-      allowPrivilegeEscalation: Privilege Escalation
-      runAsNonRoot: Run as Non-Root
+      privileged: 特权模式
+      allowPrivilegeEscalation: 提升特权
+      runAsNonRoot: 以非root用户身份运行
       runAsNonRootOptions:
         yesOption: 'Yes: containers must run as non-root-user'
         noOption: 'No'
-      readOnlyRootFilesystem: Read-Only Root Filesystem
-      runAsUser: Run as User ID
-      runAsGroup: Run as Group ID
+      readOnlyRootFilesystem: 只读根文件系统
+      runAsUser: 以用户身份运行
       supplementalGroups: Additional Group IDs
       addGroupIDs: Add Group IDs
       fsGroup: Filesystem Group
-      addCapabilities: Add Capabilities
-      dropCapabilities: Drop Capabilities
+      addCapabilities: 增加内核功能
+      dropCapabilities: 移除内核功能
       shareProcessNamespace: Share single process namespace
       hostPID: "Use Host PID Namespace"
       hostIPC: "Use Host IPC Namespace"
@@ -491,6 +501,22 @@ workload:
     ports: 端口
     command: 命令
     resource: 资源
-    
+    healthCheck: 健康检查
+    securityContext: 安全上下文
+    networking: 网络
+    nodeScheduling: 主机调度
+    scalingUpgradePolicy: "伸缩/更新策略"
 
-
+pod:
+  detailTop:
+    workload: 工作负载
+    podIp: Pod Ip
+    node: 主机
+    podRestarts: Pod重启次数
+    created: 创建时间
+  info:
+    tableHeaders:
+      status: 状态
+      name: 名称
+      image: 镜像
+      imagePullPolicy: 镜像拉取策略

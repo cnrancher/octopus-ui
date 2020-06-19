@@ -166,7 +166,7 @@ export default {
       </div>
     </div>
     <Tabbed class="contrast">
-      <Tab name="ports" label="Ports">
+      <Tab name="ports" :label="t('workload.container.titles.ports')">
         <WorkloadPorts v-model="ports" :mode="mode" />
       </Tab>
       <Tab label="Command" name="command">

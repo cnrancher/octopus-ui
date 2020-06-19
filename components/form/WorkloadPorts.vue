@@ -105,7 +105,7 @@ export default {
 </script>
 
 <template>
-  <div class="card-box-shadow">
+  <div>
     <table v-if="rows.length" class="fixed">
       <thead>
         <tr>
@@ -208,8 +208,8 @@ export default {
 
   TABLE {
     width: 100%;
-        border-collapse: separate;
-    border-spacing: 5px 10px;
+    border-collapse: separate;
+    border-spacing: 0 10px;
   }
 
   TH {

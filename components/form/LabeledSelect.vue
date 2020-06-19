@@ -49,6 +49,10 @@ export default {
 
         return e;
       }
+    },
+    hideLabel: {
+      type:    Boolean,
+      default: false
     }
   },
 
@@ -152,9 +156,9 @@ export default {
 </script>
 
 <template>
-  <div class="labeled-select labeled-input" :class="{disabled, focused, [mode]: true}">
+  <div class="labeled-select labeled-input" :class="{disabled, focused, [mode]: true, 'hide-label': hideLabel}">
     <div :class="{'labeled-container': true, raised, empty, [mode]: true}" :style="{border:'none'}">
-      <label v-if="label">
+      <label v-if="label && !hideLabel">
         {{ label }}
         <span v-if="required && !value" class="required">*</span>
       </label>
@@ -219,6 +223,12 @@ export default {
       max-height:2.3em;
       overflow:hidden;
       }
+  }
+  &.hide-label {
+    padding-top: 0;
+    .labeled-container > DIV {
+      padding-top: 0;
+    }
   }
 
   &.focused .vs__dropdown-menu {

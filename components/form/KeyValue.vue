@@ -258,7 +258,6 @@ export default {
         [this.valueName]: value,
         binary,
       });
-
       this.queueUpdate();
       this.$nextTick(() => {
         // this.$refs.key.focus();
@@ -358,9 +357,9 @@ export default {
 <template>
   <div class="key-value" :class="mode">
     <div v-if="title" class="clearfix">
-      <h4 :style="{'display':'flex'}">
+      <h2 :style="{'display':'flex'}">
         {{ title }} <i v-if="protip" v-tooltip="protip" class="icon icon-info" style="font-size: 12px" />
-      </h4>
+      </h2>
     </div>
 
     <SortableTable
@@ -596,7 +595,7 @@ export default {
     }
 }
 
-.no-rows {
+.key-value TR:first-of-type TD.no-rows {
   padding: 40px;
   text-align: center;
 }

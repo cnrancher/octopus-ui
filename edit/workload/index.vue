@@ -404,32 +404,32 @@ export default {
 
     <ResourceTabs v-model="value" :mode="mode">
       <template #before>
-        <Tab v-if="isJob" label="Job Configuration" name="job">
-          <Job v-model="spec" :mode="mode" :type="type" />
+        <Tab v-if="isJob" :label="t('workload.tab.jobConfig')" name="job">
+          <Job v-model="spec" class="pl-10" :mode="mode" :type="type" />
         </Tab>
-        <Tab name="ports" label="Ports">
-          <WorkloadPorts v-model="container.ports" :mode="mode" />
+        <Tab name="ports" :label="t('workload.tab.ports')">
+          <WorkloadPorts v-model="container.ports" class="pl-10" :mode="mode" />
         </Tab>
-        <Tab label="Command" name="command">
-          <Command v-model="command" :mode="mode" :secrets="namespacedSecrets" :config-maps="namespacedConfigMaps" />
+        <Tab :label="t('workload.tab.command')" name="command">
+          <Command v-model="command" class="pl-10" :mode="mode" :secrets="namespacedSecrets" :config-maps="namespacedConfigMaps" />
         </Tab>
-        <Tab label="Resources" name="resources">
-          <ContainerResourceLimit v-model="flatResources" :mode="mode" :show-tip="false" />
+        <Tab :label="t('workload.tab.resource')" name="resources">
+          <ContainerResourceLimit v-model="flatResources" class="pl-10" :mode="mode" :show-tip="false" />
         </Tab>
-        <Tab label="Health Check" name="healthCheck">
-          <HealthCheck v-model="healthCheck" :mode="mode" />
+        <Tab :label="t('workload.tab.healthCheck')" name="healthCheck">
+          <HealthCheck v-model="healthCheck" class="pl-10" :mode="mode" />
         </Tab>
-        <Tab label="Security Context" name="securityContext">
-          <Security v-model="container.securityContext" :mode="mode" />
+        <Tab :label="t('workload.tab.securityContext')" name="securityContext">
+          <Security v-model="container.securityContext" class="pl-10" :mode="mode" />
         </Tab>
-        <Tab label="Networking" name="networking">
-          <Networking v-model="podTemplateSpec" :mode="mode" />
+        <Tab :label="t('workload.tab.networking')" name="networking">
+          <Networking v-model="podTemplateSpec" class="pl-10" :mode="mode" />
         </Tab>
-        <Tab label="Node Scheduling" name="scheduling">
-          <Scheduling v-model="podTemplateSpec" :mode="mode" :show-pod="false" />
+        <Tab :label="t('workload.tab.nodeScheduling')" name="scheduling">
+          <Scheduling v-model="podTemplateSpec" class="pl-10" :mode="mode" :show-pod="false" />
         </Tab>
-        <Tab label="Scaling/Upgrade Policy" name="upgrading">
-          <Upgrading v-model="spec" :mode="mode" />
+        <Tab :label="t('workload.tab.scalingUpgradePolicy', undefined, true)" name="upgrading">
+          <Upgrading v-model="spec" class="pl-10" :mode="mode" />
         </Tab>
       </template>
     </ResourceTabs>

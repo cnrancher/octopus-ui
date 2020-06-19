@@ -27,6 +27,10 @@ export default {
     placeholder: {
       type:    String,
       default: ''
+    },
+    hideLabel: {
+      type:    Boolean,
+      default: false,
     }
 
   },
@@ -66,8 +70,8 @@ export default {
 </script>
 
 <template>
-  <div v-if="isViewing" :class="{'labeled-input': true, [mode]: true, disabled}">
-    <slot name="label">
+  <div v-if="isViewing" :class="{'labeled-input': true, [mode]: true, disabled, 'hide-label': hideLabel}">
+    <slot v-if="!hideLabel" name="label">
       <label>
         {{ label }}
         <span v-if="required && !value" class="required">*</span>
@@ -135,3 +139,12 @@ export default {
     <slot name="suffix" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+  .hide-label {
+    padding-top: 0;
+    > DIV {
+      padding-top: 0!important;
+    }
+  }
+</style>

@@ -24,13 +24,13 @@ export default {
 </script>
 
 <template>
-  <div class="pl-10">
+  <div>
     <div class="row">
       <Probe
         v-model="value.readinessProbe"
         class="col span-12"
         :mode="mode"
-        label="Readiness Check"
+        :label="t('workload.container.healthcheck.readinessCheck')"
         :description="t('workload.container.healthcheck.readinessTip')"
       />
     </div>
@@ -40,7 +40,7 @@ export default {
         v-model="value.livenessProbe"
         class="col span-12"
         :mode="mode"
-        label="Liveness Check"
+        :label="t('workload.container.healthcheck.livenessCheck')"
         :description="t('workload.container.healthcheck.livenessTip')"
       />
     </div>
@@ -50,7 +50,7 @@ export default {
         v-model="value.startupProbe"
         class="col span-12"
         :mode="mode"
-        label="Startup Check"
+        :label="t('workload.container.healthcheck.startupCheck')"
         :description="t('workload.container.healthcheck.startupTip')"
       />
     </div>

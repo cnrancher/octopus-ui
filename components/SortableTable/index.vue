@@ -6,10 +6,10 @@ import selection from './selection';
 import sorting from './sorting';
 import paging from './paging';
 import grouping from './grouping';
-import { dasherize } from '@/utils/string';
-import { get, clone } from '@/utils/object';
-import { removeObject } from '@/utils/array';
 import Checkbox from '@/components/form/Checkbox';
+import { removeObject } from '@/utils/array';
+import { get, clone } from '@/utils/object';
+import { dasherize } from '@/utils/string';
 
 // @TODO:
 // Fixed header/scrolling
@@ -561,6 +561,9 @@ $spacing: 10px;
       height: 0;
     }
   }
+  > THEAD > TR > TH {
+    padding-bottom: 10px;
+  }
 
   > THEAD {
     background: var(--sortable-table-header-bg);
@@ -752,6 +755,7 @@ $spacing: 10px;
 
   .no-rows {
     padding: $group-row-height;
+    color: var(--disabled-bg) !important;
     text-align: center;
   }
 

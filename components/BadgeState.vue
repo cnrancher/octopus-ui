@@ -28,6 +28,14 @@ export default {
       color: var(--success);
       background: var(--badge-success-bg);
     }
+    &.bg-error {
+      color: var(--body-bg);
+      background: var(--badge-error-bg);
+    }
+    &.bg-warning {
+      color: var(--body-text);
+      background: var(--badge-warning-bg);
+    }
   }
 
   .sortable-table TD .badge-state {

@@ -144,7 +144,7 @@ export default {
 };
 </script>
 <template>
-  <div class="pl-10" @input="update">
+  <div @input="update">
     <div class="row">
       <div class="col span-6">
         <slot name="entrypoint">
@@ -180,7 +180,7 @@ export default {
       <div class="col span-6">
         <div class="row">
           <div class="col span-6">
-            <LabeledSelect v-model="stdinSelect" label="Stdin" :options="[, 'No', 'Once', 'Yes']" :mode="mode" />
+            <LabeledSelect v-model="stdinSelect" :label="t('workload.container.command.stdin')" :options="[, 'No', 'Once', 'Yes']" :mode="mode" />
           </div>
           <div class="col span-6">
             <Checkbox v-model="tty" :disabled="!stdin" label="TTY" />
@@ -197,7 +197,7 @@ export default {
       :pad-left="false"
       :as-map="false"
       :read-allowed="false"
-      title="Environment Variables"
+      :title="t('workload.container.titles.environmentVariables')"
       class="mb-10"
     >
       <template #key="{row}">
@@ -230,12 +230,21 @@ export default {
         </span>
       </template>
     </KeyValue>
-    <div v-if="referencedValues.length" class="value-from headers">
-      <span>Type</span>
-      <span>Source</span>
-      <span>Key</span>
-      <span />
-      <span>Prefix or Alias</span>
+    <div v-if="referencedValues.length" class="row value-from headers">
+      <div class="col span-5-of-23">
+        <t k="workload.container.command.type" />
+      </div>
+      <div class="col span-5-of-23">
+        <t k="workload.container.command.source" />
+      </div>
+      <div class="col span-5-of-23">
+        <t k="workload.container.command.key" />
+      </div>
+      <div class="col span-1-of-23" />
+      <div class="col span-5-of-23">
+        <t k="workload.container.command.prefixOfAlias" />
+      </div>
+      <div class="col span-2-of-23" />
     </div>
     <ValueFromResource
       v-for="(val,i) in referencedValues"
@@ -255,18 +264,14 @@ export default {
 
 <style lang='scss'>
   .value-from {
-    display:grid;
-    grid-template-columns: 20% 25% 25% 5% 15% auto;
-    grid-column-gap:10px;
     margin-bottom:10px;
+    padding-bottom: 10px;
 
-    &.headers>* {
-      padding:0px 10px 0px 10px;
-      color: var(--input-label);
-      align-self: end;
-    }
-    & :not(.headers){
-      align-self:center;
+    &.headers {
+      border-bottom: 1px solid var(--sortable-table-top-divider);
+      >* {
+        color: var(--input-label);
+      }
     }
 
     & .labeled-input.create INPUT[type='text']{

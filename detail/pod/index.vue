@@ -43,24 +43,27 @@ export default {
     detailTopColumns() {
       return [
         {
-          title:   'Workload',
+          title: this.t('pod.detailTop.workload'),
           name:  'workload'
         },
         {
-          title:   'Pod IP',
-          content: this.value.status.podIP
+          title:   this.t('pod.detailTop.podIp'),
+          content: this.value.status.podIP,
+          icon: '#icon-ip'
         },
         {
-          title: 'Node',
+          title: this.t('pod.detailTop.node'),
           name:  'node'
         },
         {
-          title:   'Pod Restarts',
-          content: (this.value?.status?.containerStatuses || [])[0]?.restartCount
+          title:   this.t('pod.detailTop.podRestarts'),
+          content: (this.value?.status?.containerStatuses || [])[0]?.restartCount,
+          icon:    '#icon-restart'
         },
         {
-          title:   'Created',
-          name:  'created'
+          title:  this.t('pod.detailTop.created'),
+          name:   'created',
+          icon:   '#icon-time-create'
         }
       ];
     },
@@ -69,23 +72,23 @@ export default {
       return [
         {
           name:      'status',
-          label:     'Status',
+          label:     this.t('pod.info.tableHeaders.status'),
           value:     'stateDisplay',
           formatter: 'BadgeStateFormatter'
         },
         {
           name:  'name',
-          label: 'Name',
+          label: this.t('pod.info.tableHeaders.name'),
           value: 'name'
         },
         {
           name:  'image',
-          label: 'Image',
+          label: this.t('pod.info.tableHeaders.image'),
           value: 'image'
         },
         {
           name:  'imagePullPolicy',
-          label: 'Image Pull Policy',
+          label: this.t('pod.info.tableHeaders.imagePullPolicy'),
           value: 'imagePullPolicy'
         }
       ];
@@ -170,7 +173,7 @@ export default {
       </template>
     </DetailTop>
 
-    <div class="row mt-20">
+    <div class="row mt-20 p-20 card-box-shadow">
       <SortableTable
         id="container-table"
         :table-actions="false"
@@ -196,13 +199,13 @@ export default {
     <ResourceTabs v-model="value" :mode="mode">
       <template #before>
         <Tab name="networking" label="Networking">
-          <Networking :value="value.spec" mode="view" />
+          <Networking class="pl-10" :value="value.spec" mode="view" />
         </Tab>
         <Tab name="scheduling" label="Scheduling">
-          <Scheduling :value="value.spec" mode="view" :nodes="nodes" />
+          <Scheduling class="pl-10" :value="value.spec" mode="view" :nodes="nodes" />
         </Tab>
         <Tab name="security" label="Security">
-          <PodSecurity :value="value.spec" mode="view" />
+          <PodSecurity class="pl-10" :value="value.spec" mode="view" />
         </Tab>
       </template>
     </ResourceTabs>

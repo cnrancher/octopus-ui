@@ -8,6 +8,7 @@ import {
   PREVIEW,
   _FLAGGED,
   _UNFLAG,
+  _EDIT,
 } from '@/config/query-params';
 
 export default {
@@ -22,12 +23,12 @@ export default {
       required: true,
     },
 
-    model: {
+    value: {
       type:     Object,
       required: true,
     },
 
-    value: {
+    yaml: {
       type:     String,
       required: true,
     },
@@ -51,6 +52,11 @@ export default {
       type:    Function,
       default: null
     },
+
+    showFooter: {
+      type:    Boolean,
+      default: true
+    }
   },
 
   data() {
@@ -58,7 +64,7 @@ export default {
     this.$router.applyQuery({ [PREVIEW]: _UNFLAG });
 
     return {
-      currentValue: this.value,
+      currentYaml:  this.yaml,
       showPreview:  false,
       errors:       null
     };
@@ -66,26 +72,7 @@ export default {
 
   computed: {
     schema() {
-      return this.$store.getters['cluster/schemaFor'](this.model.type);
-    },
-
-    cmOptions() {
-      const readOnly = this.mode === _VIEW;
-      const gutters = ['CodeMirror-lint-markers'];
-
-      if ( !readOnly ) {
-        gutters.push('CodeMirror-foldgutter');
-      }
-
-      return {
-        readOnly,
-        gutters,
-        mode:            'yaml',
-        lint:            true,
-        lineNumbers:     !readOnly,
-        extraKeys:       { 'Ctrl-Space': 'autocomplete' },
-        cursorBlinkRate: ( readOnly ? -1 : 530 )
-      };
+      return this.$store.getters['cluster/schemaFor'](this.value.type);
     },
 
     isCreate() {
@@ -96,24 +83,45 @@ export default {
       return this.mode === _VIEW;
     },
 
+    isEdit() {
+      return this.mode === _EDIT;
+    },
+
     editorMode() {
-      return this.showPreview
-        ? EDITOR_MODES.DIFF_CODE
-        : EDITOR_MODES.EDIT_CODE;
+      if ( this.isView ) {
+        return EDITOR_MODES.VIEW_CODE;
+      } else if ( this.showPreview ) {
+        return EDITOR_MODES.DIFF_CODE;
+      }
+
+      return EDITOR_MODES.EDIT_CODE;
     },
   },
 
+  watch: {
+    mode(neu, old) {
+      // if this component is changing from viewing a resource to 'creating' that resource, it must actually be cloning
+      // clean yaml accordingly
+      if (neu === _CREATE && old === _VIEW) {
+        this.currentYaml = this.value.cleanYaml(this.yaml, neu);
+      }
+    }
+  },
+
   methods: {
-    onInput(value) {
-      this.currentValue = value;
+    onInput(yaml) {
+      this.currentYaml = yaml;
     },
 
     onReady(cm) {
-      cm.getMode().fold = 'yaml';
-
       if ( this.isCreate ) {
+        cm.getMode().fold = 'yamlcomments';
         cm.execCommand('foldAll');
+      } else if ( this.isEdit ) {
+        cm.foldLinesMatching(/^status:\s*$/);
       }
+
+      cm.foldLinesMatching(/^\s+managedFields:\s*$/);
     },
 
     onChanges(cm, changes) {
@@ -183,27 +191,34 @@ export default {
     },
 
     async save(buttonDone) {
+      const yaml = this.value.yamlForSave(this.currentYaml) || this.currentYaml;
+      let res;
+
       try {
         if ( this.isCreate ) {
-          await this.schema.followLink('collection', {
+          res = await this.schema.followLink('collection', {
             method:  'POST',
             headers: {
               'content-type': 'application/yaml',
               accept:         'application/json',
             },
-            data: this.currentValue,
+            data: yaml
           });
         } else {
-          const link = this.model.hasLink('rioupdate') ? 'rioupdate' : 'update';
+          const link = this.value.hasLink('rioupdate') ? 'rioupdate' : 'update';
 
-          await this.model.followLink(link, {
+          res = await this.value.followLink(link, {
             method:  'PUT',
             headers: {
               'content-type': 'application/yaml',
               accept:         'application/json',
             },
-            data: this.currentValue,
+            data: yaml
           });
+        }
+
+        if ( res && res.kind !== 'Table') {
+          await this.$store.dispatch('cluster/load', { data: res, existing: (this.isCreate ? this.value : undefined) });
         }
 
         buttonDone(true);
@@ -220,23 +235,19 @@ export default {
         } else {
           this.errors = [err];
         }
-
         buttonDone(false);
       }
     },
-
     done() {
       if (this.doneOverride) {
         return this.doneOverride();
       }
-
       if ( !this.doneRoute ) {
         return;
       }
-
       this.$router.replace({
         name:   this.doneRoute,
-        params: { resource: this.model.type }
+        params: { resource: this.value.type }
       });
     }
   }
@@ -247,20 +258,37 @@ export default {
   <div class="root resource-yaml">
     <YamlEditor
       ref="yamleditor"
-      v-model="currentValue"
+      v-model="currentYaml"
       class="yaml-editor"
       :editor-mode="editorMode"
       @onInput="onInput"
       @onReady="onReady"
       @onChanges="onChanges"
     />
-    <Footer v-if="!isView" :mode="mode" :errors="errors" @save="save" @done="done">
-      <template #middle>
-        <button v-if="showPreview" type="button" class="btn role-secondary" @click="unpreview">
-          Continue Editing
+    <Footer
+      v-if="showFooter"
+      :mode="mode"
+      :errors="errors"
+      @save="save"
+      @done="done"
+    >
+      <template v-if="!isView" #middle>
+        <button
+          v-if="showPreview"
+          type="button"
+          class="btn role-secondary"
+          @click="unpreview"
+        >
+          <t k="resourceYaml.buttons.continue" />
         </button>
-        <button v-else-if="offerPreview" :disabled="value === currentValue" type="button" class="btn role-secondary" @click="preview">
-          Show Diff
+        <button
+          v-else-if="offerPreview"
+          :disabled="yaml === currentYaml"
+          type="button"
+          class="btn role-secondary"
+          @click="preview"
+        >
+          <t k="resourceYaml.buttons.diff" />
         </button>
       </template>
     </Footer>

@@ -133,7 +133,7 @@ export default {
 </script>
 
 <template>
-  <div class="pl-10">
+  <div>
     <div class="row mb-5 pl-10">
       <div v-if="showTip" class="col span-12">
         <p class="helper-text mb-10">

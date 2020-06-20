@@ -81,15 +81,13 @@ export default {
       type:     Object,
       required: true,
     },
-    mode: {
-      type:     String,
-    }
+    mode: { type: String }
   },
 
   data() {
     const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
     const kind = this.value.spec.model.kind;
-    let isCustomProtocol = deviceProtocol.includes(kind);
+    const isCustomProtocol = deviceProtocol.includes(kind);
     const { devicesType } = this.$store.state;
     const extension = this.value.spec.template.spec.extension;
 
@@ -97,7 +95,6 @@ export default {
       this.$set(this.value.spec.template.spec, 'extension', _extension);
     }
     this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
-    console.log('--------pazzzzzzz', this.value.spec.template.spec);
 
     const value = this.value.spec.model.kind;
     const resource = devicesType.filter((D) => {
@@ -107,10 +104,10 @@ export default {
     });
 
     const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
+
     if (!isCustomProtocol) {
       this.$set(this.value, 'spec', _.cloneDeep(customDevice));
     }
-    console.log('----resource 自定义设备用到的spec----', spec, resource);
     const templateProperties = spec.properties?.items || [];
 
     return {
@@ -138,6 +135,7 @@ export default {
 
         return this.headers[headerName];
       }
+
       return CUSTOMDeviceHeader;
     },
   },

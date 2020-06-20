@@ -10,16 +10,6 @@ export default {
     DefalutImg
   },
 
-  data() {
-    return { search: '' };
-  },
-
-  computed: {
-    newCatalogs() {
-      return filterObj(this.catalogs, [this.search], true);
-    }
-  },
-
   async asyncData(ctx) {
     const { store } = ctx;
 
@@ -31,6 +21,16 @@ export default {
       catalogs: list,
       helmChart
     };
+  },
+
+  data() {
+    return { search: '' };
+  },
+
+  computed: {
+    newCatalogs() {
+      return filterObj(this.catalogs, [this.search], true);
+    }
   },
 
   methods: {
@@ -88,7 +88,7 @@ export default {
             :lg="8"
             :xl="6"
           >
-            <nuxt-link :to="{path: 'create', query: { app: key, mode: 'create' }}">
+            <nuxt-link :to="{path: '/c/local/helm.cattle.io.helmchart/create', query: { app: key }}">
               <el-card>
                 <div class="brand">
                   <DefalutImg :real="item[0].icon" />

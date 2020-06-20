@@ -1,5 +1,7 @@
 <script>
-import { STATE, AGE, NAMESPACE_NAME, TYPE, WORKLOAD_ENDPOINTS } from '@/config/table-headers';
+import {
+  STATE, AGE, NAMESPACE_NAME, TYPE, WORKLOAD_ENDPOINTS
+} from '@/config/table-headers';
 import ResourceTable from '@/components/ResourceTable';
 import { WORKLOAD_TYPES, SCHEMA } from '@/config/types';
 
@@ -23,6 +25,21 @@ export default {
       type:    Array,
       default: null,
     },
+  },
+
+  async asyncData({ store }) {
+    const types = Object.values(WORKLOAD_TYPES);
+
+    const resources = await Promise.all(types.map((type) => {
+      // You may not have RBAC to see some of the types
+      if ( !store.getters['cluster/schemaFor'](type) ) {
+        return null;
+      }
+
+      return store.dispatch('cluster/findAll', { type });
+    }));
+
+    return { resources };
   },
 
   computed: {
@@ -57,21 +74,6 @@ export default {
 
       return out;
     }
-  },
-
-  async asyncData({ store }) {
-    const types = Object.values(WORKLOAD_TYPES);
-
-    const resources = await Promise.all(types.map((type) => {
-      // You may not have RBAC to see some of the types
-      if ( !store.getters['cluster/schemaFor'](type) ) {
-        return null;
-      }
-
-      return store.dispatch('cluster/findAll', { type });
-    }));
-
-    return { resources };
   },
 
   typeDisplay({ store }) {

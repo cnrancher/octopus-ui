@@ -47,7 +47,7 @@ export default {
     return (moreQuery = {}) => {
       const constraintUrl = this.currentRouter().resolve({ name: 'c-cluster-gatekeeper-constraints-create' }).href;
       const url = addParams(constraintUrl, {
-        [MODE]:   _CREATE,
+        [MODE]: _CREATE,
         ...moreQuery
       });
 
@@ -59,7 +59,7 @@ export default {
     return (moreQuery = {}) => {
       const constraintUrl = this.currentRouter().resolve({ name: 'c-cluster-resource-create', params: { resource: GATEKEEPER_CONSTRAINT_TEMPLATE } }).href;
       const url = addParams(constraintUrl, {
-        [MODE]:   _CREATE,
+        [MODE]: _CREATE,
         ...moreQuery
       });
 

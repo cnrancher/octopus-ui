@@ -83,7 +83,7 @@ module.exports = {
   },
 
   // mode:    'spa', --- Use --spa CLI flag, or ?spa query param.
-  mode:    'spa', // TODO SEO
+  mode: 'spa', // TODO SEO
 
   loading: '~/components/Loading.vue',
 

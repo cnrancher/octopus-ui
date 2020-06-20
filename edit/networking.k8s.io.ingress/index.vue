@@ -12,7 +12,7 @@ import Labels from '@/components/form/Labels';
 import Footer from '@/components/form/Footer';
 
 export default {
-  name:  'CRUIngress',
+  name: 'CRUIngress',
 
   components: {
     NameNsDescription,

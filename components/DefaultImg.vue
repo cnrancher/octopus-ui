@@ -2,7 +2,7 @@
 export default {
   props: {
     real: {
-      type:     String,
+      type:     null,
       required: true
     }
   },

@@ -32,6 +32,49 @@ export default {
     CatalogHeader
   },
 
+  async asyncData(ctx) {
+    const { route, store } = ctx;
+    const { id, app, mode } = route.query;
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
+    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
+
+    const list = catalogs[0].spec.indexFile.entries;
+    const ns = namespaces.map((N) => {
+      return { value: N.id };
+    });
+    let yaml = '';
+    let helmChart = {};
+
+    if (mode === 'edit') {
+      helmChart = await store.dispatch('management/find', {
+        type: HELM, opt: { force: true }, id
+      });
+      yaml = (await helmChart.followLink('view', { headers: { accept: 'application/yaml' } })).data;
+    }
+
+    let jsonData = DefalutYaml;
+    let currentValue = '';
+
+    if (mode === 'create') {
+      jsonData = DefalutYaml;
+      jsonData.spec.chart = app;
+      jsonData.spec.repo = catalogs[0].spec.url;
+      currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
+    }
+
+    return {
+      catalogs:  list,
+      helmChart,
+      baseValue: jsonData,
+      currentValue,
+      ns,
+      id,
+      app,
+      mode,
+      yaml
+    };
+  },
+
   data() {
     return {};
   },
@@ -70,49 +113,6 @@ export default {
         cursorBlinkRate: ( readOnly ? -1 : 530 )
       };
     },
-  },
-
-  async asyncData(ctx) {
-    const { route, store } = ctx;
-    const { id, app, mode } = route.query;
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
-    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
-
-    const list = catalogs[0].spec.indexFile.entries;
-    const ns = namespaces.map((N) => {
-      return { value: N.id };
-    });
-    let yaml = '';
-    let helmChart = {};
-
-    if (mode === 'edit') {
-      helmChart = await store.dispatch('management/find', {
-        type: HELM, opt:  { force: true }, id
-      });
-      yaml = (await helmChart.followLink('view', { headers: { accept: 'application/yaml' } })).data;
-    }
-
-    let jsonData = DefalutYaml;
-    let currentValue = '';
-
-    if (mode === 'create') {
-      jsonData = DefalutYaml;
-      jsonData.spec.chart = app;
-      jsonData.spec.repo = catalogs[0].spec.url;
-      currentValue = jsyaml.safeDump(jsonData.spec.valuesContent);
-    }
-
-    return {
-      catalogs:  list,
-      helmChart,
-      baseValue: jsonData,
-      currentValue,
-      ns,
-      id,
-      app,
-      mode,
-      yaml
-    };
   },
 
   mounted() {

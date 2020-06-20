@@ -3,7 +3,7 @@ import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
 
 export default {
-  name:  'TemplateForm',
+  name: 'TemplateForm',
 
   components: {
     LabeledInput,
@@ -35,7 +35,6 @@ export default {
     } else {
       PropertiesType = this.templateProperties;
     }
-    console.log('----loc, tem', this.localDevice, this.templateProperties);
 
     return { PropertiesType };
   },

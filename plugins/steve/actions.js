@@ -124,7 +124,7 @@ export default {
     commit('loadAll', {
       ctx,
       type,
-      data:     res.data
+      data: res.data
     });
 
     if ( opt.watch !== false ) {

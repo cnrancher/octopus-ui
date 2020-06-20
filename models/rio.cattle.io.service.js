@@ -415,7 +415,7 @@ export default {
 
     return (moreQuery = {}) => {
       const url = addParams(this.detailUrl, {
-        [MODE]:  _STAGE,
+        [MODE]: _STAGE,
         ...moreQuery
       });
 

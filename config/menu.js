@@ -15,22 +15,18 @@ export const MENUS = [
     },
     children: [
       {
-        name: 'infrastructure/node-management',
         path: '/c/local/node',
         meta: { title: '节点管理' }
       },
       {
-        name: 'infrastructure/system-services',
         path: '/c/local/workload',
         meta: { title: '系统服务' }
       },
       {
-        name: 'infrastructure/namespace',
         path: '/c/local/namespace',
         meta: { title: '命名空间' }
       },
       {
-        name: 'infrastructure/store-category',
         path: '/c/local/store',
         meta: { title: '存储类别' }
       }
@@ -45,17 +41,14 @@ export const MENUS = [
     },
     children: [
       {
-        name: 'workload/default',
         path: '/c/local/workload',
         meta: { title: '工作负载' }
       },
       {
-        name: 'workload/secret-management',
         path: '/c/local/secret',
         meta: { title: '秘文管理' }
       },
       {
-        name: 'workload/configure-map',
         path: '/c/local/configmap',
         meta: { title: '配置映射' }
       }
@@ -69,9 +62,8 @@ export const MENUS = [
     },
     children: [
       {
-        name: 'lot-management/deviceProtocol',
         path: '/c/local/deviceprotocol',
-        meta:     { title: '设备协议' },
+        meta: { title: '设备协议' },
       },
       {
         path: '/c/local/edge.cattle.io.devicelink',
@@ -88,6 +80,14 @@ export const MENUS = [
     path: '/mqttManagement/edgeapi.cattle.io.catalog',
     meta: {
       title: '应用管理',
+      icon:  'icon-mqtt',
+    },
+  },
+  {
+    name: 'app-market',
+    path: '/c/local/helm.cattle.io.helmchart',
+    meta: {
+      title: '应用市场',
       icon:  'icon-mqtt',
     },
   }

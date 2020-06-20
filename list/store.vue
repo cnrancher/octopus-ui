@@ -26,6 +26,15 @@ export default {
     },
   },
 
+  async asyncData({ store }) {
+    const resources = await allHash({
+      persistentvolume: store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.PERSISTENT_VOLUME }),
+      storageclass:     store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.STORAGE_CLASS }),
+    });
+
+    return { resources };
+  },
+
   data() {
     return { activeName: 'storageclass' };
   },
@@ -43,15 +52,6 @@ export default {
         AGE,
       ];
     },
-  },
-
-  async asyncData({ store }) {
-    const resources = await allHash({
-      persistentvolume: store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.PERSISTENT_VOLUME }),
-      storageclass:     store.dispatch('cluster/findAll', { type: STORAGE_CATEGORY.STORAGE_CLASS }),
-    });
-
-    return { resources };
   },
 
   typeDisplay({ store }) {

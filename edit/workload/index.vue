@@ -67,6 +67,28 @@ export default {
     }
   },
 
+  async fetch() {
+    const hash = await allHash({
+      configMaps: this.$store.dispatch('cluster/findAll', { type: CONFIG_MAP }),
+      secrets:    this.$store.dispatch('cluster/findAll', { type: SECRET }),
+      nodes:      this.$store.dispatch('cluster/findAll', { type: NODE })
+    });
+
+    this.allSecrets = hash.secrets;
+    this.allConfigMaps = hash.configMaps;
+    this.allNodes = hash.nodes.map(node => node.id);
+  },
+
+  asyncData(ctx) {
+    let resource;
+
+    if ( !ctx.params.id ) {
+      resource = WORKLOAD_TYPES.DEPLOYMENT;
+    }
+
+    return defaultAsyncData(ctx, resource);
+  },
+
   data() {
     let type = this.value._type || this.value.type || WORKLOAD_TYPES.DEPLOYMENT;
 
@@ -284,28 +306,6 @@ export default {
       this.$set(this.value, 'type', neu);
       delete this.value.apiVersion;
     },
-  },
-
-  asyncData(ctx) {
-    let resource;
-
-    if ( !ctx.params.id ) {
-      resource = WORKLOAD_TYPES.DEPLOYMENT;
-    }
-
-    return defaultAsyncData(ctx, resource);
-  },
-
-  async fetch() {
-    const hash = await allHash({
-      configMaps: this.$store.dispatch('cluster/findAll', { type: CONFIG_MAP }),
-      secrets:    this.$store.dispatch('cluster/findAll', { type: SECRET }),
-      nodes:      this.$store.dispatch('cluster/findAll', { type: NODE })
-    });
-
-    this.allSecrets = hash.secrets;
-    this.allConfigMaps = hash.configMaps;
-    this.allNodes = hash.nodes.map(node => node.id);
   },
 
   methods: {

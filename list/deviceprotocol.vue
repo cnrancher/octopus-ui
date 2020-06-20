@@ -27,6 +27,18 @@ export default {
     },
   },
 
+  async asyncData({ store }) {
+    const resources = await allHash({
+      custom:                 store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.CUSTOM }),
+      daemonset:              store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.DAEMONSET }),
+      deployment:             store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.DEPLOYMENT }),
+      rbacClusterRolebinding: store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.RBAC_CLUSTERROLEBINDING }),
+      rbacClusterRole:        store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.RBAC_CLUSTERROLEL }),
+    });
+
+    return { resources };
+  },
+
   data() {
     const { devicesType } = this.$store.state;
     const language = this.$store.getters['i18n/getLanguage'];
@@ -79,18 +91,6 @@ export default {
     groupBy() {
       return 'customId';
     },
-  },
-
-  async asyncData({ store }) {
-    const resources = await allHash({
-      custom:                 store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.CUSTOM }),
-      daemonset:              store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.DAEMONSET }),
-      deployment:             store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.DEPLOYMENT }),
-      rbacClusterRolebinding: store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.RBAC_CLUSTERROLEBINDING }),
-      rbacClusterRole:        store.dispatch('cluster/findAll', { type: DEVICE_PROTOCOL.RBAC_CLUSTERROLEL }),
-    });
-
-    return { resources };
   },
 
   methods: {

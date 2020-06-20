@@ -7,11 +7,11 @@ import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 export default {
   components: { CustomTemplate },
 
-  mixins:     [createEditView],
+  mixins: [createEditView],
 
   props: {
-    mode:  { 
-      type: String,
+    mode:  {
+      type:     String,
       required: true
     },
     value: {
@@ -29,7 +29,7 @@ export default {
         return D;
       }
     });
-    
+
     const _spec = this.value.spec;
     const kind = resource[0].spec.names.kind;
     const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;

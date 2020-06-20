@@ -46,7 +46,6 @@ export default {
       properties = localDevice.spec.template.spec.properties[index]
     }
 
-    console.log('-----properties', properties);
     return {
       localDevice,
       index,

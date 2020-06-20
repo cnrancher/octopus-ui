@@ -13,6 +13,12 @@ export default {
     BreadCrumbs
   },
 
+  asyncData(ctx) {
+    const currentValue = jsyaml.safeDump(DefalutYaml);
+
+    return { currentValue };
+  },
+
   data() {
     return {
       route:   this.$route,
@@ -46,12 +52,6 @@ export default {
         cursorBlinkRate: ( readOnly ? -1 : 530 )
       };
     },
-  },
-
-  asyncData(ctx) {
-    const currentValue = jsyaml.safeDump(DefalutYaml);
-
-    return { currentValue };
   },
 
   methods: {

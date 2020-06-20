@@ -79,7 +79,7 @@ export default {
     ServiceStatusList
   },
 
-  mixins:     [LoadDeps],
+  mixins: [LoadDeps],
 
   data() {
     return {
@@ -460,7 +460,7 @@ export default {
         const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
 
         return {
-          id:    podIndex, name:  podItem.id, value: cpuUsage
+          id: podIndex, name: podItem.id, value: cpuUsage
         };
       });
 
@@ -469,7 +469,7 @@ export default {
         const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
 
         return {
-          id:    podIndex, name:  podItem.id, value: memoryUsage
+          id: podIndex, name: podItem.id, value: memoryUsage
         };
       });
 

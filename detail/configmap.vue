@@ -40,7 +40,7 @@ export default {
   data() {
     const valuesTableHeaders = [
       {
-        ...KEY, sort:  false, width: 400
+        ...KEY, sort: false, width: 400
       },
       { ...VALUE, sort: false },
     ];

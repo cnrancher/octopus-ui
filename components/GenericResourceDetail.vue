@@ -52,7 +52,7 @@ export default {
     });
 
     return {
-      ownersByType, owners: [], yaml:   ''
+      ownersByType, owners: [], yaml: ''
     };
   },
 

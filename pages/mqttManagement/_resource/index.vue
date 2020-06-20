@@ -12,7 +12,17 @@ export default {
     CatalogHeader, StatusBar, ExportPort
   },
 
-  mixins:     [LoadDeps],
+  mixins: [LoadDeps],
+
+  async asyncData({ store, route }) {
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG, opt: { force: true } });
+    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { force: true } });
+
+    return {
+      catalogs,
+      helmChart
+    };
+  },
 
   data() {
     return {
@@ -43,16 +53,6 @@ export default {
 
       return comppositonHelmChart;
     }
-  },
-
-  async asyncData({ store, route }) {
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOG, opt: { force: true } });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM, opt: { force: true } });
-
-    return {
-      catalogs,
-      helmChart
-    };
   },
 
   mounted() {
@@ -93,14 +93,14 @@ export default {
       this.$router.push('/mqttManagement/edgeapi.cattle.io.catalog/catalog-config');
     },
     upgradeInfo(chart) {
-      const { version } = chart.spec;
-      const allVersion = _.sortBy(chart.chartInfo, (C) => {
-        return -C.version;
-      });
-      const latestVersion = allVersion[0].version;
-      const info = version === latestVersion ? `已经是最新版本` : `有可用更新`;
+      // const { version } = chart.spec;
+      // const allVersion = _.sortBy(chart.chartInfo, (C) => {
+      //   return -C.version;
+      // });
+      // const latestVersion = allVersion[0].version;
+      // const info = version === latestVersion ? `已经是最新版本` : `有可用更新`;
 
-      return `${ info } ${ latestVersion }`;
+      // return `${ info } ${ latestVersion }`;
     },
     getStatus(obj) {
       return obj.metadata?.state?.name ? 'active' : 'Error';

@@ -173,14 +173,14 @@ export default {
       case 'secretKeyRef':
         out.valueFrom = {
           [this.type]: {
-            key:      this.key, name:     this.refName, optional: false
+            key: this.key, name: this.refName, optional: false
           }
         };
         break;
       case 'resourceFieldRef':
         out.valueFrom = {
           [this.type]: {
-            containerName: this.refName, divisor:       0, resource:      this.key
+            containerName: this.refName, divisor: 0, resource: this.key
           }
         };
         break;

@@ -8,6 +8,24 @@ export default {
     CatalogHeader,
     ResourceTable
   },
+  async asyncData({ store, route }) {
+    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
+    const helmChart = await store.dispatch('management/findAll', { type: HELM });
+    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
+
+    const allNamespace = namespaces?.map( (NS) => {
+      return {
+        value: NS.id,
+        label: NS.id
+      };
+    });
+
+    return {
+      catalogs,
+      helmChart,
+      allNamespace
+    };
+  },
   data() {
     return {
       isEdit:       true,
@@ -68,24 +86,6 @@ export default {
 
       return this.$store.state.catalogs?.showInfo.isShow;
     },
-  },
-  async asyncData({ store, route }) {
-    const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM });
-    const namespaces = await store.dispatch('management/findAll', { type: NAMESPACE });
-
-    const allNamespace = namespaces?.map( (NS) => {
-      return {
-        value: NS.id,
-        label: NS.id
-      };
-    });
-
-    return {
-      catalogs,
-      helmChart,
-      allNamespace
-    };
   },
   methods: {
     goBack() {

@@ -20,7 +20,7 @@ import { findBy, filterBy, removeObject } from '@/utils/array';
 import { allHash } from '@/utils/promise';
 
 export default {
-  name:       'CruService',
+  name: 'CruService',
 
   components: {
     Loading,
@@ -37,7 +37,7 @@ export default {
     Footer
   },
 
-  mixins:     [CreateEditView, LoadDeps],
+  mixins: [CreateEditView, LoadDeps],
 
   data() {
     if ( !this.value.spec ) {

@@ -15,7 +15,7 @@ export default {
     Checkbox
   },
 
-  mixins:     [LoadDeps],
+  mixins: [LoadDeps],
 
   props: {
     value: {
@@ -50,7 +50,7 @@ export default {
       isUsePrefixTopic,
       isShowAdvanced,
       isSetLastWillTopic,
-      secret:             [],
+      secret: [],
     };
   },
 

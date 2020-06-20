@@ -11,6 +11,50 @@ export default {
     BreadCrumbs
   },
 
+  async asyncData(ctx) {
+    const { params, store } = ctx;
+    const resource = params.resource;
+    const hasListComponent = store.getters['type-map/hasCustomList'](resource);
+    const hasEditComponent = store.getters['type-map/hasCustomEdit'](resource);
+    const hasHeaderComponent = store.getters['type-map/hasCustomHeader'](resource);
+    const schema = store.getters['cluster/schemaFor'](resource);
+
+    let foundData = false;
+    let rows;
+    let more = {};
+    let customTypeDisplay;
+
+    if ( hasListComponent ) {
+      // If you provide your own list then call its asyncData
+      const importer = store.getters['type-map/importList'](resource);
+      const component = (await importer())?.default;
+
+      if ( component?.asyncData ) {
+        more = await component.asyncData(ctx);
+        foundData = true;
+      }
+
+      if ( component?.typeDisplay ) {
+        customTypeDisplay = component.typeDisplay(ctx);
+      }
+    }
+
+    if ( !foundData ) {
+      rows = await store.dispatch('cluster/findAll', { type: resource });
+    }
+
+    return {
+      schema,
+      hasListComponent,
+      hasHeaderComponent,
+      hasEditComponent,
+      resource,
+      rows,
+      customTypeDisplay,
+      ...more
+    };
+  },
+
   data() {
     const params = { ...this.$route.params };
     const resource = params.resource;
@@ -74,50 +118,6 @@ export default {
     isCreatable() {
       return this.$store.getters['type-map/isCreatable'](this.$route.params.resource);
     }
-  },
-
-  async asyncData(ctx) {
-    const { params, store } = ctx;
-    const resource = params.resource;
-    const hasListComponent = store.getters['type-map/hasCustomList'](resource);
-    const hasEditComponent = store.getters['type-map/hasCustomEdit'](resource);
-    const hasHeaderComponent = store.getters['type-map/hasCustomHeader'](resource);
-    const schema = store.getters['cluster/schemaFor'](resource);
-
-    let foundData = false;
-    let rows;
-    let more = {};
-    let customTypeDisplay;
-
-    if ( hasListComponent ) {
-      // If you provide your own list then call its asyncData
-      const importer = store.getters['type-map/importList'](resource);
-      const component = (await importer())?.default;
-
-      if ( component?.asyncData ) {
-        more = await component.asyncData(ctx);
-        foundData = true;
-      }
-
-      if ( component?.typeDisplay ) {
-        customTypeDisplay = component.typeDisplay(ctx);
-      }
-    }
-
-    if ( !foundData ) {
-      rows = await store.dispatch('cluster/findAll', { type: resource });
-    }
-
-    return {
-      schema,
-      hasListComponent,
-      hasHeaderComponent,
-      hasEditComponent,
-      resource,
-      rows,
-      customTypeDisplay,
-      ...more
-    };
   },
 }; </script>
 

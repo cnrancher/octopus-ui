@@ -220,9 +220,9 @@ export default {
             <span class="type">配置选项</span>
             <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
           </template>
-
+          
           <form>
-            <NameNsDescription v-model="value" :mode="mode">
+            <NameNsDescription v-model="value" :mode="mode" :extra-columns="['type']">
               <template v-slot:type>
                 <LabeledSelect v-model="value.spec.version" label="版本" :options="versions" />
               </template>

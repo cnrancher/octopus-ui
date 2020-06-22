@@ -121,10 +121,10 @@ export default {
       const { version, chart, repo } = helm.spec;
       const versions = _.sortBy(this.entries[repo]?.entries?.[chart] || [], (C) => {
         return -C.version;
-      })
+      });
 
       if (version === versions?.[0]?.version) {
-        return true
+        return true;
       }
 
       return false;

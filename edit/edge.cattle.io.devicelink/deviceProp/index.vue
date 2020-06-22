@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import _ from 'lodash';
 import OpcUaModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
 import ModbusModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
@@ -85,9 +86,6 @@ export default {
   },
 
   data() {
-    const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
-    const kind = this.value.spec.model.kind;
-    const isCustomProtocol = deviceProtocol.includes(kind);
     const { devicesType } = this.$store.state;
     const extension = this.value.spec.template.spec.extension;
 
@@ -95,20 +93,6 @@ export default {
       this.$set(this.value.spec.template.spec, 'extension', _extension);
     }
     this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
-
-    const value = this.value.spec.model.kind;
-    const resource = devicesType.filter((D) => {
-      if (D.spec.names.kind === value) {
-        return D;
-      }
-    });
-
-    const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
-
-    if (!isCustomProtocol) {
-      this.$set(this.value, 'spec', _.cloneDeep(customDevice));
-    }
-    const templateProperties = spec.properties?.items || [];
 
     return {
       headers: {
@@ -119,12 +103,16 @@ export default {
       dialogVisible:      false,
       editRowIndex:       0,
       dialogModel:   'create',
-      templateProperties,
-      isCustomProtocol
+      devicesType
     };
   },
 
   computed: {
+    isCustomProtocol() {
+      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
+      const kind = this.value.spec.model.kind;
+      return deviceProtocol.includes(kind);
+    },
     currentHeader() {
       const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
       const kind = this.value.spec.model.kind;
@@ -138,6 +126,21 @@ export default {
 
       return CUSTOMDeviceHeader;
     },
+    templateProperties() {
+      const kind = this.value.spec.model.kind;
+      const resource = this.devicesType.filter((D) => {
+        if (D.spec.names.kind === kind) {
+          return D;
+        }
+      });
+
+      const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
+      console.log('------自定义设备属性', kind, resource)
+      if (!this.isCustomProtocol) {
+        this.$set(this.value, 'spec', _.cloneDeep(customDevice));
+      }
+      return spec.properties?.items || {};
+    }
   },
 
   methods: {
@@ -223,7 +226,7 @@ export default {
         @hideDialog="hideDialog($event)"
       />
 
-      <CustomModel
+      <!-- <CustomModel
         v-else
         :visible="dialogVisible"
         :template-properties="templateProperties"
@@ -232,7 +235,7 @@ export default {
         :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
-      />
+      /> -->
     </template>
   </div>
 </template>

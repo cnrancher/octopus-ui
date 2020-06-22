@@ -76,14 +76,6 @@ export const MENUS = [
     ]
   },
   {
-    name: 'mqttManagement',
-    path: '/mqttManagement/edgeapi.cattle.io.catalog',
-    meta: {
-      title: '应用管理',
-      icon:  'icon-mqtt',
-    },
-  },
-  {
     name: 'app-market',
     path: '/c/local/helm.cattle.io.helmchart',
     meta: {

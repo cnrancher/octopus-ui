@@ -63,10 +63,9 @@ export default {
   },
 
   methods: {
-    translationProperties(properties) {
+    translationProperties(properties={}) {
       let keys = Object.keys(properties);
       const obj = {}
-    
       keys.forEach(key => {
         if (properties[key].properties) {
           obj[key] = this.translationProperties(properties[key].properties);
@@ -76,14 +75,12 @@ export default {
           obj[key] = ''
         }
       })
-
       return obj
     },
     add(formName) {
       const index = this.index;
       this.localDevice.spec.template.spec.properties.splice(index, 1, this.properties)
       const properties = this.localDevice.spec.template.spec.properties;
-      console.log('-----this.properties 000', this.properties)
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {
         this.$emit('hideDialog', false);

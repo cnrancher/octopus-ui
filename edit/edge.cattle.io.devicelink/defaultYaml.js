@@ -1,3 +1,57 @@
+const extension = {
+  mqtt: {
+    client: {
+      server:          '',
+      protocolVersion: 3,
+      will:            {
+        topicName:      '',
+        payloadEncode:  'raw',
+        qos:            0,
+        payloadContent: '',
+        retained:       false
+      },
+      basicAuth: {
+        name:      '',
+        password: ''
+      },
+      tlsConfig: {
+        caFilePem:          '',
+        certFilePem:        '',
+        keyFilePem:         '',
+        insecureSkipVerify: false,
+        serverName:         '',
+        caFilePEMRef:       {
+          item: '',
+          name: ''
+        },
+        certFilePEMRef: {
+          item: '',
+          name: ''
+        },
+        keyFilePEMRef: {
+          item: '',
+          name: ''
+        }
+      },
+      store:           {
+        type:            'memory',
+        direcotryPrefix: '/var/run/octopus/mqtt',
+      },
+    },
+    message: {
+      topic: {
+        name:   '',
+        prefix: '',
+        with:   'nn'
+      },
+      topicName:     '',
+      payloadEncode: 'raw',
+      qos:           0,
+      retained:      true,
+    }
+  }
+};
+
 export const BLUE_THOOTH_DEVICE = {
   adaptor: {
     node: '',
@@ -11,59 +65,7 @@ export const BLUE_THOOTH_DEVICE = {
   template:   {
     metadata: { labels: { } },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 3,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              password: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false,
-              serverName:         '',
-              caFilePEMRef:       {
-                item: '',
-                name: ''
-              },
-              certFilePEMRef: {
-                item: '',
-                name: ''
-              },
-              keyFilePEMRef: {
-                item: '',
-                name: ''
-              }
-            },
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-          }
-        }
-      },
+      extension,
       properties: [],
       protocol:   {
         name:       '',
@@ -86,59 +88,7 @@ export const MODBUS_DEVICE_RTU = {
   template:   {
     metadata: { labels: {} },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 3,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              password: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false,
-              serverName:         '',
-              caFilePEMRef:       {
-                item: '',
-                name: ''
-              },
-              certFilePEMRef: {
-                item: '',
-                name: ''
-              },
-              keyFilePEMRef: {
-                item: '',
-                name: ''
-              }
-            },
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-          }
-        }
-      },
+      extension,
       protocol: {
         rtu: {
           slaveID:    '',
@@ -167,59 +117,7 @@ export const MODBUS_DEVICE_TCP = {
   template:   {
     metadata: { labels: {} },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 3,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              password: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false,
-              serverName:         '',
-              caFilePEMRef:       {
-                item: '',
-                name: ''
-              },
-              certFilePEMRef: {
-                item: '',
-                name: ''
-              },
-              keyFilePEMRef: {
-                item: '',
-                name: ''
-              }
-            },
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-          }
-        }
-      },
+      extension,
       protocol: {
         tcp: {
           slaveID:    '',
@@ -245,59 +143,7 @@ export const OPC_UA_DEVICE = {
   template:   {
     metadata: { labels: {} },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 3,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              password: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false,
-              serverName:         '',
-              caFilePEMRef:       {
-                item: '',
-                name: ''
-              },
-              certFilePEMRef: {
-                item: '',
-                name: ''
-              },
-              keyFilePEMRef: {
-                item: '',
-                name: ''
-              }
-            },
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-          }
-        }
-      },
+      extension,
       protocol: {
         url:      '',
         username: '',
@@ -321,59 +167,7 @@ export const customDevice = {
   template:   {
     metadata: { labels: { wj: '' } },
     spec:     {
-      extension: {
-        mqtt: {
-          client: {
-            server:          '',
-            protocolVersion: 3,
-            will:            {
-              topicName:      '',
-              payloadEncode:  'raw',
-              qos:            0,
-              payloadContent: '',
-              retained:       false
-            },
-            basicAuth: {
-              name:      '',
-              password: ''
-            },
-            tlsConfig: {
-              caFilePem:          '',
-              certFilePem:        '',
-              keyFilePem:         '',
-              insecureSkipVerify: false,
-              serverName:         '',
-              caFilePEMRef:       {
-                item: '',
-                name: ''
-              },
-              certFilePEMRef: {
-                item: '',
-                name: ''
-              },
-              keyFilePEMRef: {
-                item: '',
-                name: ''
-              }
-            },
-            store:           {
-              type:            'memory',
-              direcotryPrefix: '/var/run/octopus/mqtt',
-            },
-          },
-          message: {
-            topic: {
-              name:   '',
-              prefix: '',
-              with:   'nn'
-            },
-            topicName:     '',
-            payloadEncode: 'raw',
-            qos:           0,
-            retained:      true,
-          }
-        }
-      },
+      extension,
       protocol:   {},
       properties: []
     }

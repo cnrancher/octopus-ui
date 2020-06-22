@@ -59,9 +59,10 @@ export default {
     if (this.mode === _CREATE || this.mode === _VIEW) {
       this.$set(this.value, 'metadata', _.merge(DefalutYaml.metadata, this.value.metadata));
       this.$set(this.value, 'spec', _.merge(DefalutYaml.spec, this.value.spec));
+      this.$set(this.value.spec, 'chart', app);
     }
     currentValue = jsyaml.safeDump(this.value.spec.valuesContent);
-    console.log('----this.value', this.value, this.mode)
+    console.log('----this.value', this.value, this.mode, this.value.spec.chart)
     return {
       app: app || this.value.spec.chart,
       currentValue,
@@ -188,7 +189,6 @@ export default {
       }
     },
   }
-
 };
 </script>
 
@@ -199,7 +199,6 @@ export default {
         应用商店: {{ app }}
       </template>
     </CatalogHeader>
-
 
     <div class="box">
       <div class="mqtt-info">
@@ -214,20 +213,20 @@ export default {
         </div>
       </div>
 
-      <div class="config">
-        <Collapse>
-          <template v-slot:title>
-            <span class="type">配置选项</span>
-            <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
-          </template>
-          
-          <form>
-            <NameNsDescription v-model="value" :mode="mode" :extra-columns="['type']">
-              <template v-slot:type>
-                <LabeledSelect v-model="value.spec.version" label="版本" :options="versions" />
-              </template>
-            </NameNsDescription>
+      <form>
+        <div class="config">
+          <NameNsDescription v-model="value" :mode="mode" :extra-columns="['type']">
+            <template v-slot:type>
+              <LabeledSelect v-model="value.spec.version" label="版本" :options="versions" />
+            </template>
+          </NameNsDescription>
 
+          <Collapse>
+            <template v-slot:title>
+              <span class="type">配置选项</span>
+              <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
+            </template>
+            
             <div class="yaml-info">
               <div class="desc">
                 粘贴或上传yml/yaml格式的应答参数
@@ -245,11 +244,10 @@ export default {
                 @onChanges="onChanges"
               />
             </div>
-
-            <Footer :mode="mode" :errors="errors" @save="enable" @done="done" />
-          </form>
-        </Collapse>
-      </div>
+          </Collapse>
+        </div>
+        <Footer :mode="mode" :errors="errors" @save="enable" @done="done" />
+      </form>
     </div>
   </div>
 </template>

@@ -19,9 +19,12 @@ steps:
   commands:
   - scripts/ci
 
+node:
+  instance: agent-amd64
+
 ---
 kind: pipeline
-name: docker-branch
+name: build-embedded
 
 depends_on:
 - test
@@ -39,20 +42,31 @@ platform:
   arch: amd64
 
 steps:
-- name: docker-image
-  image: plugins/docker
+- name: build
+  pull: default
+  image: node:10
+  commands:
+  - ./scripts/build-embedded
+
+- name: upload
+  pull: default
+  image: plugins/s3
   settings:
-    dockerfile: Dockerfile
-    tag: ${DRONE_BRANCH}
-    repo: rancherlabs/dashboard
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    bucket: rancheredge-ui
+    region: ap-east-1
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: dist/${DRONE_BRANCH}.tar.gz
+    target: /ui
+
+node:
+  instance: agent-amd64
 
 ---
 kind: pipeline
-name: docker-tag
+name: build-embedded-tag
 
 depends_on:
 - test
@@ -66,16 +80,27 @@ platform:
   arch: amd64
 
 steps:
-- name: docker-image
-  image: plugins/docker
+- name: build
+  pull: default
+  image: node:10
+  commands:
+  - ./scripts/build-embedded
+
+- name: upload
+  pull: default
+  image: plugins/s3
   settings:
-    dockerfile: Dockerfile
-    tag: ${DRONE_TAG}
-    repo: rancherlabs/dashboard
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    bucket: rancheredge-ui
+    region: ap-east-1
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: dist/${DRONE_TAG}.tar.gz
+    target: /ui
+
+node:
+  instance: agent-amd64
 
 ---
 kind: pipeline
@@ -103,15 +128,20 @@ steps:
 
 - name: upload
   pull: default
-  image: plugins/gcs
+  image: plugins/s3
   settings:
-    acl:
-    - allUsers:READER
-    cache_control: "no-cache,must-revalidate"
-    source: dist/latest
-    target: releases.rancher.com/dashboard/latest
-    token:
-      from_secret: google_auth_key
+    bucket: rancheredge-ui
+    region: ap-east-1
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: dist/latest/*
+    strip_prefix: dist/latest/
+    target: /ui/latest
+
+node:
+  instance: agent-amd64
 
 ---
 kind: pipeline
@@ -140,15 +170,20 @@ steps:
 
 - name: upload
   pull: default
-  image: plugins/gcs
+  image: plugins/s3
   settings:
-    acl:
-    - allUsers:READER
-    cache_control: "no-cache,must-revalidate"
-    source: dist/${DRONE_BRANCH}
-    target: releases.rancher.com/dashboard/${DRONE_BRANCH}
-    token:
-      from_secret: google_auth_key
+    bucket: rancheredge-ui
+    region: ap-east-1
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: dist/${DRONE_BRANCH}/*
+    strip_prefix: dist/${DRONE_BRANCH}/
+    target: /ui/${DRONE_BRANCH}
+
+node:
+  instance: agent-amd64
 
 ---
 kind: pipeline
@@ -174,12 +209,17 @@ steps:
 
 - name: upload
   pull: default
-  image: plugins/gcs
+  image: plugins/s3
   settings:
-    acl:
-    - allUsers:READER
-    cache_control: "no-cache,must-revalidate"
-    source: dist/${DRONE_TAG}
-    target: releases.rancher.com/dashboard/${DRONE_TAG}
-    token:
-      from_secret: google_auth_key
+    bucket: rancheredge-ui
+    region: ap-east-1
+    access_key:
+      from_secret: aws_access_key_id
+    secret_key:
+      from_secret: aws_secret_access_key
+    source: dist/${DRONE_TAG}/*
+    strip_prefix: dist/${DRONE_TAG}/
+    target: /ui/${DRONE_TAG}
+
+node:
+  instance: agent-amd64

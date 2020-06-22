@@ -1,7 +1,7 @@
-# dashboard
-[![Build Status](http://drone-publish.rancher.io/api/badges/rancher/dashboard/status.svg)](http://drone-publish.rancher.io/rancher/dashboard)
+# edge-ui
+[![Build Status](http://drone-pandaria.cnrancher.com/api/badges/cnrancher/edge-ui/status.svg)](http://drone-pandaria.cnrancher.com/cnrancher/edge-ui)
 
-Dashboard UI.  For the other Rancher UI see [rancher/ui](https://github.com/rancher/ui).
+Edge Dashboard UI.  For the other Rancher UI see [rancher/ui](https://github.com/rancher/ui).
 
 ## Build Setup
 

@@ -73,6 +73,7 @@ export default {
     isCustomDevice() {
       const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
       const kind = this.value?.spec?.model?.kind;
+
       return !deviceProtocol.includes(kind);
     }
   },
@@ -129,7 +130,7 @@ export default {
           }
         });
         const kind = resource[0].spec.names.kind;
-        console.log('-----resource', resource)
+
         this.$set(this.value.spec.adaptor, 'name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
         this.$set(this.value.spec.model, 'kind', kind);
       }
@@ -157,7 +158,7 @@ export default {
             />
           </template>
         </NameNsDescription>
-        
+
         <div class="row">
           <div class="col span-4">
             <LabeledSelect v-model="value.spec.adaptor.node" label="节点" :options="allNodes" />
@@ -168,7 +169,7 @@ export default {
       <ResourceTabs v-model="value" :mode="mode" default-tab="config">
         <template #before>
           <Tab label="访问配置" name="config">
-            <component v-if="!isCustomDevice" :is="`${kind}Config`" :value="value" />
+            <component :is="`${kind}Config`" v-if="!isCustomDevice" :value="value" />
 
             <CustomConfig v-else :value="value" :mode="mode" />
           </Tab>

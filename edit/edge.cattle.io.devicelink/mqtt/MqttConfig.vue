@@ -133,8 +133,6 @@ export default {
 
       this.addReferences();
 
-      console.log('-----Vauth', Vauth, Vprefix);
-
       return [...Vauth, ...Vprefix];
     },
     validateBasicAuth() {
@@ -331,7 +329,7 @@ export default {
             <LabeledSelect
               v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePEMRef.name"
               label="Cert File Pem"
-              :options="this.secretList"
+              :options="secretList"
               :clearable="true"
               required
               @input="clearData('certFilePEMRef')"
@@ -351,7 +349,7 @@ export default {
             <LabeledSelect
               v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
               label="Key File Pem"
-              :options="this.secretList"
+              :options="secretList"
               required
               @input="clearData('keyFilePEMRef')"
             />
@@ -372,7 +370,7 @@ export default {
             <LabeledSelect
               v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.caFilePEMRef.name"
               label="CA File Pem (optional)"
-              :options="this.secretList"
+              :options="secretList"
               @input="clearData('caFilePEMRef')"
             />
           </div>

@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import _ from 'lodash';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';

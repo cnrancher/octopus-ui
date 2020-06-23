@@ -118,6 +118,11 @@ export const DEVICE_PROTOCOL = {
   RBAC_CLUSTERROLEL:          'rbac.authorization.k8s.io.clusterrole'
 };
 
+export const DEVICE_TEMPLATE = {
+  TEMPLATE:     'edgeapi.cattle.io.devicetemplate',
+  REVISION:     'edgeapi.cattle.io.devicetemplaterevision'
+};
+
 export const STORAGE_CATEGORY = {
   PERSISTENT_VOLUME:      'persistentvolume',
   STORAGE_CLASS:          'storage.k8s.io.storageclass'

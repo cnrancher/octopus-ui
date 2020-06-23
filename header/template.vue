@@ -16,7 +16,7 @@ export default {
 <template>
   <div>
     <nuxt-link
-      :to="{path: formRoute}"
+      :to="{name: 'c-cluster-resource-createtemplate'}"
       tag="button"
       type="button"
       class="btn bg-primary ml-10"

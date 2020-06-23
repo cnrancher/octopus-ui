@@ -70,7 +70,7 @@ export const MENUS = [
         meta: { title: '设备列表' }
       },
       {
-        path: '/c/local/edgeapi.cattle.io.devicetemplate',
+        path: '/c/local/template',
         meta: { title: '设备模板' }
       },
     ]

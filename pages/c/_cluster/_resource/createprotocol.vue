@@ -170,7 +170,9 @@ export default {
     <header>
       <BreadCrumbs class="breadcrumbs" :route="route" />
 
-      <h1>Create DeviceProtocol</h1>
+      <h1 class="p-20">
+        Create DeviceProtocol
+      </h1>
     </header>
 
     <CodeMirror

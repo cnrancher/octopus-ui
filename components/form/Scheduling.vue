@@ -111,7 +111,7 @@ export default {
 <template>
   <div @input="update">
     <div>
-      <h3>Node Scheduling</h3>
+      <h3>{{ t('workload.scheduling.titles.nodeScheduling') }}</h3>
       <h4 v-if="isView" class="mt-10 mb-10">
         {{ selectNode ? t('workload.scheduling.affinity.specificNode') : t('workload.scheduling.affinity.schedulingRules') }}
       </h4>
@@ -128,7 +128,7 @@ export default {
           <div class="col span-6">
             <LabeledSelect
               v-model="nodeName"
-              label="Node Name"
+              :label="t('workload.scheduling.affinity.nodeName')"
               :options="nodes"
               :mode="mode"
               option-label="id"

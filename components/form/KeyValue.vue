@@ -43,8 +43,10 @@ export default {
       default: ''
     },
     protip: {
-      type:    [String, Boolean],
-      default: 'ProTip: Paste lines of <code>key=value</code> or <code>key: value</code> into any key field for easy bulk entry',
+      type: [String, Boolean],
+      default() {
+        return this.$store.getters['i18n/t']('formKeyValue.protip');
+      }
     },
 
     padLeft: {
@@ -357,7 +359,7 @@ export default {
 <template>
   <div class="key-value" :class="mode">
     <div v-if="title" class="clearfix">
-      <h2 :style="{'display':'flex'}">
+      <h2 class="mb-10" :style="{'display':'flex'}">
         {{ title }} <i v-if="protip" v-tooltip="protip" class="icon icon-info" style="font-size: 12px" />
       </h2>
     </div>

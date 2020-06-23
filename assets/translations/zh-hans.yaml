@@ -31,6 +31,9 @@ nav:
     namespace: "{name}"
     orphan: "Not in a Project"
 
+formKeyValue:
+  protip: '高级技巧: 在键(Key)输入栏中粘贴一行或多行的key=value键值对能够批量输入。'
+
 cluster:
   provider:
     amazonelasticcontainerservice:
@@ -441,7 +444,7 @@ workload:
   scheduling:
     titles:
       tab: Scheduling
-      nodeScheduling: Node Scheduling
+      nodeScheduling: 主机调度
       podScheduling: Pod Scheduling
       tolerations: Tolerations
       priority: Priority
@@ -469,13 +472,14 @@ workload:
         preferNoSchedule: PreferNoSchedule
         noExecute: NoExecute
     affinity:
-      specificNode: Run pods on specific node(s)
-      schedulingRules: Run pods on node(s) matching these scheduling rules
+      specificNode: 在特定节点上运行Pod
+      schedulingRules: 在符合这些调度规则的节点上运行Pod
       requireAny: 'Require any of:'
       preferAny: 'Prefer any of:'
       thisPodNamespace: This pod's namespace
       affinityTitle: Run pods on nodes with pods matching these selectors
       antiAffinityTitle: Run pods on nodes without pods matching these selectors
+      nodeName: 节点名称
       matchExpressions:
         in: '='
         notIn: ≠
@@ -506,6 +510,71 @@ workload:
     networking: 网络
     nodeScheduling: 主机调度
     scalingUpgradePolicy: "伸缩/更新策略"
+  jobConfig: 
+    completions:
+      label: 完成
+      detail: 成功运行Job的Pod的数量。
+    parallelism:
+      label: 并行数
+      detail: Job在给定时间内应运行的最大Pod数。
+    backoffLimit:
+      label: Back Off Limit
+      detail: 标记此作业失败之前的重试次数。
+    activeDeadlineSeconds:
+      label: 停止延迟时间
+      detail: 在系统尝试终止Job之前，job可能处于活动状态的持续时间。
+  networking:
+    mode: 
+      label: 网络模式
+      palceholder: 选择一种模式
+    dnsPolicy: 
+      label: DNS策略
+      placeholder: 选择一种策略
+    hostname: 
+      label: 主机名
+      placeholder: '例如: web'
+    subdomain: 
+      label: 子域名
+      placeholder: '例如: web'
+    nameservers: 
+      label: DNS服务器地址
+      placeholder: '例如: 192.168.2.1'
+    searchDomains: 
+      label: 搜索域
+      placeholder: '例如: prod.example.com'
+    resolvingServers: 
+      label: 解析服务器
+      placeholder: '例如: 114.114.114.114'
+    hostAlias: 
+      label: '主机别名(/etc/hosts记录)'
+      tip: '额外注入到容器的 /etc/hosts记录'
+      ip:
+        label: IP地址
+        placeholder: '例如: 192.168.0.1'
+      host:
+        label: 主机名
+        placeholder: '例如: database'
+  formUpgrade:
+    strategy: 
+      newOld: '滚动: 先启动新Pod，再停止旧Pod。'
+      oldNew: '滚动: 先停止旧Pod，再启动新Pod。'
+      recreate: 删除所有Pod，然后重新开始。
+      custom: 自定义
+    batchSize:
+      label: 批量大小
+      detail: Pod将批量启动或停止
+    maxSurge:
+      label: 最大浪涌
+      detail: 在任何给定时间内允许超出所需规模的最大Pod数量。
+    maxUnavailable:
+      label: 最大不可用
+      detail: 在任意给定时间最大不可用的Pod数量。
+    minReadySeconds:
+      label: 最短准备时间
+      detail: 在Pod被视为可用之前，Pod中的容器需至少运行多长时间。
+    progressDeadlineSeconds:
+      label: 进度截止时间
+      detail: 将部署标记为停滞状态之前需要等待多久时间才能看到进度。
 
 pod:
   detailTop:

@@ -46,7 +46,13 @@ export default {
 
   methods: {
     hashChange() {
-      this.select(window.location.hash);
+      const match = window.location.href.match(/^[^#]+#([^?]*)\??(.*)/);
+
+      if (match) {
+        const hashPath = match[1];
+
+        this.select(hashPath);
+      }
     },
 
     find(name) {
@@ -59,8 +65,9 @@ export default {
       if ( !selected || selected.disabled) {
         return;
       }
+      const pathname = window.location.pathname;
 
-      window.location.hash = `#${ name }`;
+      window.history.replaceState({}, '', `${ pathname }#${ name }`);
 
       for ( const tab of this.tabs ) {
         tab.active = (tab.name === selected.name);

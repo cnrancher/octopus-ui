@@ -4,7 +4,6 @@ import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import { allHash } from '@/utils/promise';
-import '@/assets/fonts/hyzhuzi/style.scss';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
@@ -268,7 +267,7 @@ export default {
       const { online, offline, total } = this.iotInfo;
 
       const chartInfo = {
-        color: ['#35bfe3', '#dadce7'],
+        color: ['#a0a2f4', '#fac40f'],
         online,
         offline,
         total
@@ -626,17 +625,19 @@ export default {
               </div>
             </div>
             <div class="count">
-              <div>
-                <span>设备总数：</span>
-                <span>{{ iotInfo.total }}</span>
+              <div class="count-num count-num-border prompt-light-font">
+                {{ iotInfo.online }}
               </div>
-              <div>
-                <span>在线数量：</span>
-                <span>{{ iotInfo.online }}</span>
+              <div class="count-num prompt-light-font">
+                {{ iotInfo.offline }}
               </div>
-              <div>
-                <span>离线数量：</span>
-                <span>{{ iotInfo.offline }}</span>
+              <div class="count-title">
+                <i class="icon icon-dot online" />
+                在线数量(个)
+              </div>
+              <div class="count-title">
+                <i class="icon icon-dot offline" />
+                离线数量(个)
               </div>
             </div>
           </div>
@@ -687,7 +688,6 @@ export default {
 </template>
 
 <style lang="scss">
-  // @import "~assets/fonts/fzpszhjw/style.scss";
   .wrapper {
     padding: 0 !important;
     background-color: #f6f7fb;
@@ -700,7 +700,7 @@ export default {
       border-bottom: 1px solid #ddd;
       border-top: 1px solid #dcdcdc;
       background-color: var(--body-bg);
-      padding-left: 2vw;
+      padding-left: 30px;
       .name {
         margin-left: 10px;
         font-size: 16px;
@@ -726,12 +726,12 @@ export default {
     .module-title {
       font-size: 24px;
       margin-bottom: 4px;
-      font-family: fzpszhjw;
     }
     .content {
       display: flex;
       justify-content: space-between;
       width: 100%;
+      padding: 10px;
       .content-main {
         min-height: 800px;
         width: 71%;
@@ -754,7 +754,6 @@ export default {
             padding: 10px 10px 0;
             h4 {
               font-size: 17px;
-              font-weight: bold;
             }
             path {
               transition: all .3s ease-in-out;
@@ -828,22 +827,30 @@ export default {
           }
         }
         .count {
-          display: flex;
-          justify-content: space-around;
-          padding: 21px 0;
-
+          display: grid;
+          padding: 21px 0 0;
+          grid-template-columns: 50% 50%;
           div {
-            display: flex;
-            align-items: flex-end;
             box-sizing: border-box;
-            border-right: 1px solid #ddd;
-            padding-right: 0.4vw;
-            span:first-child {
-              line-height: 1.5;
-              font-size: 18px;
+            width: 100%;
+            text-align: center;
+            &.count-num {
+              font-size: 28px;
             }
-            span:last-child {
-              font-size: 26px;
+            &.count-num-border {
+              border-right: 1px solid #ddd;
+            }
+            &.count-title {
+              font-size: 16px;
+            }
+            .icon {
+              font-size: 16px;
+              &.online {
+                color: #a0a2f4;
+              }
+              &.offline {
+                color: #fac40f;
+              }
             }
           }
           div:last-child {

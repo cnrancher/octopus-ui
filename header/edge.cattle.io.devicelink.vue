@@ -39,7 +39,7 @@ export default {
     </nuxt-link>
 
     <nuxt-link
-      to="/c/local/edgeapi.cattle.io.devicetemplate"
+      to="/c/local/template"
       tag="button"
       type="button"
       class="btn bg-primary ml-10"

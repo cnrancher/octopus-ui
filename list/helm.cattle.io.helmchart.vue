@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash';
 import { STATE, AGE, NAMESPACE_NAME, TYPE } from '@/config/table-headers';
 import SortableTable from '@/components/SortableTable';
 import {

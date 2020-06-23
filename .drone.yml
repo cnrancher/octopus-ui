@@ -136,7 +136,7 @@ steps:
       from_secret: aws_access_key_id
     secret_key:
       from_secret: aws_secret_access_key
-    source: dist/latest/**
+    source: dist/latest/**/*
     strip_prefix: dist/latest/
     target: /ui/latest
 
@@ -178,7 +178,7 @@ steps:
       from_secret: aws_access_key_id
     secret_key:
       from_secret: aws_secret_access_key
-    source: dist/${DRONE_BRANCH}/**
+    source: dist/${DRONE_BRANCH}/**/*
     strip_prefix: dist/${DRONE_BRANCH}/
     target: /ui/${DRONE_BRANCH}
 
@@ -217,7 +217,7 @@ steps:
       from_secret: aws_access_key_id
     secret_key:
       from_secret: aws_secret_access_key
-    source: dist/${DRONE_TAG}/**
+    source: dist/${DRONE_TAG}/**/*
     strip_prefix: dist/${DRONE_TAG}/
     target: /ui/${DRONE_TAG}
 

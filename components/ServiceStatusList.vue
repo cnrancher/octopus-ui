@@ -96,7 +96,6 @@ export default {
       span {
         line-height: 40px;
         font-size: 17px;
-        font-weight: bold;
         vertical-align: middle;
         text-align: center;
       }

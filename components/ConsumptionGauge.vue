@@ -181,8 +181,7 @@ export default {
                 percent: {
                   fontSize:   this.formatFontSize(40),
                   color:      '#423fa9',
-                  fontWeight: 'bold',
-                  // fontFamily: 'hyzhuzi',
+                  fontFamily: 'prompt-light',
                   height:     40
                 },
                 type: {

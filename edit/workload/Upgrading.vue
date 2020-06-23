@@ -127,37 +127,42 @@ export default {
         <RadioGroup
           v-model="actualStrategy"
           :options="['newOld', 'oldNew', 'recreate', 'custom']"
-          :labels="['Rolling: start new pods, then stop old', 'Rolling: stop old pods, then start new', 'Kill ALL pods, then start new', 'Custom']"
+          :labels="[
+            t('workload.formUpgrade.strategy.newOld'),
+            t('workload.formUpgrade.strategy.oldNew'),
+            t('workload.formUpgrade.strategy.recreate'),
+            t('workload.formUpgrade.strategy.custom')
+          ]"
           :mode="mode"
         />
       </div>
       <div v-if="actualStrategy !== 'recreate'" class="col span-6">
-        <UnitInput v-if="actualStrategy !=='custom'" v-model="batchSize" :suffix="batchSize == 1 ? 'Pod' : 'Pods'" label="Batch Size" :mode="mode">
+        <UnitInput v-if="actualStrategy !=='custom'" v-model="batchSize" :suffix="batchSize == 1 ? 'Pod' : 'Pods'" :label="t('workload.formUpgrade.batchSize.label')" :mode="mode">
           <template v-slot:label>
             <span :style="{'color':'var(--input-label)'}">
-              Batch Size
-              <i v-tooltip="'Pods will be started and stopped this many at a time'" class="icon icon-info" style="font-size: 14px" />
+              {{ t('workload.formUpgrade.batchSize.label') }}
+              <i v-tooltip="t('workload.formUpgrade.batchSize.detail')" class="icon icon-info" style="font-size: 14px" />
             </span>
           </template>
         </UnitInput>
         <template v-else>
           <div class="row">
             <div class="col span-6">
-              <UnitInput v-model="maxSurge" :suffix="maxSurge == 1 ? 'Pod' : 'Pods'" label="Max Surge" :mode="mode">
+              <UnitInput v-model="maxSurge" :suffix="maxSurge == 1 ? 'Pod' : 'Pods'" :label="t('workload.formUpgrade.maxSurge.label')" :mode="mode">
                 <template v-slot:label>
                   <span :style="{'color':'var(--input-label)'}">
-                    Max Surge
-                    <i v-tooltip="'The maximum number of pods allowed beyond the desired scale at any given time.'" class="icon icon-info" style="font-size: 14px" />
+                    {{ t('workload.formUpgrade.maxSurge.label') }}
+                    <i v-tooltip="t('workload.formUpgrade.maxSurge.detail')" class="icon icon-info" style="font-size: 14px" />
                   </span>
                 </template>
               </UnitInput>
             </div>
             <div class="col span-6">
-              <UnitInput v-model="maxUnavailable" :suffix="maxUnavailable == 1 ? 'Pod' : 'Pods'" label="Max Unavailable" :mode="mode">
+              <UnitInput v-model="maxUnavailable" :suffix="maxUnavailable == 1 ? 'Pod' : 'Pods'" :label="t('workload.formUpgrade.maxUnavailable.label')" :mode="mode">
                 <template v-slot:label>
                   <span :style="{'color':'var(--input-label)'}">
-                    Max Unavailable
-                    <i v-tooltip="'The maximum number of pods which can be unavailable at any given time.'" class="icon icon-info" style="font-size: 14px" />
+                    {{ t('workload.formUpgrade.maxUnavailable.label') }}
+                    <i v-tooltip="t('workload.formUpgrade.maxUnavailable.detail')" class="icon icon-info" style="font-size: 14px" />
                   </span>
                 </template>
               </UnitInput>
@@ -168,21 +173,21 @@ export default {
     </div>
     <div class="row">
       <div class="col span-6">
-        <UnitInput v-model="minReadySeconds" :suffix="minReadySeconds == 1 ? 'Second' : 'Seconds'" label="Minimum Ready Time" :mode="mode">
+        <UnitInput v-model="minReadySeconds" :suffix="minReadySeconds == 1 ? 'Second' : 'Seconds'" :label="t('workload.formUpgrade.minReadySeconds.label')" :mode="mode">
           <template #label>
             <label :style="{'color':'var(--input-label)'}">
-              Minimum Ready Time
-              <i v-tooltip="'Containers in the pods must be up for at least this long before the pod is considered available.'" class="icon icon-info" style="font-size: 14px" />
+              {{ t('workload.formUpgrade.minReadySeconds.label') }}
+              <i v-tooltip="t('workload.formUpgrade.minReadySeconds.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>
       </div>
       <div class="col span-6">
-        <UnitInput v-model="progressDeadlineSeconds" :suffix="progressDeadlineSeconds == 1 ? 'Second' : 'Seconds'" label="Progress Deadline" :mode="mode">
+        <UnitInput v-model="progressDeadlineSeconds" :suffix="progressDeadlineSeconds == 1 ? 'Second' : 'Seconds'" :label="t('workload.formUpgrade.progressDeadlineSeconds.label')" :mode="mode">
           <template #label>
             <label :style="{'color':'var(--input-label)'}">
-              Progress Deadline
-              <i v-tooltip="'How long to wait without seeing progress before marking the deployment as stalled.'" class="icon icon-info" style="font-size: 14px" />
+              {{ t('workload.formUpgrade.progressDeadlineSeconds.label') }}
+              <i v-tooltip="t('workload.formUpgrade.progressDeadlineSeconds.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>

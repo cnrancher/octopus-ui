@@ -148,8 +148,8 @@ export default {
           v-model="networkMode"
           :mode="mode"
           :options="networkModeChoices"
-          label="Network Mode"
-          placeholder="Select a Mode..."
+          :label="t('workload.networking.mode.label')"
+          :placeholder="t('workload.networking.mode.placeholder')"
           @input="update"
         />
       </div>
@@ -159,8 +159,8 @@ export default {
           v-model="dnsPolicy"
           :mode="mode"
           :options="dnsPolicyChoices"
-          label="DNS Policy"
-          placeholder="Select a Policy..."
+          :label="t('workload.networking.dnsPolicy.label')"
+          :placeholder="t('workload.networking.dnsPolicy.placeholder')"
           @input="update"
         />
       </div>
@@ -170,18 +170,18 @@ export default {
       <div class="col span-6">
         <LabeledInput
           v-model="hostname"
-          label="Hostname"
+          :label="t('workload.networking.hostname.label')"
           :mode="mode"
-          placeholder="e.g. web"
+          :placeholder="t('workload.networking.hostname.placeholder')"
           @input="update"
         />
       </div>
       <div class="col span-6">
         <LabeledInput
           v-model="subdomain"
-          label="Subdomain"
+          :label="t('workload.networking.subdomain.label')"
           :mode="mode"
-          placeholder="e.g. web"
+          :placeholder="t('workload.networking.subdomain.placeholder')"
           @input="update"
         />
       </div>
@@ -192,8 +192,8 @@ export default {
         <ArrayList
           key="dnsNameservers"
           v-model="nameservers"
-          title="Nameservers"
-          value-placeholder="e.g. 1.1.1.1"
+          :title="t('workload.networking.nameservers.label')"
+          :value-placeholder="t('workload.networking.nameservers.placeholder')"
           add-label="Add Nameserver"
           :value-multiline="false"
           :mode="mode"
@@ -206,8 +206,8 @@ export default {
         <ArrayList
           key="dnsSearches"
           v-model="searches"
-          title="Search Domains"
-          value-placeholder="e.g. mycompany.com"
+          :title="t('workload.networking.searchDomains.label')"
+          :value-placeholder="t('workload.networking.searchDomains.placeholder')"
           add-label="Add Search Domain"
           :value-multiline="false"
           :mode="mode"
@@ -219,7 +219,14 @@ export default {
     </div>
 
     <div class="row">
-      <KeyValue v-model="options" key-label="Name" :mode="mode" title="DNS Resolver Options" :read-allowed="false" />
+      <KeyValue
+        v-model="options"
+        key-label="Name"
+        :mode="mode"
+        :title="t('workload.networking.resolvingServers.label')"
+        :key-placeholder="t('workload.networking.resolvingServers.placeholder')"
+        :read-allowed="false"
+      />
     </div>
 
     <div class="row">
@@ -228,16 +235,16 @@ export default {
           key="hostAliases"
           v-model="hostAliases"
           :mode="mode"
-          title="Host Aliases"
-          protip="Additional /etc/hosts entries to be injected in the container."
+          :title="t('workload.networking.hostAlias.label', undefined, true)"
+          :protip="t('workload.networking.hostAlias.tip', undefined, true)"
           :read-allowed="false"
           :as-map="false"
           key-name="ip"
-          key-label="IP Address"
-          key-placeholder="e.g. 1.1.1.1"
+          :key-label="t('workload.networking.hostAlias.ip.label')"
+          :key-placeholder="t('workload.networking.hostAlias.ip.placeholder')"
           value-name="hostnames"
-          value-label="Hostname"
-          value-placeholder="e.g. foo.com, bar.com"
+          :value-label="t('workload.networking.hostAlias.host.label')"
+          :value-placeholder="t('workload.networking.hostAlias.host.placeholder')"
           :pad-left="false"
           add-label="Add Alias"
           @input="updateHostAliases"

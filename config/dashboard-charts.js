@@ -12,7 +12,7 @@ export function rightGaugeConfigGenerator(opts) {
         fontWeight: 'normal',
         color:      opts.color[1],
         fontSize:   '36',
-        fontFamily: 'hyzhuzi',
+        fontFamily: 'prompt-light',
         lineHeight:  30,
         rich:       {
           num: {
@@ -31,13 +31,6 @@ export function rightGaugeConfigGenerator(opts) {
         color:    '#454545',
       }
     },
-    legend: {
-      orient:  'vertical',
-      top:     'center',
-      itemGap: 20,
-      right:   0,
-    },
-    color:  opts.color,
     series: [
       {
         type:      'pie',
@@ -45,20 +38,27 @@ export function rightGaugeConfigGenerator(opts) {
         radius:    ['80%', '96%'],
         itemStyle: {
           normal: {
-            label:     { show: false },
-            labelLine: { show: false }
+            color:       opts.color[0],
+            shadowColor: opts.color[0],
+            shadowBlur:  0,
+            label:       { show: false },
+            labelLine:   { show: false }
           }
         },
         hoverAnimation: false,
         data:           [
           {
+            name:      '离线数量',
+            value:     opts.offline,
+            itemStyle: {
+              normal:   { color: opts.color[1] },
+              emphasis: { color: opts.color[1] }
+            }
+          },
+          {
             value:     opts.online,
             name:      '在线数量',
           },
-          {
-            name:  '离线数量',
-            value: opts.offline
-          }
         ]
       }
     ]
@@ -161,10 +161,9 @@ export function baseGaugeConfigGenerator(rate) {
           textStyle: { fontSize: formatFontSize(44) },
           rich:      {
             percent: {
-              fontSize:   formatFontSize(40),
+              fontSize:   formatFontSize(42),
               color:      '#423fa9',
-              fontWeight: 'bold',
-              fontFamily: 'hyzhuzi',
+              fontFamily: 'prompt-light',
               height:     60
             },
             type: {
@@ -173,7 +172,7 @@ export function baseGaugeConfigGenerator(rate) {
               height:   30
             },
             describe: {
-              color:    '#35bfe3',
+              color:    '#178fff',
               fontSize: formatFontSize(15),
               height:   20
             }

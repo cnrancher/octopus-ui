@@ -102,8 +102,9 @@ export function parseSi(inValue, { increment = null, allowFractional = true } = 
 
 export function formatFontSize(val, initWidth = 1920) {
   const nowClientWidth = document.documentElement.clientWidth;
+  const rate = nowClientWidth < initWidth ? 1.2 : 0.9;
 
-  return val * (nowClientWidth / initWidth);
+  return val * (nowClientWidth / initWidth) * rate;
 }
 
 export default {

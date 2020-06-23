@@ -100,8 +100,8 @@ export default {
         <UnitInput v-model="completions" :mode="mode" :suffix="completions===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
-              Completions
-              <i v-tooltip="'The number of successfully finished pods the job should be run with.'" class="icon icon-info" style="font-size: 14px" />
+              <t k="workload.jobConfig.completions.label" />
+              <i v-tooltip="t('workload.jobConfig.completions.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>
@@ -110,8 +110,8 @@ export default {
         <UnitInput v-model="parallelism" :mode="mode" class="col span-6" :suffix="parallelism===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
-              Parallelism
-              <i v-tooltip="'The maximum number of pods the job should run at any given time.'" class="icon icon-info" style="font-size: 14px" />
+              <t k="workload.jobConfig.parallelism.label" />
+              <i v-tooltip="t('workload.jobConfig.parallelism.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>
@@ -122,8 +122,8 @@ export default {
         <UnitInput v-model="backOffLimit" :mode="mode" :suffix="backOffLimit===1 ? 'Time' : 'Times'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
-              Back Off Limit
-              <i v-tooltip="'The number of retries before marking this job failed.'" class="icon icon-info" style="font-size: 14px" />
+              <t k="workload.jobConfig.backoffLimit.label" />
+              <i v-tooltip="t('workload.jobConfig.backoffLimit.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>
@@ -132,8 +132,8 @@ export default {
         <UnitInput v-model="activeDeadlineSeconds" :mode="mode" :suffix="activeDeadlineSeconds===1 ? 'Second' : 'Seconds'">
           <template v-slot:label>
             <label :style="{'color':'var(--input-label)'}">
-              Active Deadline
-              <i v-tooltip="'The duration that the job may be active before the system tries to terminate it.'" class="icon icon-info" style="font-size: 14px" />
+              <t k="workload.jobConfig.activeDeadlineSeconds.label" />
+              <i v-tooltip="t('workload.jobConfig.activeDeadlineSeconds.detail')" class="icon icon-info" style="font-size: 14px" />
             </label>
           </template>
         </UnitInput>

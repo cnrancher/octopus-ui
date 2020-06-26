@@ -1,9 +1,7 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import ButtonGroup from '@/components/ButtonGroup';
 import createEditView from '@/mixins/create-edit-view';
 import { _EDIT, _CREATE } from '@/config/query-params';
 import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
@@ -11,35 +9,31 @@ import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 export default {
   components: { LabeledSelect, LabeledInput },
 
-  mixins: [createEditView],
-
   props: {
-    mode:  {
+    kind: {
       type:     String,
       required: true
     },
-    value: {
+    templateSpec: {
       type:     Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
-    const { devicesType } = this.$store.state;
+    const { devicesType } = this.$store.state || [];
 
     return {
       devicesType,
+      properties:       {},
       templateProtocol: {},
-      properties: {}
-    }
+    };
   },
-  
+
   computed: {
-    kind() {
-      return this.value.spec.model.kind;
-    },
     isRequired(key) {
       const requiredArr = this.templateProtocol?.required || [];
+
       return requiredArr.includes(key);
     },
   },
@@ -51,42 +45,41 @@ export default {
             return D;
           }
         });
-        const _spec = this.value.spec;
-        const customDevice = _.cloneDeep(customDevice)
-        this.$set(this.value, 'spec', _.merge(customDevice, _spec));
+
+        const _templateSpec = _.cloneDeep(customDevice.template.spec);
+
+        const mergeProtocol = _.merge(_templateSpec.protocol, this.templateSpec.protocol);
+
+        this.$set(this.templateSpec, 'protocol', _.cloneDeep(mergeProtocol));
 
         const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
-        const templateProtocol =  _.cloneDeep(spec.protocol);
+        const templateProtocol = _.cloneDeep(spec.protocol);
 
         const protocol = templateProtocol?.properties || {};
-        let properties = {};
         const keys = Object.keys(protocol);
+        let properties = {};
 
         keys.forEach((key) => {
           const deepProperties = Object.keys(protocol[key]);
-        
+
           if (deepProperties.includes('properties')) {
             const types = Object.keys(protocol[key].properties);
 
-            Object.assign(properties, {
-              [key]: {}
-            })
-            
-            types.forEach((Deepkey) => {
-              Object.assign(properties[key], {
-                [Deepkey]: ''
-              })
-            })
-          } else {
-            Object.assign(properties, {
-              [key]: ''
-            })
-          }
-        })
-        const _protocol = this.value.spec.template.spec.protocol;
-        properties = _.merge(properties, _protocol)
+            Object.assign(properties, { [key]: {} });
 
-        this.$set(this.value.spec.template.spec, 'protocol', _.cloneDeep(properties));
+            types.forEach((Deepkey) => {
+              Object.assign(properties[key], { [Deepkey]: '' });
+            });
+          } else {
+            Object.assign(properties, { [key]: '' });
+          }
+        });
+
+        const _protocol = _.cloneDeep(this.templateSpec.protocol);
+
+        properties = _.merge(properties, _protocol);
+
+        this.$set(this.templateSpec, 'protocol', _.cloneDeep(properties));
         this.$set(this, 'templateProtocol', _.cloneDeep(templateProtocol));
         this.$set(this, 'properties', _.cloneDeep(properties));
       },
@@ -100,56 +93,54 @@ export default {
   <div class="config">
     <template v-for="(prop, key) in properties">
       <template v-if="templateProtocol.properties[key].required">
-        <div class="span-12" :key="key">
-          <h2 class="title" :key="key">{{key}}</h2>
+        <div :key="key" class="span-12">
+          <h2 :key="key" class="title">
+            {{ key }}
+          </h2>
         </div>
-               
+
         <template v-for="(deepProp, deepKey) in templateProtocol.properties[key].properties">
-          
           <template v-if="templateProtocol.properties[key].properties[deepKey].enum">
-            <div class="span-6" :key="key + deepKey">
+            <div :key="key + deepKey" class="span-6">
               <LabeledSelect
-                v-model.number="value.spec.template.spec.protocol[key][deepKey]"
+                v-model.number="templateSpec.protocol[key][deepKey]"
                 :label="deepKey"
                 :options="templateProtocol.properties[key].properties[deepKey].enum"
               />
             </div>
-            
           </template>
 
           <template v-else>
-            <div class="span-6" :key="key + deepKey">
+            <div :key="key + deepKey" class="span-6">
               <LabeledInput
-                v-model="value.spec.template.spec.protocol[key][deepKey]"
+                v-model="templateSpec.protocol[key][deepKey]"
                 :label="deepKey"
               />
             </div>
           </template>
         </template>
-
       </template>
 
       <template v-else-if="templateProtocol.properties[key].enum">
-        <div class="span-6" :key="key">
+        <div :key="key" class="span-6">
           <LabeledSelect
             :key="key"
-            :label="label"
-            v-model="value.spec.template.spec.protocol[key]"
-            :options="templateProtocol.properties[key].enum" 
+            v-model="templateSpec.protocol[key]"
+            :label="key"
+            :options="templateProtocol.properties[key].enum"
           />
         </div>
       </template>
 
       <template v-else>
-        <div class="span-6" :key="key">
+        <div :key="key" class="span-6">
           <LabeledInput
             :key="key"
+            v-model="templateSpec.protocol[key]"
             :label="key"
-            v-model="value.spec.template.spec.protocol[key]"
           />
         </div>
       </template>
-
     </template>
   </div>
 </template>

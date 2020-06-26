@@ -45,7 +45,7 @@ export default {
     position: relative;
     padding: 2px 3px;
     font-size: 1em;
-    max-width: 110px;
+    max-width: 210px;
     font-size: .85em;
     vertical-align: middle;
   }

@@ -1,75 +1,92 @@
 <script>
+import Vue from 'vue';
 import _ from 'lodash';
+import Checkbox from '@/components/form/Checkbox';
+import ButtonGroup from '@/components/ButtonGroup';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import ButtonGroup from '@/components/ButtonGroup';
-import { parity, dataBits, deviceDefaultInfo } from '@/config/map';
-import { MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
+import { parity, dataBits } from '@/config/map';
+import {
+  MODBUS_DEVICE_RTU,
+  MODBUS_DEVICE_TCP
+} from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
 export default {
   components: {
     ButtonGroup,
     LabeledInput,
-    LabeledSelect
+    LabeledSelect,
+    Checkbox
   },
 
   props: {
-    value: {
+    templateSpec: {
       type:     Object,
       required: true,
-    },
+    }
   },
 
   data() {
     return {
-      stopBits: [
-        { label: 1, value: 1 },
-        { label: 2, value: 2 }
-      ],
       parity,
       dataBits,
-      deviceDefaultInfo,
-      isChoose: true,
-      tempSpec: {},
+      isChoose:    true,
+      tempStorage: null,
     };
   },
 
   computed: {
-    isModeReady() {
-      return !!this.value.spec.template.spec.protocol?.tcp || !!this.value.spec.template.spec.protocol?.rtu;
+    stopBits() {
+      return [
+        { label: 1, value: 1 },
+        { label: 2, value: 2 }
+      ];
+    },
+    modeOption() {
+      return [
+        { label: 'RTU', value: 'rtu' },
+        { label: 'TCP', value: 'tcp' }
+      ];
     },
     transferMode: {
       get() {
-        if (this.value.spec.template.spec.protocol?.tcp) {
+        if (this.templateSpec.protocol?.tcp) {
           return 'tcp';
-        } else if (this.value.spec.template.spec.protocol?.rtu) {
+        } else if (this.templateSpec.protocol?.rtu) {
           return 'rtu';
         }
 
         return 'rtu';
       },
-      set(v) {
-        this.changeTransferMode(v);
+      set(mode) {
+        this.changeTransferMode(mode);
 
-        return v;
+        return mode;
       }
     },
   },
 
   methods: {
     changeTransferMode(mode) {
-      const tempSpec = _.cloneDeep(this.value.spec);
-      const node = this.value.spec.adaptor.node;
+      const tempStorage = _.cloneDeep(this.templateSpec.protocol);
 
-      if (Object.keys(this.tempSpec).length > 0) {
-        this.$set(this.value, 'spec', _.cloneDeep(this.tempSpec));
+      if (this.tempStorage) {
+        this.$set(this.templateSpec, 'protocol', _.cloneDeep(this.tempStorage));
       } else {
         mode === 'rtu'
-          ? this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU))
-          : this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_TCP));
+          ? this.$set(this.templateSpec, 'protocol', _.cloneDeep(MODBUS_DEVICE_RTU.template.spec.protocol))
+          : this.$set(this.templateSpec, 'protocol', _.cloneDeep(MODBUS_DEVICE_TCP.template.spec.protocol));
       }
-      this.$set(this.value.spec.adaptor, 'node', node);
-      this.tempSpec = tempSpec;
+
+      this.tempStorage = tempStorage;
+    },
+    deleteData() {
+      if (!this.isChoose && this.templateSpec.protocol.rtu) {
+        Vue.delete(this.templateSpec.protocol.rtu, 'baudRate');
+        Vue.delete(this.templateSpec.protocol.rtu, 'dataBits');
+        Vue.delete(this.templateSpec.protocol.rtu, 'parity');
+        Vue.delete(this.templateSpec.protocol.rtu, 'stopBits');
+      }
     }
   }
 };
@@ -79,14 +96,13 @@ export default {
   <div>
     <div class="row">
       <div class="col span-6">
-        <ButtonGroup :value="transferMode" :options="[{label: 'TCP', value: 'tcp'}, {label: 'RTU', value: 'rtu'}]" @input="changeTransferMode" />
+        <ButtonGroup :value="transferMode" :options="modeOption" @input="changeTransferMode" />
       </div>
 
       <div class="col span-6">
         <LabeledInput
-          v-model.number="value.spec.template.spec.protocol[transferMode].slaveID"
+          v-model.number="templateSpec.protocol[transferMode].slaveID"
           label="SlaveID"
-          mode="create"
         />
       </div>
     </div>
@@ -95,9 +111,8 @@ export default {
       <template v-if="transferMode === 'rtu'">
         <div class="col span-6">
           <LabeledInput
-            v-model="value.spec.template.spec.protocol[transferMode].serialPort"
+            v-model="templateSpec.protocol[transferMode].serialPort"
             label="串口"
-            mode="create"
           />
         </div>
       </template>
@@ -105,17 +120,15 @@ export default {
       <template v-else>
         <div class="col span-6">
           <LabeledInput
-            v-model="value.spec.template.spec.protocol[transferMode].ip"
+            v-model="templateSpec.protocol[transferMode].ip"
             label="IP"
-            mode="create"
           />
         </div>
 
         <div class="col span-6">
           <LabeledInput
-            v-model.number="value.spec.template.spec.protocol[transferMode].port"
+            v-model.number="templateSpec.protocol[transferMode].port"
             label="Port"
-            mode="create"
           />
         </div>
       </template>
@@ -123,36 +136,49 @@ export default {
 
     <template v-if="transferMode === 'rtu'">
       <div class="row">
-        <label class="checkbox-container" mode="create" type="checkbox">
-          <label class="checkbox-box">
-            <input v-model="isChoose" type="checkbox" tabindex="-1"> <span tabindex="0" aria-label="Interactive" role="checkbox" class="checkbox-custom"></span>
-          </label>
-          <span class="checkbox-label">添加RTU高级配置</span>
-        </label>
+        <Checkbox
+          v-model="isChoose"
+          class="checkbox"
+          label="添加RTU高级配置"
+          type="checkbox"
+        />
       </div>
 
       <template v-if="isChoose">
         <div class="row">
           <div class="col span-6">
             <LabeledInput
-              v-model.number="value.spec.template.spec.protocol[transferMode].baudRate"
+              v-model.number="templateSpec.protocol[transferMode].baudRate"
               label="baudRate"
-              mode="create"
             />
           </div>
 
           <div class="col span-6">
-            <LabeledSelect v-model.number="value.spec.template.spec.protocol[transferMode].dataBits" label="dataBits" :options="dataBits" />
+            <LabeledSelect
+              v-model.number="templateSpec.protocol[transferMode].dataBits"
+              label="dataBits"
+              :options="dataBits"
+            />
           </div>
         </div>
 
         <div class="row">
           <div class="col span-6">
-            <LabeledSelect v-model.number="value.spec.template.spec.protocol[transferMode].parity" label="parity" :options="parity" :clearable="true" />
+            <LabeledSelect
+              v-model.number="templateSpec.protocol[transferMode].parity"
+              label="parity"
+              :options="parity"
+              :clearable="true"
+            />
           </div>
 
           <div class="col span-6">
-            <LabeledSelect v-model.number="value.spec.template.spec.protocol[transferMode].stopBits" label="stopBits" :options="stopBits" :clearable="true" />
+            <LabeledSelect
+              v-model.number="templateSpec.protocol[transferMode].stopBits"
+              label="stopBits"
+              :options="stopBits"
+              :clearable="true"
+            />
           </div>
         </div>
       </template>

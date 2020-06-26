@@ -1,6 +1,7 @@
 <script>
+import _ from 'lodash';
 import {
-  STATE, AGE, NAMESPACE_NAME, TYPE, WORKLOAD_ENDPOINTS
+  STATE, AGE, NAMESPACE, NAME, TYPE, WORKLOAD_ENDPOINTS
 } from '@/config/table-headers';
 import SortableTable from '@/components/SortableTable';
 import { DEVICE_TEMPLATE, SCHEMA } from '@/config/types';
@@ -29,8 +30,8 @@ export default {
 
   async asyncData({ store }) {
     const resources = await allHash({
-      template:             store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
-      reviosn:              store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.REVISION }),
+      reviosn:  store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.REVISION }),
+      template: store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
     });
 
     return { resources };
@@ -44,6 +45,7 @@ export default {
     headers() {
       return [
         STATE,
+        NAME,
         {
           ...TYPE,
           width: 300
@@ -51,10 +53,17 @@ export default {
         {
           name:      'version',
           labelKey:  'tableHeaders.version',
-          value:     'metadata.name',
-          sort:      'metadata.name',
+          value:     'spec.displayName',
+          sort:      'spec.displayName',
         },
-        NAMESPACE_NAME,
+        {
+          name:      'defaultRevisionName',
+          value:     'spec.defaultRevisionName',
+          label:     '默认修订',
+          sort:       ['spec.defaultRevisionName'],
+          formatter: 'FormatTemplateVersion',
+        },
+        NAMESPACE,
         AGE,
       ];
     },
@@ -66,7 +75,7 @@ export default {
       for ( const typeRows of template ) {
         const templateName = typeRows.metadata.name;
 
-        // out.push(typeRows);
+        out.push(typeRows);
         typeRows.customId = templateName;
 
         for ( const row of [...this.resources.reviosn] ) {
@@ -102,6 +111,16 @@ export default {
     key-field="_key"
     v-on="$listeners"
   >
+    <template #group-by="{group}">
+      <tr class="group-row">
+        <td :colspan="4">
+          <div class="group-tab">
+            设备模版: ({{ group.ref }})
+          </div>
+        </td>
+      </tr>
+    </template>
+
     <template #group-by="{group}">
       <tr class="group-row">
         <td :colspan="4">

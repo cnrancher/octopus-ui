@@ -29,15 +29,15 @@ export default {
     ButtonGroup
   },
   props: {
-    value: {
-      type:    Object,
-      default: () => {}
-    },
     visible: {
       type:    Boolean,
       default: false
     },
-    dialogModel: {
+    templateSpec: {
+      type:     Object,
+      required: true
+    },
+    dialogModel:  {
       type:     String,
       required: true
     },
@@ -48,12 +48,12 @@ export default {
   },
 
   data() {
-    const localDevice = _.cloneDeep(this.value);
+    const localDevice = _.cloneDeep(this.templateSpec);
     let index = 0;
 
     if (this.dialogModel === 'create') {
-      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-      index = localDevice.spec.template.spec.properties.length - 1;
+      localDevice.properties.push(_.cloneDeep(properties));
+      index = localDevice.properties.length - 1;
     } else {
       index = this.editRowIndex;
     }
@@ -76,7 +76,7 @@ export default {
     },
     disableType() {
       const index = this.index;
-      const type = this.localDevice.spec.template.spec.properties[index].visitor.register;
+      const type = this.localDevice.properties[index].visitor.register;
 
       return type === 'CoilRegister' || type === 'DiscreteInputRegister';
     },
@@ -90,7 +90,7 @@ export default {
       delete row.binary;
     },
     add(formName) {
-      const properties = this.localDevice.spec.template.spec.properties;
+      const properties = this.localDevice.properties;
 
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {
@@ -103,17 +103,17 @@ export default {
     changeRegister(value) {
       const index = this.index;
 
-      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '');
+      this.$set(this.localDevice.properties[index], 'value', '');
       this.register.forEach((item) => {
         if (item.value === value) {
-          this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
+          this.localDevice.properties[index].readOnly = item.readOnly;
         }
       });
     },
     changeDataType() {
       const index = this.index;
 
-      this.$set(this.localDevice.spec.template.spec.properties[index], 'value', '');
+      this.$set(this.localDevice.properties[index], 'value', '');
     }
   }
 };
@@ -135,7 +135,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].name"
+          v-model="localDevice.properties[index].name"
           label="属性名"
           mode="create"
         />
@@ -143,7 +143,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].description"
+          v-model="localDevice.properties[index].description"
           label="描述"
           mode="create"
         />
@@ -152,24 +152,24 @@ export default {
 
     <div class="row">
       <div class="col span-6">
-        <LabeledSelect v-model="localDevice.spec.template.spec.properties[index].dataType" label="类型" :options="typeOption" />
+        <LabeledSelect v-model="localDevice.properties[index].dataType" label="类型" :options="typeOption" />
       </div>
 
       <div class="col span-6">
         <LabeledSelect
-          v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'"
-          v-model="localDevice.spec.template.spec.properties[index].value"
+          v-if="localDevice.properties[index].dataType === 'boolean'"
+          v-model="localDevice.properties[index].value"
           label="类型"
           :options="booleanType"
-          :disabled="localDevice.spec.template.spec.properties[index].readOnly"
+          :disabled="localDevice.properties[index].readOnly"
         />
 
         <LabeledInput
           v-else
-          v-model="localDevice.spec.template.spec.properties[index].value"
+          v-model="localDevice.properties[index].value"
           label="值"
           mode="create"
-          :disabled="localDevice.spec.template.spec.properties[index].readOnly"
+          :disabled="localDevice.properties[index].readOnly"
         />
       </div>
     </div>
@@ -178,13 +178,13 @@ export default {
       <div class="col span-6 center">
         <!-- 寄存器类型 -->
         <div>
-          <ButtonGroup v-model="localDevice.spec.template.spec.properties[index].visitor.register" :options="register" @input="changeRegister" />
+          <ButtonGroup v-model="localDevice.properties[index].visitor.register" :options="register" @input="changeRegister" />
         </div>
       </div>
 
       <div class="col span-6">
         <LabeledSelect
-          v-model="localDevice.spec.template.spec.properties[index].readOnly"
+          v-model="localDevice.properties[index].readOnly"
           label="访问模式"
           :options="[{label: '读/写', value: false}, {label: '只读', value: true}]"
           disabled
@@ -195,7 +195,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.number="localDevice.spec.template.spec.properties[index].visitor.offset"
+          v-model.number="localDevice.properties[index].visitor.offset"
           label="寄存器偏移地址"
           mode="create"
         />
@@ -203,7 +203,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model.number="localDevice.spec.template.spec.properties[index].visitor.quantity"
+          v-model.number="localDevice.properties[index].visitor.quantity"
           label="寄存器的个数"
           mode="create"
         />
@@ -214,7 +214,7 @@ export default {
 
     <KeyValue
       key="operationType"
-      v-model="localDevice.spec.template.spec.properties[index].visitor.orderOfOperations"
+      v-model="localDevice.properties[index].visitor.orderOfOperations"
       key-name="operationType"
       value-name="operationValue"
       key-label="Operation"

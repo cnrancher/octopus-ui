@@ -23,13 +23,13 @@ export default {
   },
 
   props: {
-    value: {
-      type:    Object,
-      default: () => {}
-    },
     visible: {
       type:    Boolean,
       default: false
+    },
+    templateSpec: {
+      type:     Object,
+      required: true
     },
     editRowIndex: {
       type:     Number,
@@ -42,12 +42,12 @@ export default {
   },
 
   data() {
-    const localDevice = _.cloneDeep(this.value);
+    const localDevice = _.cloneDeep(this.templateSpec);
     let index = 0;
 
     if (this.dialogModel === 'create') {
-      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-      index = localDevice.spec.template.spec.properties.length - 1;
+      localDevice.properties.push(_.cloneDeep(properties));
+      index = localDevice.properties.length - 1;
     } else {
       index = this.editRowIndex;
     }
@@ -66,13 +66,13 @@ export default {
 
   computed: {
     propLength() {
-      return this.localDevice.spec.template.spec.properties.length;
+      return this.localDevice.properties.length;
     }
   },
 
   methods: {
     add(formName) {
-      const properties = this.localDevice.spec.template.spec.properties;
+      const properties = this.localDevice.properties;
 
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {
@@ -87,14 +87,14 @@ export default {
         if (item.value === value) {
           const index = this.index;
 
-          this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
+          this.localDevice.properties[index].readOnly = item.readOnly;
         }
       });
     },
     clearValue() {
       const index = this.index;
 
-      this.localDevice.spec.template.spec.properties[index].value = '';
+      this.localDevice.properties[index].value = '';
     }
   }
 };
@@ -116,7 +116,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].name"
+          v-model="localDevice.properties[index].name"
           label="属性名"
           placeholder="请输入名称"
         />
@@ -124,7 +124,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].description"
+          v-model="localDevice.properties[index].description"
           label="描述"
           placeholder="请输入描述"
         />
@@ -134,7 +134,7 @@ export default {
     <div class="row">
       <div class="col span-12">
         <LabeledSelect
-          v-model="localDevice.spec.template.spec.properties[index].readOnly"
+          v-model="localDevice.properties[index].readOnly"
           label="readOnly"
           :options="READ_ONLY"
         />
@@ -144,18 +144,18 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledSelect
-          v-model="localDevice.spec.template.spec.properties[index].dataType"
+          v-model="localDevice.properties[index].dataType"
           label="类型"
           :options="opcTypeOption"
           @input="clearValue"
         />
       </div>
 
-      <div v-if="localDevice.spec.template.spec.properties[index].readOnly === false" class="col span-6">
+      <div v-if="localDevice.properties[index].readOnly === false" class="col span-6">
         <select
-          v-if="localDevice.spec.template.spec.properties[index].dataType === 'boolean'"
+          v-if="localDevice.properties[index].dataType === 'boolean'"
           key="selectDataType"
-          v-model="localDevice.spec.template.spec.properties[index].value"
+          v-model="localDevice.properties[index].value"
           class="bigInput"
         >
           <option v-for="opt in booleanType" :key="opt.value" :value="opt.value">
@@ -166,7 +166,7 @@ export default {
         <input
           v-else
           key="inputDataType"
-          v-model="localDevice.spec.template.spec.properties[index].value"
+          v-model="localDevice.properties[index].value"
           autocorrect="off"
           class="bigInput"
           autocapitalize="off"
@@ -178,14 +178,14 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].visitor.nodeID"
+          v-model="localDevice.properties[index].visitor.nodeID"
           label="nodeID"
         />
       </div>
 
       <div class="col span-6">
         <LabeledInput
-          v-model="localDevice.spec.template.spec.properties[index].visitor.browseName"
+          v-model="localDevice.properties[index].visitor.browseName"
           label="browseName"
         />
       </div>

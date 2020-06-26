@@ -1,13 +1,14 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
 import TemplateForm from './templateForm';
-import { opcTypeOption, register } from '@/config/map'
+import { opcTypeOption, register } from '@/config/map';
 
 export default {
-  props: {
+
+  components: { TemplateForm },
+  props:      {
     templateProperties: {
-      type: Object,
+      type:    Object,
       default: () => {}
     },
     value: {
@@ -18,32 +19,31 @@ export default {
       type:    Boolean,
       default: false
     },
+    templateSpec: {
+      type:     Object,
+      required: true
+    },
     dialogModel:  {
       type:     String,
       required: true
     },
-    editRowIndex: { 
-      type: Number,
+    editRowIndex: {
+      type:     Number,
       required: true
     },
   },
 
-  components: {
-    TemplateForm
-  },
-
   data() {
     let properties = this.translationProperties(this.templateProperties.properties);
-
-    const localDevice = _.cloneDeep(this.value);
+    const localDevice = _.cloneDeep(this.templateSpec);
     let index = 0;
 
     if (this.dialogModel === 'create') {
-      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-      index = localDevice.spec.template.spec.properties.length - 1;
+      localDevice.properties.push(_.cloneDeep(properties));
+      index = localDevice.properties.length - 1;
     } else {
       index = this.editRowIndex;
-      properties = localDevice.spec.template.spec.properties[index]
+      properties = localDevice.properties[index];
     }
 
     return {
@@ -55,7 +55,7 @@ export default {
       activeNames: []
     };
   },
-  
+
   computed: {
     showModel() {
       return this.visible;
@@ -63,24 +63,28 @@ export default {
   },
 
   methods: {
-    translationProperties(properties={}) {
-      let keys = Object.keys(properties);
-      const obj = {}
-      keys.forEach(key => {
+    translationProperties(properties = {}) {
+      const keys = Object.keys(properties);
+      const obj = {};
+
+      keys.forEach((key) => {
         if (properties[key].properties) {
           obj[key] = this.translationProperties(properties[key].properties);
-        } else if(properties[key].items) {
+        } else if (properties[key].items) {
           obj[key] = this.translationProperties(properties[key].items.properties);
         } else {
-          obj[key] = ''
+          obj[key] = '';
         }
-      })
-      return obj
+      });
+
+      return obj;
     },
     add(formName) {
       const index = this.index;
-      this.localDevice.spec.template.spec.properties.splice(index, 1, this.properties)
-      const properties = this.localDevice.spec.template.spec.properties;
+
+      this.localDevice.properties.splice(index, 1, this.properties);
+      const properties = this.localDevice.properties;
+
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {
         this.$emit('hideDialog', false);
@@ -95,8 +99,9 @@ export default {
     changeRegister(value) {
       this.register.forEach((item) => {
         if (item.value === value) {
-          const index = this.index
-          this.localDevice.spec.template.spec.properties[index].readOnly = item.readOnly;
+          const index = this.index;
+
+          this.localDevice.properties[index].readOnly = item.readOnly;
         }
       });
     }
@@ -112,11 +117,13 @@ export default {
     class="popUp"
     :before-close="hide"
   >
-    <header slot="title"><span class="icon"></span>添加新属性</header>
+    <header slot="title">
+      <span class="icon"></span>添加新属性
+    </header>
 
     <TemplateForm
-      :templateProperties="templateProperties"
-      :localDevice="localDevice"
+      :template-properties="templateProperties"
+      :local-device="localDevice"
       :properties="properties"
     />
 

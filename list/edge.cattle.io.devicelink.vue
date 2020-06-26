@@ -1,7 +1,7 @@
 <script>
 import ResourceTable from '@/components/ResourceTable';
 import {
-  DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE
+  STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE
 } from '@/config/table-headers';
 
 export default {
@@ -21,7 +21,7 @@ export default {
   },
 
   data() {
-    return { headers: [DEVICE_STATE, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE] };
+    return { headers: [{ ...STATE, width: 150 }, DEVICE_NAME, NAMESPACE, KIND_APIVERSION, PROPERTIES, AGE] };
   },
 };
 </script>

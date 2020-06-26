@@ -18,14 +18,16 @@ export default {
   mixins: [LoadDeps],
 
   props: {
-    value: {
+    templateSpec: {
       type:     Object,
       required: true,
     },
+    namespace:  { type: String, required: true },
+    references: { type: Array, required: true }
   },
 
   data() {
-    const mqtt = this.value.spec.template.spec.extension.mqtt;
+    const mqtt = this.templateSpec.extension.mqtt;
     const isShowBasicAuth = !!mqtt.client.basicAuth.name || false;
     let isShowAdvanced = false;
     let isUsePrefixTopic = false;
@@ -57,7 +59,7 @@ export default {
   computed: {
     secretList() {
       const list = this.secret.filter( (S) => {
-        return S.metadata.namespace === this.value.metadata.namespace;
+        return S.metadata.namespace === this.namespace;
       });
       const mapList = list.map( (S) => {
         return {
@@ -139,16 +141,16 @@ export default {
       const errors = [];
 
       if (this.isShowBasicAuth) {
-        const { name, passsword } = this.value.spec.template.spec.extension.mqtt.client.basicAuth;
+        const { name, passsword } = this.templateSpec.extension.mqtt.client.basicAuth;
 
         if (!name && !passsword) {
-          Vue.delete(this.value.spec.template.spec.extension.mqtt.client.basicAuth, 'name');
-          Vue.delete(this.value.spec.template.spec.extension.mqtt.client.basicAuth, 'passsword');
+          Vue.delete(this.templateSpec.extension.mqtt.client.basicAuth, 'name');
+          Vue.delete(this.templateSpec.extension.mqtt.client.basicAuth, 'passsword');
         } else if (!(name && passsword)) {
           errors.push('请输入name 或 password!');
         }
       } else {
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.client, 'basicAuth');
+        Vue.delete(this.templateSpec.extension.mqtt.client, 'basicAuth');
       }
 
       return errors;
@@ -157,22 +159,22 @@ export default {
       const errors = [];
 
       if (this.isUsePrefixTopic) {
-        if (!this.value.spec.template.spec.extension.mqtt.message.topic.prefix.trim()) {
+        if (!this.templateSpec.extension.mqtt.message.topic.prefix.trim()) {
           errors.push('请输入Prefix Name!');
         }
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.message.topic, 'name');
+        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'name');
       } else {
-        if (!this.value.spec.template.spec.extension.mqtt.message.topic.name.trim()) {
+        if (!this.templateSpec.extension.mqtt.message.topic.name.trim()) {
           errors.push('请输入Topic Name!');
         }
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.message.topic, 'prefix');
-        Vue.delete(this.value.spec.template.spec.extension.mqtt.message.topic, 'with');
+        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'prefix');
+        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'with');
       }
 
       return errors;
     },
     addReferences() {
-      const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.value.spec.template.spec.extension.mqtt.client;
+      const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.templateSpec.extension.mqtt.client;
       const arr = [caFilePEMRef, certFilePEMRef, keyFilePEMRef];
       const filterArr = _.uniqBy(arr, 'name');
       const references = filterArr.map( (O) => {
@@ -182,10 +184,10 @@ export default {
         };
       });
 
-      this.$set(this.value.spec, 'references', references);
+      this.$set(this, 'references', references);
     },
     clearData(type) {
-      this.value.spec.template.spec.extension.mqtt.client.tlsConfig[type].item = '';
+      this.templateSpec.extension.mqtt.client.tlsConfig[type].item = '';
     }
   },
 };
@@ -196,7 +198,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="value.spec.template.spec.extension.mqtt.client.server"
+          v-model.trim="templateSpec.extension.mqtt.client.server"
           label="MQTT Server"
           required
         />
@@ -204,7 +206,7 @@ export default {
 
       <div class="col span-6">
         <LabeledSelect
-          v-model.number="value.spec.template.spec.extension.mqtt.client.protocolVersion"
+          v-model.number="templateSpec.extension.mqtt.client.protocolVersion"
           label="protocolVersion"
           :options="versionList"
         />
@@ -223,7 +225,7 @@ export default {
     <div v-if="isShowBasicAuth" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="value.spec.template.spec.extension.mqtt.client.basicAuth.name"
+          v-model.trim="templateSpec.extension.mqtt.client.basicAuth.name"
           label="username"
           required
         />
@@ -231,7 +233,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="value.spec.template.spec.extension.mqtt.client.basicAuth.password"
+          v-model.trim="templateSpec.extension.mqtt.client.basicAuth.password"
           label="password"
           required
         />
@@ -252,14 +254,14 @@ export default {
     <div v-if="isUsePrefixTopic" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.extension.mqtt.message.topic.prefix"
+          v-model="templateSpec.extension.mqtt.message.topic.prefix"
           label="Prefix Name"
         />
       </div>
 
       <div class="col span-6">
         <LabeledSelect
-          v-model="value.spec.template.spec.extension.mqtt.message.topic.with"
+          v-model="templateSpec.extension.mqtt.message.topic.with"
           label="Prefix mode"
           :options="topicWithList"
         />
@@ -269,7 +271,7 @@ export default {
     <div v-if="!isUsePrefixTopic" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.extension.mqtt.message.topic.name"
+          v-model="templateSpec.extension.mqtt.message.topic.name"
           label="Topic Name"
         />
       </div>
@@ -278,7 +280,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledSelect
-          v-model="value.spec.template.spec.extension.mqtt.message.payloadEncode"
+          v-model="templateSpec.extension.mqtt.message.payloadEncode"
           label="Payload Encode"
           :options="payloadEncodeList"
         />
@@ -286,7 +288,7 @@ export default {
 
       <div class="col span-6">
         <LabeledSelect
-          v-model.number="value.spec.template.spec.extension.mqtt.message.qos"
+          v-model.number="templateSpec.extension.mqtt.message.qos"
           label="QoS"
           :options="qosList"
         />
@@ -308,26 +310,26 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.insecureSkipVerify"
+            v-model="templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify"
             label="Skip Insecure Verify"
             :options="booleanType"
             required
           />
         </div>
 
-        <div v-if="!value.spec.template.spec.extension.mqtt.client.tlsConfig.insecureSkipVerify" class="col span-6">
+        <div v-if="!templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify" class="col span-6">
           <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.serverName"
+            v-model="templateSpec.extension.mqtt.client.tlsConfig.serverName"
             label="Server Name"
           />
         </div>
       </div>
 
-      <div v-if="!value.spec.template.spec.extension.mqtt.client.tlsConfig.insecureSkipVerify">
+      <div v-if="!templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify">
         <div class="row">
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePEMRef.name"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.name"
               label="Cert File Pem"
               :options="secretList"
               :clearable="true"
@@ -338,16 +340,16 @@ export default {
 
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePEMRef.item"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.item"
               label="data"
-              :options="getSecretData(value.spec.template.spec.extension.mqtt.client.tlsConfig.certFilePEMRef.name)"
+              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.name)"
               required
             />
           </div>
 
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
               label="Key File Pem"
               :options="secretList"
               required
@@ -357,9 +359,9 @@ export default {
 
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePEMRef.item"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.item"
               label="data"
-              :options="getSecretData(value.spec.template.spec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name)"
+              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name)"
               required
             />
           </div>
@@ -368,7 +370,7 @@ export default {
         <div class="row">
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.caFilePEMRef.name"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.name"
               label="CA File Pem (optional)"
               :options="secretList"
               @input="clearData('caFilePEMRef')"
@@ -377,9 +379,9 @@ export default {
 
           <div class="col span-3">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.tlsConfig.caFilePEMRef.item"
+              v-model="templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.item"
               label="data"
-              :options="getSecretData(value.spec.template.spec.extension.mqtt.client.tlsConfig.caFilePEMRef.name)"
+              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.name)"
             />
           </div>
 
@@ -411,7 +413,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledInput
-              v-model="value.spec.template.spec.extension.mqtt.client.will.topicName"
+              v-model="templateSpec.extension.mqtt.client.will.topicName"
               label="Topic Name (optional)"
               placeholder="default $will"
             />
@@ -419,7 +421,7 @@ export default {
 
           <div class="col span-6">
             <LabeledInput
-              v-model="value.spec.template.spec.extension.mqtt.client.will.payloadContent"
+              v-model="templateSpec.extension.mqtt.client.will.payloadContent"
               label="Payload Content*"
               placeholder="请输入Payload Content"
             />
@@ -429,7 +431,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.will.payloadEncode"
+              v-model="templateSpec.extension.mqtt.client.will.payloadEncode"
               label="Payload Encode"
               :options="payloadEncodeList"
             />
@@ -437,7 +439,7 @@ export default {
 
           <div class="col span-6">
             <LabeledSelect
-              v-model.number="value.spec.template.spec.extension.mqtt.client.will.qos"
+              v-model.number="templateSpec.extension.mqtt.client.will.qos"
               label="QoS"
               :options="qosList"
             />
@@ -447,7 +449,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledSelect
-              v-model="value.spec.template.spec.extension.mqtt.client.will.retained"
+              v-model="templateSpec.extension.mqtt.client.will.retained"
               label="Retained"
               :options="booleanType"
               required
@@ -461,16 +463,16 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledSelect
-            v-model="value.spec.template.spec.extension.mqtt.client.store.type"
+            v-model="templateSpec.extension.mqtt.client.store.type"
             label="Store Type"
             :options="storeTypeList"
             required
           />
         </div>
 
-        <div v-if="value.spec.template.spec.extension.mqtt.client.store.type === 'file'" class="col span-6">
+        <div v-if="templateSpec.extension.mqtt.client.store.type === 'file'" class="col span-6">
           <LabeledInput
-            v-model="value.spec.template.spec.extension.mqtt.client.store.direcotryPrefix"
+            v-model="templateSpec.extension.mqtt.client.store.direcotryPrefix"
             label="Direcotry Prefix"
             required
           />

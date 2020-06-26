@@ -133,6 +133,8 @@ export const METRIC = { // None
   POD:  'metrics.k8s.io.podmetrics',
 };
 
+export const OFFICIAL_DEVICE = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
+
 export const GATEKEEPER = {
   TEMPLATE_ID: 'cattle-global-data/system-library-rancher-gatekeeper-operator',
   APP_ID:      'rancher-gatekeeper-operator',

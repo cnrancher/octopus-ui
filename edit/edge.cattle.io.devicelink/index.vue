@@ -5,7 +5,8 @@ import {
   BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, customDevice
 } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 import { allHash } from '@/utils/promise';
-import { NODE, NAMESPACES } from '@/config/types';
+import { sortBy } from '@/utils/sort';
+import { NODE, NAMESPACES, DEVICE_TEMPLATE, OFFICIAL_DEVICE } from '@/config/types';
 import { _EDIT, _CREATE } from '@/config/query-params';
 
 import LoadDeps from '@/mixins/load-deps';
@@ -13,45 +14,52 @@ import createEditView from '@/mixins/create-edit-view';
 
 import Tab from '@/components/Tabbed/Tab';
 import Footer from '@/components/form/Footer';
+import Checkbox from '@/components/form/Checkbox';
 import ResourceTabs from '@/components/form/ResourceTabs';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import NameNsDescription from '@/components/form/NameNsDescription';
 
-import BluetoothDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/bluetooth';
-import ModbusDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/modbus';
-import OPCUADeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/opcUa';
-import CustomConfig from '@/edit/edge.cattle.io.devicelink/configuration/custom';
-import MqttConfig from '@/edit/edge.cattle.io.devicelink/mqtt/MqttConfig';
 import DeviceProp from '@/edit/edge.cattle.io.devicelink/deviceProp';
+import MqttConfig from '@/edit/edge.cattle.io.devicelink/mqtt/MqttConfig';
+import CustomConfig from '@/edit/edge.cattle.io.devicelink/configuration/custom';
+import OPCUADeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/opcUa';
+import ModbusDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/modbus';
+import BluetoothDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/bluetooth';
 
 export default {
   components: {
-    BluetoothDeviceConfig,
-    ModbusDeviceConfig,
-    OPCUADeviceConfig,
+    Tab,
+    Footer,
+    Checkbox,
     MqttConfig,
     DeviceProp,
     CustomConfig,
-    NameNsDescription,
     ResourceTabs,
-    Tab,
-    Footer,
-    LabeledSelect
+    LabeledSelect,
+    NameNsDescription,
+    OPCUADeviceConfig,
+    ModbusDeviceConfig,
+    BluetoothDeviceConfig,
   },
 
   mixins: [createEditView, LoadDeps],
 
   data() {
-    const { devicesType } = this.$store.state;
+    const { devicesType = [] } = this.$store.state;
 
     if (this.mode === _CREATE) {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
 
     return {
-      isChoose:      true,
       devicesType,
-      allNodes:           [],
+      allNodes:        [],
+      allVersion:      [],
+      allTemplate:     [],
+      templateName:    '',
+      templateVersion: '',
+      isChoose:        true,
+      isUseTemplate:   false
     };
   },
 
@@ -59,7 +67,13 @@ export default {
     isEdit() {
       return this.mode === _EDIT;
     },
-    deviceType() {
+    kind() {
+      return this.value.spec.model.kind;
+    },
+    isOfficialDevice() {
+      return OFFICIAL_DEVICE.includes(this.kind);
+    },
+    deviceTypeOption() {
       return this.devicesType.map((device) => {
         return {
           label: device.spec.names.kind,
@@ -67,14 +81,42 @@ export default {
         };
       });
     },
-    kind() {
-      return this.value?.spec?.model?.kind;
+    templateVersionOption() {
+      return sortBy(
+        this.allVersion
+          .filter(O => O.spec.deviceTemplateName === this.templateName)
+          .map((O) => {
+            return {
+              label: O.spec.displayName,
+              value: O.spec.displayName
+            };
+          }),
+        'label'
+      );
     },
-    isCustomDevice() {
-      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
-      const kind = this.value?.spec?.model?.kind;
-
-      return !deviceProtocol.includes(kind);
+    templateOption() {
+      return sortBy(
+        this.allTemplate
+          .filter( T => T.spec.deviceKind === this.kind)
+          .map((T) => {
+            return {
+              value: T.metadata.name,
+              label: T.metadata.name
+            };
+          }),
+        'label'
+      );
+    },
+    nodeOption() {
+      return sortBy(
+        this.allNodes.map( (N) => {
+          return {
+            value: N.id,
+            label: N.id
+          };
+        }),
+        'label'
+      );
     }
   },
 
@@ -87,14 +129,11 @@ export default {
     enable(buttonCb) {
       const errors = this.$refs.mqttConfig.deleteUnuseProp();
 
-      this.errors = errors;
-      // if (!this.isChoose && this.value.spec.template.spec.protocol.rtu) { // Delete unwanted data
-      if (!errors.length) {
-        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'baudRate');
-        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'dataBits');
-        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'parity');
-        // Vue.delete(this.value.spec.template.spec.protocol.rtu, 'stopBits');
+      this.$refs.modbus.deleteData();
+      // TODO need callback method
 
+      this.errors = errors;
+      if (!errors.length) {
         this.save(buttonCb);
       } else {
         buttonCb(false);
@@ -103,41 +142,45 @@ export default {
       }
     },
     async loadDeps() {
-      const hash = await allHash({ nodes: this.$store.dispatch('management/findAll', { type: NODE, opt: { url: NODE } }) });
-
-      const nodes = hash.nodes?.map((node) => {
-        return {
-          value: node.id,
-          label: node.id
-        };
+      const hash = await allHash({
+        nodes:    this.$store.dispatch('management/findAll', { type: NODE }),
+        template: this.$store.dispatch('management/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
+        version:  this.$store.dispatch('management/findAll', { type: DEVICE_TEMPLATE.REVISION })
       });
 
-      this.allNodes = nodes;
+      this.allNodes = hash.nodes;
+      this.allTemplate = hash.template;
+      this.allVersion = hash.version;
     },
-    changeKind(value) {
-      if (value === 'ModbusDevice') {
+    changeKind(kind) {
+      this.templateName = '';
+      this.templateVersion = '';
+      const { node } = this.value.spec.adaptor;
+
+      if (kind === 'ModbusDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(MODBUS_DEVICE_RTU));
-      } else if (value === 'BluetoothDevice') {
+      } else if (kind === 'BluetoothDevice') {
         this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
-      } else if (value === 'OPCUADevice') {
+      } else if (kind === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
       } else {
         this.$set(this.value, 'spec', _.cloneDeep(customDevice));
-
-        const resource = this.devicesType.filter((D) => {
-          if (D.spec.names.kind === value) {
-            return D;
-          }
-        });
-        const kind = resource[0].spec.names.kind;
 
         this.$set(this.value.spec.adaptor, 'name', `adaptors.edge.cattle.io/${ kind.toLowerCase() }`);
         this.$set(this.value.spec.model, 'kind', kind);
       }
 
-      const node = this.value.spec.adaptor.node;
-
       this.$set(this.value.spec.adaptor, 'node', node);
+    },
+    changeTemplate(value) {
+      this.templateVersion = '';
+    },
+    changeVersion(value) {
+      const template = this.allVersion.find( (T) => {
+        return this.templateName === T.spec.deviceTemplateName && value === T.spec.displayName;
+      });
+
+      this.$set(this.value.spec.template, 'spec', _.cloneDeep(template.spec.templateSpec));
     },
   }
 };
@@ -152,7 +195,7 @@ export default {
             <LabeledSelect
               v-model="value.spec.model.kind"
               label="设备类型"
-              :options="deviceType"
+              :options="deviceTypeOption"
               :disabled="isEdit"
               @input="changeKind"
             />
@@ -161,25 +204,83 @@ export default {
 
         <div class="row">
           <div class="col span-4">
-            <LabeledSelect v-model="value.spec.adaptor.node" label="节点" :options="allNodes" />
+            <LabeledSelect v-model="value.spec.adaptor.node" label="节点" :options="nodeOption" />
           </div>
         </div>
       </slot>
 
+      <div>
+        <Checkbox
+          v-model="isUseTemplate"
+          class="checkbox"
+          label="使用现有的设备模板和修订"
+          type="checkbox"
+        />
+      </div>
+
+      <div v-if="isUseTemplate" class="row">
+        <div class="col span-6">
+          <LabeledSelect
+            v-model="templateName"
+            label="设备模版"
+            :options="templateOption"
+            @input="changeTemplate"
+          />
+        </div>
+
+        <div class="col span-6">
+          <LabeledSelect
+            v-model="templateVersion"
+            label="设备模版版本"
+            :options="templateVersionOption"
+            @input="changeVersion"
+          />
+        </div>
+      </div>
+
       <ResourceTabs v-model="value" :mode="mode" default-tab="config">
         <template #before>
           <Tab label="访问配置" name="config">
-            <component :is="`${kind}Config`" v-if="!isCustomDevice" :value="value" />
+            <ModbusDeviceConfig
+              v-if="kind === 'ModbusDevice'"
+              ref="modbus"
+              :template-spec="value.spec.template.spec"
+            />
 
-            <CustomConfig v-else :value="value" :mode="mode" />
+            <BluetoothDeviceConfig
+              v-else-if="kind === 'BluetoothDevice'"
+              :template-spec="value.spec.template.spec"
+            />
+
+            <OPCUADeviceConfig
+              v-else-if="kind === 'OPCUADevice'"
+              :template-spec="value.spec.template.spec"
+            />
+
+            <CustomConfig
+              v-else
+              :mode="mode"
+              :kind="kind"
+              :template-spec="value.spec.template.spec"
+            />
           </Tab>
 
           <Tab label="设备属性" name="prop">
-            <DeviceProp :value="value" />
+            <DeviceProp
+              :value="value"
+              :kind="kind"
+              :template-spec="value.spec.template.spec"
+              :is-official-device="isOfficialDevice"
+            />
           </Tab>
 
           <Tab label="MQTT" name="mqtt">
-            <MqttConfig ref="mqttConfig" :value="value" />
+            <MqttConfig
+              ref="mqttConfig"
+              :template-spec="value.spec.template.spec"
+              :namespace="value.metadata.namespace"
+              :references="value.spec.references"
+            />
           </Tab>
         </template>
       </ResourceTabs>

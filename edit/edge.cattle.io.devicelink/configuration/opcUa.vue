@@ -5,19 +5,11 @@ export default {
   components: { LabeledInput },
 
   props: {
-    value: {
+    templateSpec: {
       type:     Object,
       required: true,
-    },
-  },
-
-  data() {
-    return {};
-  },
-
-  computed: {},
-
-  methods: {}
+    }
+  }
 };
 </script>
 
@@ -26,17 +18,15 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.protocol.url"
+          v-model="templateSpec.protocol.url"
           label="URL"
-          mode="create"
         />
       </div>
 
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.protocol.username"
+          v-model="templateSpec.protocol.username"
           label="username"
-          mode="create"
         />
       </div>
     </div>
@@ -44,9 +34,8 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="value.spec.template.spec.protocol.password"
+          v-model="templateSpec.protocol.password"
           label="password"
-          mode="create"
         />
       </div>
     </div>

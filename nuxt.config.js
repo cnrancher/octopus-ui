@@ -232,7 +232,7 @@ module.exports = {
       key:  fs.readFileSync(path.resolve(__dirname, 'server/server.key')),
       cert: fs.readFileSync(path.resolve(__dirname, 'server/server.crt'))
     }),
-    port:      (dev ? 8005 : 80),
+    port:      (dev ? 8005 : 8091),
     host:      '0.0.0.0',
   },
 

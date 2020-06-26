@@ -1,10 +1,9 @@
 <script>
-/* eslint-disable */
 import _ from 'lodash';
-import OpcUaModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
-import ModbusModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
-import BluethoothModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
+import OPCUADeviceModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
+import ModbusDeviceModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
 import CustomModel from '@/edit/edge.cattle.io.devicelink/custom/CustomModel';
+import BluetoothDeviceModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
 import AddTable from '@/edit/edge.cattle.io.devicelink/deviceProp/AddTable';
 import {
   BluetoothDeviceHeader,
@@ -12,6 +11,7 @@ import {
   OPCUADeviceHeader,
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
+import { OFFICIAL_DEVICE } from '@/config/types';
 import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
 const _extension = {
@@ -71,28 +71,36 @@ const _extension = {
 export default {
   components: {
     AddTable,
-    BluethoothModel,
-    ModbusModel,
-    OpcUaModel,
-    CustomModel
+    CustomModel,
+    OPCUADeviceModel,
+    ModbusDeviceModel,
+    BluetoothDeviceModel
   },
 
   props: {
-    value: {
+    templateSpec: {
       type:     Object,
       required: true,
     },
-    mode: { type: String }
+    kind: {
+      type:     String,
+      required: true
+    },
+    isOfficialDevice: {
+      type:     Boolean,
+      required: true
+    }
   },
 
   data() {
     const { devicesType } = this.$store.state;
-    const extension = this.value.spec.template.spec.extension;
+    const { extension } = this.templateSpec;
 
     if (!extension) {
-      this.$set(this.value.spec.template.spec, 'extension', _extension);
+      this.$set(this.templateSpec, 'extension', _extension);
     }
-    this.$set(this.value.spec.template.spec, 'extension', _.merge(_extension, extension));
+
+    this.$set(this.templateSpec, 'extension', _.merge(_extension, extension));
 
     return {
       headers: {
@@ -100,45 +108,29 @@ export default {
         ModbusDeviceHeader,
         OPCUADeviceHeader
       },
-      dialogVisible:      false,
-      editRowIndex:       0,
-      dialogModel:   'create',
-      devicesType
+      devicesType,
+      dialogVisible: false,
+      editRowIndex:  0,
+      dialogModel:   'create'
     };
   },
 
   computed: {
-    isCustomProtocol() {
-      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
-      const kind = this.value.spec.model.kind;
-      return deviceProtocol.includes(kind);
-    },
     currentHeader() {
-      const deviceProtocol = ['ModbusDevice', 'BluetoothDevice', 'OPCUADevice'];
-      const kind = this.value.spec.model.kind;
-      const isCustomProtocol = deviceProtocol.includes(kind);
-
-      if (isCustomProtocol) {
-        const headerName = `${ kind }Header`;
-
-        return this.headers[headerName];
-      }
-
-      return CUSTOMDeviceHeader;
+      return this.isOfficialDevice ? this.headers[`${ this.kind }Header`] : CUSTOMDeviceHeader;
     },
     templateProperties() {
-      const kind = this.value.spec.model.kind;
       const resource = this.devicesType.filter((D) => {
-        if (D.spec.names.kind === kind) {
+        if (D.spec.names.kind === this.kind) {
           return D;
         }
       });
-
       const spec = resource[0].spec.versions[0].schema.openAPIV3Schema.properties.spec.properties;
-      console.log('------自定义设备属性', kind, resource)
-      if (!this.isCustomProtocol) {
-        this.$set(this.value, 'spec', _.cloneDeep(customDevice));
+
+      if (!this.isOfficialDevice) {
+        this.$set(this.templateSpec, 'properties', _.cloneDeep(customDevice.template.spec.properties));
       }
+
       return spec.properties?.items || {};
     }
   },
@@ -156,7 +148,7 @@ export default {
     },
 
     deleteRow(index) {
-      this.value.spec.template.spec.properties.splice(index, 1);
+      this.templateSpec.properties.splice(index, 1);
     },
 
     hideDialog() {
@@ -164,8 +156,8 @@ export default {
     },
 
     addProperties(row) {
-      this.value.spec.template.spec.properties.length = 0;
-      this.value.spec.template.spec.properties.push(...row);
+      this.templateSpec.properties.length = 0;
+      this.templateSpec.properties.push(...row);
     },
   }
 };
@@ -174,31 +166,28 @@ export default {
 <template>
   <div>
     <div>
-      <span>
-        <i class="el-icon-warning"></i>
-        注意：设备属性会明文展示所输入信息，请不要填入敏感信息，如涉及敏感信息，请先加密，请防止信息泄露。
-      </span>
+      <i class="el-icon-warning"></i>
+      注意：设备属性会明文展示所输入信息，请不要填入敏感信息，如涉及敏感信息，请先加密，请防止信息泄露。
     </div>
 
     <AddTable
       :headers="currentHeader"
-      :properties="value.spec.template.spec.properties"
+      :properties="templateSpec.properties"
       @editRow="edit($event)"
       @deleteRow="deleteRow($event)"
     />
 
     <div class="spacer"></div>
-    <button
-      class="btn btn-sm bg-primary"
-      @click="addAttribute"
-    >
+
+    <button class="btn btn-sm bg-primary" @click="addAttribute">
       新增属性
     </button>
 
     <template v-if="dialogVisible">
-      <BluethoothModel
-        v-if="value.spec.model.kind === 'BluetoothDevice'"
-        :value="value"
+      <component
+        :is="`${kind}Model`"
+        v-if="isOfficialDevice"
+        :template-spec="templateSpec"
         :edit-row-index="editRowIndex"
         :visible="dialogVisible"
         :dialog-model="dialogModel"
@@ -206,36 +195,16 @@ export default {
         @hideDialog="hideDialog($event)"
       />
 
-      <ModbusModel
-        v-else-if="value.spec.model.kind === 'ModbusDevice'"
-        :visible="dialogVisible"
-        :edit-row-index="editRowIndex"
-        :value="value"
-        :dialog-model="dialogModel"
-        @addProperties="addProperties($event)"
-        @hideDialog="hideDialog($event)"
-      />
-
-      <OpcUaModel
-        v-else-if="value.spec.model.kind === 'OPCUADevice'"
-        :visible="dialogVisible"
-        :edit-row-index="editRowIndex"
-        :value="value"
-        :dialog-model="dialogModel"
-        @addProperties="addProperties($event)"
-        @hideDialog="hideDialog($event)"
-      />
-
-      <!-- <CustomModel
+      <CustomModel
         v-else
         :visible="dialogVisible"
+        :template-spec="templateSpec"
         :template-properties="templateProperties"
         :edit-row-index="editRowIndex"
-        :value="value"
         :dialog-model="dialogModel"
         @addProperties="addProperties($event)"
         @hideDialog="hideDialog($event)"
-      /> -->
+      />
     </template>
   </div>
 </template>

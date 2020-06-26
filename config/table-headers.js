@@ -10,16 +10,6 @@ export const STATE = {
   formatter: 'BadgeStateFormatter',
 };
 
-export const DEVICE_STATE = {
-  name:      'state',
-  labelKey:  'tableHeaders.state',
-  sort:      ['stateSort', 'nameSort'],
-  value:     'stateDisplay',
-  width:     175,
-  default:   'unknown',
-  formatter: 'DeviceStateFormatter',
-};
-
 export const DOWNLOAD = {
   name:          'download',
   labelKey:      'tableHeaders.download',

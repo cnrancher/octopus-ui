@@ -30,11 +30,11 @@ export default {
   },
 
   props: {
-    value: {
+    templateSpec: {
       type:     Object,
-      required: true,
+      required: true
     },
-    visible: {
+    visible:      {
       type:    Boolean,
       default: false
     },
@@ -49,12 +49,12 @@ export default {
   },
 
   data() {
-    const localDevice = _.cloneDeep(this.value);
+    const localDevice = _.cloneDeep(this.templateSpec);
     let index = 0;
 
     if (this.dialogModel === 'create') {
-      localDevice.spec.template.spec.properties.push(_.cloneDeep(properties));
-      index = localDevice.spec.template.spec.properties.length - 1;
+      localDevice.properties.push(_.cloneDeep(properties));
+      index = localDevice.properties.length - 1;
     } else {
       index = this.editRowIndex;
     }
@@ -71,13 +71,13 @@ export default {
     accessMode() {
       const { index } = this;
 
-      return this.localDevice.spec.template.spec.properties[index].accessMode;
+      return this.localDevice.properties[index].accessMode;
     }
   },
 
   methods: {
     add(formName) {
-      const properties = this.localDevice.spec.template.spec.properties;
+      const properties = this.localDevice.properties;
 
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$emit('hideDialog', false);
@@ -110,7 +110,7 @@ export default {
       <div class="col span-6">
         <LabeledInput
           key="attname"
-          v-model="localDevice.spec.template.spec.properties[index].name"
+          v-model="localDevice.properties[index].name"
           label="属性名"
           mode="create"
         />
@@ -119,7 +119,7 @@ export default {
       <div class="col span-6">
         <LabeledInput
           key="desc"
-          v-model="localDevice.spec.template.spec.properties[index].description"
+          v-model="localDevice.properties[index].description"
           label="描述"
           mode="create"
         />
@@ -130,7 +130,7 @@ export default {
       <div class="col span-6">
         <LabeledSelect
           key="accessMode"
-          v-model="localDevice.spec.template.spec.properties[index].accessMode"
+          v-model="localDevice.properties[index].accessMode"
           label="accessMode"
           :options="accessModeList"
         />
@@ -139,7 +139,7 @@ export default {
       <div class="col span-6">
         <LabeledInput
           key="UUID"
-          v-model="localDevice.spec.template.spec.properties[index].visitor.characteristicUUID"
+          v-model="localDevice.properties[index].visitor.characteristicUUID"
           label="UUID"
           mode="create"
         />
@@ -150,14 +150,14 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            v-model.number="localDevice.spec.template.spec.properties[index].visitor.dataConverter.startIndex"
+            v-model.number="localDevice.properties[index].visitor.dataConverter.startIndex"
             label="startIndex"
           />
         </div>
 
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.endIndex"
+            v-model="localDevice.properties[index].visitor.dataConverter.endIndex"
             label="endIndex"
           />
         </div>
@@ -166,7 +166,7 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.shiftRight"
+            v-model="localDevice.properties[index].visitor.dataConverter.shiftRight"
             label="shiftRight"
           />
         </div>
@@ -177,7 +177,7 @@ export default {
       <div class="row">
         <KeyValue
           key="operationType"
-          v-model="localDevice.spec.template.spec.properties[index].visitor.dataConverter.orderOfOperations"
+          v-model="localDevice.properties[index].visitor.dataConverter.orderOfOperations"
           key-name="operationType"
           value-name="operationValue"
           :pad-left="false"
@@ -207,7 +207,7 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.spec.template.spec.properties[index].visitor.defaultValue"
+            v-model="localDevice.properties[index].visitor.defaultValue"
             label="defaultValue"
           />
         </div>
@@ -216,7 +216,7 @@ export default {
       <div class="row">
         <KeyValue
           key="labels"
-          v-model="localDevice.spec.template.spec.properties[index].visitor.dataWrite"
+          v-model="localDevice.properties[index].visitor.dataWrite"
           :value-multiline="false"
           :pad-left="false"
           :as-map="true"

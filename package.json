@@ -10,6 +10,7 @@
     "node": ">=10"
   },
   "scripts": {
+    "pre-commit": "./scripts/ci",
     "lint:fix": "./node_modules/.bin/eslint --fix --ext .js,.vue .",
     "lint": "./node_modules/.bin/eslint --max-warnings 0 --ext .js,.vue .",
     "test": "./node_modules/.bin/nyc ava --serial --verbose",

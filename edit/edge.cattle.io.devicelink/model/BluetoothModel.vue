@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
@@ -79,6 +80,14 @@ export default {
     add(formName) {
       const properties = this.localDevice.properties;
 
+      for (let i = 0; i < properties.length; i++) {
+        for (const key in properties[i].visitor.dataConverter) {
+          if (!properties[i].visitor.dataConverter[key]) {
+            Vue.delete(properties[i].visitor.dataConverter, key);
+          }
+        }
+      }
+
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$emit('hideDialog', false);
     },
@@ -157,7 +166,7 @@ export default {
 
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.properties[index].visitor.dataConverter.endIndex"
+            v-model.number="localDevice.properties[index].visitor.dataConverter.endIndex"
             label="endIndex"
           />
         </div>
@@ -166,7 +175,7 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledInput
-            v-model="localDevice.properties[index].visitor.dataConverter.shiftRight"
+            v-model.number="localDevice.properties[index].visitor.dataConverter.shiftRight"
             label="shiftRight"
           />
         </div>

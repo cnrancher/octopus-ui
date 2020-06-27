@@ -75,7 +75,7 @@ export default {
       for ( const typeRows of template ) {
         const templateName = typeRows.metadata.name;
 
-        out.push(typeRows);
+        // out.push(typeRows);
         typeRows.customId = templateName;
 
         for ( const row of [...this.resources.reviosn] ) {

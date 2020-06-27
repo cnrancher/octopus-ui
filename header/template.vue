@@ -6,17 +6,13 @@ export default {
       required: true,
     },
   },
-
-  data() {
-    return {};
-  }
 };
 </script>
 
 <template>
   <div>
     <nuxt-link
-      :to="{name: 'c-cluster-resource-createtemplate'}"
+      :to="{path: formRoute}"
       tag="button"
       type="button"
       class="btn bg-primary ml-10"

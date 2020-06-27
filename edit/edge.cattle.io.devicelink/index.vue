@@ -129,7 +129,9 @@ export default {
     enable(buttonCb) {
       const errors = this.$refs.mqttConfig.deleteUnuseProp();
 
-      this.$refs.modbus.deleteData();
+      if (this.kind === 'ModbusDevice') {
+        this.$refs.modbus.deleteData();
+      }
       // TODO need callback method
 
       this.errors = errors;

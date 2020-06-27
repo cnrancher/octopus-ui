@@ -1,12 +1,12 @@
 <script>
 import _ from 'lodash';
+import LoadDeps from '@/mixins/load-deps';
 import { sortBy } from '@/utils/sort';
 import {
   BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, customDevice, extension
 } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 import Footer from '@/components/form/Footer';
 import Tabbed from '@/components/Tabbed';
-import BreadCrumbs from '@/components/BreadCrumbs';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import CreateEditView from '@/mixins/create-edit-view';
@@ -21,6 +21,8 @@ import MqttConfig from '@/edit/edge.cattle.io.devicelink/mqtt/MqttConfig';
 import DeviceProp from '@/edit/edge.cattle.io.devicelink/deviceProp';
 import { DEVICE_TEMPLATE, SCHEMA, NAMESPACE, OFFICIAL_DEVICE } from '@/config/types';
 import KeyValue from '@/components/form/KeyValue';
+import { defaultAsyncData } from '@/components/ResourceDetail';
+import { _CREATE, _EDIT } from '../config/query-params';
 
 const templateValue = {
   apiVersion: 'edgeapi.cattle.io/v1alpha1',
@@ -31,9 +33,9 @@ const templateValue = {
   },
   spec: {
     deviceKind:          '',
-    deviceVersion:       '',
+    deviceVersion:       'v1alpha1',
     deviceGroup:         'devices.edge.cattle.io',
-    deviceResource:      '', // ModbusDevice
+    deviceResource:      'modbusdevices', // ModbusDevice
     labels:              {},
     description:         '',
     defaultRevisionName: ''
@@ -67,7 +69,6 @@ export default {
     InputWithSelect,
     LabeledInput,
     LabeledSelect,
-    BreadCrumbs,
     BluetoothDeviceConfig,
     ModbusDeviceConfig,
     OPCUADeviceConfig,
@@ -77,31 +78,44 @@ export default {
     Tab,
   },
 
-  mixins: { CreateEditView },
+  mixins: [CreateEditView, LoadDeps],
 
-  async asyncData({ store }) {
-    const resources = await allHash({
-      template:   store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
-      reviosn:    store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.REVISION }),
-    });
+  props:  {
+    value: {
+      type:     Object,
+      required: true,
+    },
+    mode: {
+      type:    String,
+      default: 'create'
+    }
+  },
 
-    return { resources };
+  asyncData(ctx) {
+    let resource;
+
+    if ( !ctx.params.id ) {
+      resource = DEVICE_TEMPLATE.REVISION;
+    }
+
+    return defaultAsyncData(ctx, resource);
   },
 
   data() {
     const { devicesType } = this.$store.state;
 
     return {
-      mode:   'create',
       devicesType,
-      route:         this.$route,
+      templateValue: {},
       errors:        null,
-      templateValue,
-      versionValue
+      resources:     {},
     };
   },
 
   computed: {
+    isEdit() {
+      return this.mode === _EDIT;
+    },
     deviceType() {
       return this.devicesType.map((device) => {
         return {
@@ -123,38 +137,52 @@ export default {
       return out;
     },
     kind() {
-      return this.templateValue.spec.deviceKind;
+      return this.templateValue?.spec?.deviceKind;
     },
     isOfficialDevice() {
       return OFFICIAL_DEVICE.includes(this.kind);
-    },
+    }
   },
 
   methods: {
-    async save(buttonDone) {
+    async loadDeps() {
+      const resources = await allHash({
+        template:   this.$store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
+        reviosn:    this.$store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.REVISION }),
+      });
+
+      this.$set(this.value, 'spec', _.merge(versionValue.spec, this.value.spec));
+
+      let _templateValue = {};
+
+      if (this.mode === _EDIT) {
+        const templateName = this.value.spec.deviceTemplateName;
+        const templateNamespace = this.value.metadata.namespace;
+
+        _templateValue = resources.template.filter( (T) => {
+          return T.metadata.namespace === templateNamespace && T.metadata.name === templateName;
+        })[0];
+      }
+
+      this.templateValue = _.merge(_.cloneDeep(templateValue), _templateValue);
+      this.resources = resources;
+    },
+    async enable(buttonCb) {
       try {
-        await this.$store.dispatch('management/request', {
-          method:  'POST',
-          headers: {
-            'content-type': 'application/json',
-            accept:         'application/json',
-          },
-          url:  `v1/edgeapi.cattle.io.devicetemplate`,
-          data: this.templateValue,
-        });
+        if (this.mode === _CREATE) {
+          this.templateValue.spec.deviceResource = `${ this.templateValue.spec.deviceKind.toLowerCase() }s`;
+          await this.$store.dispatch('management/request', {
+            method:  'POST',
+            headers: {
+              'content-type': 'application/json',
+              accept:         'application/json',
+            },
+            url:  `v1/edgeapi.cattle.io.devicetemplate`,
+            data: this.templateValue,
+          });
+        }
 
-        await this.$store.dispatch('management/request', {
-          method:  'POST',
-          headers: {
-            'content-type': 'application/json',
-            accept:         'application/json',
-          },
-          url:  `v1/edgeapi.cattle.io.devicetemplaterevision`,
-          data: this.versionValue,
-        });
-
-        buttonDone(true);
-        this.done();
+        this.save(buttonCb);
       } catch (err) {
         if ( err && err.response && err.response.data ) {
           const body = err.response.data;
@@ -168,29 +196,24 @@ export default {
           this.errors = [err];
         }
 
-        buttonDone(false);
+        buttonCb(false);
       }
-    },
-    done() {
-      this.$router.replace({
-        name:   'c-cluster-resource',
-        params: { resource: 'template' }
-      });
     },
     changeNameAndNamespace(e) {
       this.templateValue.metadata.name = (e.text || '').toLowerCase();
-      this.versionValue.spec.deviceTemplateName = (e.text || '').toLowerCase();
+      this.value.spec.deviceTemplateName = (e.text || '').toLowerCase();
       this.templateValue.metadata.namespace = e.selected;
+      this.value.metadata.namespace = e.selected;
     },
     changeKind(kind) {
       if (kind === 'ModbusDevice') {
-        this.$set(this.versionValue.spec, 'templateSpec', _.cloneDeep(MODBUS_DEVICE_RTU.template.spec));
+        this.$set(this.value.spec, 'templateSpec', _.cloneDeep(MODBUS_DEVICE_RTU.template.spec));
       } else if (kind === 'BluetoothDevice') {
-        this.$set(this.versionValue.spec, 'templateSpec', _.cloneDeep(BLUE_THOOTH_DEVICE.template.spec));
+        this.$set(this.value.spec, 'templateSpec', _.cloneDeep(BLUE_THOOTH_DEVICE.template.spec));
       } else if (kind === 'OPCUADevice') {
-        this.$set(this.versionValue.spec, 'templateSpec', _.cloneDeep(OPC_UA_DEVICE.template.spec));
+        this.$set(this.value.spec, 'templateSpec', _.cloneDeep(OPC_UA_DEVICE.template.spec));
       } else {
-        this.$set(this.versionValue.spec, 'templateSpec', _.cloneDeep(customDevice.template.spec));
+        this.$set(this.value.spec, 'templateSpec', _.cloneDeep(customDevice.template.spec));
 
         this.$set(this.templateValue.spec, 'deviceKind', kind);
       }
@@ -202,16 +225,8 @@ export default {
 
 <template>
   <div>
-    <header>
-      <BreadCrumbs class="breadcrumbs" :route="route" />
-
-      <h1 class="p-20">
-        Create Template
-      </h1>
-    </header>
-
     <div class="p-20">
-      <form>
+      <form v-if="templateValue.metadata">
         <div class="row">
           <div class="col span-4">
             <InputWithSelect
@@ -222,6 +237,7 @@ export default {
               :text-required="true"
               :select-value="templateValue.metadata.namespace"
               :mode="mode"
+              :disabled="isEdit"
               @input="changeNameAndNamespace($event)"
             />
           </div>
@@ -235,7 +251,7 @@ export default {
 
           <div class="col span-4">
             <LabeledInput
-              v-model="templateValue.spec.deviceVersion"
+              v-model="value.spec.displayName"
               label="模版修订版本"
             />
           </div>
@@ -247,6 +263,7 @@ export default {
               v-model="templateValue.spec.deviceKind"
               label="设备类型"
               :options="deviceType"
+              :disabled="isEdit"
               @input="changeKind"
             />
           </div>
@@ -258,32 +275,31 @@ export default {
           <ModbusDeviceConfig
             v-if="kind === 'ModbusDevice'"
             ref="modbus"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
           />
 
           <BluetoothDeviceConfig
             v-else-if="kind === 'BluetoothDevice'"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
           />
 
           <OPCUADeviceConfig
             v-else-if="kind === 'OPCUADevice'"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
           />
 
           <CustomConfig
             v-else
             :mode="mode"
             :kind="kind"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
           />
         </Tab>
 
         <Tab label="设备属性" name="prop">
           <DeviceProp
-            :value="versionValue"
             :kind="kind"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
             :is-official-device="isOfficialDevice"
           />
         </Tab>
@@ -291,16 +307,16 @@ export default {
         <Tab label="MQTT" name="mqtt">
           <MqttConfig
             ref="mqttConfig"
-            :template-spec="versionValue.spec.templateSpec"
+            :template-spec="value.spec.templateSpec"
             :namespace="templateValue.metadata.namespace"
-            :references="versionValue.spec.references"
+            :references="value.spec.references"
           />
         </Tab>
 
         <Tab name="Labels" :label="t('common.labels')">
           <KeyValue
             key="labels"
-            v-model="versionValue.spec.labels"
+            v-model="value.spec.labels"
             :mode="mode"
             :initial-empty-row="true"
             :pad-left="false"
@@ -314,7 +330,7 @@ export default {
     <Footer
       mode="create"
       :errors="errors"
-      @save="save"
+      @save="enable"
       @done="done"
     />
   </div>

@@ -1,6 +1,6 @@
 export const MENUS = [
   {
-    name: 'global-overview',
+    name: 'globalOverview',
     path: '/c/local',
     meta: {
       title: '全局概览',
@@ -19,7 +19,7 @@ export const MENUS = [
         meta: { title: '节点管理' }
       },
       {
-        path: '/c/local/workload',
+        path: '/c/local/system.component',
         meta: { title: '系统服务' }
       },
       {
@@ -43,6 +43,10 @@ export const MENUS = [
       {
         path: '/c/local/workload',
         meta: { title: '工作负载' }
+      },
+      {
+        path: '/c/local/service',
+        meta: { title: '服务发现' }
       },
       {
         path: '/c/local/secret',

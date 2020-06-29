@@ -85,12 +85,7 @@ export default async function({
       }
     }
   } catch (e) {
-    if ( e instanceof ClusterNotFoundError ) {
-      redirect(302, '/clusters');
-    } else {
-      store.commit('setError', e);
-      redirect(302, '/fail-whale');
-    }
+    redirect(302, '/auth/login');
   }
 }
 

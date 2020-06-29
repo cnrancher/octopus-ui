@@ -309,9 +309,6 @@ export default {
   },
 
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
     toggleTabs() {
       this.showTabs = !this.showTabs;
     },
@@ -437,7 +434,7 @@ export default {
       </template>
     </ResourceTabs>
 
-    <Footer v-if="mode!= 'view'" :errors="errors" :mode="mode" @save="saveWorkload" @done="goBack" />
+    <Footer v-if="mode!= 'view'" :errors="errors" :mode="mode" @save="saveWorkload" @done="done" />
   </form>
 </template>
 

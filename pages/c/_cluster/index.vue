@@ -8,7 +8,7 @@ import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardProgressBar from '@/components/DashboardProgressBar';
 import {
-  NODE, POD, EVENT, COMPONENTSTATUS, METRIC, K3S, DEVICE_LINK
+  NODE, POD, EVENT, COMPONENTSTATUS, METRIC, K3S, DEVICE_LINK, SETTING
 } from '@/config/types';
 
 function hexbinClassNameGenerator(count) {
@@ -83,6 +83,7 @@ export default {
   data() {
     return {
       screenWidth:      document.documentElement.clientWidth,
+      flag:             true,
       gaugeList:        [],
       rightGaugeList:   [],
       tableData:        [],
@@ -92,6 +93,7 @@ export default {
         online:  0,
         offline: 0
       },
+      allSetting:           [],
       hexbinData:        [],
       gaugeData:         {},
       cpuLoadList:       [],
@@ -104,7 +106,8 @@ export default {
       podsLoadInfo:      [],
       datastorage:       [],
       systemControllers: [],
-      networking:        []
+      networking:        [],
+      clusterName:       ''
     };
   },
 
@@ -116,6 +119,13 @@ export default {
       this.rightGaugeList.forEach((chartsItem) => {
         chartsItem.resize();
       });
+    },
+    allSetting(newV) {
+      const location = newV.filter( (S) => {
+        return S.id === 'location';
+      });
+
+      this.clusterName = location[0]?.value;
     },
     nodesData() {
       this.updateMetricsIoNodes();
@@ -132,9 +142,6 @@ export default {
     },
     podsLoadInfo() {
       this.updatePodsLoadInfo();
-    },
-    eventList() {
-      this.updateEventsData();
     },
     datastorage() {
       this.updateSystemServiceStatus();
@@ -160,13 +167,15 @@ export default {
         nodesMetricsData:   this.$store.dispatch('management/findAll', { type: METRIC.NODE }),
         podsLoadInfo:       this.$store.dispatch('management/findAll', { type: METRIC.POD }),
         podsData:           this.$store.dispatch('management/findAll', { type: POD }),
+        setting:            this.$store.dispatch('management/findAll', { type: SETTING }),
         nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
-        devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }),
+        devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }), // TODO device-link url may not found
         systemControllers:  this.$store.dispatch('management/findAll', { type: COMPONENTSTATUS }),
         networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
         datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),
       });
 
+      this.allSetting = hash.setting;
       this.events = hash.event;
       this.nodesData = hash.nodes;
       this.devices = hash.devices;
@@ -515,8 +524,35 @@ export default {
       systemServeives.push(getSystemStatus('Nodes', nodesStatus));
 
       this.serviceList = systemServeives;
+    },
+    editSetting() {
+      this.flag = false;
+      this.$nextTick(() => {
+        if (this.$refs.nameInput) {
+          this.$refs.nameInput.focus();
+        }
+      });
+    },
+    async input(v) {
+      this.flag = true;
+      const data = this.allSetting.filter( (S) => {
+        return S.id === 'location';
+      })[0];
+
+      data.value = this.clusterName.trim();
+
+      await this.$store.dispatch('management/request', {
+        method:  'PUT',
+        headers: {
+          'content-type': 'application/json',
+          accept:         'application/json',
+        },
+        url: `v1/edgeapi.cattle.io.settings/location`,
+        data,
+      });
     }
-  }
+  },
+
 };
 </script>
 
@@ -525,7 +561,10 @@ export default {
     <client-only>
       <h3 class="header-border">
         <i class="position icon iconfont icon-position"></i>
-        <span class="name">智慧园区-北京朝阳</span>
+        <div v-if="flag" class="name" :class="{'isEmpty': !clusterName.length }" @click="editSetting">
+          {{ clusterName ? clusterName : '添加集群名称' }}
+        </div>
+        <input v-else ref="nameInput" v-model="clusterName" @blur="input">
       </h3>
       <div class="content">
         <div class="content-main">
@@ -702,10 +741,16 @@ export default {
       background-color: var(--body-bg);
       padding-left: 30px;
       .name {
+        cursor: pointer;
         margin-left: 10px;
         font-size: 16px;
         font-weight: bold;
         color: var(--action-text);
+      }
+
+      .isEmpty {
+        font-weight: normal;
+        font-style: italic;
       }
       .time {
         font-size: 14px;

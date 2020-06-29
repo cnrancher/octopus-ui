@@ -37,14 +37,14 @@ export default {
     };
   },
 
-  methods: {
-    /**
-     * Sends the user back to cluster roles page after save is finished
-     */
-    done() {
-      this.$router.replace({ name: 'rbac-roles-cluster' });
-    }
-  },
+  // methods: {
+  //   /**
+  //    * Sends the user back to cluster roles page after save is finished
+  //    */
+  //   // done() {
+  //   //   this.$router.replace({ name: 'rbac-roles-cluster' });
+  //   // }
+  // },
 };
 </script>
 

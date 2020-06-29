@@ -150,7 +150,6 @@ export default {
 
     type = normalizeType(type);
 
-    console.log('Find', type, id); // eslint-disable-line no-console
     let out;
 
     if ( opt.force !== true ) {

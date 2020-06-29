@@ -52,6 +52,7 @@ export default function(store) {
 
   for (const key in WORKLOAD_TYPES) {
     mapTypeToComponentName(WORKLOAD_TYPES[key], 'workload');
+    mapTypeToComponentName(WORKLOAD_TYPES[key], 'system.component');
   }
 
   mapTypeToComponentName('edgeapi.cattle.io.devicetemplaterevision', 'template');

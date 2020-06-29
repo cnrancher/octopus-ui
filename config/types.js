@@ -99,6 +99,8 @@ export const RIO = {
 
 export const WORKLOAD = 'workload';
 
+export const SETTING = 'edgeapi.cattle.io.setting';
+
 // The types that are aggregated into a "workload"
 export const WORKLOAD_TYPES = {
   DEPLOYMENT:             'apps.deployment',

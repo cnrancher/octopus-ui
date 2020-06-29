@@ -1,6 +1,6 @@
 <script>
 import { STATE, AGE, NAMESPACE_NAME, TYPE } from '@/config/table-headers';
-import ResourceTable from '@/components/ResourceTable';
+import SortableTable from '@/components/SortableTable';
 import { STORAGE_CATEGORY, SCHEMA } from '@/config/types';
 import { allHash } from '@/utils/promise';
 
@@ -16,7 +16,7 @@ const schema = {
 
 export default {
   name:       'ListStore',
-  components: { ResourceTable },
+  components: { SortableTable },
 
   props: {
     // The things out of asyncData come in as props
@@ -54,6 +54,12 @@ export default {
     },
   },
 
+  methods: {
+    changeTab() {
+      this.$router.push({ query: { type: this.activeName } });
+    }
+  },
+
   typeDisplay({ store }) {
     return store.getters['type-map/pluralLabelFor'](schema);
   },
@@ -61,12 +67,26 @@ export default {
 </script>
 
 <template>
-  <el-tabs v-model="activeName">
+  <el-tabs v-model="activeName" @tab-click="changeTab">
     <el-tab-pane label="Storageclass" name="storageclass">
-      <ResourceTable :schema="schema" :rows="resources.storageclass" :headers="headers" />
+      <SortableTable
+        v-bind="$attrs"
+        :headers="headers"
+        :rows="[...resources.storageclass]"
+        key-field="_key"
+        v-on="$listeners"
+      >
+      </SortableTable>
     </el-tab-pane>
     <el-tab-pane label="Persistentvolume" name="persistentvolume">
-      <ResourceTable :schema="schema" :rows="resources.persistentvolume" :headers="headers" />
+      <SortableTable
+        v-bind="$attrs"
+        :headers="headers"
+        :rows="[...resources.persistentvolume]"
+        key-field="_key"
+        v-on="$listeners"
+      >
+      </SortableTable>
     </el-tab-pane>
   </el-tabs>
 </template>

@@ -40,6 +40,10 @@ export default {
       type:    Boolean,
       default: true
     },
+    ignoreNamespace: {
+      type:    Boolean,
+      default: false
+    }
   },
 
   computed: {
@@ -89,7 +93,7 @@ export default {
       const isAll = this.$store.getters['isAllNamespaces'];
 
       // If the resources isn't namespaced or we want ALL of them, there's nothing to do.
-      if ( !this.namespaced || isAll ) {
+      if ( !this.namespaced || isAll || this.ignoreNamespace) {
         return this.rows;
       }
 

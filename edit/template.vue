@@ -85,10 +85,6 @@ export default {
       type:     Object,
       required: true,
     },
-    mode: {
-      type:    String,
-      default: 'create'
-    }
   },
 
   asyncData(ctx) {
@@ -151,11 +147,10 @@ export default {
         reviosn:    this.$store.dispatch('cluster/findAll', { type: DEVICE_TEMPLATE.REVISION }),
       });
 
-      this.$set(this.value, 'spec', _.merge(versionValue.spec, this.value.spec));
-
+      this.$set(this.value, 'spec', _.merge(_.cloneDeep(versionValue.spec), this.value.spec));
       let _templateValue = {};
 
-      if (this.mode === _EDIT) {
+      if (this.mode === _EDIT || this.mode === _CREATE) {
         const templateName = this.value.spec.deviceTemplateName;
         const templateNamespace = this.value.metadata.namespace;
 
@@ -169,7 +164,9 @@ export default {
     },
     async enable(buttonCb) {
       try {
-        if (this.mode === _CREATE) {
+        const { mode } = this.$route.query;
+
+        if (this.mode === _CREATE && mode !== 'clone') {
           this.templateValue.spec.deviceResource = `${ this.templateValue.spec.deviceKind.toLowerCase() }s`;
           await this.$store.dispatch('management/request', {
             method:  'POST',
@@ -227,6 +224,7 @@ export default {
   <div>
     <div class="p-20">
       <form v-if="templateValue.metadata">
+        <slot></slot>
         <div class="row">
           <div class="col span-4">
             <InputWithSelect

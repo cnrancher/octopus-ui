@@ -156,14 +156,15 @@ export default {
     },
 
     done() {
-      if ( !this.doneRoute ) {
-        return;
-      }
+      this.$router.go(-1);
+      // if ( !this.doneRoute ) {
+      //   return;
+      // }
 
-      this.$router.replace({
-        name:   this.doneRoute,
-        params: this.doneParams || { resource: this.value.type }
-      });
+      // this.$router.replace({
+      //   Fname:   this.doneRoute,
+      //   params: this.doneParams || { resource: this.value.type }
+      // });
     },
 
     async save(buttonDone, url) {

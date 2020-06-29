@@ -245,10 +245,11 @@ export default {
       if ( !this.doneRoute ) {
         return;
       }
-      this.$router.replace({
-        name:   this.doneRoute,
-        params: { resource: this.value.type }
-      });
+      // this.$router.replace({
+      //   name:   this.doneRoute,
+      //   params: { resource: this.value.type }
+      // });
+      this.$router.go(-1);
     }
   }
 };

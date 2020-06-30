@@ -7,6 +7,9 @@ import LabeledSelect from '@/components/form/LabeledSelect';
 import LoadDeps from '@/mixins/load-deps';
 import { booleanType } from '@/config/map';
 import { allHash } from '@/utils/promise';
+import { customDevice, extension } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
+
+const _extension = _.cloneDeep(extension);
 
 export default {
   components: {
@@ -27,6 +30,14 @@ export default {
   },
 
   data() {
+    const { extension } = this.templateSpec;
+
+    if (!extension) {
+      this.$set(this.templateSpec, 'extension', _extension);
+    }
+
+    this.$set(this.templateSpec, 'extension', _.merge(_extension, extension));
+
     const mqtt = this.templateSpec.extension.mqtt;
     const isShowBasicAuth = !!mqtt.client.basicAuth.name || false;
     let isShowAdvanced = false;
@@ -129,6 +140,12 @@ export default {
       return data[0] || [];
     },
     deleteUnuseProp() {
+      if (!this.templateSpec.extension.mqtt.client.server) {
+        Vue.delete(this.templateSpec, 'extension');
+
+        return [];
+      }
+
       const { isShowBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
       const Vauth = this.validateBasicAuth();
       const Vprefix = this.validatePrefix();
@@ -201,14 +218,6 @@ export default {
           v-model.trim="templateSpec.extension.mqtt.client.server"
           label="MQTT Server"
           required
-        />
-      </div>
-
-      <div class="col span-6">
-        <LabeledSelect
-          v-model.number="templateSpec.extension.mqtt.client.protocolVersion"
-          label="protocolVersion"
-          :options="versionList"
         />
       </div>
     </div>

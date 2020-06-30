@@ -12,61 +12,9 @@ import {
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
 import { OFFICIAL_DEVICE } from '@/config/types';
-import { customDevice } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
+import { customDevice, extension } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
-const _extension = {
-  mqtt: {
-    client: {
-      server:          '',
-      protocolVersion: 3,
-      will:            {
-        topicName:      '',
-        payloadEncode:  'raw',
-        qos:            0,
-        payloadContent: '',
-        retained:       false
-      },
-      basicAuth: {
-        name:      '',
-        password: ''
-      },
-      tlsConfig: {
-        caFilePem:          '',
-        certFilePem:        '',
-        keyFilePem:         '',
-        insecureSkipVerify: false,
-        serverName:         '',
-        caFilePEMRef:       {
-          item: '',
-          name: ''
-        },
-        certFilePEMRef: {
-          item: '',
-          name: ''
-        },
-        keyFilePEMRef: {
-          item: '',
-          name: ''
-        }
-      },
-      store:           {
-        type:            'memory',
-        direcotryPrefix: '/var/run/octopus/mqtt',
-      },
-    },
-    message: {
-      topic: {
-        name:   '',
-        prefix: '',
-        with:   'nn'
-      },
-      topicName:     '',
-      payloadEncode: 'raw',
-      qos:           0,
-      retained:      true,
-    }
-  }
-};
+const _extension = _.cloneDeep(extension);
 
 export default {
   components: {
@@ -94,13 +42,6 @@ export default {
 
   data() {
     const { devicesType } = this.$store.state;
-    const { extension } = this.templateSpec;
-
-    if (!extension) {
-      this.$set(this.templateSpec, 'extension', _extension);
-    }
-
-    this.$set(this.templateSpec, 'extension', _.merge(_extension, extension));
 
     return {
       headers: {

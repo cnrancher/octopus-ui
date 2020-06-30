@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       mapPath: {
-        storageclass:     'storage.k8s.io.storageclass/local-path?mode=edit&as-yaml',
+        storageclass:     'storage.k8s.io.storageclass/create?as-yaml',
         persistentvolume: 'persistentvolume/create?as-yaml',
       }
     };
@@ -32,7 +32,7 @@ export default {
       type="button"
       class="btn bg-primary"
     >
-      Create as Yaml
+      Create From YAML
     </nuxt-link>
   </div>
 </template>

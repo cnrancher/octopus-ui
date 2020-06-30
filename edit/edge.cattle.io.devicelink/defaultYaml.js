@@ -1,8 +1,7 @@
-const extension = {
+export const extension = {
   mqtt: {
     client: {
       server:          '',
-      protocolVersion: 3,
       will:            {
         topicName:      '',
         payloadEncode:  'raw',

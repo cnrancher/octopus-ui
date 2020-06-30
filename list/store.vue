@@ -36,7 +36,7 @@ export default {
   },
 
   data() {
-    return { activeName: 'storageclass' };
+    return { activeName: this.$route.query.type || 'storageclass' };
   },
 
   computed: {

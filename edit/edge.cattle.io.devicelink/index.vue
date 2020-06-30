@@ -51,6 +51,10 @@ export default {
       this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
     }
 
+    if (this.mode === _EDIT) {
+      this.getDeviceTemplate(this.value.spec.model.kind);
+    }
+
     return {
       devicesType,
       allNodes:        [],
@@ -126,6 +130,21 @@ export default {
 
       return false;
     },
+    getDeviceTemplate(kind) {
+      if (kind === 'ModbusDevice') {
+        if (this.value.spec.template.spec.protocol.tcp) {
+          this.$set(this.value, 'spec', _.merge(_.cloneDeep(MODBUS_DEVICE_TCP), this.value.spec));
+        } else {
+          this.$set(this.value, 'spec', _.merge(_.cloneDeep(MODBUS_DEVICE_RTU), this.value.spec));
+        }
+      } else if (kind === 'BluetoothDevice') {
+        this.$set(this.value, 'spec', _.merge(_.cloneDeep(BLUE_THOOTH_DEVICE), this.value.spec));
+      } else if (kind === 'OPCUADevice') {
+        this.$set(this.value, 'spec', _.merge(_.cloneDeep(OPC_UA_DEVICE), this.value.spec));
+      } else {
+        this.$set(this.value, 'spec', _.merge(_.cloneDeep(customDevice), this.value.spec));
+      }
+    },
     enable(buttonCb) {
       const errors = this.$refs.mqttConfig.deleteUnuseProp();
 
@@ -133,7 +152,6 @@ export default {
         this.$refs.modbus.deleteData();
       }
       // TODO need callback method
-
       this.errors = errors;
       if (!errors.length) {
         this.save(buttonCb);

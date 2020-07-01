@@ -9,7 +9,7 @@ import { booleanType } from '@/config/map';
 import { allHash } from '@/utils/promise';
 import { customDevice, extension } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
-const _extension = _.cloneDeep(extension);
+const tempExtension = _.cloneDeep(extension);
 
 export default {
   components: {
@@ -30,22 +30,17 @@ export default {
   },
 
   data() {
-    const { extension } = this.templateSpec;
+    const originExtension = _.cloneDeep(this.templateSpec.extension) || {};
+    const _extension = _.merge(tempExtension, originExtension);
 
-    if (!extension) {
-      this.$set(this.templateSpec, 'extension', _extension);
-    }
-
-    this.$set(this.templateSpec, 'extension', _.merge(_extension, extension));
-
-    const mqtt = this.templateSpec.extension.mqtt;
-    const isShowBasicAuth = !!mqtt.client.basicAuth.name || false;
-    let isShowAdvanced = false;
-    let isUsePrefixTopic = false;
+    const mqtt = _extension.mqtt;
+    const isEnableBasicAuth = !!mqtt.client.basicAuth.name || false;
+    let isEnableAdvanced = false;
+    let isUsePrefixTopic = true;
     let isSetLastWillTopic = false;
 
-    if (!mqtt.client.tlsConfig.insecureSkipVerify || mqtt.client.will.topicName) {
-      isShowAdvanced = true;
+    if (mqtt.client.tlsConfig.serverName || mqtt.client.will.topicName) {
+      isEnableAdvanced = true;
     }
 
     if (mqtt.client.will.topicName) {
@@ -59,11 +54,13 @@ export default {
     }
 
     return {
-      isShowBasicAuth,
+      isEnableBasicAuth,
       isUsePrefixTopic,
-      isShowAdvanced,
+      isEnableAdvanced,
       isSetLastWillTopic,
-      secret: [],
+      secret:        [],
+      extension:     _extension,
+      saveExtension: {}
     };
   },
 
@@ -140,34 +137,43 @@ export default {
       return data[0] || [];
     },
     deleteUnuseProp() {
-      if (!this.templateSpec.extension.mqtt.client.server) {
-        Vue.delete(this.templateSpec, 'extension');
+      this.$set(this, 'saveExtension', _.cloneDeep(this.extension));
+      this.addReferences();
+
+      if (!this.saveExtension.mqtt.client.server) {
+        this.$emit('update:extension', 'empty');
 
         return [];
       }
 
-      const { isShowBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
+      const { isEnableBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
       const Vauth = this.validateBasicAuth();
       const Vprefix = this.validatePrefix();
+      const Vadvance = this.validateAdvance();
+      const error = [...Vauth, ...Vprefix, ...Vadvance];
 
-      this.addReferences();
+      if (error.length) {
+        return error;
+      } else {
+        this.$emit('update:extension', this.saveExtension);
 
-      return [...Vauth, ...Vprefix];
+        return [];
+      }
     },
     validateBasicAuth() {
       const errors = [];
 
-      if (this.isShowBasicAuth) {
-        const { name, passsword } = this.templateSpec.extension.mqtt.client.basicAuth;
+      if (this.isEnableBasicAuth) {
+        const { name, passsword } = this.saveExtension.mqtt.client.basicAuth;
 
         if (!name && !passsword) {
-          Vue.delete(this.templateSpec.extension.mqtt.client.basicAuth, 'name');
-          Vue.delete(this.templateSpec.extension.mqtt.client.basicAuth, 'passsword');
+          Vue.delete(this.saveExtension.mqtt.client.basicAuth, 'name');
+          Vue.delete(this.saveExtension.mqtt.client.basicAuth, 'passsword');
         } else if (!(name && passsword)) {
           errors.push('请输入name 或 password!');
         }
       } else {
-        Vue.delete(this.templateSpec.extension.mqtt.client, 'basicAuth');
+        Vue.delete(this.saveExtension.mqtt.client, 'basicAuth');
       }
 
       return errors;
@@ -176,24 +182,28 @@ export default {
       const errors = [];
 
       if (this.isUsePrefixTopic) {
-        if (!this.templateSpec.extension.mqtt.message.topic.prefix.trim()) {
+        if (!this.saveExtension.mqtt.message.topic.prefix.trim()) {
           errors.push('请输入Prefix Name!');
         }
-        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'name');
+        Vue.delete(this.saveExtension.mqtt.message.topic, 'name');
       } else {
-        if (!this.templateSpec.extension.mqtt.message.topic.name.trim()) {
+        if (!this.saveExtension.mqtt.message.topic.name.trim()) {
           errors.push('请输入Topic Name!');
         }
-        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'prefix');
-        Vue.delete(this.templateSpec.extension.mqtt.message.topic, 'with');
+        Vue.delete(this.saveExtension.mqtt.message.topic, 'prefix');
+        Vue.delete(this.saveExtension.mqtt.message.topic, 'with');
       }
 
       return errors;
     },
     addReferences() {
-      const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.templateSpec.extension.mqtt.client;
+      const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.saveExtension.mqtt.client;
       const arr = [caFilePEMRef, certFilePEMRef, keyFilePEMRef];
-      const filterArr = _.uniqBy(arr, 'name');
+
+      const filterArr = _.uniqBy(arr.filter( (O) => {
+        return O.name !== '' && O.item !== '';
+      }), 'name');
+
       const references = filterArr.map( (O) => {
         return {
           name:   O.name,
@@ -201,10 +211,52 @@ export default {
         };
       });
 
-      this.$set(this, 'references', references);
+      this.$emit('update:references', _.cloneDeep(references));
+    },
+    validateAdvance() {
+      const errors = [];
+
+      if (!this.isEnableAdvanced) {
+        Vue.delete(this.saveExtension.mqtt.client, 'tlsConfig');
+        Vue.delete(this.saveExtension.mqtt.client, 'will');
+        Vue.delete(this.saveExtension.mqtt.client, 'store');
+      } else {
+        if (this.saveExtension.mqtt.client.tlsConfig.serverName) { // delete tlsconfig
+          const { tlsConfig: { caFilePEMRef, certFilePEMRef, keyFilePEMRef } } = this.saveExtension.mqtt.client;
+
+          if (certFilePEMRef.name === '' || certFilePEMRef.item === '') {
+            Vue.delete(this.saveExtension.mqtt.client.tlsConfig, 'certFilePEMRef');
+          }
+
+          if (caFilePEMRef.name === '' || caFilePEMRef.item === '') {
+            Vue.delete(this.saveExtension.mqtt.client.tlsConfig, 'caFilePEMRef');
+          }
+
+          if (this.saveExtension.mqtt.client.tlsConfig.insecureSkipVerify) {
+            Vue.delete(this.saveExtension.mqtt.client.tlsConfig, 'caFilePEMRef');
+          } else if (caFilePEMRef.name === '' || caFilePEMRef.item === '') {
+            Vue.delete(this.saveExtension.mqtt.client.tlsConfig, 'caFilePEMRef');
+          }
+        } else {
+          Vue.delete(this.saveExtension.mqtt.client, 'tlsConfig');
+        }
+
+        if (this.isSetLastWillTopic) { // delete will
+          if (!this.saveExtension.mqtt.client.will.topicName) {
+            errors.push('请输入Topic Name!');
+          }
+          if (!this.saveExtension.mqtt.client.will.payloadContent) {
+            errors.push('请输入Payload Content!');
+          }
+        } else {
+          Vue.delete(this.saveExtension.mqtt.client, 'will');
+        }
+      }
+
+      return errors;
     },
     clearData(type) {
-      this.templateSpec.extension.mqtt.client.tlsConfig[type].item = '';
+      this.extension.mqtt.client.tlsConfig[type].item = '';
     }
   },
 };
@@ -215,26 +267,26 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="templateSpec.extension.mqtt.client.server"
-          label="MQTT Server"
+          v-model.trim="extension.mqtt.client.server"
           required
+          label="MQTT Server"
         />
       </div>
     </div>
 
     <div>
       <Checkbox
-        v-model="isShowBasicAuth"
+        v-model="isEnableBasicAuth"
+        type="checkbox"
         class="checkbox"
         label="Enable basic auth"
-        type="checkbox"
       />
     </div>
 
-    <div v-if="isShowBasicAuth" class="row">
+    <div v-if="isEnableBasicAuth" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="templateSpec.extension.mqtt.client.basicAuth.name"
+          v-model.trim="extension.mqtt.client.basicAuth.name"
           label="username"
           required
         />
@@ -242,7 +294,7 @@ export default {
 
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="templateSpec.extension.mqtt.client.basicAuth.password"
+          v-model.trim="extension.mqtt.client.basicAuth.password"
           label="password"
           required
         />
@@ -263,14 +315,14 @@ export default {
     <div v-if="isUsePrefixTopic" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="templateSpec.extension.mqtt.message.topic.prefix"
+          v-model="extension.mqtt.message.topic.prefix"
           label="Prefix Name"
         />
       </div>
 
       <div class="col span-6">
         <LabeledSelect
-          v-model="templateSpec.extension.mqtt.message.topic.with"
+          v-model="extension.mqtt.message.topic.with"
           label="Prefix mode"
           :options="topicWithList"
         />
@@ -280,7 +332,7 @@ export default {
     <div v-if="!isUsePrefixTopic" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model="templateSpec.extension.mqtt.message.topic.name"
+          v-model="extension.mqtt.message.topic.name"
           label="Topic Name"
         />
       </div>
@@ -289,7 +341,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledSelect
-          v-model="templateSpec.extension.mqtt.message.payloadEncode"
+          v-model="extension.mqtt.message.payloadEncode"
           label="Payload Encode"
           :options="payloadEncodeList"
         />
@@ -297,7 +349,7 @@ export default {
 
       <div class="col span-6">
         <LabeledSelect
-          v-model.number="templateSpec.extension.mqtt.message.qos"
+          v-model.number="extension.mqtt.message.qos"
           label="QoS"
           :options="qosList"
         />
@@ -308,102 +360,95 @@ export default {
 
     <div>
       <Checkbox
-        v-model="isShowAdvanced"
+        v-model="isEnableAdvanced"
         class="checkbox"
-        label="Show Advanced Configuration"
+        label="Enable Advanced Configuration"
         type="checkbox"
       />
     </div>
 
-    <div v-if="isShowAdvanced" class="advanced">
+    <div v-if="isEnableAdvanced" class="advanced">
       <div class="row">
         <div class="col span-6">
+          <LabeledInput
+            v-model="extension.mqtt.client.tlsConfig.serverName"
+            label="Server Name"
+          />
+          <nuxt-link
+            to="/c/local/secret"
+            class="add mt-10"
+          >
+            点击跳转添加密文
+          </nuxt-link>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col span-3">
           <LabeledSelect
-            v-model="templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify"
-            label="Skip Insecure Verify"
-            :options="booleanType"
+            v-model="extension.mqtt.client.tlsConfig.certFilePEMRef.name"
+            label="Cert File Pem"
+            :options="secretList"
+            :clearable="true"
+            required
+            @input="clearData('certFilePEMRef')"
+          />
+        </div>
+
+        <div class="col span-3">
+          <LabeledSelect
+            v-model="extension.mqtt.client.tlsConfig.certFilePEMRef.item"
+            label="data"
+            :options="getSecretData(extension.mqtt.client.tlsConfig.certFilePEMRef.name)"
             required
           />
         </div>
 
-        <div v-if="!templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify" class="col span-6">
-          <LabeledInput
-            v-model="templateSpec.extension.mqtt.client.tlsConfig.serverName"
-            label="Server Name"
+        <div class="col span-3">
+          <LabeledSelect
+            v-model="extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
+            label="Key File Pem"
+            :options="secretList"
+            required
+            @input="clearData('keyFilePEMRef')"
+          />
+        </div>
+
+        <div class="col span-3">
+          <LabeledSelect
+            v-model="extension.mqtt.client.tlsConfig.keyFilePEMRef.item"
+            label="data"
+            :options="getSecretData(extension.mqtt.client.tlsConfig.keyFilePEMRef.name)"
+            required
           />
         </div>
       </div>
 
-      <div v-if="!templateSpec.extension.mqtt.client.tlsConfig.insecureSkipVerify">
-        <div class="row">
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.name"
-              label="Cert File Pem"
-              :options="secretList"
-              :clearable="true"
-              required
-              @input="clearData('certFilePEMRef')"
-            />
-          </div>
+      <div>
+        <Checkbox
+          v-model="extension.mqtt.client.tlsConfig.insecureSkipVerify"
+          class="checkbox"
+          label="Skip Insecure Verify"
+          type="checkbox"
+        />
+      </div>
 
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.item"
-              label="data"
-              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.certFilePEMRef.name)"
-              required
-            />
-          </div>
-
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name"
-              label="Key File Pem"
-              :options="secretList"
-              required
-              @input="clearData('keyFilePEMRef')"
-            />
-          </div>
-
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.item"
-              label="data"
-              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.keyFilePEMRef.name)"
-              required
-            />
-          </div>
+      <div class="row">
+        <div v-if="extension.mqtt.client.tlsConfig.insecureSkipVerify" class="col span-3">
+          <LabeledSelect
+            v-model="extension.mqtt.client.tlsConfig.caFilePEMRef.name"
+            label="CA File Pem (optional)"
+            :options="secretList"
+            @input="clearData('caFilePEMRef')"
+          />
         </div>
 
-        <div class="row">
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.name"
-              label="CA File Pem (optional)"
-              :options="secretList"
-              @input="clearData('caFilePEMRef')"
-            />
-          </div>
-
-          <div class="col span-3">
-            <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.item"
-              label="data"
-              :options="getSecretData(templateSpec.extension.mqtt.client.tlsConfig.caFilePEMRef.name)"
-            />
-          </div>
-
-          <div class="col span-6">
-            <nuxt-link
-              to="/c/local/secret"
-              tag="button"
-              type="button"
-              class="btn bg-primary ml-10"
-            >
-              添加secret
-            </nuxt-link>
-          </div>
+        <div v-if="extension.mqtt.client.tlsConfig.insecureSkipVerify" class="col span-3">
+          <LabeledSelect
+            v-model="extension.mqtt.client.tlsConfig.caFilePEMRef.item"
+            label="data"
+            :options="getSecretData(extension.mqtt.client.tlsConfig.caFilePEMRef.name)"
+          />
         </div>
       </div>
 
@@ -422,7 +467,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledInput
-              v-model="templateSpec.extension.mqtt.client.will.topicName"
+              v-model="extension.mqtt.client.will.topicName"
               label="Topic Name (optional)"
               placeholder="default $will"
             />
@@ -430,7 +475,7 @@ export default {
 
           <div class="col span-6">
             <LabeledInput
-              v-model="templateSpec.extension.mqtt.client.will.payloadContent"
+              v-model="extension.mqtt.client.will.payloadContent"
               label="Payload Content*"
               placeholder="请输入Payload Content"
             />
@@ -440,7 +485,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.will.payloadEncode"
+              v-model="extension.mqtt.client.will.payloadEncode"
               label="Payload Encode"
               :options="payloadEncodeList"
             />
@@ -448,7 +493,7 @@ export default {
 
           <div class="col span-6">
             <LabeledSelect
-              v-model.number="templateSpec.extension.mqtt.client.will.qos"
+              v-model.number="extension.mqtt.client.will.qos"
               label="QoS"
               :options="qosList"
             />
@@ -458,7 +503,7 @@ export default {
         <div class="row">
           <div class="col span-6">
             <LabeledSelect
-              v-model="templateSpec.extension.mqtt.client.will.retained"
+              v-model="extension.mqtt.client.will.retained"
               label="Retained"
               :options="booleanType"
               required
@@ -472,16 +517,16 @@ export default {
       <div class="row">
         <div class="col span-6">
           <LabeledSelect
-            v-model="templateSpec.extension.mqtt.client.store.type"
+            v-model="extension.mqtt.client.store.type"
             label="Store Type"
             :options="storeTypeList"
             required
           />
         </div>
 
-        <div v-if="templateSpec.extension.mqtt.client.store.type === 'file'" class="col span-6">
+        <div v-if="extension.mqtt.client.store.type === 'file'" class="col span-6">
           <LabeledInput
-            v-model="templateSpec.extension.mqtt.client.store.direcotryPrefix"
+            v-model="extension.mqtt.client.store.direcotryPrefix"
             label="Direcotry Prefix"
             required
           />
@@ -492,10 +537,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.largeHeight {
-  height: 120px;
-}
 .advanced {
   margin-left: 30px;
+}
+.add {
+  display: inline-block;
 }
 </style>

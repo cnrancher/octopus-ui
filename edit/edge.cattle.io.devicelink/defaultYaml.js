@@ -14,9 +14,6 @@ export const extension = {
         password: ''
       },
       tlsConfig: {
-        caFilePem:          '',
-        certFilePem:        '',
-        keyFilePem:         '',
         insecureSkipVerify: false,
         serverName:         '',
         caFilePEMRef:       {
@@ -93,7 +90,7 @@ export const MODBUS_DEVICE_RTU = {
           slaveID:    '',
           serialPort: '',
           baudRate:   '',
-          dataBits:   '8',
+          dataBits:   8,
           parity:     'E',
           stopBits:   1
         }

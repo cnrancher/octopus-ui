@@ -49,7 +49,7 @@ export default {
    border: 1px solid  var(--border);
    background: var(--nav-bg);
    display: grid;
-   padding: 1.25rem;
+   padding: 0.5rem 0.5rem 1.5rem 1.25rem;
    grid-gap: .75rem;
    grid-template-rows: 1fr 2fr 1fr;
    & .card-body {
@@ -69,7 +69,6 @@ export default {
      justify-content: space-between;
      align-items: center;
      padding-bottom: 0.5rem;
-     border-bottom: 1px solid var(--border);
    }
  }
 </style>

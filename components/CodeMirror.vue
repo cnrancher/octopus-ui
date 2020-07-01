@@ -88,12 +88,17 @@ export default {
   .code-mirror  {
     position: relative;
     .CodeMirror {
+      padding: 10px;
+      background-color: var(--body-bg)!important;
       height: initial;
       position: absolute;
       top:0;
       bottom:0;
       left:0;
       right:0;
+    }
+    .cm-s-base16-light .CodeMirror-gutters {
+      background-color: var(--body-bg)!important;
     }
   }
 </style>

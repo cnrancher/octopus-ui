@@ -1,6 +1,8 @@
 <script>
 import Identicon from 'identicon.js';
 import { mapState } from 'vuex';
+import { NORMAN } from '@/config/types';
+import { mapPref, USER_ID } from '@/store/prefs';
 import NamespaceFilter from './NamespaceFilter';
 import { md5 } from '@/utils/crypto';
 
@@ -8,7 +10,17 @@ export default {
   components: { NamespaceFilter },
 
   computed: {
-    ...mapState(['managementReady', 'clusterReady', 'isRancher', 'currentCluster']),
+    ...mapState(['managementReady', 'clusterReady', 'isRancher', 'isMultiCluster', 'currentCluster']),
+
+    userId: mapPref(USER_ID),
+
+    authEnabled() {
+      return this.$store.getters['auth/enabled'];
+    },
+
+    principal() {
+      return this.$store.getters['rancher/byId'](NORMAN.PRINCIPAL, this.$store.getters['auth/principalId']) || {};
+    },
 
     backToRancherLink() {
       if ( !this.isRancher ) {
@@ -28,8 +40,8 @@ export default {
 
       return link;
     },
-  },
 
+  },
   methods: {
     avatarSrc() {
       const id = 'Unknown';
@@ -49,26 +61,27 @@ export default {
       <NamespaceFilter v-if="clusterReady" />
     </div>
 
+    <div v-if="backToRancherLink" class="back">
+      <a v-t="'header.backToRancher'" :href="backToRancherLink" />
+    </div>
+
     <div class="user">
       <v-popover
         placement="bottom"
-        offset="-10"
+        offset="-5"
         trigger="hover"
         :delay="{show: 0, hide: 200}"
         :popper-options="{modifiers: { flip: { enabled: false } } }"
       >
         <div class="user-info">
           <img :src="avatarSrc()" width="40" height="40" />
-          <div class="ml-10">
-            admin
-          </div>
         </div>
 
         <template slot="popover">
           <ul class="list-unstyled dropdown" style="margin: -1px;">
             <li>
-              <div class="text-small pb-10">
-                admin
+              <div class="pt-5 pb-5">
+                {{ userId }}
               </div>
             </li>
             <nuxt-link tag="li" :to="{name: 'prefs'}" class="pt-5 pb-5 hand">
@@ -89,8 +102,8 @@ export default {
     display: grid;
     height: 100vh;
 
-    grid-template-areas:  "top  top   top  user";
-    grid-template-columns: var(--nav-width) auto 0px 120px;
+    grid-template-areas:  "top  top   back user";
+    grid-template-columns: var(--nav-width) auto 0px var(--header-height);
     grid-template-rows:    var(--header-height);
 
     &.back-to-rancher {
@@ -101,7 +114,6 @@ export default {
       grid-area: top;
       background-color: var(--header-bg);
       padding-top: 8px;
-      border-bottom: 1px solid #dbdbdb;
 
       INPUT[type='search']::placeholder,
       .vs__open-indicator,
@@ -128,8 +140,22 @@ export default {
           background: var(--header-dropdown);
           border-radius: var(--border-radius);
           border: none;
-          margin: 0 135px 0 125px!important;
+          margin: 0 35px 0 25px!important;
         }
+      }
+    }
+
+    > .back {
+      grid-area: back;
+      background-color: var(--header-bg);
+
+      A {
+        line-height: var(--header-height);
+        display: block;
+        color: white;
+        padding: 0 5px;
+        margin-right: 20px;
+        text-align: right;
       }
     }
 
@@ -137,7 +163,6 @@ export default {
       grid-area: user;
       background-color: var(--header-bg);
       padding: 5px;
-      border-bottom: 1px solid #dbdbdb;
 
       .user-info {
         display: flex;
@@ -149,10 +174,4 @@ export default {
       }
     }
   }
-</style>
-
-<style lang="scss">
-.popover {
-  width: 100px;
-}
 </style>

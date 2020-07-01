@@ -39,7 +39,7 @@
 
         &.btn:hover {
           transition: all 0.3s ease;
-          box-shadow: 0 0 10px -1px var(--#{$name});
+          box-shadow: 1px 1px 6px 0 var(--#{$name});
         }
 
         &.btn:active {

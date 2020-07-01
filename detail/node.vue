@@ -83,7 +83,7 @@ export default {
         ADDRESS
       ],
       imageTableHeaders: [
-        { ...SIMPLE_NAME, width: 400 },
+        { ...SIMPLE_NAME, width: 900 },
         IMAGE_SIZE
       ],
       taintTableHeaders: [
@@ -135,7 +135,9 @@ export default {
 
     imageTableRows() {
       return this.value.status.images.map(image => ({
-        name:      image.names[1],
+        // data in pos 1 has version/branch, data in pos 0 has sha, but too long
+        // sometimes it does not include 1
+        name:      image.names[1] || image.names[0],
         sizeBytes: image.sizeBytes
       }));
     },

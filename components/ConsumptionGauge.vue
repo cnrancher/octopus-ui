@@ -1,6 +1,7 @@
 <script>
 import echarts from 'echarts';
 import VStack from '@/components/Layout/Stack/VStack';
+import { formatFontSize } from '@/utils/units';
 
 /**
  * A detailed view of how much a resource is being consumed.
@@ -83,11 +84,6 @@ export default {
     this.draw();
   },
   methods: {
-    formatFontSize(val, initWidth = 1920) {
-      const nowClientWidth = document.documentElement.clientWidth;
-
-      return val * (nowClientWidth / initWidth);
-    },
     draw() {
       if (this.hasDraw && this.chartObj) {
         this.chartObj.resize();
@@ -176,22 +172,22 @@ export default {
                 // return `{percent|${ params[0] }%}\n{type|${ params[1] }}\n{describe|${ params[2] }}`;
                 return `{percent|${ outer.percentageBarValue.toFixed(1) }%}\n{type|${ outer.resourceName }}\n{describe|${ outer.t('node.detail.glance.consumptionGauge.amount', params) }}`;
               },
-              textStyle: { fontSize: this.formatFontSize(16) },
+              textStyle: { fontSize: formatFontSize(16) },
               rich:      {
                 percent: {
-                  fontSize:   this.formatFontSize(40),
+                  fontSize:   formatFontSize(40),
                   color:      '#423fa9',
                   fontFamily: 'prompt-light',
                   height:     40
                 },
                 type: {
-                  fontSize: this.formatFontSize(18),
+                  fontSize: formatFontSize(18),
                   color:    '#000',
                   height:   24
                 },
                 describe: {
                   color:    '#35bfe3',
-                  fontSize: this.formatFontSize(15),
+                  fontSize: formatFontSize(15),
                   height:   18
                 }
               }

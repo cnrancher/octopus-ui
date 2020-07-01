@@ -71,8 +71,10 @@ export default {
 </script>
 
 <template>
-  <div>
-    <h1>Preferences</h1>
+  <div class="m-20">
+    <h1 class="mb-10">
+      Preferences
+    </h1>
 
     <h4 class="mb-10">
       Theme
@@ -104,7 +106,7 @@ export default {
     <div class="row">
       <div class="col span-3">
         <LabeledSelect
-          v-model="perPage"
+          v-model.number="perPage"
           label="Table Rows per Page"
           :options="perPageOptions"
           placeholder="Select a row count"
@@ -140,5 +142,9 @@ export default {
     &:first-of-type {
       margin-top: 0;
     }
+  }
+  .btn-group {
+    text-align: left;
+    background-color: transparent!important;
   }
 </style>

@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable nuxt/no-globals-in-created */
 import * as d3 from 'd3';
 import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
@@ -10,6 +11,9 @@ import DashboardProgressBar from '@/components/DashboardProgressBar';
 import {
   NODE, POD, EVENT, COMPONENTSTATUS, METRIC, K3S, DEVICE_LINK, SETTING
 } from '@/config/types';
+import SortableTable from '@/components/SortableTable';
+import { NAMESPACE } from '@/config/table-headers';
+import { DESCENDING } from '@/config/query-params';
 
 function hexbinClassNameGenerator(count) {
   if (count <= 30) {
@@ -75,7 +79,8 @@ function formatBarData(array) {
 export default {
   components: {
     DashboardProgressBar,
-    ServiceStatusList
+    ServiceStatusList,
+    SortableTable
   },
 
   mixins: [LoadDeps],
@@ -107,7 +112,40 @@ export default {
       datastorage:       [],
       systemControllers: [],
       networking:        [],
-      clusterName:       ''
+      clusterName:       '',
+      headers:           [
+        NAMESPACE,
+        {
+          name:      'timestamp',
+          label:     '事件时间',
+          value:     '$["metadata"]["fields"][0]',
+          sort:      '$["metadata"]["fields"][0]'
+        },
+        {
+          name:  'type',
+          label: '类型',
+          value: '$["metadata"]["fields"][1]',
+          sort:  '$["metadata"]["fields"][1]'
+        },
+        {
+          name:  'reason',
+          label: '原因',
+          value: '$["metadata"]["fields"][2]',
+          sort:  '$["metadata"]["fields"][2]'
+        },
+        {
+          name:  'resource',
+          label: '资源对象',
+          value: '$["metadata"]["fields"][3]',
+          sort:  '$["metadata"]["fields"][3]'
+        },
+        {
+          name:  'message',
+          label: '事件消息',
+          value: 'message',
+          sort:  'message'
+        }
+      ]
     };
   },
 
@@ -152,6 +190,13 @@ export default {
     networking() {
       this.updateSystemServiceStatus();
     },
+  },
+
+  created() {
+    const pathname = window.location.pathname;
+
+    this.$router.applyQuery({ [DESCENDING]: true }, { [DESCENDING]: false });
+    this.$route.query.desc = null;
   },
 
   mounted() {
@@ -468,7 +513,9 @@ export default {
         const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
 
         return {
-          id: podIndex, name: podItem.id, value: cpuUsage
+          id:    podIndex,
+          name:  podItem.id,
+          value: cpuUsage
         };
       });
 
@@ -477,7 +524,9 @@ export default {
         const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
 
         return {
-          id: podIndex, name: podItem.id, value: memoryUsage
+          id:    podIndex,
+          name:  podItem.id,
+          value: memoryUsage
         };
       });
 
@@ -557,7 +606,7 @@ export default {
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="dashboard-wrapper">
     <client-only>
       <h3 class="header-border">
         <i class="position icon iconfont icon-position"></i>
@@ -613,43 +662,23 @@ export default {
             />
           </div>
           <div class="event">
-            <h3 class="module-title">
+            <h3 class="module-title mb-20">
               <i class="icon iconfont icon-set"></i>
               集群事件
             </h3>
-            <el-table
-              :data="events"
-              cell-class-name="events-table-td"
-              class="events-table"
-              height="410px"
-            >
-              <el-table-column
-                label="命名空间"
-                prop="metadata.namespace"
-              />
-              <el-table-column
-                label="事件时间"
-                prop="metadata.fields[0]"
-              />
-              <el-table-column
-                label="类型"
-                prop="metadata.fields[1]"
-              />
-              <el-table-column
-                label="原因"
-                prop="metadata.fields[2]"
-              />
-              <el-table-column
-                label="资源对象"
-                prop="metadata.fields[3]"
-                min-width="150"
-              />
-              <el-table-column
-                label="事件消息"
-                prop="message"
-                min-width="220"
-              />
-            </el-table>
+            <SortableTable
+              :headers="headers"
+              :rows="events"
+              :search="false"
+              :table-actions="false"
+              :row-actions="false"
+              :show-groups="false"
+              :paging="false"
+              default-sort-by="timestamp"
+              default-sort-type="desc"
+              key-field="id"
+              class="dashboard-event-table"
+            />
           </div>
         </div>
         <div class="content-side">
@@ -727,7 +756,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .wrapper {
+  .dashboard-wrapper {
     padding: 0 !important;
     background-color: #f6f7fb;
     min-width: 1440px;
@@ -782,8 +811,10 @@ export default {
         width: 71%;
         display: grid;
         grid-template-rows: repeat(3, auto);
-        .icon {
-          font-size: 25px;
+        .service {
+          .icon {
+            font-size: 25px;
+          }
         }
         .pie-container {
           width: 100%;
@@ -813,37 +844,19 @@ export default {
         .event {
           width: 100%;
           overflow: auto;
-          .events-table {
-            width: 99.9%;
-            border: 0;
-            border-collapse: collapse;
-            height: 26.5vw;
-            margin-top: 16px;
-            th, td {
-              color: var(--module-header-text);
-              line-height: 36px;
-              padding: 0;
-              font-size: 16px;
+          .dashboard-event-table {
+            max-height: 395px;
+            overflow-y: auto;
+          }
+          thead {
+            th {
               text-align: center;
             }
-            thead {
-              th {
-                background-color: var(--module-header-bg);
-                font-weight: normal;
-                border-bottom: 1px solid var(--module-header-bg);
-              }
-            }
-            tbody {
-              tr:nth-child(odd) {
-                background-color: #fff;
-              }
-              tr:nth-child(even) {
-                background-color: #f6f7fb;
-              }
-              .events-table-td {
-                color: #000;
-                padding: 0.5vw 0;
-              }
+          }
+          .events-table {
+            td {
+              color: var(--module-header-text);
+              text-align: center;
             }
           }
         }

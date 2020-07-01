@@ -127,6 +127,9 @@ const TYPE_ORDER = {
   date:      10,
 };
 
+// match like 1h1m1s
+const timeStrReg = /^(\d*h)?(\d*m)?(\d*s)?$/;
+
 export function compare(a, b) {
   const typeA = typeOf(a);
   const typeB = typeOf(b);
@@ -142,9 +145,13 @@ export function compare(a, b) {
   case 'number':
     return spaceship(a, b);
 
-  case 'string':
-    return spaceship(a.localeCompare(b), 0);
-
+  case 'string': {
+    if (timeStrReg.test(a) && timeStrReg.test(b)) {
+      return compare(transTimeString(a), transTimeString(b));
+    } else {
+      return spaceship(a.localeCompare(b), 0);
+    }
+  }
   case 'array': {
     const aLen = a.length;
     const bLen = b.length;
@@ -167,6 +174,36 @@ export function compare(a, b) {
   }
 
   return 0;
+}
+
+function transTimeString(timeString) {
+  let h = 0;
+  let m = 0;
+  let s = 0;
+  let temp = '';
+  const splitHour = timeString.split('h');
+
+  if (splitHour.length > 1) {
+    h = parseInt(splitHour[0], 10) || 0;
+    temp = splitHour[1];
+  } else {
+    temp = splitHour[0];
+  }
+
+  const splitMiniute = temp.split('m');
+
+  if (splitMiniute.length > 1) {
+    m = parseInt(splitMiniute[0], 10) || 0;
+    temp = splitMiniute[1];
+  } else {
+    temp = splitMiniute[0];
+  }
+
+  const splitSeconds = temp.split('s');
+
+  s = parseInt(splitSeconds[0], 10) || 0;
+
+  return (h * 60 + m) * 60 + s;
 }
 
 export function parseField(str) {

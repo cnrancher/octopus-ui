@@ -2,17 +2,26 @@ locale:
   none: (None)
   en-us: English
 
+buttons:
+  add: Add
+  remove: 删除
+  downloadYaml: 下载YAML
+
 generic:
+  cancel: Cancel
   close: Close
   comingSoon: Coming Soon
   created: Created
   customize: Customize
   na: "n/a"
+  name: Name
+  type: Type
   unknown: Unknown
 
 suffix:
   ib: iB
   cpus: CPUs
+  seconds: Seconds
 
 header:
   backToRancher: "← Back to Rancher"
@@ -35,6 +44,34 @@ formKeyValue:
   protip: '高级技巧: 在键(Key)输入栏中粘贴一行或多行的key=value键值对能够批量输入。'
 
 cluster:
+  nodeDriver:
+    displayName:
+      aliyun: Alibaba ACK
+      aliyunecs: Aliyun ECS
+      amazonec2: Amazon EC2
+      amazoneks: Amazon EKS
+      azure: Azure
+      azureaks: Azure AKS
+      baidu: Baidu CCE
+      cloudca: Cloud.ca
+      digitalocean: DigitalOcean
+      exoscale: Exoscale
+      googlegke: Google GKE
+      huaweicce: Huawei CCE
+      linode: Linode
+      oci: Oracle Cloud Infrastructure
+      openstack: OpenStack
+      oracleoke: Oracle OKE
+      otc: Open Telekom Cloud
+      packet: Packet
+      pinganyunecs: Pinganyun ECS
+      rackspace: RackSpace
+      rancherkubernetesengine: RKE
+      softlayer: SoftLayer
+      tencenttke: Tencent TKE
+      upcloud: UpCloud
+      vmwarevsphere: vSphere
+      zstack: ZStack
   provider:
     amazonelasticcontainerservice:
       label: Amazon Elastic Container Service for Kubernetes
@@ -70,6 +107,16 @@ cluster:
       label: Import an existing cluster
       shortLabel: Imported
 
+promptRemove:
+  attemptingToRemove: You are attemping to remove the {type}
+  andOthers: |
+    {count, plural,
+    =0 {.}
+    =1 {, and one other.}
+    other {, and {count} others.}
+    }
+  protip: 'protip: Hold the {alternateLabel} key while clicking delete to bypass this confirmation'
+
 containerResourceLimit:
   label: Container Default Resource Limit
   helpText: Configure how much of the resources the container can consume by default.
@@ -89,6 +136,43 @@ footer:
   issue: File an Issue
   download: Download CLI
 
+servicesPage:
+  typeOpts:
+    label: Service Type
+  serviceTypes:
+    clusterIp: Cluster IP
+    externalName: External Name
+    headless: Headless
+    loadBalancer: Load Balancer
+    nodePort: Node Port
+  externalName:
+    label: External Name
+    helpText: External Name is intended to specify a canonical DNS name. To hardcode an IP address, use a Headless service.
+    placeholder: e.g. my.database.example.com
+  selectors:
+    label: Selectors
+    helpText: If no selector is created, manual endpoints must be made.
+  ips:
+    label: Listener IPs
+    helpText: "Warning: Configuring additional listener IPs is an advanced use case."
+    clusterIpHelpText: The Cluster IP address must be within the CIDR range configured for the API server.
+    input:
+      label: Cluster IP
+      placeholder: e.g. 10.0.171.239
+    external:
+      label: External IPs
+      placeholder: e.g. 1.1.1.1
+      protip: List of IP addresses for which nodes in the cluster will also accept traffic for this service.
+  affinity:
+    label: Session Affinity
+    helpText: Map connections to a consistent target based on their source IP.
+    actionLabels:
+      none: There is no session affinity configured.
+      clusterIp: ClusterIP
+    timeout:
+      label: Session Sticky Time
+      placeholder: e.g. 10800
+
 clusterIndexPage:
   header: "Cluster: {name}"
   sections:
@@ -99,7 +183,7 @@ clusterIndexPage:
       label: OPA Gatekeeper Constraint Violations
       disabled: OPA Gatekeeper is not configured.
       buttonText: Configure Gatekeeper
-      noRows: "There are no contrains with violations to show."
+      noRows: "There are no contraints with violations to show."
     events:
       label: Events
 
@@ -109,12 +193,11 @@ gatekeeperIndex:
 
 gatekeeperConfig:
   header: OPA Gatekeeper
-  flag: Experimental
   configure:
     description: Description
     helpText:
       listItem1: "OPA Gatekeeper provides first-class integration between OPA (Open Policy Agent) and Kubernetes."
-      listItem2: "You can Customize Gatekeeper’s yaml configuartion or Enable Gatekeeper with defaults."
+      listItem2: "You can customize Gatekeeper’s yaml configuration or Enable Gatekeeper with defaults."
       listItem3: "For more information, visit the "
       listItem4: "OPA Documentation."
     requirements:
@@ -154,16 +237,14 @@ gatekeeperConstraint:
     selectors:
       title: Selectors
       sub:
-        labelSelector: 
+        labelSelector:
           title: Label Selector
           addLabel: Add Label
-        namespaceSelector: 
+        namespaceSelector:
           title: Namespace Selector
           addNamespace: Add Namespace
     kinds:
       title: Kinds
-
-
 
 infoBoxCluster:
   cpu: CPU Usage
@@ -187,16 +268,46 @@ infoBoxCluster:
 
 resourceDetail:
   header:
-    view: '{name}'
-    create: 'Create {type}'
-    edit: 'Edit {type}: {name}'
-    clone: 'Clone from {type}: {name}'
-    stage: 'Stage from {type}: {name}'
+    view: "{name}"
+    create: "Create {type}"
+    edit: "Edit {type}: {name}"
+    clone: "Clone from {type}: {name}"
+    stage: "Stage from {type}: {name}"
   masthead:
-    namespace: 'Namespace'
-    project: 'Project'
-    yaml: 'YAML'
-    overview: 'Overview'
+    namespace: "Namespace"
+    project: "Project"
+    yaml: "YAML"
+    overview: "Overview"
+  detailTop:
+    created: Created
+    deleted: Deleted
+    ownerReferences: Owner References
+
+resourceTable:
+  groupLabel:
+    namespace: "<span>Namespace:</span> {name}"
+    project: "<span>Project:</span> {name}"
+    notInAProject: "Not in a Project"
+    notInANamespace: "Not Namespaced"
+
+servicePorts:
+  header:
+    label: Port Rules
+  rules:
+    name:
+      label: Port Name
+      placeholder: e.g. myport
+    listening:
+      label: Listening Port
+      placeholder: e.g. 8080
+    protocol:
+      label: Protocol
+    target:
+      label: Target Port
+      placeholder: e.g. 80 or http
+    node:
+      label: Node Port
+      placeholder: e.g. 80
 
 sortableTable:
   noRows: "没有数据"
@@ -218,11 +329,6 @@ sortableTable:
       =1 {{count} {count, plural, =1 {Workload} other {Workloads}}}
       other {{from} - {to} of {count} Workloads}}
 
-model:
-  namespace:
-    project: "Project: {name}"
-    notInAProject: "Not in a Project"
-
 configmapPage:
   data:
     title: Data
@@ -237,25 +343,36 @@ wm:
     disconnected: Disconnected
     error: Error
   containerShell:
-    containerName: 'Container: {label}'
+    containerName: "Container: {label}"
     clear: Clear
   containerLogs:
-    containerName: 'Container: {label}'
+    containerName: "Container: {label}"
     clear: Clear
     download: Download
     follow: Follow
     range:
       label: Show the last
-      lines: '{value} Lines'
-      minutes: '{value} Minutes'
-      hours: '{value} Hours'
-      all: 'Everything'
+      lines: "{value, number} Lines"
+      minutes: |
+        {value, number} {value, plural,
+        =1 {Minute}
+        other {Minutes}
+        }
+      hours: |
+        {value, number}
+        {value, plural,
+        =1 {Hour}
+        other {Hours}
+        }
+      all: "Everything"
     previous: Use Previous Container
     wrap: Wrap Lines
     timestamps: Show Timestamps
     search: Filter
     noMatch: No lines match the current filter.
     noData: There are no log entries to show in the current range.
+  kubectlShell:
+    title: "Kubectl: {name}"
 
 tableHeaders:
   state: 状态
@@ -326,7 +443,7 @@ node:
       ipAddress: IP地址
       version: Kubelet版本
       os: 操作系统
-      containerRuntime: 创建时间
+      containerRuntime: 容器运行时
     glance:
       pidPressure: PID负载
       diskPressure: 磁盘负载
@@ -344,8 +461,76 @@ node:
       images: 镜像
       taints: Taints
 
+ingress:
+  rules:
+    headers:
+      path: Path
+      target: Target Service
+      port: Port
+    hostname: Hostname
+    title: Rules
+    requestHost:
+      label: Request Host
+      placeholder: e.g. example.com
+    path:
+      label: Path
+      placeholder: e.g. /foo
+    target:
+      label: Target Service
+    port:
+      label: Port
+      placeholder: e.g. 80 or http
+    addPath: Add Path
+    removePath: Remove
+    addRule: Add Rule
+  certificates:
+    headers:
+      certificate: Certificate
+      hosts: Hosts
+    label: Certificates
+    defaultCertLabel: Default Ingress Controller Certificate
+    certificate:
+      label: Certificate - Secret Name
+    host:
+      label: Host
+      placeholder: e.g. example.com
+    removeHost: Remove
+    addHost: Add Host
+    addCertificate: Add Certificate
+  defaultBackend:
+    label: Default Backend
+    warning: "Warning: Default backend is used globally for the entire cluster."
+    targetService:
+      label: Target Service
+    port:
+      label: Port
+      placeholder: e.g. 80 or http
+    noServiceSelected: No default backend is configured.
+
 internalExternalIP:
   none: None
+
+serviceTypes:
+  clusterip: Cluster IP
+  externalname: External Name
+  headless: Headless
+  loadbalancer: Load Balancer
+  nodeport: Node Port
+
+resourceYaml:
+  buttons:
+    continue: Continue Editing
+    diff: Show Diff
+
+resourceList:
+  head:
+    create: Create
+    createFromYaml: Create from YAML
+
+resourceTabs:
+  tabs:
+    labels: Labels
+    annotations: Annotations
 
 cruStorageClass:
   provisioner:
@@ -589,3 +774,135 @@ pod:
       name: 名称
       image: 镜像
       imagePullPolicy: 镜像拉取策略
+
+rioConfig:
+  header: Rio
+  configure:
+    description: Description
+    helpText:
+      listItem1: The application deployment engine for Kubernetes.
+      listItem2: Rio makes it faster and easier for DevOps to build, test, deploy, scale and version stateless applications
+    requirements:
+      header: Requirements
+      helpText:
+        listItem1: 1 CPU Core
+        listItem2: 2 GiB of Memory
+  yaml:
+    buttonText: Customize
+
+validation:
+  custom:
+    missing: "No validtor exists for { validatorName }! Does the validtor exist in custom-validtors? Is the name spelled correctly?"
+  noType: No type to validate
+  noSchema: No schema found to validate
+  required: '"{key}" is required'
+  requiredOrOverride: '"{key}" is required or must allow override'
+  arrayLength:
+    exactly: '"{key}" should contain {count, plural, =1 {# item} other {# items}}'
+    between: '"{key}" should contain between {min} and {max} {max, plural, =1 {item} other {items}}'
+    min: '"{key}" should contain at least {count} {count, plural, =1 {item} other {items}}'
+    max: '"{key}" should contain at most {count} {count, plural, =1 {item} other {items}}'
+  stringLength:
+    exactly: '"{key}" should be {count, plural, =1 {# character} other {# characters}}'
+    between: '"{key}" should be between {min} and {max} {max, plural, =1 {character} other {characters}}'
+    min: '"{key}" should be at least {count} {count, plural, =1 {character} other {characters}}'
+    max: '"{key}" should be at most {count} {count, plural, =1 {character} other {characters}}'
+  number:
+    exactly: '"{key}" should be exactly {val}'
+    between: '"{key}" should be between {min} and {max}'
+    min: '"{key}" should be at least {val}'
+    max: '"{key}" should be at most {val}'
+  chars: '"{key}" contains {count, plural, =1 {an invalid character} other {# invalid characters}}: {chars}'
+  dns:
+    doubleHyphen: '"{key}" Cannot contain two or more consecutive hyphens'
+    hostname:
+      startDot: '"{key}" cannot start with a dot'
+      endDot: '"{key}" cannot end with a dot'
+      empty: '"{key}" must be at least one character'
+      tooLong: '"{key}" cannot be longer than {max} characters'
+      startNumber: '"{key}" cannot start with a number'
+      startHyphen: '"{key}" cannot start with a hyphen'
+      endHyphen: '"{key}" cannot end with a hyphen'
+      emptyLabel: '"{key}" cannot contain two consecutive dots'
+      tooLongLabel: '"{key}" cannot contain a section longer than {max} characters'
+    label:
+      startNumber: '"{key}" cannot start with a number'
+      startHyphen: '"{key}" cannot start with a hyphen'
+      endHyphen: '"{key}" cannot end with a hyphen'
+      emptyLabel: '"{key}" cannot be empty'
+      tooLongLabel: '"{key}" cannot be more than {max} characters'
+  k8s:
+    identifier:
+      startLetter: '"{key}" must start with a letter or number'
+      endLetter: '"{key}" must end with a letter or number'
+      emptyPrefix: '"{key}" cannot have an empty prefix'
+      tooLongPrefix: '"{key}" cannot have a prefix longer than {max} characters'
+      emptyLabel: '"{key}" cannot have an empty key'
+      tooLongKey: '"{key}" cannot have a key longer than {max} characters'
+  targets:
+    missingProjectId: A target must have a project selected.
+  service:
+    ports:
+      name:
+        required: "Port Rule [{position}] - Name is required."
+      nodePort:
+        requriedInt: "Port Rule [{position}] - Node Port must be interger values if included."
+      port:
+        requriedInt: "Port Rule [{position}] - Port must be interger values if included."
+        required: "Port Rule [{position}] - Port is required."
+      targetPort:
+        between: "Port Rule [{position}] - Target Port must be between 1 and 65535"
+        iana: "Port Rule [{position}] - Target Port must be an IANA Service Name or Integer"
+        ianaAt: "Port Rule [{position}] - Target Port "
+        required: "Port Rule [{position}] - Target Port is required"
+
+##############################
+# Model Properties
+##############################
+model:
+  account:
+    kind:
+      registeredAgent: Registered Agent
+      agent: Agent
+      service: Service
+      user: User
+      admin: Admin
+      project: Environment
+  cluster:
+    name: Cluster Name
+  identity:
+    displayType:
+      user: User
+      team: Team
+      group: Group
+      org: Organization
+      localUser: Local User
+      unknown: "{type}?"
+  ingress:
+    displayKind: L7 Ingress
+  machine:
+    role:
+      worker: Worker
+      etcd: etcd
+      controlPlane: Control Plane
+  openldapconfig:
+    server:
+      label: Hostname or IP Address
+    serviceAccountUsername:
+      label: Service Account Username
+    serviceAccountPassword:
+      label: Service Account Password
+    domain:
+      label: User Search Base
+      placeholder: "e.g. ou=Users,dc=mycompany,dc=com"
+      help: "Only users below this base will be used."
+  projectMember:
+    role:
+      member: Member
+      owner: Owner
+      readonly: Read-Only
+      restricted: Restricted
+  service:
+    displayKind:
+      generic: Service
+      loadBalancer: L4 Balancer

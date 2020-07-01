@@ -73,6 +73,12 @@ export default {
       default: null
     },
 
+    defaultSortType: {
+      // Default type to sort if specified
+      type:    String,
+      default: null
+    },
+
     tableActions: {
       // Show bulk table actions
       type:    Boolean,
@@ -365,11 +371,13 @@ export default {
             :key="act.action"
             type="button"
             class="btn bg-primary btn-sm"
+            :class="act.btnClass"
             :disabled="!act.enabled"
             @click="applyTableAction(act)"
           >
             <i v-if="act.icon" :class="act.icon" />
-            {{ act.label }}
+            <t v-if="act.labelKey" :k="act.labelKey" />
+            <span v-else>{{ act.label }}</span>
           </button>
         </div>
 
@@ -421,7 +429,7 @@ export default {
         </slot>
       </tbody>
 
-      <tbody v-for="group in groupedRows" :key="group.key" :class="{ group: groupBy }">
+      <tbody v-for="group in groupedRows" :key="group.key" :class="{ group: groupBy, 'events-table': true }">
         <slot v-if="groupBy" name="group-row" :group="group" :fullColspan="fullColspan">
           <tr class="group-row">
             <td :colspan="fullColspan">
@@ -585,6 +593,9 @@ $spacing: 10px;
 
         &.sortable a {
           color: var(--secondary);
+          &:focus {
+            outline: none;
+          }
         }
         font-weight: normal;
 
@@ -762,6 +773,15 @@ $spacing: 10px;
   TH[align=left], TD[align=left] { text-align: left; }
   TH[align=center], TD[align=center] { text-align: center; }
   TH[align=right], TD[align=right] { text-align: right; }
+}
+
+.events-table {
+  tr:nth-child(odd) {
+    background-color: #fff;
+  }
+  tr:nth-child(even) {
+    background-color: #f6f7fb;
+  }
 }
 
  .for-inputs{

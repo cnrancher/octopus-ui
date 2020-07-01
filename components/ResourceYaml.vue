@@ -260,7 +260,7 @@ export default {
     <YamlEditor
       ref="yamleditor"
       v-model="currentYaml"
-      class="yaml-editor"
+      class="ml-20 mr-20 card-box-shadow"
       :editor-mode="editorMode"
       @onInput="onInput"
       @onReady="onReady"

@@ -104,7 +104,14 @@ export function formatFontSize(val, initWidth = 1920) {
   const nowClientWidth = document.documentElement.clientWidth;
   const rate = nowClientWidth < initWidth ? 1.2 : 0.9;
 
-  return val * (nowClientWidth / initWidth) * rate;
+  // return val * (nowClientWidth / initWidth) * rate;
+
+  // just resize for small screen
+  if (nowClientWidth < initWidth) {
+    return val * (nowClientWidth / initWidth) * rate;
+  }
+
+  return val;
 }
 
 export default {

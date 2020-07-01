@@ -289,7 +289,7 @@ export default {
     />
     <template v-if="asYaml">
       <div v-if="!isView">
-        <button class="btn btn-sm role-primary" @click="readFromFile">
+        <button class="btn btn-sm role-primary ml-20 mb-20" @click="readFromFile">
           Read from file
         </button>
       </div>

@@ -455,6 +455,7 @@ export default {
       {
         action:     'download',
         label:      'Download YAML',
+        labelKey:   'buttons.downloadYaml',
         icon:       'icon icon-fw icon-download',
         bulkable:   true,
         bulkAction: 'downloadBulk',
@@ -465,7 +466,9 @@ export default {
         action:     'promptRemove',
         altAction:  'remove',
         label:      'Delete',
+        labelKey:   'buttons.remove',
         icon:       'icon icon-fw icon-trash',
+        btnClass:   'bg-error',
         bulkable:   true,
         enabled:    this.canDelete,
         bulkAction: 'promptRemove',

@@ -120,7 +120,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .search-wrapper {
     margin: 0 8px;
     .search {
@@ -132,6 +132,10 @@ export default {
       &:hover {
         background-color: #434966;
         opacity: 1;
+      }
+      &:focus {
+        background-color: #434966!important;
+        color: var(--menu-text)!important;
       }
     }
   }
@@ -145,9 +149,21 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 1;
-    background: var(--box-bg);
+    background: var(--body-bg);
     border: solid var(--border) thin;
     padding: 0 10px;
     box-shadow: 0px 8px 16px 0px var(--shadow);
+    .child {
+      &.nuxt-link-exact-active {
+        background-color: #f5f7fd!important;
+        .label, .count {
+          color: var(--link-text)!important;
+          opacity: 1;
+        }
+      }
+      .label, .count {
+        color: #585858;
+      }
+    }
   }
 </style>

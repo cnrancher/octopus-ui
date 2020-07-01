@@ -79,6 +79,8 @@ export const TIME_FORMAT = create('time-format', 'h:mm:ss a', {
   ]
 });
 
+export const USER_ID = create('user-id', '');
+
 export const TIME_ZONE = create('time-zone', 'local');
 export const DEV = create('dev', false, { parseJSON });
 
@@ -311,6 +313,10 @@ export const actions = {
     for (const key in definitions) {
       const definition = definitions[key];
       let value = clone(server.data[key]);
+
+      if (USER_ID === key) {
+        value = server.id || '';
+      }
 
       if ( value === undefined || key === ignoreKey) {
         continue;

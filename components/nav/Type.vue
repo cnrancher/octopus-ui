@@ -75,17 +75,18 @@ export default {
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--menu-text);
 
       ::v-deep .highlight {
         background: var(--diff-ins-bg);
-        color: var(--body-text);
+        color: var(--menu-text);
         padding: 2px;
       }
 
       ::v-deep .icon {
         position: relative;
         top: -1px;
-        color: var(--muted);
+        opacity: .8;
       }
     }
 
@@ -101,10 +102,9 @@ export default {
       white-space: nowrap;
 
       &:hover {
-        background: var(--dropdown-hover-bg);
-
+        text-decoration: none;
         ::v-deep .icon {
-          color: var(--body-text);
+          opacity: 1;
         }
       }
     }
@@ -121,6 +121,11 @@ export default {
       font-size: 12px;
       text-align: right;
       justify-items: center;
+      color: var(--menu-text);
+      opacity: .8;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 </style>

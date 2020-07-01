@@ -1,5 +1,6 @@
 <script>
 import _ from 'lodash';
+import Vue from 'vue';
 import LoadDeps from '@/mixins/load-deps';
 import { sortBy } from '@/utils/sort';
 import {
@@ -165,21 +166,33 @@ export default {
     async enable(buttonCb) {
       try {
         const { mode } = this.$route.query;
+        const errors = this.$refs.mqttConfig.deleteUnuseProp();
 
-        if (this.mode === _CREATE && mode !== 'clone') {
-          this.templateValue.spec.deviceResource = `${ this.templateValue.spec.deviceKind.toLowerCase() }s`;
-          await this.$store.dispatch('management/request', {
-            method:  'POST',
-            headers: {
-              'content-type': 'application/json',
-              accept:         'application/json',
-            },
-            url:  `v1/edgeapi.cattle.io.devicetemplate`,
-            data: this.templateValue,
-          });
+        if (this.kind === 'ModbusDevice') {
+          this.$refs.modbus.deleteData();
         }
+        // TODO need callback method
+        this.errors = errors;
+        if (!errors.length) {
+          if (this.mode === _CREATE && mode !== 'clone') {
+            this.templateValue.spec.deviceResource = `${ this.templateValue.spec.deviceKind.toLowerCase() }s`;
+            await this.$store.dispatch('management/request', {
+              method:  'POST',
+              headers: {
+                'content-type': 'application/json',
+                accept:         'application/json',
+              },
+              url:  `v1/edgeapi.cattle.io.devicetemplate`,
+              data: this.templateValue,
+            });
+          }
 
-        this.save(buttonCb);
+          this.save(buttonCb);
+        } else {
+          buttonCb(false);
+
+          return false;
+        }
       } catch (err) {
         if ( err && err.response && err.response.data ) {
           const body = err.response.data;
@@ -215,6 +228,20 @@ export default {
         this.$set(this.templateValue.spec, 'deviceKind', kind);
       }
     },
+    updateReferences(references) {
+      if (references.length) {
+        this.$set(this.value.spec, 'references', references);
+      } else {
+        Vue.delete(this.value.spec, 'references');
+      }
+    },
+    updateExtension(extension) {
+      if (extension === 'empty') {
+        Vue.delete(this.value.spec.templateSpec, 'extension');
+      } else {
+        this.$set(this.value.spec.templateSpec, 'extension', extension);
+      }
+    }
   },
 
 };
@@ -308,6 +335,8 @@ export default {
             :template-spec="value.spec.templateSpec"
             :namespace="templateValue.metadata.namespace"
             :references="value.spec.references"
+            @update:references="updateReferences"
+            @update:extension="updateExtension"
           />
         </Tab>
 

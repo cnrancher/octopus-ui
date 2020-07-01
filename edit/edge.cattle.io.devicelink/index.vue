@@ -202,6 +202,20 @@ export default {
 
       this.$set(this.value.spec.template, 'spec', _.cloneDeep(template.spec.templateSpec));
     },
+    updateReferences(references) {
+      if (references.length) {
+        this.$set(this.value.spec, 'references', references);
+      } else {
+        Vue.delete(this.value.spec, 'references');
+      }
+    },
+    updateExtension(extension) {
+      if (extension === 'empty') {
+        Vue.delete(this.value.spec.template.spec, 'extension');
+      } else {
+        this.$set(this.value.spec.template.spec, 'extension', extension);
+      }
+    }
   }
 };
 </script>
@@ -299,7 +313,9 @@ export default {
               ref="mqttConfig"
               :template-spec="value.spec.template.spec"
               :namespace="value.metadata.namespace"
-              :references="value.spec.references"
+              :references="value.spec.references || []"
+              @update:references="updateReferences"
+              @update:extension="updateExtension"
             />
           </Tab>
         </template>

@@ -225,6 +225,11 @@ export default {
     showHeaders: {
       type:    Boolean,
       default: true
+    },
+
+    eventsTable: {
+      type:    Boolean,
+      default: true
     }
 
   },
@@ -429,7 +434,7 @@ export default {
         </slot>
       </tbody>
 
-      <tbody v-for="group in groupedRows" :key="group.key" :class="{ group: groupBy, 'events-table': true }">
+      <tbody v-for="group in groupedRows" :key="group.key" :class="{ group: groupBy, 'events-table': eventsTable }">
         <slot v-if="groupBy" name="group-row" :group="group" :fullColspan="fullColspan">
           <tr class="group-row">
             <td :colspan="fullColspan">

@@ -69,8 +69,9 @@ export default {
     detailTopColumns() {
       return [
         {
-          title: this.$store.getters['i18n/t']('generic.created'),
-          name:  'created'
+          title:  this.t('workload.detailTop.created'),
+          name:  'created',
+          icon:  '#icon-time-create'
         },
       ];
     },

@@ -34,7 +34,7 @@ export default {
     </nuxt-link>
 
     <nuxt-link
-      to="/mqttManagement/edgeapi.cattle.io.catalog/catalog"
+      to="/mqttManagement/catalog"
       tag="button"
       type="button"
       class="btn bg-primary ml-10"

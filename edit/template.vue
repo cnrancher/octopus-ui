@@ -334,7 +334,7 @@ export default {
             ref="mqttConfig"
             :template-spec="value.spec.templateSpec"
             :namespace="templateValue.metadata.namespace"
-            :references="value.spec.references"
+            :references="value.spec.references || []"
             @update:references="updateReferences"
             @update:extension="updateExtension"
           />

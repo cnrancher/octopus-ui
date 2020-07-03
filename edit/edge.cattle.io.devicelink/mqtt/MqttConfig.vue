@@ -272,6 +272,14 @@ export default {
           label="MQTT Server"
         />
       </div>
+
+      <div class="col span-6">
+        <LabeledSelect
+          v-model.number="extension.mqtt.client.protocolVersion"
+          label="protocolVersion"
+          :options="versionList"
+        />
+      </div>
     </div>
 
     <div>

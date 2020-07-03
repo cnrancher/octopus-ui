@@ -1,10 +1,10 @@
 <script>
 /* eslint-disable */
+import _ from 'lodash';
 import jsyaml from 'js-yaml';
 import NameNsDescription from '@/components/form/NameNsDescription';
 import Footer from '@/components/form/Footer';
 import LabeledSelect from '@/components/form/LabeledSelect';
-import LabeledInput from '@/components/form/LabeledInput';
 import CreateEditView from '@/mixins/create-edit-view';
 import CatalogHeader from '@/components/AppHeader';
 import Collapse from '@/components/Collapse';
@@ -14,7 +14,7 @@ import { allHash } from '@/utils/promise';
 import LoadDeps from '@/mixins/load-deps';
 import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
-const DefalutYaml = {
+const _tempValue = {
   metadata:   {
     annotations: {
       'edgeapi.cattle.io/edge-api-server': 'true',
@@ -38,13 +38,12 @@ export default {
     Footer,
     NameNsDescription,
     LabeledSelect,
-    LabeledInput,
     Collapse,
     CodeMirror,
     CatalogHeader
   },
 
-  mixins:     [CreateEditView, LoadDeps],
+  mixins: [CreateEditView, LoadDeps],
 
   props: {
     value: {
@@ -54,17 +53,26 @@ export default {
   },
 
   data() {
-    const { id, app } = this.$route.query;
-    let currentValue='';
-    if (this.mode === _CREATE || this.mode === _VIEW) {
-      this.$set(this.value, 'metadata', _.merge(DefalutYaml.metadata, this.value.metadata));
-      this.$set(this.value, 'spec', _.merge(DefalutYaml.spec, this.value.spec));
+    const {
+      id, app, name, namespace
+    } = this.$route.query;
+    let currentValue = '';
+
+    if (this.mode === _CREATE) {
+      console.log('----创建');
+      const cloneValue = _.cloneDeep(_tempValue);
+      if (app === 'emqx') {
+        cloneValue.spec.valuesContent = 'replicaCount: 3\nimage:\n  pullPolicy: IfNotPresent\n  repository: emqx/emqx\nresources:\n  limits:\n    cpu: 500m\n    memory: 512Mi\n  requests:\n    cpu: 500m\n    memory: 512Mi\npersistence:\n  accessMode: ReadWriteOnce\n  enabled: false\n  size: 20Mi\nservice.type: ClusterIP\nemqxConfig:\n  EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname\n  EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443\n  EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local\nemqxLicneseSecretName: null\ntolerations: []\nnodeSelector: {}\naffinity: {}\ningress:\n  annotations: {}\n  enabled: false\n  hosts:\n  - chart-example.local\n  path: /\n  tls: []'
+      }
+      cloneValue.metadata.annotations['edgeapi.cattle.io/catalogs'] = name;
+      this.$set(this.value, 'metadata', _.merge(cloneValue.metadata, this.value.metadata));
+      this.$set(this.value, 'spec', _.merge(cloneValue.spec, this.value.spec));
       this.$set(this.value.spec, 'chart', app);
     }
     currentValue = jsyaml.safeDump(this.value.spec.valuesContent);
-    console.log('----this.value', this.value, this.mode, this.value.spec.chart)
+    console.log('111----app', app, this.value.spec.chart)
     return {
-      app: app || this.value.spec.chart,
+      app:      app || this.value.spec.chart,
       currentValue,
       catalogs: {}
     };
@@ -75,13 +83,13 @@ export default {
       return this.mode === _EDIT;
     },
     icon() {
-      return this.catalogs?.[this.app]?.[0].icon
+      return this.catalogs?.[this.app]?.[0].icon;
     },
     description() {
       return this.catalogs?.[this.app]?.[0].description;
     },
     versions() {
-      const arr  = this.catalogs[this.app] || []
+      const arr = this.catalogs?.[this.app] || [];
       const versions = arr.map( (V) => {
         return V.version;
       });
@@ -113,19 +121,31 @@ export default {
   methods: {
     enable(buttonCb) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
+
       this.$set(this.value.spec, 'valuesContent', currentValue);
       this.save(buttonCb);
     },
     async loadDeps() {
-      const hash = await allHash({
-        catalogs: this.$store.dispatch('cluster/findAll', { type: CATALOG }),
-      });
+      const hash = await allHash({ catalogs: this.$store.dispatch('cluster/findAll', { type: CATALOG }) });
+
       
-      const list = hash.catalogs[0].spec.indexFile.entries;
-      this.catalogs = list;
+      let name;
+      let namespace;
+
+      name = this.$route.query.name || this.value.metadata?.annotations['edgeapi.cattle.io/catalogs'];
+      namespace = this.$route.query.namespace || this.value.metadata.namespace;
+      const catalog = hash.catalogs.filter( (C) => {
+        return name === C.metadata.name && namespace === C.metadata.namespace;
+      });
+      console.log('=------', this.$route.query, this.value, name, namespace, catalog);
+      const appArr = catalog[0].spec.indexFile?.entries;
+
+      this.value.spec.repo = catalog[0].spec.url;
+
+      this.catalogs = appArr;
     },
     defaultImg() {
-      return require(`static/device-default.png`);
+      return require(`static/generic-catalog.svg`);
     },
     onInput(value) {
       this.currentValue = value;
@@ -226,7 +246,7 @@ export default {
               <span class="type">配置选项</span>
               <span class="desc">Helm模版接受逗号做为分隔符的字符串列表</span>
             </template>
-            
+
             <div class="yaml-info">
               <div class="desc">
                 粘贴或上传yml/yaml格式的应答参数

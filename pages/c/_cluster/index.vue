@@ -1,10 +1,9 @@
 <script>
-/* eslint-disable nuxt/no-globals-in-created */
 import * as d3 from 'd3';
 import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
-import { allHash } from '@/utils/promise';
+import { allHash, allSettled } from '@/utils/promise';
 import { formatCPUValue, formatMemoryValue } from '@/utils/units';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
@@ -40,6 +39,30 @@ export default {
   },
 
   mixins: [LoadDeps],
+
+  async fetch() {
+    const hash = await allSettled({
+      event:              this.$store.dispatch('management/findAll', { type: EVENT }),
+      nodesMetricsData:   this.$store.dispatch('management/findAll', { type: METRIC.NODE }),
+      podsData:           this.$store.dispatch('management/findAll', { type: POD }),
+      setting:            this.$store.dispatch('management/findAll', { type: SETTING }),
+      nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
+      devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }), // TODO device-link url may not found
+      systemControllers:  this.$store.dispatch('management/findAll', { type: COMPONENTSTATUS }),
+      networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
+      datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),
+    });
+
+    this.allSetting = hash.setting;
+    this.events = hash.event;
+    this.nodesData = hash.nodes;
+    this.devices = hash.devices;
+    this.podsData = hash.podsData;
+    this.networking = hash.networking;
+    this.datastorage = hash.datastorage;
+    this.nodesMetricsData = hash.nodesMetricsData;
+    this.systemControllers = hash.systemControllers;
+  },
 
   data() {
     return {
@@ -139,13 +162,6 @@ export default {
     },
   },
 
-  created() {
-    const pathname = window.location.pathname;
-
-    this.$router.applyQuery({ [DESCENDING]: true }, { [DESCENDING]: false });
-    this.$route.query.desc = null;
-  },
-
   mounted() {
     window.onresize = () => {
       this.screenWidth = document.documentElement.clientWidth;
@@ -153,29 +169,6 @@ export default {
   },
 
   methods: {
-    async loadDeps() {
-      const hash = await allHash({
-        event:              this.$store.dispatch('management/findAll', { type: EVENT }),
-        nodesMetricsData:   this.$store.dispatch('management/findAll', { type: METRIC.NODE }),
-        podsData:           this.$store.dispatch('management/findAll', { type: POD }),
-        setting:            this.$store.dispatch('management/findAll', { type: SETTING }),
-        nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
-        devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }), // TODO device-link url may not found
-        systemControllers:  this.$store.dispatch('management/findAll', { type: COMPONENTSTATUS }),
-        networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
-        datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),
-      });
-
-      this.allSetting = hash.setting;
-      this.events = hash.event;
-      this.nodesData = hash.nodes;
-      this.devices = hash.devices;
-      this.podsData = hash.podsData;
-      this.networking = hash.networking;
-      this.datastorage = hash.datastorage;
-      this.nodesMetricsData = hash.nodesMetricsData;
-      this.systemControllers = hash.systemControllers;
-    },
     drawGauge(gaugeData) {
       const chartContainerNames = ['cpuUsedGauge', 'memoryUsedGauge', 'podsUsedGauge'];
 

@@ -216,7 +216,7 @@ export default function(store) {
   //   route:       { name: 'c-cluster' },
   //   exact:       true,
   // });
-
+  
   virtualType({
     label:      'Workload',
     namespaced: true,
@@ -226,6 +226,18 @@ export default function(store) {
     route:      {
       name:     'c-cluster-resource',
       params:   { resource: 'workload' }
+    },
+  });
+
+  virtualType({
+    label:      'system.component',
+    namespaced: true,
+    name:       'system.component',
+    group:      'Cluster',
+    weight:     10,
+    route:      {
+      name:     'c-cluster-resource',
+      params:   { resource: 'system.component' }
     },
   });
 

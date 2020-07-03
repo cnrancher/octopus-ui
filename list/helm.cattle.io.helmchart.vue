@@ -32,13 +32,13 @@ export default {
 
   async asyncData({ store }) {
     const resources = await allHash({
-      deployment:  store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DEPLOYMENT, opt: { force: true } }),
-      daemonSet:   store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DAEMON_SET, opt: { force: true } }),
-      statefulSet: store.dispatch('management/findAll', { type: WORKLOAD_TYPES.STATEFUL_SET, opt: { force: true } }),
-      batchJob:    store.dispatch('management/findAll', { type: WORKLOAD_TYPES.JOB, opt: { force: true } }),
-      service:     store.dispatch('management/findAll', { type: SERVICE, opt: { force: true } }),
-      helm:        store.dispatch('management/findAll', { type: HELM, opt: { force: true } }),
-      catalogs:    store.dispatch('management/findAll', { type: CATALOG, opt: { force: true } })
+      deployment:  store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DEPLOYMENT }),
+      daemonSet:   store.dispatch('management/findAll', { type: WORKLOAD_TYPES.DAEMON_SET }),
+      statefulSet: store.dispatch('management/findAll', { type: WORKLOAD_TYPES.STATEFUL_SET }),
+      batchJob:    store.dispatch('management/findAll', { type: WORKLOAD_TYPES.JOB }),
+      service:     store.dispatch('management/findAll', { type: SERVICE }),
+      helm:        store.dispatch('management/findAll', { type: HELM }),
+      catalogs:    store.dispatch('management/findAll', { type: CATALOG })
     });
 
     return { resources };
@@ -77,6 +77,7 @@ export default {
     rows() {
       const out = [];
       const helm = this.resources.helm;
+      const mapKey = ['app.kubernetes.io/instance', 'release'];
 
       for (const typeRows of helm) {
         const name = typeRows.metadata.name;
@@ -87,7 +88,15 @@ export default {
         out.push(typeRows);
 
         for (const row of [...this.resources.statefulSet, ...this.resources.daemonSet, ...this.resources.deployment, ...this.resources.batchJob, ...this.resources.service]) {
+          
           if ( row.metadata.namespace === targetNamespace && row.metadata?.labels?.['app.kubernetes.io/instance'] === name && row.metadata?.labels['app.kubernetes.io/name'] === chart) {
+            out.push(row);
+            row.customId = id;
+            break;
+          }
+
+          console.log(row.metadata?.labels?.['release'], name)
+          if (row.metadata?.labels?.['release'] === name) {
             row.customId = id;
             out.push(row);
           }
@@ -162,6 +171,6 @@ export default {
 
 <style lang="scss" scoped>
 .version {
-  color: red !important;
+  color: blue !important;
 }
 </style>

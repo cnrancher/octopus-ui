@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import CatalogHeader from '@/components/AppHeader';
 import DefalutImg from '@/components/DefaultImg';
 import { CATALOG, HELM } from '@/config/types';
@@ -14,12 +15,10 @@ export default {
     const { store } = ctx;
 
     const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
-    const helmChart = await store.dispatch('management/findAll', { type: HELM });
-    const list = catalogs[0].spec.indexFile.entries;
+    console.log('----catalogs', catalogs);
 
     return {
-      catalogs: list,
-      helmChart
+      catalogs,
     };
   },
 
@@ -29,13 +28,28 @@ export default {
 
   computed: {
     newCatalogs() {
-      return filterObj(this.catalogs, [this.search], true);
+      let obj = {}
+      for (let i in this.catalogs) {
+        const catalog = this.catalogs[i];
+        const arr = catalog.spec.indexFile?.entries || [];
+        const filterCatalog = filterObj(arr, [this.search], true);
+
+        if (Object.keys(filterCatalog).length) {
+          obj[catalog.metadata.name] = {
+            catalog: filterCatalog,
+            namespace: catalog.metadata.namespace,
+            name: catalog.metadata.name
+          };
+        }
+      }
+      // console.log('-----', obj);
+      return obj
     }
   },
 
   methods: {
     defaultImg() {
-      return require(`static/device-default.png`);
+      return require(`static/generic-catalog.svg`);
     },
     async handlerRefresh() {
       this.$nuxt.$loading.start();
@@ -69,17 +83,17 @@ export default {
       </template>
     </CatalogHeader>
 
-    <div class="cardList">
+    <div class="cardList" v-for="(item, key) in newCatalogs" :key="key">
       <div class="title">
         <div class="name">
-          Catalog
+          {{key}}
         </div>
       </div>
 
       <div class="list">
         <el-row :gutter="30">
           <el-col
-            v-for="(item, key) in newCatalogs"
+            v-for="(C, key) in item.catalog"
             :key="key"
             class="card"
             :xs="24"
@@ -88,10 +102,10 @@ export default {
             :lg="8"
             :xl="6"
           >
-            <nuxt-link :to="{path: '/c/local/helm.cattle.io.helmchart/create', query: { app: key }}">
+            <nuxt-link :to="{path: '/c/local/helm.cattle.io.helmchart/create', query: { app: key, name: item.name, namespace: item.namespace }}">
               <el-card>
                 <div class="brand">
-                  <DefalutImg :real="item[0].icon" />
+                  <DefalutImg :real="C[0].icon" :src="defaultImg()" />
                 </div>
 
                 <el-divider></el-divider>
@@ -104,6 +118,9 @@ export default {
           </el-col>
         </el-row>
       </div>
+      
+      <el-divider></el-divider>
+
     </div>
   </div>
 </template>

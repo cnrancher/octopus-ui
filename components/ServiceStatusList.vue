@@ -33,19 +33,15 @@ export default {
     }
   },
 
-  data() {
-    return { displayList: [] };
-  },
-
-  watch: {
-    list() {
+  computed: {
+    displayList() {
       const tempList = this.list.map((item) => {
         item.classname = getItemClassname(item.status);
 
         return item;
       });
 
-      return { displayList: tempList };
+      return tempList;
     }
   }
 };
@@ -53,7 +49,7 @@ export default {
 
 <template>
   <ul class="dashboard-service">
-    <li v-for="statusItem in list" :key="statusItem.name" :class="statusItem.classname.type">
+    <li v-for="statusItem in displayList" :key="statusItem.name" :class="statusItem.classname.type">
       <span class="type">
         <i :class="['icon', statusItem.classname.icon]"></i>
       </span>

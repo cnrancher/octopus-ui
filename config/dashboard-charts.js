@@ -31,6 +31,12 @@ export function rightGaugeConfigGenerator(opts) {
         color:    '#454545',
       }
     },
+    legend: {
+      orient:  'vertical',
+      top:     'center',
+      itemGap: 20,
+      right:   0,
+    },
     series: [
       {
         type:      'pie',

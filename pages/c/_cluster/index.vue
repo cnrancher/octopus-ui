@@ -5,14 +5,14 @@ import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import { allHash } from '@/utils/promise';
+import { formatCPUValue, formatMemoryValue } from '@/utils/units';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
-import DashboardProgressBar from '@/components/DashboardProgressBar';
+import DashboardWorkload from '@/components/DashboardWorkload';
 import {
   NODE, POD, EVENT, COMPONENTSTATUS, METRIC, K3S, DEVICE_LINK, SETTING
 } from '@/config/types';
-import SortableTable from '@/components/SortableTable';
-import { NAMESPACE } from '@/config/table-headers';
+import DashboardEvents from '@/components/DashboardEvents';
 import { DESCENDING } from '@/config/query-params';
 
 function hexbinClassNameGenerator(count) {
@@ -32,55 +32,11 @@ function getSystemStatus(name, status) {
   };
 }
 
-// 1核=1000m，1m=1000*1000n，后台返回的是n为单位的
-function formatCPUValue(cpuValue) {
-  const value = parseInt(cpuValue, 10);
-
-  if (!value) {
-    return 0;
-  }
-
-  if (/n/.test(cpuValue)) {
-    return value; // n结尾的直接返回
-  } else if (/m/.test(cpuValue)) {
-    return value * 1000 * 1000; // m结尾的换算成为单位的值
-  } else if (/\u/.test(cpuValue)) {
-    return value * 1000 * 10; // 100u=1m
-  }
-
-  return value * 1000 * 1000 * 1000; // 核数时的返回
-}
-
-// 1024，目前后台返回的是ki结尾，需要去掉单位
-function formatMemoryValue(memoryValue) {
-  return parseInt(memoryValue, 10) || 0;
-}
-
-function formatBarData(array) {
-  let max;
-  const sortArray = array.sort((leftItem, rightItem) => rightItem.value - leftItem.value).splice(0, 10);
-
-  return sortArray.map((item, index) => {
-    let percent = 0;
-
-    if (index === 0) {
-      percent = 100;
-      max = item.value;
-    } else {
-      percent = item.value / max * 100;
-    }
-
-    return {
-      ...item, value: item.value.toFixed(1), percent
-    };
-  });
-}
-
 export default {
   components: {
-    DashboardProgressBar,
     ServiceStatusList,
-    SortableTable
+    DashboardEvents,
+    DashboardWorkload
   },
 
   mixins: [LoadDeps],
@@ -92,7 +48,6 @@ export default {
       gaugeList:        [],
       rightGaugeList:   [],
       tableData:        [],
-      serviceList:      [],
       iotInfo:          {
         total:   0,
         online:  0,
@@ -101,52 +56,57 @@ export default {
       allSetting:           [],
       hexbinData:        [],
       gaugeData:         {},
-      cpuLoadList:       [],
-      memoryLoadList:    [],
       events:            [],
       nodesMetricsData:  [],
       nodesData:         [],
       podsData:          [],
       devices:           [],
-      podsLoadInfo:      [],
       datastorage:       [],
       systemControllers: [],
       networking:        [],
-      clusterName:       '',
-      headers:           [
-        NAMESPACE,
-        {
-          name:      'timestamp',
-          label:     '事件时间',
-          value:     '$["metadata"]["fields"][0]',
-          sort:      '$["metadata"]["fields"][0]'
-        },
-        {
-          name:  'type',
-          label: '类型',
-          value: '$["metadata"]["fields"][1]',
-          sort:  '$["metadata"]["fields"][1]'
-        },
-        {
-          name:  'reason',
-          label: '原因',
-          value: '$["metadata"]["fields"][2]',
-          sort:  '$["metadata"]["fields"][2]'
-        },
-        {
-          name:  'resource',
-          label: '资源对象',
-          value: '$["metadata"]["fields"][3]',
-          sort:  '$["metadata"]["fields"][3]'
-        },
-        {
-          name:  'message',
-          label: '事件消息',
-          value: 'message',
-          sort:  'message'
-        }
-      ]
+      clusterName:       ''
     };
+  },
+
+  computed: {
+    serviceList() {
+      const {
+        datastorage, systemControllers, networking, nodesData
+      } = this;
+      const systemServeives = [];
+
+      systemServeives.push(getSystemStatus('Datastore', datastorage.health));
+
+      let systemControllersStatus = true;
+      let networkingStatus = true;
+      let nodesStatus = true;
+
+      systemControllers.forEach((controllerItem, controllerIndex) => {
+        const { state } = controllerItem.metadata;
+
+        systemControllersStatus &= state.name === 'active';
+      });
+
+      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus));
+
+      nodesData.forEach((nodeItem, nodeIndex) => {
+        networkingStatus &= nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'] !== '';
+        nodesStatus &= nodeItem.metadata.state.name === 'active';
+      });
+
+      networking.forEach((networkingItem, networkingIndex) => {
+        const { metadata } = networkingItem;
+
+        if (!!~['traefik', 'coredns'].indexOf(metadata.name)) {
+          networkingStatus &= metadata.state.name === 'active';
+        }
+      });
+
+      systemServeives.push(getSystemStatus('Networking', networkingStatus));
+      systemServeives.push(getSystemStatus('Nodes', nodesStatus));
+
+      return systemServeives;
+    }
   },
 
   watch: {
@@ -167,7 +127,6 @@ export default {
     },
     nodesData() {
       this.updateMetricsIoNodes();
-      this.updateSystemServiceStatus();
     },
     podsData() {
       this.updateMetricsIoNodes();
@@ -177,18 +136,6 @@ export default {
     },
     devices() {
       this.updateDeviceInfo();
-    },
-    podsLoadInfo() {
-      this.updatePodsLoadInfo();
-    },
-    datastorage() {
-      this.updateSystemServiceStatus();
-    },
-    systemControllers() {
-      this.updateSystemServiceStatus();
-    },
-    networking() {
-      this.updateSystemServiceStatus();
     },
   },
 
@@ -210,7 +157,6 @@ export default {
       const hash = await allHash({
         event:              this.$store.dispatch('management/findAll', { type: EVENT }),
         nodesMetricsData:   this.$store.dispatch('management/findAll', { type: METRIC.NODE }),
-        podsLoadInfo:       this.$store.dispatch('management/findAll', { type: METRIC.POD }),
         podsData:           this.$store.dispatch('management/findAll', { type: POD }),
         setting:            this.$store.dispatch('management/findAll', { type: SETTING }),
         nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
@@ -227,7 +173,6 @@ export default {
       this.podsData = hash.podsData;
       this.networking = hash.networking;
       this.datastorage = hash.datastorage;
-      this.podsLoadInfo = hash.podsLoadInfo;
       this.nodesMetricsData = hash.nodesMetricsData;
       this.systemControllers = hash.systemControllers;
     },
@@ -506,74 +451,6 @@ export default {
       };
       this.drawRightGauge();
     },
-    updatePodsLoadInfo() {
-      const { podsLoadInfo } = this;
-      const cpuList = podsLoadInfo.map((podItem, podIndex) => {
-        const cpu = formatCPUValue(podItem.containers[0].usage.cpu);
-        const cpuUsage = parseFloat((cpu / 1000 / 1000).toFixed(2)); // 换算m
-
-        return {
-          id:    podIndex,
-          name:  podItem.id,
-          value: cpuUsage
-        };
-      });
-
-      const memoryList = podsLoadInfo.map((podItem, podIndex) => {
-        const memory = formatMemoryValue(podItem.containers[0].usage.memory);
-        const memoryUsage = parseFloat((memory / 1024).toFixed(2)); // 换算m
-
-        return {
-          id:    podIndex,
-          name:  podItem.id,
-          value: memoryUsage
-        };
-      });
-
-      const memoryLoadList = formatBarData(memoryList);
-      const cpuLoadList = formatBarData(cpuList);
-
-      this.$set(this.$data, 'cpuLoadList', cpuLoadList);
-      this.$set(this.$data, 'memoryLoadList', memoryLoadList);
-    },
-    updateSystemServiceStatus() {
-      const {
-        datastorage, systemControllers, networking, nodesData
-      } = this;
-      const systemServeives = [];
-
-      systemServeives.push(getSystemStatus('Datastore', datastorage.health));
-
-      let systemControllersStatus = true;
-      let networkingStatus = true;
-      let nodesStatus = true;
-
-      systemControllers.forEach((controllerItem, controllerIndex) => {
-        const { state } = controllerItem.metadata;
-
-        systemControllersStatus &= state.name === 'active';
-      });
-
-      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus));
-
-      nodesData.forEach((nodeItem, nodeIndex) => {
-        networkingStatus &= nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'] !== '';
-        nodesStatus &= nodeItem.metadata.state.name === 'active';
-      });
-
-      networking.forEach((networkingItem, networkingIndex) => {
-        const { metadata } = networkingItem;
-
-        if (!!~['traefik', 'coredns'].indexOf(metadata.name)) {
-          networkingStatus &= metadata.state.name === 'active';
-        }
-      });
-
-      systemServeives.push(getSystemStatus('Networking', networkingStatus));
-      systemServeives.push(getSystemStatus('Nodes', nodesStatus));
-
-      this.serviceList = systemServeives;
-    },
     editSetting() {
       this.flag = false;
       this.$nextTick(() => {
@@ -661,25 +538,9 @@ export default {
               :list="serviceList"
             />
           </div>
-          <div class="event">
-            <h3 class="module-title mb-20">
-              <i class="icon iconfont icon-set"></i>
-              集群事件
-            </h3>
-            <SortableTable
-              :headers="headers"
-              :rows="events"
-              :search="false"
-              :table-actions="false"
-              :row-actions="false"
-              :show-groups="false"
-              :paging="false"
-              default-sort-by="timestamp"
-              default-sort-type="desc"
-              key-field="id"
-              class="dashboard-event-table"
-            />
-          </div>
+          <DashboardEvents
+            :events="events"
+          />
         </div>
         <div class="content-side">
           <div class="iot">
@@ -709,24 +570,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="balance">
-            <h3 class="module-title">
-              <i class="icon iconfont icon-workload"></i>
-              工作负载
-            </h3>
-            <DashboardProgressBar
-              title="CPU密集型Pod TOP10"
-              unit="单位：M"
-              bar-color="linear-gradient(90deg, #8e79d9, #7c88f2)"
-              :list="cpuLoadList"
-            />
-            <DashboardProgressBar
-              title="内存密集型Pod TOP10"
-              unit="单位：MiB"
-              bar-color="linear-gradient(90deg, #2891f4, #4d66fe)"
-              :list="memoryLoadList"
-            />
-          </div>
+          <DashboardWorkload />
         </div>
       </div>
       <div ref="tooltip" class="dashboard-tooltip"></div>
@@ -841,25 +685,6 @@ export default {
             }
           }
         }
-        .event {
-          width: 100%;
-          overflow: auto;
-          .dashboard-event-table {
-            max-height: 395px;
-            overflow-y: auto;
-          }
-          thead {
-            th {
-              text-align: center;
-            }
-          }
-          .events-table {
-            td {
-              color: var(--module-header-text);
-              text-align: center;
-            }
-          }
-        }
       }
       .content-side {
         height: 100%;
@@ -916,11 +741,6 @@ export default {
             border-right: none;
             padding-right: 0;
           }
-        }
-
-        .balance {
-          border: 1px solid #ddd;
-          padding: 16px 10px;
         }
       }
     }

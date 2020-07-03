@@ -76,10 +76,10 @@ export default {
       Preferences
     </h1>
 
-    <h4 class="mb-10">
+    <!-- <h4 class="mb-10">
       Theme
     </h4>
-    <ButtonGroup v-model="theme" :options="themeOptions" />
+    <ButtonGroup v-model="theme" :options="themeOptions" /> -->
 
     <h4 class="mb-10">
       Formatting

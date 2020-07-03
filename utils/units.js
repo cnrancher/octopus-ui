@@ -114,9 +114,33 @@ export function formatFontSize(val, initWidth = 1920) {
   return val;
 }
 
+export function formatCPUValue(cpuValue) {
+  const value = parseInt(cpuValue, 10);
+
+  if (!value) {
+    return 0;
+  }
+
+  if (/n/.test(cpuValue)) {
+    return value; // unit n
+  } else if (/m/.test(cpuValue)) {
+    return value * 1000 * 1000; // unit m
+  } else if (/\u/.test(cpuValue)) {
+    return value * 1000 * 10; // 100u=1m
+  }
+
+  return value * 1000 * 1000 * 1000; // core
+}
+
+export function formatMemoryValue(memoryValue) {
+  return parseInt(memoryValue, 10) || 0;
+}
+
 export default {
   exponentNeeded,
   formatSi,
   parseSi,
-  formatFontSize
+  formatFontSize,
+  formatCPUValue,
+  formatMemoryValue
 };

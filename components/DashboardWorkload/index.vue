@@ -98,7 +98,7 @@ export default {
     <div class="progress-item">
       <p class="progress-item-title">
         <span>CPU密集型Pod TOP10<i class="icon iconfont el-icon-refresh-left ml-10" @click="forceRefresh"></i></span>
-        <span>单位：M</span>
+        <span>单位：Milli</span>
       </p>
       <DashboardProgressBar
         bar-color="linear-gradient(90deg, #8e79d9, #7c88f2)"

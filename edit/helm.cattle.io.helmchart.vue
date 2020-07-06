@@ -11,7 +11,6 @@ import Collapse from '@/components/Collapse';
 import CodeMirror from '@/components/CodeMirror';
 import { _EDIT, _CREATE, _VIEW } from '@/config/query-params';
 import { allHash } from '@/utils/promise';
-import LoadDeps from '@/mixins/load-deps';
 import { CATALOG, HELM, NAMESPACE } from '@/config/types';
 
 const _tempValue = {
@@ -27,7 +26,7 @@ const _tempValue = {
     repo:            'http://charts.cnrancher.cn',
     version:         '',
     targetNamespace: 'default',
-    valuesContent:   'replicaCount: 3\nimage:\n  pullPolicy: IfNotPresent\n  repository: emqx/emqx\nresources:\n  limits:\n    cpu: 500m\n    memory: 512Mi\n  requests:\n    cpu: 500m\n    memory: 512Mi\npersistence:\n  accessMode: ReadWriteOnce\n  enabled: false\n  size: 20Mi\nservice.type: ClusterIP\nemqxConfig:\n  EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname\n  EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443\n  EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local\nemqxLicneseSecretName: null\ntolerations: []\nnodeSelector: {}\naffinity: {}\ningress:\n  annotations: {}\n  enabled: false\n  hosts:\n  - chart-example.local\n  path: /\n  tls: []'
+    valuesContent: ''
   }
 };
 
@@ -43,7 +42,7 @@ export default {
     CatalogHeader
   },
 
-  mixins: [CreateEditView, LoadDeps],
+  mixins: [CreateEditView],
 
   props: {
     value: {
@@ -59,7 +58,6 @@ export default {
     let currentValue = '';
 
     if (this.mode === _CREATE) {
-      console.log('----创建');
       const cloneValue = _.cloneDeep(_tempValue);
       if (app === 'emqx') {
         cloneValue.spec.valuesContent = 'replicaCount: 3\nimage:\n  pullPolicy: IfNotPresent\n  repository: emqx/emqx\nresources:\n  limits:\n    cpu: 500m\n    memory: 512Mi\n  requests:\n    cpu: 500m\n    memory: 512Mi\npersistence:\n  accessMode: ReadWriteOnce\n  enabled: false\n  size: 20Mi\nservice.type: ClusterIP\nemqxConfig:\n  EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname\n  EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443\n  EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local\nemqxLicneseSecretName: null\ntolerations: []\nnodeSelector: {}\naffinity: {}\ningress:\n  annotations: {}\n  enabled: false\n  hosts:\n  - chart-example.local\n  path: /\n  tls: []'
@@ -69,12 +67,12 @@ export default {
       this.$set(this.value, 'spec', _.merge(cloneValue.spec, this.value.spec));
       this.$set(this.value.spec, 'chart', app);
     }
-    currentValue = jsyaml.safeDump(this.value.spec.valuesContent);
-    console.log('111----app', app, this.value.spec.chart)
+    currentValue = this.value.spec?.valuesContent ? jsyaml.safeDump(this.value.spec.valuesContent) : '';
+
     return {
       app:      app || this.value.spec.chart,
       currentValue,
-      catalogs: {}
+      catalogs: []
     };
   },
 
@@ -89,14 +87,12 @@ export default {
       return this.catalogs?.[this.app]?.[0].description;
     },
     versions() {
-      const arr = this.catalogs?.[this.app] || [];
-      const versions = arr.map( (V) => {
-        return V.version;
+      const versions = _.sortBy(this.catalogs?.[this.app] || [], (C) => {
+        return -C.version;
       });
-
-      return versions.sort((a, b) => {
-        return (b).localeCompare(a);
-      });
+      return versions.map( C => {
+        return C.version
+      })
     },
     cmOptions() {
       const readOnly = false;
@@ -118,31 +114,28 @@ export default {
     },
   },
 
+  async fetch() {
+    const hash = await allHash({ catalogs: this.$store.dispatch('cluster/findAll', { type: CATALOG }) });
+
+    let name = this.$route.query.name || this.value.metadata?.annotations['edgeapi.cattle.io/catalogs'];
+    let namespace = this.$route.query.namespace || this.value.metadata.namespace;
+    const catalog = hash.catalogs.filter( (C) => {
+      return name === C.metadata.name && namespace === C.metadata.namespace;
+    });
+
+    const appArr = catalog[0].spec.indexFile?.entries;
+
+    this.value.spec.repo = catalog[0].spec.url;
+
+    this.catalogs = appArr;
+  },
+
   methods: {
     enable(buttonCb) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
 
       this.$set(this.value.spec, 'valuesContent', currentValue);
       this.save(buttonCb);
-    },
-    async loadDeps() {
-      const hash = await allHash({ catalogs: this.$store.dispatch('cluster/findAll', { type: CATALOG }) });
-
-      
-      let name;
-      let namespace;
-
-      name = this.$route.query.name || this.value.metadata?.annotations['edgeapi.cattle.io/catalogs'];
-      namespace = this.$route.query.namespace || this.value.metadata.namespace;
-      const catalog = hash.catalogs.filter( (C) => {
-        return name === C.metadata.name && namespace === C.metadata.namespace;
-      });
-      console.log('=------', this.$route.query, this.value, name, namespace, catalog);
-      const appArr = catalog[0].spec.indexFile?.entries;
-
-      this.value.spec.repo = catalog[0].spec.url;
-
-      this.catalogs = appArr;
     },
     defaultImg() {
       return require(`static/generic-catalog.svg`);

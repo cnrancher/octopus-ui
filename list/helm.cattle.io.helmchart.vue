@@ -88,14 +88,12 @@ export default {
         out.push(typeRows);
 
         for (const row of [...this.resources.statefulSet, ...this.resources.daemonSet, ...this.resources.deployment, ...this.resources.batchJob, ...this.resources.service]) {
-          
           if ( row.metadata.namespace === targetNamespace && row.metadata?.labels?.['app.kubernetes.io/instance'] === name && row.metadata?.labels['app.kubernetes.io/name'] === chart) {
             out.push(row);
             row.customId = id;
             break;
           }
 
-          console.log(row.metadata?.labels?.['release'], name)
           if (row.metadata?.labels?.['release'] === name) {
             row.customId = id;
             out.push(row);
@@ -114,9 +112,9 @@ export default {
       const entries = {};
 
       this.resources.catalogs.forEach( (C) => {
-        const url = C.spec?.url;
+        const name = C.metadata?.name;
 
-        entries[url] = C.spec.indexFile;
+        entries[name] = C.spec.indexFile;
       });
 
       return entries;
@@ -129,7 +127,8 @@ export default {
         return row.kind === 'HelmChart';
       });
       const { version, chart, repo } = helm.spec;
-      const versions = _.sortBy(this.entries[repo]?.entries?.[chart] || [], (C) => {
+      const name = helm.metadata?.annotations['edgeapi.cattle.io/catalogs'];
+      const versions = _.sortBy(this.entries[name]?.entries?.[chart] || [], (C) => {
         return -C.version;
       });
 

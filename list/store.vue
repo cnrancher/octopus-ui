@@ -47,7 +47,10 @@ export default {
     headers() {
       return [
         STATE,
-        TYPE,
+        {
+          ...TYPE,
+          width: 200
+        },
         NAMESPACE_NAME,
         AGE,
       ];

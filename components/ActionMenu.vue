@@ -94,6 +94,9 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+  * {
+    user-select: none;
+  }
   .root {
     position: absolute;
   }

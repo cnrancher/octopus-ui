@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable */
 import LoadDeps from '@/mixins/load-deps';
 import LabelValue from '@/components/LabelValue';
 import createEditView from '@/mixins/create-edit-view';
@@ -13,6 +12,7 @@ export default {
 
     for (let i = 0; i < properties?.length; i++) {
       const obj = this.flatterObject(properties[i]);
+
       rows.push(obj);
     }
 
@@ -30,7 +30,7 @@ export default {
       creationTimestamp,
       apiVersion,
       kind,
-      node: nodeHostName,
+      node:       nodeHostName,
       activeName: 'second',
       rows,
       properties,
@@ -49,7 +49,7 @@ export default {
     async loadDeps() {
       const { type } = this;
       const deviceList = await this.$store.dispatch('management/findAll', { type });
-      
+
       this.deviceList = deviceList.filter( item => item.id === this.value.id);
     },
     flatterObject(obj) {
@@ -216,16 +216,16 @@ export default {
           </el-tab-pane>
           <el-tab-pane label="访问配置" name="third">
             <template v-if="kind === 'BluetoothDevice'">
-              <LabelValue label="设备名称" :value="this.value.spec.template.spec.name" />
+              <LabelValue label="设备名称" :value="value.spec.template.spec.name" />
             </template>
 
             <template v-if="kind === 'ModbusDevice'">
-              <template v-for="(v, k) in this.value.spec.template.spec.protocol.rtu">
+              <template v-for="(v, k) in value.spec.template.spec.protocol.rtu">
                 <el-col :key="k" :span="12">
                   <LabelValue :label="k" :value="v" />
                 </el-col>
               </template>
-              <template v-for="(v, k) in this.value.spec.template.spec.protocol.tcp">
+              <template v-for="(v, k) in value.spec.template.spec.protocol.tcp">
                 <el-col :key="k" :span="12">
                   <LabelValue :label="k" :value="v" />
                 </el-col>
@@ -233,8 +233,8 @@ export default {
             </template>
           </el-tab-pane>
           <el-tab-pane label="标签" name="fourth">
-            <template v-if="this.value.spec.template && this.value.spec.template.metadata &&this.value.spec.template.metadata.labels">
-              <template v-for="(v, k) in this.value.spec.template.metadata.labels">
+            <template v-if="value.spec.template && value.spec.template.metadata &&value.spec.template.metadata.labels">
+              <template v-for="(v, k) in value.spec.template.metadata.labels">
                 <el-col :key="k" :span="12">
                   <LabelValue :label="k" :value="v" />
                 </el-col>
@@ -250,7 +250,7 @@ export default {
         状态
       </div>
       <el-row>
-        <el-col v-for="item in this.value.status.conditions" :key="item.type" :span="12">
+        <el-col v-for="item in value.status.conditions" :key="item.type" :span="12">
           <LabelValue :label="item.type" :value="item.status" />
         </el-col>
       </el-row>

@@ -483,7 +483,7 @@ export default {
         <div v-if="flag" class="name" :class="{'isEmpty': !clusterName.length }" @click="editSetting">
           {{ clusterName ? clusterName : '添加集群名称' }}
         </div>
-        <input v-else ref="nameInput" v-model="clusterName" @blur="input">
+        <input v-else ref="nameInput" v-model="clusterName" maxlength="60" @blur="input">
       </h3>
       <div class="content">
         <div class="content-main">

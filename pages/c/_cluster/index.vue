@@ -4,7 +4,7 @@ import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
 import { allHash, allSettled } from '@/utils/promise';
-import { formatCPUValue, formatMemoryValue } from '@/utils/units';
+import { formatMemoryValue, parseSi } from '@/utils/units';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
 import DashboardWorkload from '@/components/DashboardWorkload';
@@ -344,17 +344,17 @@ export default {
         let podsUsedRate = 0;
 
         if (isReady) {
-          cpuUsedRate = (formatCPUValue(usage.cpu, 10) / formatCPUValue(cpu, 10) * 100).toFixed(1);
+          cpuUsedRate = (parseSi(usage.cpu) / parseInt(cpu, 10) * 100).toFixed(1);
           memoryUsedRate = (formatMemoryValue(usage.memory, 10) / formatMemoryValue(memory, 10) * 100).toFixed(1);
           podsUsedRate = (podList.length / parseInt(pods, 10) * 100).toFixed(1);
 
-          // 统计集群总量
-          clusterCPU += formatCPUValue(cpu, 10);
+          // cluster total
+          clusterCPU += parseInt(cpu, 10);
           clusterMemory += formatMemoryValue(memory, 10);
           clusterPods += parseInt(pods, 10);
           clusterCPUCore += parseInt(cpu, 10);
-          // 统计集群已使用总量
-          clusterUsedCPU += formatCPUValue(usage.cpu, 10);
+          // cluster total used
+          clusterUsedCPU += parseSi(usage.cpu);
           clusterUsedMemory += formatMemoryValue(usage.memory, 10);
           clusterUsedPods += podList.length;
         }
@@ -392,14 +392,14 @@ export default {
       const echartInfo = {
         cpuUsedGauge: {
           type:    'CPU',
-          unit:    'M',
+          unit:    '核',
           percent: clusterCPUUsedRate,
-          total:   clusterCPUCore * 1000,
-          usage:   (clusterUsedCPU / 1000000).toFixed(1)
+          total:   clusterCPUCore,
+          usage:   clusterUsedCPU.toFixed(2)
         },
         memoryUsedGauge: {
           type:    'Memory',
-          unit:    'GIB',
+          unit:    'GiB',
           percent: clusterMemoryUsedRate,
           total:   (clusterMemory / 1024 / 1024).toFixed(1),
           usage:   (clusterUsedMemory / 1024 / 1024).toFixed(1)

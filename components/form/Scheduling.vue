@@ -108,7 +108,7 @@ export default {
 
 </script>
 
-<template>
+<template scoped>
   <div @input="update">
     <div>
       <h3>{{ t('workload.scheduling.titles.nodeScheduling') }}</h3>
@@ -222,5 +222,8 @@ export default {
 <style lang='scss' >
   .label-tip {
     z-index: z-index('overContent')+1 !important;
+  }
+  H4 {
+    font-size: 14px;
   }
 </style>

@@ -89,16 +89,31 @@ export default {
     position: relative;
     .CodeMirror {
       padding: 10px;
-      background-color: var(--body-bg)!important;
+      background-color: #272822!important;
+      // background-color: var(--body-bg)!important;
       height: initial;
       position: absolute;
       top:0;
       bottom:0;
       left:0;
       right:0;
+      color: #f8f8f2!important;
+      .cm-atom {
+        color: #ae81ff;
+      }
+      .cm-meta {
+        color: inherit;
+      }
+      .cm-string {
+        color: #e6db74;
+      }
+      .cm-number {
+        color: #ae81ff;
+      }
     }
     .cm-s-base16-light .CodeMirror-gutters {
-      background-color: var(--body-bg)!important;
+      background-color: #272822!important;
+      // background-color: var(--body-bg)!important;
     }
   }
 </style>

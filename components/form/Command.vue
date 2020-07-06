@@ -282,4 +282,9 @@ export default {
       padding:0px;
     }
   }
+  .tab-container {
+    H2 {
+      font-size: 16px;
+    }
+  }
 </style>

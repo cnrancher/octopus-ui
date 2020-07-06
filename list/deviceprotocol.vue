@@ -79,14 +79,12 @@ export default {
           // add daemoset... ,
           for (const crd of [...this.resources.rbacClusterRole, ...this.resources.daemonset, ...this.resources.deployment, ...this.resources.rbacClusterRolebinding]) {
             if (typeDevice.metadata.labels?.['app.kubernetes.io/name'] !== undefined && crd.metadata.labels?.['app.kubernetes.io/name'] === typeDevice.metadata.labels?.['app.kubernetes.io/name'] && !this.hasInsert(out, crd)) {
-              console.log('-', typeDevice.metadata.labels?.['app.kubernetes.io/name'], crd.metadata.labels?.['app.kubernetes.io/name']);
               crd.customId = crd.metadata.labels?.['app.kubernetes.io/name'];
               out.push(crd);
             }
           }
         }
       }
-      console.log('-----', out);
 
       return out;
     },

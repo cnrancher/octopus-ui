@@ -223,6 +223,7 @@ export default {
       justify-content: space-between;
 
       & .toggle-host-ports{
+        cursor: pointer;
         padding-right: 5px;
         color: var(--primary)
       }

@@ -198,6 +198,7 @@ export default {
     <v-select
       ref="select"
       v-model="value"
+      class="namespaceFilter"
       multiple
       placeholder="All User Namespaces"
       :selectable="option => !option.disabled && option.id"
@@ -222,3 +223,10 @@ export default {
     <button v-shortkey.once="['n']" class="hide" @shortkey="focus()" />
   </div>
 </template>
+
+<style lang="scss">
+.namespaceFilter > .vs__dropdown-toggle {
+  max-height: 50px;
+  overflow-y: auto;
+}
+</style>

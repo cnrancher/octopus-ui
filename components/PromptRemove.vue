@@ -133,6 +133,7 @@ export default {
 
   methods: {
     close() {
+      this.error = '';
       this.$store.commit('action-menu/togglePromptRemove');
     },
 

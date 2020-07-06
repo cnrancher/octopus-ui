@@ -216,7 +216,7 @@ export default function(store) {
   //   route:       { name: 'c-cluster' },
   //   exact:       true,
   // });
-  
+
   virtualType({
     label:      'Workload',
     namespaced: true,

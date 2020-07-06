@@ -18,8 +18,8 @@ export function allHash(hash) {
 export function allSettled(hash) {
   const keys = Object.keys(hash);
   const promises = Object.values(hash);
-  
-  return Promise.allSettled(promises).then(res => {
+
+  return Promise.allSettled(promises).then((res) => {
     const out = {};
 
     for ( let i = 0 ; i < keys.length ; i++ ) {
@@ -30,7 +30,7 @@ export function allSettled(hash) {
       }
     }
 
-    return out
+    return out;
   });
 }
 

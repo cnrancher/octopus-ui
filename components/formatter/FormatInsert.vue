@@ -28,7 +28,7 @@ export default {
   computed: {
     tagValue() {
       const out = [];
-      const deviceValue = this.device[0]?.status?.properties;
+      const deviceValue = this.device[0]?.status?.properties || [this.device[0]?.status];
 
       for (let i = 0; i < deviceValue?.length; i++) {
         if (typeof deviceValue[i] === 'object') {

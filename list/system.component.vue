@@ -1,6 +1,6 @@
 <script>
 import {
-  STATE, AGE, NAMESPACE, NAMESPACE_NAME, TYPE, WORKLOAD_ENDPOINTS
+  STATE, AGE, NAMESPACE, NAME, TYPE, WORKLOAD_ENDPOINTS
 } from '@/config/table-headers';
 import ResourceTable from '@/components/ResourceTable';
 import { WORKLOAD_TYPES, SCHEMA, SETTING } from '@/config/types';
@@ -57,7 +57,10 @@ export default {
         STATE,
         TYPE,
         NAMESPACE,
-        NAMESPACE_NAME,
+        {
+          ...NAME,
+          width: ''
+        },
         WORKLOAD_ENDPOINTS,
         AGE,
       ];

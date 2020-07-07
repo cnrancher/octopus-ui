@@ -47,7 +47,7 @@ export default {
       podsData:           this.$store.dispatch('management/findAll', { type: POD }),
       setting:            this.$store.dispatch('management/findAll', { type: SETTING }),
       nodes:              this.$store.dispatch('management/findAll', { type: NODE }),
-      devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }), // TODO device-link url may not found
+      devices:            this.$store.dispatch('management/findAll', { type: DEVICE_LINK }),
       systemControllers:  this.$store.dispatch('management/findAll', { type: COMPONENTSTATUS }),
       networking:         this.$store.dispatch('management/findAll', { type: K3S.ADDON }),
       datastorage:        this.$store.dispatch('management/request', { url: '/v2-public/health/datastorage', method: 'get' }),

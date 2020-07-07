@@ -64,10 +64,10 @@ export default {
     add() {
       this.rows.push({
         name:          '',
-        expose:        true,
+        // expose:        true,
         protocol:      'TCP',
         containerPort: null,
-        hostPort:      false
+        // hostPort:      false
       });
 
       this.queueUpdate();
@@ -89,7 +89,7 @@ export default {
         return;
       }
 
-      const out = [];
+      const out = [...this.rows];
 
       for ( const row of this.rows ) {
         const value = clone(row);

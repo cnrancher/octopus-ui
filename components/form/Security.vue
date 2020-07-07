@@ -93,6 +93,10 @@ export default {
         runAsUser:                this.runAsUser
       };
 
+      if (!this.runAsUser) {
+        delete securityContext.runAsUser;
+      }
+
       this.$emit('input', securityContext);
     }
   }

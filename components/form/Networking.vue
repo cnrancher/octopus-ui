@@ -30,8 +30,9 @@ export default {
         hostnames: entry.hostnames.join(', ')
       };
     });
+
     const { dnsConfig = {}, hostname, subdomain } = this.value;
-    const { nameservers, searches, options } = dnsConfig;
+    const { nameservers, searches, options = [] } = dnsConfig;
 
     const out = {
       dnsPolicy:   this.value.dnsPolicy || 'Default',
@@ -91,34 +92,38 @@ export default {
     }
   },
 
-  created() {
-    // const spec = this.spec;
-
-    // if ( !spec.dnsNameservers ) {
-    //   spec.dnsNameservers = [];
-    // }
-
-    // if ( !spec.searches ) {
-    //   spec.searches = [];
-    // }
-
-    // if ( !spec.dnsPolicy ) {
-    //   spec.dnsPolicy = 'Default';
-    // }
-  },
-
   methods: {
-    updateHostAliases(neu) {
+    formatHostAliases(neu) {
       this.hostAliases = neu.map((entry) => {
         const ip = entry.ip.trim();
-        const hostnames = entry.hostnames.trim().split(/[\s,]+/).filter(x => !!x);
+        let hostnames;
+
+        if (Array.isArray(entry.hostnames)) {
+          hostnames = entry.hostnames;
+        } else {
+          hostnames = entry.hostnames.trim().split(/[\s,]+/).filter(x => !!x);
+        }
 
         return { ip, hostnames };
       }).filter(entry => entry.ip && entry.hostnames.length);
+    },
+
+    updateHostAliases(neu) {
+      this.update();
+    },
+
+    updateOptions(neu) {
+      this.options = neu.map((entry) => {
+        const name = entry.name.trim();
+        const value = entry.value.trim();
+
+        return { name, value };
+      }).filter(entry => entry.name && entry.value.length);
       this.update();
     },
 
     update() {
+      this.formatHostAliases(this.hostAliases);
       const dnsConfig = {
         ...this.dnsConfig,
         nameservers: this.nameservers,
@@ -221,11 +226,15 @@ export default {
     <div class="row">
       <KeyValue
         v-model="options"
-        key-label="Name"
         :mode="mode"
         :title="t('workload.networking.resolvingServers.label')"
-        :key-placeholder="t('workload.networking.resolvingServers.placeholder')"
         :read-allowed="false"
+        :as-map="false"
+        key-name="name"
+        :key-placeholder="t('workload.networking.resolvingServers.placeholder')"
+        value-name="value"
+        :pad-left="false"
+        @input="updateOptions"
       />
     </div>
 

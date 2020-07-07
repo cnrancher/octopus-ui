@@ -19,12 +19,21 @@ export default {
     isView() {
       return this.mode === _VIEW;
     }
+  },
+
+  methods: {
+    update() {
+      if ( this.isView ) {
+        return;
+      }
+      this.$emit('input', this.value);
+    }
   }
 };
 </script>
 
 <template>
-  <div>
+  <div @input="update">
     <div class="row">
       <Probe
         v-model="value.readinessProbe"
@@ -32,6 +41,7 @@ export default {
         :mode="mode"
         :label="t('workload.container.healthcheck.readinessCheck')"
         :description="t('workload.container.healthcheck.readinessTip')"
+        @input="update"
       />
     </div>
     <hr v-if="!isView" />
@@ -42,6 +52,7 @@ export default {
         :mode="mode"
         :label="t('workload.container.healthcheck.livenessCheck')"
         :description="t('workload.container.healthcheck.livenessTip')"
+        @input="update"
       />
     </div>
     <hr v-if="!isView" />
@@ -52,6 +63,7 @@ export default {
         :mode="mode"
         :label="t('workload.container.healthcheck.startupCheck')"
         :description="t('workload.container.healthcheck.startupTip')"
+        @input="update"
       />
     </div>
   </div>

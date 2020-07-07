@@ -3,11 +3,8 @@ import { NODE } from '@/config/types';
 
 export default {
   props: {
-    value: {
-      type:     String,
-      required: true
-    },
-    row: {
+    value: { type: [String, undefined] }, // eslint-disable-line
+    row:   {
       type:     Object,
       required: true
     },

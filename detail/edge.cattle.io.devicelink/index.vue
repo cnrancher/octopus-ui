@@ -1,11 +1,22 @@
 <script>
-import LoadDeps from '@/mixins/load-deps';
 import LabelValue from '@/components/LabelValue';
+import SortableTable from '@/components/SortableTable';
 import createEditView from '@/mixins/create-edit-view';
+import { EVENT } from '@/config/types';
+import { NAMESPACE } from '@/config/table-headers';
 
 export default {
-  components: { LabelValue },
-  mixins:     [createEditView, LoadDeps],
+  components: { LabelValue, SortableTable },
+  mixins:     [createEditView],
+
+  async fetch() {
+    const { type } = this;
+    const deviceList = await this.$store.dispatch('management/findAll', { type });
+    const eventList = await this.$store.dispatch('management/findAll', { type: EVENT });
+
+    this.deviceList = deviceList.filter( item => item.id === this.value.id);
+    this.eventList = eventList;
+  },
   data() {
     const { properties } = this.value.spec.template.spec;
     const rows = [];
@@ -35,23 +46,58 @@ export default {
       rows,
       properties,
       type,
-      deviceList: []
+      deviceList: [],
+      eventList:  []
     };
   },
 
   computed: {
     deviceValue() {
-      return this.deviceList[0]?.status?.properties;
+      return this.deviceList[0]?.status?.properties || [this.deviceList[0]?.status];
+    },
+    headers() {
+      return [
+        NAMESPACE,
+        {
+          name:      'timestamp',
+          label:     '事件时间',
+          value:     '$["metadata"]["fields"][0]',
+          sort:      '$["metadata"]["fields"][0]'
+        },
+        {
+          name:  'type',
+          label: '类型',
+          value: '$["metadata"]["fields"][1]',
+          sort:  '$["metadata"]["fields"][1]'
+        },
+        {
+          name:  'reason',
+          label: '原因',
+          value: '$["metadata"]["fields"][2]',
+          sort:  '$["metadata"]["fields"][2]'
+        },
+        {
+          name:  'resource',
+          label: '资源对象',
+          value: '$["metadata"]["fields"][3]',
+          sort:  '$["metadata"]["fields"][3]'
+        },
+        {
+          name:  'message',
+          label: '事件消息',
+          value: 'message',
+          sort:  'message'
+        }
+      ];
+    },
+    filterEvent() {
+      return this.eventList.filter( (E) => {
+        return `devicelink/${ this.value.name }` === E.metadata.fields[3];
+      });
     }
   },
 
   methods: {
-    async loadDeps() {
-      const { type } = this;
-      const deviceList = await this.$store.dispatch('management/findAll', { type });
-
-      this.deviceList = deviceList.filter( item => item.id === this.value.id);
-    },
     flatterObject(obj) {
       const keys = Object.keys(obj);
       let row = {};
@@ -253,6 +299,26 @@ export default {
         <el-col v-for="item in value.status.conditions" :key="item.type" :span="12">
           <LabelValue :label="item.type" :value="item.status" />
         </el-col>
+      </el-row>
+    </el-card>
+
+    <el-card class="statusInfo">
+      <div class="title">
+        事件
+      </div>
+      <el-row>
+        <SortableTable
+          :headers="headers"
+          :rows="filterEvent"
+          :search="false"
+          :table-actions="false"
+          :row-actions="false"
+          :show-groups="false"
+          :paging="false"
+          default-sort-by="timestamp"
+          key-field="id"
+          class="dashboard-event-table"
+        />
       </el-row>
     </el-card>
   </div>

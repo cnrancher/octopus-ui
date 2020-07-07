@@ -76,7 +76,9 @@ export default {
 
     this.allSecrets = hash.secrets;
     this.allConfigMaps = hash.configMaps;
-    this.allNodes = hash.nodes.map(node => node.id);
+    this.allNodes = hash.nodes.map((node) => {
+      return { id: node.id };
+    });
   },
 
   asyncData(ctx) {
@@ -113,7 +115,7 @@ export default {
       workloadTypeOptions,
       allConfigMaps:          [],
       allSecrets:             [],
-      allNodes:               null,
+      allNodes:               [],
       showTabs:               false,
     };
   },
@@ -130,6 +132,10 @@ export default {
 
     isCronJob() {
       return this.type === WORKLOAD_TYPES.CRON_JOB;
+    },
+
+    isDeployMent() {
+      return this.type === WORKLOAD_TYPES.DEPLOYMENT;
     },
 
     isReplicable() {
@@ -316,6 +322,12 @@ export default {
       this.showTabs = !this.showTabs;
     },
 
+    changeSpec(neu) {
+      this.$set(this, 'spec', neu);
+      this.spec = neu;
+      this.$set(this.value, 'spec', neu);
+    },
+
     saveWorkload(cb) {
       if (!this.spec.selector && this.type !== WORKLOAD_TYPES.JOB) {
         this.spec.selector = { matchLabels: this.workloadSelector };
@@ -363,6 +375,7 @@ export default {
       if (!this.container.name) {
         this.$set(this.container, 'name', this.value.metadata.name);
       }
+
       this.save(cb);
     },
   },
@@ -429,10 +442,10 @@ export default {
           <Networking v-model="podTemplateSpec" class="pl-10" :mode="mode" />
         </Tab>
         <Tab :label="t('workload.tab.nodeScheduling')" name="scheduling">
-          <Scheduling v-model="podTemplateSpec" class="pl-10" :mode="mode" :show-pod="false" />
+          <Scheduling v-model="podTemplateSpec" class="pl-10" :mode="mode" :nodes="allNodes" :show-pod="false" />
         </Tab>
-        <Tab :label="t('workload.tab.scalingUpgradePolicy', undefined, true)" name="upgrading">
-          <Upgrading v-model="spec" class="pl-10" :mode="mode" />
+        <Tab v-if="isDeployMent" :label="t('workload.tab.scalingUpgradePolicy', undefined, true)" name="upgrading">
+          <Upgrading v-model="spec" class="pl-10" :mode="mode" @input="changeSpec" />
         </Tab>
       </template>
     </ResourceTabs>

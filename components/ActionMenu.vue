@@ -45,6 +45,9 @@ export default {
           this.phase = HIDDEN;
         }
       },
+    },
+    '$route'() {
+      this.$store.commit('action-menu/hide');
     }
   },
 

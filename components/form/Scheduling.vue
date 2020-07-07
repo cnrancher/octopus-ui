@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import { mapGetters } from 'vuex';
 import RadioGroup from '@/components/form/RadioGroup';
 import LabeledSelect from '@/components/form/LabeledSelect';
@@ -99,8 +100,13 @@ export default {
         delete out.nodeName;
         delete out.nodeSelector;
       }
-
+      console.log('----cleanUp(out)', cleanUp(out))
       this.$emit('input', cleanUp(out));
+    },
+    updateNodeSelector(neu) {
+      console.log('----updateNodeSelector', neu)
+      this.nodeSelector = neu
+      this.update();
     },
     isEmpty
   },
@@ -137,7 +143,7 @@ export default {
           </div>
         </div>
         <div v-if="mode!=='view' || !isEmpty(nodeSelector)" class="row">
-          <KeyValue title="Nodes with these labels" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" />
+          <KeyValue title="Nodes with these labels" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" @input="updateNodeSelector" />
         </div>
       </template>
       <template v-else>

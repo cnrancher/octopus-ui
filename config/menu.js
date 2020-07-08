@@ -84,7 +84,7 @@ export const MENUS = [
     path: '/c/local/helm.cattle.io.helmchart',
     meta: {
       title: '应用市场',
-      icon:  'icon-mqtt',
+      icon:  'icon-library',
     },
   }
 ];

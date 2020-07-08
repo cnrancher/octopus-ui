@@ -1,4 +1,5 @@
 <script>
+import { getObjectFlatterChainData } from '@/utils/object';
 import LoadDeps from '@/mixins/load-deps';
 
 export default {
@@ -27,13 +28,23 @@ export default {
 
   computed: {
     tagValue() {
-      const out = [];
-      const deviceValue = this.device[0]?.status?.properties || [this.device[0]?.status];
+      let out = [];
+      const deviceValue = this.device[0]?.status?.properties || this.device[0]?.status;
 
-      for (let i = 0; i < deviceValue?.length; i++) {
-        if (typeof deviceValue[i] === 'object') {
-          out.push( `${ deviceValue[i]['name'] }: ${ deviceValue[i].value }` );
-        }
+      // for (let i = 0; i < deviceValue?.length; i++) {
+      //   if (typeof deviceValue[i] === 'object' && deviceValue[i]['name']) {
+      //     out.push( `${ deviceValue[i]['name'] }: ${ deviceValue[i].value }` );
+      //   } else if (typeof deviceValue[i] === 'object') {
+      //     out.push();
+      //   }
+      // }
+
+      if (Array.isArray(deviceValue)) {
+        out = deviceValue.map( (O) => {
+          return { [O.name]: O.value };
+        });
+      } else if (typeof deviceValue === 'object') {
+        out = getObjectFlatterChainData(deviceValue, []);
       }
 
       return out;
@@ -62,9 +73,11 @@ export default {
 
 <template>
   <div class="label">
-    <el-tag v-for="(v,k) in tagValue" :key="k">
-      {{ v }}
-    </el-tag>
+    <template v-for="tag in tagValue">
+      <el-tag v-for="(v,k) in tag" :key="k">
+        {{ `${k}: ${v}` }}
+      </el-tag>
+    </template>
   </div>
 </template>
 

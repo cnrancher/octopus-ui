@@ -118,3 +118,22 @@ export function filterObj(obj, arr, isfuzzy = false) {
 
   return result;
 }
+
+export function getObjectFlatterChainData(data, list, keyName) {
+  let str;
+
+  for (const key in data) {
+    if (keyName) {
+      str = `${ keyName }.${ key }`;
+    } else {
+      str = key;
+    }
+    if (typeof data[key] === 'object' && isNaN(data[key].length)) {
+      this.getObjectData(data[key], list, str);
+    } else {
+      list.push({ [str]: data[key] });
+    }
+  }
+
+  return list;
+}

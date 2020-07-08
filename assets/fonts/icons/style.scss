@@ -26,6 +26,46 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-local:before {
+  content: "\e63d";
+}
+
+.icon-library:before {
+  content: "\e634";
+}
+
+.icon-system-controllers:before {
+  content: "\e62e";
+}
+
+.icon-nodes:before {
+  content: "\e631";
+}
+
+.icon-datastore:before {
+  content: "\e632";
+}
+
+.icon-networking:before {
+  content: "\e633";
+}
+
+.icon-runtime:before {
+  content: "\e62d";
+}
+
+.icon-resource-used:before {
+  content: "\e62c";
+}
+
+.icon-resource-global:before {
+  content: "\e628";
+}
+
+.icon-resource-divide:before {
+  content: "\e62a";
+}
+
 .icon-custom-iot:before {
   content: "\e627";
 }
@@ -222,6 +262,10 @@
   content: "\edf9";
 }
 
+.icon-chevron-down:before {
+  content: "\e6a8";
+}
+
 .icon-chevron-up:before {
   content: "\e6a9";
 }
@@ -252,10 +296,6 @@
 
 .icon-chevron-right:before {
   content: "\e93f";
-}
-
-.icon-chevron-down:before {
-  content: "\e6a8";
 }
 
 .icon-chevron-end:before {

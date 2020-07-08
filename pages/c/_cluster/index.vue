@@ -479,11 +479,18 @@ export default {
   <div class="dashboard-wrapper">
     <client-only>
       <h3 class="header-border">
-        <i class="position icon iconfont icon-position"></i>
+        <i class="position icon iconfont icon-local"></i>
         <div v-if="flag" class="name" :class="{'isEmpty': !clusterName.length }" @click="editSetting">
-          {{ clusterName ? clusterName : '添加集群名称' }}
+          {{ clusterName ? clusterName : '添加集群位置' }}
         </div>
-        <input v-else ref="nameInput" v-model="clusterName" maxlength="60" @blur="input">
+        <input
+          v-else
+          ref="nameInput"
+          v-model="clusterName"
+          class="nameInput"
+          maxlength="60"
+          @blur="input"
+        >
       </h3>
       <div class="content">
         <div class="content-main">
@@ -597,6 +604,10 @@ export default {
     padding: 0 !important;
     background-color: #f6f7fb;
     min-width: 1440px;
+
+    .nameInput {
+      width: 800px;
+    }
 
     .header-border {
       display: flex;

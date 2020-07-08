@@ -5,13 +5,13 @@ export default {
   data: () => ({ loading: false }),
 
   mounted() {
-    const player = new SVGA.Player('#demoCanvas');
-    const parser = new SVGA.Parser('#demoCanvas');
+    // const player = new SVGA.Player('#demoCanvas');
+    // const parser = new SVGA.Parser('#demoCanvas');
 
-    parser.load('static/mutiMask.svga', (videoItem) => {
-      player.setVideoItem(videoItem);
-      player.startAnimation();
-    });
+    // parser.load('static/mutiMask.svga', (videoItem) => {
+    //   player.setVideoItem(videoItem);
+    //   player.startAnimation();
+    // });
   },
   methods: {
     start() {

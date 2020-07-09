@@ -183,7 +183,7 @@ export default {
             <LabeledSelect v-model="stdinSelect" :label="t('workload.container.command.stdin')" :options="[, 'No', 'Once', 'Yes']" :mode="mode" />
           </div>
           <div class="col span-6">
-            <Checkbox v-model="tty" :disabled="!stdin" label="TTY" />
+            <Checkbox v-model="tty" :mode="mode" :disabled="!stdin" label="TTY" />
           </div>
         </div>
       </div>

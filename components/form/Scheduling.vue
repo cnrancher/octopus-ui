@@ -81,6 +81,12 @@ export default {
     ...mapGetters({ t: 'i18n/t' })
   },
 
+  watch: {
+    nodeName() {
+      this.update()
+    }
+  },
+
   methods: {
     update() {
       const out = {

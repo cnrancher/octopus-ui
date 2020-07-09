@@ -115,7 +115,7 @@ export default {
           </th>
           <th class="port">
             <t k="workload.container.ports.containerPort" />
-            <span v-if="!isView" class="toggle-host-ports" @click="()=>showHostPorts=!showHostPorts">{{ showHostPorts ? 'Hide Host Ports' : 'Show Host Ports' }}</span>
+            <span v-if="!isView" class="toggle-host-ports" @click="()=>showHostPorts=!showHostPorts">{{ showHostPorts ? '隐藏主机端口' : '显示主机端口' }}</span>
           </th>
           <th v-if="showHostPorts" class="targetPort">
             <t k="workload.container.ports.hostPort" />
@@ -148,6 +148,7 @@ export default {
               v-model.number="row.containerPort"
               type="number"
               min="1"
+              onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
               max="65535"
               placeholder="e.g. 8080"
               @input="queueUpdate"
@@ -173,7 +174,7 @@ export default {
               v-model="row.protocol"
               :style="{'height':'50px'}"
               class="inline"
-              :options="['TCP', 'UDP', 'SCTP']"
+              :options="['TCP', 'UDP']"
               :searchable="false"
               @input="queueUpdate"
             />
@@ -222,10 +223,11 @@ export default {
       display: flex;
       justify-content: space-between;
 
-      & .toggle-host-ports{
+      & .toggle-host-ports {
         cursor: pointer;
         padding-right: 5px;
-        color: var(--primary)
+        color: var(--primary);
+        font-weight: bold;
       }
     }
   }

@@ -499,3 +499,37 @@ export const DISPLAY_SOURCE = {
   labelKey:    'persistentVolumePage.source.label',
   value:       'displaySource'
 };
+
+export const POD_EVENT = [
+  NAMESPACE,
+  {
+    name:      'timestamp',
+    label:     '事件时间',
+    value:     '$["metadata"]["fields"][0]',
+    sort:      '$["metadata"]["fields"][0]'
+  },
+  {
+    name:  'type',
+    label: '类型',
+    value: '$["metadata"]["fields"][1]',
+    sort:  '$["metadata"]["fields"][1]'
+  },
+  {
+    name:  'reason',
+    label: '原因',
+    value: '$["metadata"]["fields"][2]',
+    sort:  '$["metadata"]["fields"][2]'
+  },
+  {
+    name:  'resource',
+    label: '资源对象',
+    value: '$["metadata"]["fields"][3]',
+    sort:  '$["metadata"]["fields"][3]'
+  },
+  {
+    name:  'message',
+    label: '事件消息',
+    value: 'message',
+    sort:  'message'
+  }
+];

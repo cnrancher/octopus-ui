@@ -45,7 +45,8 @@ export default {
     protip: {
       type: [String, Boolean],
       default() {
-        return this.$store.getters['i18n/t']('formKeyValue.protip');
+        // return this.$store.getters['i18n/t']('formKeyValue.protip');
+        return '';
       }
     },
 
@@ -520,10 +521,9 @@ export default {
     .view {
       width: 100%;
       height: 100%;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
       display: inline;
+      max-height: 70px;
+      overflow-y: auto;
     }
 
     label {
@@ -536,9 +536,8 @@ export default {
 
     .view {
       width: 100%;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+      max-height: 70px;
+      overflow-y: auto;
     }
 
     label {

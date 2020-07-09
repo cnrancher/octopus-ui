@@ -199,7 +199,7 @@ export default {
           v-model="nameservers"
           :title="t('workload.networking.nameservers.label')"
           :value-placeholder="t('workload.networking.nameservers.placeholder')"
-          add-label="Add Nameserver"
+          add-label="Add Name Server"
           :value-multiline="false"
           :mode="mode"
           :pad-left="false"

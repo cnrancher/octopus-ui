@@ -571,9 +571,9 @@ workload:
     imagePullPolicy: Image Pull Policy
     ports:
       containerPort: 容器端口
-      hostPort: Public Host Port
+      hostPort: 主机监听端口
       protocol: 协议
-      name: 名称
+      name: 端口名称
     command:
       command: 入口
       args: 参数

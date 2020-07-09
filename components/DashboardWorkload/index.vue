@@ -96,7 +96,7 @@ export default {
       工作负载
     </h3>
     <div class="progress-item">
-      <p class="progress-item-title">
+      <p class="progress-item-title border-bottom-purple">
         <span>CPU密集型Pod TOP10<i class="icon iconfont el-icon-refresh-left ml-10" @click="forceRefresh"></i></span>
         <span>单位：Milli</span>
       </p>
@@ -106,7 +106,7 @@ export default {
       />
     </div>
     <div class="progress-item">
-      <p class="progress-item-title">
+      <p class="progress-item-title border-bottom-gray">
         <span>内存密集型Pod TOP10<i class="icon iconfont el-icon-refresh-left ml-10" @click="forceRefresh"></i></span>
         <span>单位：MiB</span>
       </p>
@@ -119,6 +119,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+  @keyframes myRotate{
+    0%{ -webkit-transform: rotate(0deg);}
+    50%{ -webkit-transform: rotate(180deg);}
+    100%{ -webkit-transform: rotate(360deg);}
+  }
   .balance {
     border: 1px solid #ddd;
     padding: 16px 10px!important;
@@ -127,11 +132,20 @@ export default {
       width: 100%;
       .progress-item-title {
         color: var(--module-header-text);
-        background: var(--module-header-bg);
+        background: #f4f4fa;
         padding: 5px 10px;
+        &.border-bottom-purple {
+          border-bottom: 2px solid #1f2aa1;
+        }
+        &.border-bottom-gray {
+          border-bottom: 2px solid #1e1f23;
+        }
         .icon {
           font-size: inherit;
           cursor: pointer;
+          &:hover {
+            animation: myRotate .5s linear;
+          }
         }
         span:last-child {
           float: right;

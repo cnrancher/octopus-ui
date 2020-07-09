@@ -1,9 +1,9 @@
 <script>
-import CopyCode from '@/components/CopyCode';
+import CopyToClipboardText from '@/components/CopyToClipboardText';
 
 export default {
   name:       'DashboardProgressBar',
-  components: { CopyCode },
+  components: { CopyToClipboardText },
   props:      {
     list: {
       type:    Array,
@@ -33,7 +33,7 @@ export default {
       <div class="bar-container">
         <div :style="{width: progress.width, background: barColor}" class="progress-bar"></div>
         <div class="progress-bar-text">
-          <CopyCode>{{ progress.name }}</CopyCode>
+          <CopyToClipboardText :text="progress.name" />
         </div>
       </div>
       <div class="bar-text">
@@ -46,7 +46,8 @@ export default {
 <style lang="scss" scoped>
   .bar-wrapper {
     padding: 10px 0 10px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ededed;
+    border-top: none;
     margin-top: 0;
     min-height: 300px;
     li {
@@ -84,7 +85,7 @@ export default {
         left: 0;
         font-size: 12px;
         color: #fff;
-        code {
+        .copy {
           font-family: 'prompt-light'!important;
         }
       }
@@ -93,8 +94,7 @@ export default {
         width: 10%;
         right: 0;
         text-align: left;
-        font-weight: bold;
-        color: #1245d9;
+        color: var(--body-text);
       }
     }
     li:last-child {

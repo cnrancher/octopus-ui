@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import echarts from 'echarts';
 import { hexbin } from 'd3-hexbin';
 import { rightGaugeConfigGenerator, baseGaugeConfigGenerator } from '@/config/dashboard-charts';
-import { allHash, allSettled } from '@/utils/promise';
+import { allSettled } from '@/utils/promise';
 import { formatMemoryValue, parseSi } from '@/utils/units';
 import LoadDeps from '@/mixins/load-deps';
 import ServiceStatusList from '@/components/ServiceStatusList';
@@ -23,11 +23,29 @@ function hexbinClassNameGenerator(count) {
     return 'liner-deep';
   }
 }
+const ServiceList = [
+  {
+    name: 'Datastore',
+    icon: 'icon-datastore'
+  },
+  {
+    name: 'System Controllers',
+    icon: 'icon-system-controllers'
+  },
+  {
+    name: 'Networking',
+    icon: 'icon-networking'
+  },
+  {
+    name: 'Nodes',
+    icon: 'icon-nodes'
+  }
+];
 
-function getSystemStatus(name, status) {
+function getSystemStatus(item, status) {
   return {
-    name,
-    status: status ? 'success' : 'error'
+    ...item,
+    status: status === false ? 'error' : 'success' // make sure default success
   };
 }
 
@@ -98,7 +116,7 @@ export default {
       } = this;
       const systemServeives = [];
 
-      systemServeives.push(getSystemStatus('Datastore', datastorage.health));
+      systemServeives.push(getSystemStatus(ServiceList[0], datastorage.health));
 
       let systemControllersStatus = true;
       let networkingStatus = true;
@@ -110,7 +128,7 @@ export default {
         systemControllersStatus &= state.name === 'active';
       });
 
-      systemServeives.push(getSystemStatus('System Controllers', systemControllersStatus));
+      systemServeives.push(getSystemStatus(ServiceList[1], systemControllersStatus));
 
       nodesData.forEach((nodeItem, nodeIndex) => {
         networkingStatus &= nodeItem.metadata.annotations['flannel.alpha.coreos.com/public-ip'] !== '';
@@ -125,8 +143,8 @@ export default {
         }
       });
 
-      systemServeives.push(getSystemStatus('Networking', networkingStatus));
-      systemServeives.push(getSystemStatus('Nodes', nodesStatus));
+      systemServeives.push(getSystemStatus(ServiceList[2], networkingStatus));
+      systemServeives.push(getSystemStatus(ServiceList[3], nodesStatus));
 
       return systemServeives;
     }
@@ -146,7 +164,7 @@ export default {
         return S.id === 'location';
       });
 
-      this.clusterName = location[0]?.value;
+      this.clusterName = location[0]?.value || '';
     },
     nodesData() {
       this.updateMetricsIoNodes();
@@ -259,24 +277,53 @@ export default {
       const { online, offline, total } = this.iotInfo;
 
       const chartInfo = {
-        color: ['#a0a2f4', '#fac40f'],
+        color:            ['#a0a2f4', '#fac40f'],
+        defaultTextColor: '#454545',
         online,
         offline,
-        total
+        total,
+        displayNum:       total
       };
 
-      const rightGaugeNames = ['rightGaugeLeft'];
+      const rightGaugeName = 'rightGaugeLeft';
+      const ecDraw = echarts.init(this.$refs[rightGaugeName]);
+      const option = rightGaugeConfigGenerator(chartInfo);
 
-      rightGaugeNames.forEach((ecItem, ecIndex) => {
-        const ecDraw = echarts.init(this.$refs[ecItem]);
-        const option = rightGaugeConfigGenerator(chartInfo);
+      ecDraw.setOption(option);
+      ecDraw.on('legendselectchanged', (params) => {
+        const { name, selected } = params;
+        const onlineName = option.series[0].data[1].name;
+        const offlineName = option.series[0].data[0].name;
+        let num = 0;
+        let color = '';
 
-        ecDraw.setOption(option);
-        this.rightGaugeList.push(ecDraw);
-        setTimeout(() => {
-          ecDraw.resize();
-        }, 500);
+        if (selected[offlineName] && selected[onlineName]) {
+          // both
+          color = chartInfo.defaultTextColor;
+          num = total;
+        } else if (!selected[offlineName] && !selected[onlineName]) {
+          // both off
+          color = chartInfo.defaultTextColor;
+          num = 0;
+        } else if (selected[onlineName]) {
+          color = chartInfo.color[0];
+          num = online;
+        } else {
+          color = chartInfo.color[1];
+          num = offline;
+        }
+
+        const curChartInfo = {
+          ...chartInfo, displayNum: num, defaultTextColor: color
+        };
+        const newOption = rightGaugeConfigGenerator(curChartInfo);
+
+        ecDraw.setOption(newOption);
       });
+      this.rightGaugeList.push(ecDraw);
+      setTimeout(() => {
+        ecDraw.resize();
+      }, 500);
     },
     updateMetricsIoNodes() {
       const { nodesMetricsData, nodesData, podsData } = this;
@@ -540,6 +587,7 @@ export default {
           </div>
           <DashboardEvents
             :events="events"
+            :max="100"
           />
         </div>
         <div class="content-side">

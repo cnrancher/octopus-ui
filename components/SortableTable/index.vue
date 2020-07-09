@@ -248,9 +248,10 @@ export default {
         }
       }
 
-      if ( this.tableActions ) {
-        span++;
-      }
+      // should not render checkbox while tableActions was off
+      // if ( this.tableActions ) {
+      //   span++;
+      // }
 
       if ( this.subExpandColumn ) {
         span++;
@@ -368,7 +369,7 @@ export default {
 
 <template>
   <div>
-    <div class="sortable-table-header">
+    <div class="sortable-table-header" :class="{'show-search-header': search}">
       <div v-if="showHeaderRow" class="fixed-header-actions">
         <div v-if="tableActions" class="bulk">
           <button
@@ -391,7 +392,7 @@ export default {
         </div>
 
         <div v-if="search" class="search">
-          <input v-model="searchQuery" type="search" class="input-sm" placeholder="Filter">
+          <input v-model="searchQuery" type="search" class="input-sm" :placeholder="t('sortableTable.searchFilter')">
         </div>
 
         <div class="end">
@@ -449,7 +450,7 @@ export default {
         <template v-for="row in group.rows">
           <slot name="main-row" :row="row">
             <tr :key="get(row,keyField)" class="main-row">
-              <td v-show="tableActions" class="row-check" align="middle">
+              <td v-if="tableActions" class="row-check" align="middle">
                 <Checkbox class="selection-checkbox" type="checkbox" :data-node-id="get(row,keyField)" :value="tableSelected.includes(row)" />
               </td>
               <td v-if="subExpandColumn" class="row-expand" align="middle">
@@ -569,6 +570,10 @@ $spacing: 10px;
     padding: 0;
     transition: none;
     word-wrap: break-word;
+
+    &:first-child {
+      padding-left: 10px;
+    }
 
     &:last-child {
       height: 0;
@@ -866,6 +871,11 @@ $spacing: 10px;
   SPAN {
     display: inline-block;
     min-width: 200px;
+  }
+}
+.tab-container {
+  .show-search-header {
+    margin-top: -30px!important;
   }
 }
 </style>

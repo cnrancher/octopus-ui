@@ -26,6 +26,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-resource-focus:before {
+  content: "\e635";
+}
+
 .icon-local:before {
   content: "\e63d";
 }

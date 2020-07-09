@@ -8,7 +8,7 @@ buttons:
   downloadYaml: 下载YAML
 
 generic:
-  cancel: Cancel
+  cancel: 取消
   close: Close
   comingSoon: Coming Soon
   created: Created
@@ -39,6 +39,10 @@ nav:
     project: "Project: {name}"
     namespace: "{name}"
     orphan: "Not in a Project"
+
+breadCrumbs:
+  nodes: 节点管理
+  local: 全局概览
 
 formKeyValue:
   protip: '高级技巧: 在键(Key)输入栏中粘贴一行或多行的key=value键值对能够批量输入。'
@@ -312,6 +316,7 @@ servicePorts:
 sortableTable:
   noRows: "没有数据"
   noData: "没有符合条件的数据"
+  searchFilter: 搜索
   paging:
     generic: |
       {pages, plural,
@@ -453,7 +458,7 @@ node:
         cpu: CPU
         memory: MEMORY
         pods: PODS
-        amount: '{used} of {total} {unit} used'
+        amount: '已使用{total}{unit}中的{used}{unit}'
     tab:
       conditions: 状态
       info: 系统信息

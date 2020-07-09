@@ -261,6 +261,9 @@ export default {
   watch: {
     asYamlInit(neu) {
       this.asYaml = neu;
+    },
+    $route(route) {
+      this.asYaml = route.query[AS_YAML] === _FLAGGED;
     }
   },
 

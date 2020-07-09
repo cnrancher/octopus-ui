@@ -20,8 +20,8 @@ export default {
 
 <template>
   <span>
-    <CopyToClipboardText v-if="isIp(row.internalIp)" :text="row.internalIp" /><span v-else>{{ t('internalExternalIP.none') }}</span>
+    <CopyToClipboardText v-if="isIp(row.internalIp)" :text="row.internalIp" :use-icon="true" /><span v-else>{{ t('internalExternalIP.none') }}</span>
     <span>/</span>
-    <CopyToClipboardText v-if="isIp(row.externalIp)" :text="row.externalIp" /><span v-else>{{ t('internalExternalIP.none') }}</span>
+    <CopyToClipboardText v-if="isIp(row.externalIp)" :text="row.externalIp" :use-icon="true" /><span v-else>{{ t('internalExternalIP.none') }}</span>
   </span>
 </template>

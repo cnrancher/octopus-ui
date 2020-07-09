@@ -2,12 +2,21 @@
 import LabelValue from '@/components/LabelValue';
 import SortableTable from '@/components/SortableTable';
 import createEditView from '@/mixins/create-edit-view';
-import { EVENT } from '@/config/types';
-import { NAMESPACE } from '@/config/table-headers';
+import { EVENT, DEVICE_LINK } from '@/config/types';
+import { POD_EVENT } from '@/config/table-headers';
 
 export default {
   components: { LabelValue, SortableTable },
   mixins:     [createEditView],
+
+  props:      {
+    value: {
+      type:    Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
 
   async fetch() {
     const { type } = this;
@@ -17,6 +26,7 @@ export default {
     this.deviceList = deviceList.filter( item => item.id === this.value.id);
     this.eventList = eventList;
   },
+
   data() {
     const { properties } = this.value.spec.template.spec;
     const rows = [];
@@ -56,39 +66,7 @@ export default {
       return this.deviceList[0]?.status?.properties || [this.deviceList[0]?.status];
     },
     headers() {
-      return [
-        NAMESPACE,
-        {
-          name:      'timestamp',
-          label:     '事件时间',
-          value:     '$["metadata"]["fields"][0]',
-          sort:      '$["metadata"]["fields"][0]'
-        },
-        {
-          name:  'type',
-          label: '类型',
-          value: '$["metadata"]["fields"][1]',
-          sort:  '$["metadata"]["fields"][1]'
-        },
-        {
-          name:  'reason',
-          label: '原因',
-          value: '$["metadata"]["fields"][2]',
-          sort:  '$["metadata"]["fields"][2]'
-        },
-        {
-          name:  'resource',
-          label: '资源对象',
-          value: '$["metadata"]["fields"][3]',
-          sort:  '$["metadata"]["fields"][3]'
-        },
-        {
-          name:  'message',
-          label: '事件消息',
-          value: 'message',
-          sort:  'message'
-        }
-      ];
+      return POD_EVENT;
     },
     filterEvent() {
       return this.eventList.filter( (E) => {

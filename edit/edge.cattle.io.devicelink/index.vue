@@ -163,7 +163,7 @@ export default {
     },
     async loadDeps() {
       const hash = await allHash({
-        nodes:    this.$store.dispatch('management/findAll', { type: NODE }),
+        nodes:    this.$store.dispatch('cluster/findAll', { type: NODE }),
         template: this.$store.dispatch('management/findAll', { type: DEVICE_TEMPLATE.TEMPLATE }),
         version:  this.$store.dispatch('management/findAll', { type: DEVICE_TEMPLATE.REVISION })
       });

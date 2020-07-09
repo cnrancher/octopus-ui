@@ -6,8 +6,8 @@ export default {
       required: true
     },
     value: {
-      type:     [String, Number],
-      required: true
+      type:     [String, Number, null],
+      default:  ''
     }
   }
 };

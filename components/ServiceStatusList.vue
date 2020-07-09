@@ -3,25 +3,13 @@
 function getItemClassname(status) {
   switch (status) {
   case 'success':
-    return {
-      icon: 'icon-system-active',
-      type: 'active'
-    };
+    return 'active';
   case 'error':
-    return {
-      icon: 'icon-system-error',
-      type: 'error'
-    };
+    return 'error';
   case 'unknown':
-    return {
-      icon: 'icon-system-question',
-      type: 'question'
-    };
+    return 'question';
   default:
-    return {
-      icon: 'icon-system-question',
-      type: 'question'
-    };
+    return 'question';
   }
 }
 
@@ -35,13 +23,11 @@ export default {
 
   computed: {
     displayList() {
-      const tempList = this.list.map((item) => {
-        item.classname = getItemClassname(item.status);
+      return this.list.map((item) => {
+        item.type = getItemClassname(item.status);
 
         return item;
       });
-
-      return tempList;
     }
   }
 };
@@ -49,9 +35,9 @@ export default {
 
 <template>
   <ul class="dashboard-service">
-    <li v-for="statusItem in displayList" :key="statusItem.name" :class="statusItem.classname.type">
+    <li v-for="statusItem in displayList" :key="statusItem.name" :class="statusItem.type">
       <span class="type">
-        <i :class="['icon', statusItem.classname.icon]"></i>
+        <i :class="['icon', statusItem.icon]"></i>
       </span>
       <span>{{ statusItem.name }}</span>
     </li>

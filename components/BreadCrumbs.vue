@@ -71,12 +71,12 @@ export default {
         const schema = this.$store.getters['cluster/schemaFor'](resourceType);
 
         if (schema) {
-          return this.$store.getters['type-map/pluralLabelFor'](schema);
+          return this.t(`breadCrumbs.${ this.$store.getters['type-map/pluralLabelFor'](schema).toLocaleLowerCase() }`);
         } else {
           return resourceType;
         }
       } else if (lastPiece === 'cluster') {
-        return this.cluster.nameDisplay;
+        return this.t(`breadCrumbs.${ this.cluster.nameDisplay }`);
       } else {
         return params[lastPiece];
       }

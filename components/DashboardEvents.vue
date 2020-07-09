@@ -8,6 +8,10 @@ export default {
     events: {
       type:    Array,
       default: () => []
+    },
+    max: {
+      type:    Number,
+      default: null
     }
   },
   computed:   {
@@ -15,22 +19,25 @@ export default {
       return [
         NAMESPACE,
         {
-          name:      'timestamp',
-          label:     '事件时间',
-          value:     '$["metadata"]["fields"][0]',
-          sort:      '$["metadata"]["fields"][0]'
+          name:  'timestamp',
+          label: '事件时间',
+          value: '$["metadata"]["fields"][0]',
+          sort:  '$["metadata"]["fields"][0]',
+          width: 100
         },
         {
           name:  'type',
           label: '类型',
           value: '$["metadata"]["fields"][1]',
-          sort:  '$["metadata"]["fields"][1]'
+          sort:  '$["metadata"]["fields"][1]',
+          width: 100
         },
         {
           name:  'reason',
           label: '原因',
           value: '$["metadata"]["fields"][2]',
-          sort:  '$["metadata"]["fields"][2]'
+          sort:  '$["metadata"]["fields"][2]',
+          width: 150
         },
         {
           name:  'resource',
@@ -45,6 +52,21 @@ export default {
           sort:  'message'
         }
       ];
+    },
+    displayRows() {
+      if (typeof this.max === 'number') {
+        const { events, max } = this;
+        const len = events.length;
+        let start = 0;
+
+        if (len > max) {
+          start = len - max;
+        }
+
+        return this.events?.slice(start, len) || [];
+      }
+
+      return this.events;
     }
   }
 };
@@ -57,8 +79,7 @@ export default {
     </h3>
     <SortableTable
       :headers="headers"
-      :rows="events"
-      :search="false"
+      :rows="displayRows"
       :table-actions="false"
       :row-actions="false"
       :show-groups="false"
@@ -75,7 +96,7 @@ export default {
     width: 100%;
     overflow: auto;
     .dashboard-event-table {
-      max-height: 395px;
+      height: 420px;
       overflow-y: auto;
     }
     thead {

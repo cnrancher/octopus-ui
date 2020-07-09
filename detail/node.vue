@@ -6,6 +6,7 @@ import HStack from '@/components/Layout/Stack/HStack';
 import VStack from '@/components/Layout/Stack/VStack';
 import Alert from '@/components/Alert';
 import SortableTable from '@/components/SortableTable';
+import { allSettled } from '@/utils/promise';
 import Tab from '@/components/Tabbed/Tab';
 import BadgeState from '@/components/BadgeState';
 import {
@@ -23,7 +24,7 @@ import {
 } from '@/config/table-headers';
 import ResourceTabs from '@/components/form/ResourceTabs';
 import Poller from '@/utils/poller';
-import { METRIC } from '@/config/types';
+import { METRIC, POD } from '@/config/types';
 import createEditView from '@/mixins/create-edit-view';
 import { formatSi, exponentNeeded, UNITS } from '@/utils/units';
 import CopyToClipboardText from '@/components/CopyToClipboardText';
@@ -60,6 +61,7 @@ export default {
     return {
       metricPoller:           new Poller(this.loadMetrics, METRICS_POLL_RATE_MS, MAX_FAILURES),
       metrics:                { cpu: 0, memory: 0 },
+      podsRequested:          0,
       conditionsTableHeaders: [
         SIMPLE_TYPE,
         STATUS,
@@ -166,7 +168,7 @@ export default {
         {
           title:   this.t('node.detail.detailTop.containerRuntime'),
           name:    'container-runtime',
-          icon:    '#icon-time-create'
+          icon:    '#icon-runtime'
         },
       ];
     }
@@ -183,8 +185,9 @@ export default {
   methods: {
     memoryFormatter(value) {
       const formatOptions = {
-        addSuffix:  false,
-        increment:  1024,
+        addSuffix:   false,
+        increment:   1024,
+        minExponent: 3
       };
 
       return formatSi(value, formatOptions);
@@ -199,11 +202,24 @@ export default {
       const schema = this.$store.getters['cluster/schemaFor'](METRIC.NODE);
 
       if (schema) {
-        await this.$store.dispatch('cluster/find', {
-          type: METRIC.NODE,
-          id:   this.value.id,
-          opt:  { force: true }
+        const ret = await allSettled({
+          metrics: this.$store.dispatch('cluster/find', {
+            type: METRIC.NODE,
+            id:   this.value.id,
+            opt:  { force: true }
+          }),
+          pods:    this.$store.dispatch('management/findAll', {
+            type: POD,
+            opt:  { force: true }
+          })
         });
+
+        const nodeName = this.value.id;
+        const pods = ret.pods?.filter((podItem) => {
+          return podItem.spec.nodeName === nodeName;
+        }) || [];
+
+        this.podsRequested = pods.length;
 
         this.$forceUpdate();
       }
@@ -216,7 +232,7 @@ export default {
   <VStack class="node">
     <DetailTop :columns="detailTopColumns">
       <template v-slot:ip-address>
-        <CopyToClipboardText :text="value.internalIp" />
+        <CopyToClipboardText :text="value.internalIp" :use-icon="true" />
       </template>
       <template v-slot:state>
         <BadgeState v-if="value.showDetailStateBadge" :value="value" />
@@ -233,9 +249,9 @@ export default {
         <Alert :status="kubeletStatus" :message="t('node.detail.glance.kubelet')" />
       </VStack>
       <HStack class="cluster card-box-shadow" horizontal-align="space-evenly">
-        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.cpu')" :capacity="value.cpuCapacity" :used="value.cpuUsage" />
+        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.cpu')" :capacity="value.cpuCapacity" units="核" :used="value.cpuUsage" />
         <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.memory')" :capacity="value.ramCapacity" :used="value.ramUsage" :units="memoryUnits" :number-formatter="memoryFormatter" />
-        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.pods')" :capacity="value.podCapacity" :used="value.podConsumed" />
+        <ConsumptionGauge :resource-name="t('node.detail.glance.consumptionGauge.pods')" :capacity="value.podCapacity" :used="podsRequested" />
       </HStack>
     </HStack>
     <ResourceTabs v-model="value" :mode="mode">

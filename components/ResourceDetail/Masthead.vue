@@ -102,10 +102,13 @@ export default {
       });
     },
 
-    toggleYaml() {
-      const out = !this.asYaml;
-
-      this.$emit('update:asYaml', out);
+    toggleYaml(value) {
+      if (value && !this.asYaml) {
+        // eslint-disable-next-line no-unused-expressions
+        this.value?.goToViewYaml();
+      } else if (!value) {
+        this.$emit('update:asYaml', false);
+      }
     }
   }
 };

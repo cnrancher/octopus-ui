@@ -23,7 +23,7 @@ export default {
     <div v-for="col in columns" :key="col.title" class="detail-top-item">
       <div class="detail-icon">
         <svg class="icon" aria-hidden="true">
-          <use :xlink:href="col.icon"></use>
+          <use :xlink:href="col.icon ? col.icon : '#icon-version'"></use>
         </svg>
       </div>
       <div class="detail-content">

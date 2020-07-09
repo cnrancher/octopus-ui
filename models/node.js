@@ -1,7 +1,10 @@
+import Vue from 'vue';
 import { formatPercent } from '@/utils/string';
-import { NODE_ROLES } from '@/config/labels-annotations.js';
-import { METRIC } from '@/config/types';
+import { NODE_ROLES, RKE } from '@/config/labels-annotations.js';
+import { METRIC, POD } from '@/config/types';
 import { parseSi } from '@/utils/units';
+import { PRIVATE } from '@/plugins/steve/resource-proxy';
+import { findLast } from 'lodash';
 
 export default {
   availableActions() {
@@ -39,11 +42,17 @@ export default {
   },
 
   internalIp() {
-    return this.status?.addresses?.find(address => address.type === 'InternalIP')?.address;
+    const addresses = this.status?.addresses || [];
+
+    return findLast(addresses, address => address.type === 'InternalIP')?.address;
   },
 
   externalIp() {
-    return this.status?.addresses?.find(address => address.type === 'ExternalIP')?.address;
+    const addresses = this.status?.addresses || [];
+    const annotationAddress = this.metadata.annotations[RKE.EXTERNAL_IP];
+    const statusAddress = findLast(addresses, address => address.type === 'ExternalIP')?.address;
+
+    return statusAddress || annotationAddress;
   },
 
   labels() {
@@ -168,28 +177,45 @@ export default {
   },
 
   containerRuntimeIcon() {
-    return this.status.nodeInfo.containerRuntimeVersion.includes('docker')
-      ? 'icon-docker'
-      : false;
+    if ( this.status.nodeInfo.containerRuntimeVersion.includes('docker') ) {
+      return 'icon-docker';
+    }
+
+    return false;
   },
 
   cordon() {
     return async() => {
-      const clone = await this.$dispatch('clone', { resource: this });
-
-      clone.spec.unschedulable = true;
-      await clone.save();
+      Vue.set(this.spec, 'unschedulable', true);
+      await this.save();
     };
   },
 
   uncordon() {
     return async() => {
-      const clone = await this.$dispatch('clone', { resource: this });
-
-      clone.spec.unschedulable = false;
-      await clone.save();
+      Vue.set(this.spec, 'unschedulable', false);
+      await this.save();
     };
   },
+
+  state() {
+    if ( !this[PRIVATE].isDetailPage && this.isCordoned ) {
+      return 'cordoned';
+    }
+
+    return this.metadata?.state?.name || 'unknown';
+  },
+
+  highlightBadge() {
+    if ( this.isCordoned ) {
+      return {
+        stateBackground: this.stateBackground,
+        stateDisplay:    this.stateDisplay
+      };
+    }
+
+    return false;
+  }
 };
 
 function calculatePercentage(allocatable, capacity) {

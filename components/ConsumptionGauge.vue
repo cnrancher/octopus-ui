@@ -97,7 +97,7 @@ export default {
           {
             name:        'gauge_sub',
             type:        'gauge',
-            radius:      '91.5%',
+            radius:      '105%',
             center:      ['50%', '58%'],
             splitNumber: 0, // 刻度数量
             startAngle:  225,
@@ -118,7 +118,7 @@ export default {
           },
           {
             type:        'gauge',
-            radius:      '91.5%',
+            radius:      '105%',
             center:      ['50%', '58%'],
             splitNumber: 0, // 刻度数量
             startAngle:  225,

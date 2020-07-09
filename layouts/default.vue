@@ -14,8 +14,14 @@ import { COUNT, SCHEMA } from '@/config/types';
 import { FAVORITE, USED } from '@/store/type-map';
 
 const PACKAGE_TITLE_MAP = {
-  'in-use':  '已使用的资源',
-  starred:  '关注资源'
+  'in-use': {
+    label: '已使用的资源',
+    icon:  'icon-resource-used'
+  },
+  starred: {
+    label: '关注资源',
+    icon:  'icon-resource-focus'
+  }
 };
 
 export default {
@@ -121,10 +127,12 @@ export default {
 
       this.groups = out.map((groupItem) => {
         const label = groupItem.label.toLowerCase();
+        const labelItem = PACKAGE_TITLE_MAP[label];
 
         return {
           ...groupItem,
-          displayLabel: PACKAGE_TITLE_MAP[label] || groupItem.label
+          displayLabel: labelItem.label || groupItem.label,
+          displayIcon:  labelItem.icon
         };
       });
     },
@@ -184,6 +192,7 @@ export default {
         >
           <template slot="accordion">
             <h6 style="color: #fff">
+              <i v-if="g.displayIcon" class="icon" :class="g.displayIcon" />
               {{ g.displayLabel }}
             </h6>
           </template>

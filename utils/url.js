@@ -77,3 +77,21 @@ parse.options = {
     loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
   }
 };
+
+export function parseSearch(url) {
+  const queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+  const paramString = queryString.split('#')[0];
+  const arr = paramString.split('&');
+  const out = {};
+
+  // eslint-disable-next-line no-unused-expressions
+  arr?.forEach((paramItem) => {
+    const temp = paramItem.split('=');
+    const key = temp[0];
+    const value = temp[1];
+
+    out[key] = value || null;
+  });
+
+  return out;
+}

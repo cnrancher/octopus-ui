@@ -4,7 +4,7 @@ import { formatFontSize } from '@/utils/units';
 export function rightGaugeConfigGenerator(opts) {
   return {
     title: {
-      text:      `{num|${ opts.total }}{unit|个}`,
+      text:      `{num|${ opts.displayNum }}{unit|个}`,
       subtext:   '设备总数',
       x:         'center',
       y:         'center',
@@ -17,11 +17,11 @@ export function rightGaugeConfigGenerator(opts) {
         rich:       {
           num: {
             fontSize: 36,
-            color:    opts.color[0],
+            color:    opts.defaultTextColor,
           },
           unit: {
             align:         'right',
-            color:         '#454545',
+            color:         opts.defaultTextColor,
             verticalAlign: 'bottom',
           },
         },

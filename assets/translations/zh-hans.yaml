@@ -671,6 +671,7 @@ workload:
     affinity:
       specificNode: 在特定节点上运行Pod
       schedulingRules: 在符合这些调度规则的节点上运行Pod
+      nodeLabel: 节点标签
       requireAny: '必须:'
       preferAny: '首选:'
       thisPodNamespace: This pod's namespace

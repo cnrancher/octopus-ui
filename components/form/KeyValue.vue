@@ -498,7 +498,7 @@ export default {
     border-collapse: collapse;
     margin-bottom: $spacing;
 
-    TH {
+    TH, TD {
       padding: 0 $spacing $spacing 0;
     }
 

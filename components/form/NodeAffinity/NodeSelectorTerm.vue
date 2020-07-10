@@ -31,7 +31,16 @@ export default {
   },
 
   data() {
-    const ops = [{ label: '<', value: 'Lt' }, { label: '>', value: 'Gt' }, { label: 'is set', value: 'Exists' }, { label: 'is not set', value: 'DoesNotExist' }, { label: 'in list', value: 'In' }, { label: 'not in list', value: 'NotIn' }];
+    const ops = [
+      { label: '=', value: 'In' }, 
+      { label: '≠', value: 'NotIn' }, 
+      { label: '<', value: 'Lt' }, 
+      { label: '>', value: 'Gt' }, 
+      { label: 'is set', value: 'Exists' }, 
+      { label: 'is not set', value: 'DoesNotExist' }, 
+      { label: 'in list', value: 'In' }, 
+      { label: 'not in list', value: 'NotIn' }
+    ];
 
     let rules;
 
@@ -71,7 +80,7 @@ export default {
     },
 
     addRule() {
-      this.rules.push({ values: '' });
+      this.rules.push({ values: '', operator: 'In' });
     },
 
     update() {
@@ -135,7 +144,7 @@ export default {
           :disabled="mode==='view'"
           @click="removeRule(i)"
         >
-          <i class="icon icon-minus icon-lg" />
+          Remove
         </button>
       </div>
     </div>
@@ -164,7 +173,7 @@ export default {
 
   .rule-row {
     display:grid;
-    grid-template-columns: auto 20% auto 3%;
+    grid-template-columns: 33% 20% 33% 14%;
     grid-column-gap:10px;
     margin-bottom:10px;
 
@@ -179,6 +188,6 @@ export default {
   }
 
   .remove-rule-button{
-    justify-content:center;
+    align-items: center;
   }
 </style>

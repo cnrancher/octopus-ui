@@ -189,6 +189,8 @@ export default {
       </div>
     </div>
 
+    <el-divider></el-divider>
+
     <KeyValue
       key="env"
       v-model="unreferencedValues"
@@ -198,6 +200,7 @@ export default {
       :as-map="false"
       :read-allowed="false"
       :title="t('workload.container.titles.environmentVariables')"
+      :add-label="t('workload.container.command.addEnvironmentLabel')"
       class="mb-10"
     >
       <template #key="{row}">
@@ -230,22 +233,10 @@ export default {
         </span>
       </template>
     </KeyValue>
-    <div v-if="referencedValues.length" class="row value-from headers">
-      <div class="col span-5-of-23">
-        <t k="workload.container.command.type" />
-      </div>
-      <div class="col span-5-of-23">
-        <t k="workload.container.command.source" />
-      </div>
-      <div class="col span-5-of-23">
-        <t k="workload.container.command.key" />
-      </div>
-      <div class="col span-1-of-23" />
-      <div class="col span-5-of-23">
-        <t k="workload.container.command.prefixOfAlias" />
-      </div>
-      <div class="col span-2-of-23" />
-    </div>
+
+    <el-divider></el-divider>
+
+    <h2 class="mb-10">附加资源</h2>
     <ValueFromResource
       v-for="(val,i) in referencedValues"
       ref="referenced"

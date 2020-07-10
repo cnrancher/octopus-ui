@@ -1,6 +1,7 @@
 <script>
 import ArrayList from '@/components/form/ArrayList';
 import KeyValue from '@/components/form/KeyValue';
+import { _VIEW } from '@/config/query-params';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
 
@@ -63,6 +64,10 @@ export default {
         { label: 'Host Network', value: 'host' },
       ];
     },
+
+    isView() {
+      return this.mode === _VIEW;
+    }
   },
 
   watch: {
@@ -192,6 +197,8 @@ export default {
       </div>
     </div>
 
+    <el-divider v-if="!isView"></el-divider>
+
     <div class="row">
       <div class="col span-6">
         <ArrayList
@@ -199,11 +206,11 @@ export default {
           v-model="nameservers"
           :title="t('workload.networking.nameservers.label')"
           :value-placeholder="t('workload.networking.nameservers.placeholder')"
-          add-label="Add Name Server"
           :value-multiline="false"
           :mode="mode"
           :pad-left="false"
           :protip="false"
+          :add-label="t('workload.networking.nameservers.addLabel')"
           @input="update"
         />
       </div>
@@ -213,7 +220,7 @@ export default {
           v-model="searches"
           :title="t('workload.networking.searchDomains.label')"
           :value-placeholder="t('workload.networking.searchDomains.placeholder')"
-          add-label="Add Search Domain"
+          :add-label="t('workload.networking.searchDomains.addLabel')"
           :value-multiline="false"
           :mode="mode"
           :pad-left="false"
@@ -222,6 +229,8 @@ export default {
         />
       </div>
     </div>
+
+    <el-divider v-if="!isView"></el-divider>
 
     <div class="row">
       <KeyValue
@@ -233,10 +242,14 @@ export default {
         key-name="name"
         :key-placeholder="t('workload.networking.resolvingServers.placeholder')"
         value-name="value"
+        :value-placeholder="t('workload.networking.resolvingServers.valuePlaceholder')"
+        :add-label="t('workload.networking.resolvingServers.addLabel')"
         :pad-left="false"
         @input="updateOptions"
       />
     </div>
+
+    <el-divider v-if="!isView"></el-divider>
 
     <div class="row">
       <div class="col span-12">
@@ -255,7 +268,7 @@ export default {
           :value-label="t('workload.networking.hostAlias.host.label')"
           :value-placeholder="t('workload.networking.hostAlias.host.placeholder')"
           :pad-left="false"
-          add-label="Add Alias"
+          :add-label="t('workload.networking.hostAlias.addLabel')"
           @input="updateHostAliases"
         />
       </div>

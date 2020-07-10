@@ -591,7 +591,8 @@ workload:
       workingDir: 工作目录
       env: 环境变量
       stdin: 标准输入
-      addFromResource: Add from Resource
+      addFromResource: 添加附加资源
+      addEnvironmentLabel: 添加变量
       type: 类型
       source: 资源
       key: 键
@@ -731,19 +732,24 @@ workload:
       placeholder: '例如: web'
     subdomain: 
       label: 子域名
-      placeholder: '例如: web'
+      placeholder: '例如: foo'
     nameservers: 
       label: DNS服务器地址
+      addLabel: 添加DNS服务器
       placeholder: '例如: 192.168.2.1'
     searchDomains: 
       label: 搜索域
-      placeholder: '例如: prod.example.com'
+      addLabel: 添加搜索域
+      placeholder: '例如: example.com'
     resolvingServers: 
-      label: 解析服务器
-      placeholder: '例如: 114.114.114.114'
+      label: DNS解析选项
+      addLabel: 添加
+      placeholder: '例如: ndots'
+      valuePlaceholder: '例如： 5'
     hostAlias: 
       label: '主机别名(/etc/hosts记录)'
       tip: '额外注入到容器的 /etc/hosts记录'
+      addLabel: 添加主机别名
       ip:
         label: IP地址
         placeholder: '例如: 192.168.0.1'

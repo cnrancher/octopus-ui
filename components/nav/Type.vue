@@ -87,6 +87,7 @@ export default {
         position: relative;
         top: -1px;
         opacity: .8;
+        margin-right: 4px;
       }
     }
 

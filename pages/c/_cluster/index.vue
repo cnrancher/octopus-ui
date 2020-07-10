@@ -513,7 +513,7 @@ export default {
           'content-type': 'application/json',
           accept:         'application/json',
         },
-        url: `v1/edgeapi.cattle.io.settings/location`,
+        url: `v1/octopusapi.cattle.io.settings/location`,
         data,
       });
     }

@@ -52,8 +52,8 @@ steps:
   pull: default
   image: plugins/s3
   settings:
-    bucket: rancheredge-ui
-    region: ap-east-1
+    bucket: rancher-octopus
+    region: ap-northeast-1
     access_key:
       from_secret: aws_access_key_id
     secret_key:
@@ -90,8 +90,8 @@ steps:
   pull: default
   image: plugins/s3
   settings:
-    bucket: rancheredge-ui
-    region: ap-east-1
+    bucket: rancher-octopus
+    region: ap-northeast-1
     access_key:
       from_secret: aws_access_key_id
     secret_key:
@@ -130,8 +130,8 @@ steps:
   pull: default
   image: plugins/s3
   settings:
-    bucket: rancheredge-ui
-    region: ap-east-1
+    bucket: rancher-octopus
+    region: ap-northeast-1
     access_key:
       from_secret: aws_access_key_id
     secret_key:
@@ -172,8 +172,8 @@ steps:
   pull: default
   image: plugins/s3
   settings:
-    bucket: rancheredge-ui
-    region: ap-east-1
+    bucket: rancher-octopus
+    region: ap-northeast-1
     access_key:
       from_secret: aws_access_key_id
     secret_key:
@@ -211,8 +211,8 @@ steps:
   pull: default
   image: plugins/s3
   settings:
-    bucket: rancheredge-ui
-    region: ap-east-1
+    bucket: rancher-octopus
+    region: ap-northeast-1
     access_key:
       from_secret: aws_access_key_id
     secret_key:

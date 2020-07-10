@@ -26,7 +26,7 @@ import { defaultAsyncData } from '@/components/ResourceDetail';
 import { _CREATE, _EDIT } from '../config/query-params';
 
 const templateValue = {
-  apiVersion: 'edgeapi.cattle.io/v1alpha1',
+  apiVersion: 'octopusapi.cattle.io/v1alpha1',
   kind:       'DeviceTemplate',
   metadata:   {
     name:      '',
@@ -44,14 +44,14 @@ const templateValue = {
 };
 
 const versionValue = {
-  apiVersion: 'edgeapi.cattle.io/v1alpha1',
+  apiVersion: 'octopusapi.cattle.io/v1alpha1',
   kind:       'DeviceTemplateRevision',
   metadata:   { namespace: 'default' },
   spec:       {
     displayName:              '',
     enable:                   true,
     deviceTemplateName:       '',
-    deviceTemplateAPIVersion: 'edgeapi.cattle.io/v1alpha1',
+    deviceTemplateAPIVersion: 'octopusapi.cattle.io/v1alpha1',
     labels:                   {},
     references:               [],
     templateSpec:             {
@@ -182,7 +182,7 @@ export default {
                 'content-type': 'application/json',
                 accept:         'application/json',
               },
-              url:  `v1/edgeapi.cattle.io.devicetemplate`,
+              url:  `v1/octopusapi.cattle.io.devicetemplate`,
               data: this.templateValue,
             });
           }

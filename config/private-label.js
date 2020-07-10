@@ -3,7 +3,7 @@ export const STANDARD = 1;
 export const CUSTOM = 2;
 
 let mode = STANDARD;
-let vendor = 'Edge';
+let vendor = 'Octopus';
 let product = 'Dashboard';
 
 export function setMode(m) {

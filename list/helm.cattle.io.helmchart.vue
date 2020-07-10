@@ -127,7 +127,7 @@ export default {
         return row.kind === 'HelmChart';
       });
       const { version, chart, repo } = helm.spec;
-      const name = helm.metadata?.annotations['edgeapi.cattle.io/catalogs'];
+      const name = helm.metadata?.annotations['octopusapi.cattle.io/catalogs'];
       const versions = _.sortBy(this.entries[name]?.entries?.[chart] || [], (C) => {
         return -C.version;
       });

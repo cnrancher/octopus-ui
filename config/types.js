@@ -25,7 +25,7 @@ export const DEVICE_LINK = 'edge.cattle.io.devicelink';
 export const PREFIX_DEVICE = 'devices.edge.cattle.io.';
 export const CUSTOM = 'apiextensions.k8s.io.customresourcedefinitions';
 export const DUMMY_DEVICE = 'devices.edge.cattle.io.dummydevice';
-export const CATALOG = 'edgeapi.cattle.io.catalog';
+export const CATALOG = 'octopusapi.cattle.io.catalog';
 export const HELM = 'helm.cattle.io.helmchart';
 export const JOB = 'batch.job';
 
@@ -99,7 +99,7 @@ export const RIO = {
 
 export const WORKLOAD = 'workload';
 
-export const SETTING = 'edgeapi.cattle.io.setting';
+export const SETTING = 'octopusapi.cattle.io.setting';
 
 // The types that are aggregated into a "workload"
 export const WORKLOAD_TYPES = {
@@ -121,8 +121,8 @@ export const DEVICE_PROTOCOL = {
 };
 
 export const DEVICE_TEMPLATE = {
-  TEMPLATE:     'edgeapi.cattle.io.devicetemplate',
-  REVISION:     'edgeapi.cattle.io.devicetemplaterevision'
+  TEMPLATE:     'octopusapi.cattle.io.devicetemplate',
+  REVISION:     'octopusapi.cattle.io.devicetemplaterevision'
 };
 
 export const STORAGE_CATEGORY = {

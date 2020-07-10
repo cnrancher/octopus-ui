@@ -1,7 +1,7 @@
-# edge-ui
-[![Build Status](http://drone-pandaria.cnrancher.com/api/badges/cnrancher/edge-ui/status.svg)](http://drone-pandaria.cnrancher.com/cnrancher/edge-ui)
+# octopus-ui
+[![Build Status](http://drone-pandaria.cnrancher.com/api/badges/cnrancher/octopus-ui/status.svg)](http://drone-pandaria.cnrancher.com/cnrancher/octopus-ui)
 
-Edge Dashboard UI.  For the other Rancher UI see [rancher/ui](https://github.com/rancher/ui).
+Octopus Dashboard UI.  For the other Dashboard UI see [dashboard/ui](https://github.com/rancher/dashboard).
 
 ## Build Setup
 
@@ -20,32 +20,14 @@ $ yarn start
 $ yarn generate
 ```
 
-## Multiple GitHub auth configs
-Auth supports multiple GitHub auth URLs and using the appropriate one based on the Host header that a request comes in on.  This is particularly useful for development against a server that already has GitHub setup.
-
-In `management.cattle.io.authconfig` `github`, add a `hostnameToClientId` map of Host header value -> GitHub client ID:
-
-```yaml
-hostnameToClientId:
-  "localhost:8005": <your GitHub Client ID for localhost:8005>
-```
-
-And then in the `secret` in namespace `cattle-global-data` called `githubconfig-clientsecret`, add GitHub client ID -> base64-encoded client secret to the `data` section:
-
-```yaml
-data:
-  clientsecret: <the normal client secret already configured>
-  <your client id>: <your base64-encoded client secret for localhost:8005>
- ```
-
  ## Running with standalone Steve on a Mac
  ```bash
  cd steve
  make run-host
 
  cd dashboard
- docker build -f Dockerfile.dev -t rancherlabs/dashboard:dev
- docker run -v $(pwd):/src -v dashboard_node:/src/node_modules -p 8005:8005 -e API=http://172.17.0.1:8989 rancherlabs/dashboard:dev
+ docker build -f Dockerfile.dev -t cnrancher/octopus-ui:dev
+ docker run -v $(pwd):/src -v dashboard_node:/src/node_modules -p 8005:8005 -e API=http://172.17.0.1:8989 cnrancher/octopus-ui:dev
  #
  # The first time will take forever installing node_modules into the volume, it will be faster next time.
  #

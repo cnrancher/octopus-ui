@@ -16,7 +16,7 @@ export default {
 <template>
   <div>
     <nuxt-link
-      to="/c/local/edgeapi.cattle.io.catalog"
+      to="/c/local/octopusapi.cattle.io.catalog"
       tag="button"
       type="button"
       class="btn bg-primary"

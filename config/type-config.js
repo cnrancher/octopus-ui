@@ -55,7 +55,7 @@ export default function(store) {
     mapTypeToComponentName(WORKLOAD_TYPES[key], 'system.component');
   }
 
-  mapTypeToComponentName('edgeapi.cattle.io.devicetemplaterevision', 'template');
+  mapTypeToComponentName('octopusapi.cattle.io.devicetemplaterevision', 'template');
 
   ignoreType('events.k8s.io.event'); // Events type moved into core
   ignoreType('extensions.ingress'); // Moved into networking

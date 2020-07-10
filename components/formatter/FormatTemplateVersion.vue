@@ -30,7 +30,7 @@ export default {
 
   methods: {
     async loadDeps() {
-      const templateList = await this.$store.dispatch('management/findAll', { type: 'edgeapi.cattle.io.devicetemplate' });
+      const templateList = await this.$store.dispatch('management/findAll', { type: 'octopusapi.cattle.io.devicetemplate' });
 
       this.templateList = templateList;
     },

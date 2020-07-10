@@ -1,11 +1,11 @@
 <script>
-import { mapGetters } from 'vuex';
 import { NODE, POD, NAMESPACE } from '@/config/types';
 import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import SortableTable from '@/components/SortableTable';
 import { sortBy } from '@/utils/sort';
 import ArrayList from '@/components/form/ArrayList';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -23,6 +23,11 @@ export default {
 
     namespaces: {
       type:    Array,
+      default: null
+    },
+
+    topologyKey: {
+      type:    String,
       default: null
     },
 
@@ -160,7 +165,6 @@ export default {
       const idx = this.rules.indexOf(row);
 
       this.rules.splice(idx, 1);
-      this.update();
     },
 
     addRule() {
@@ -196,23 +200,45 @@ export default {
 
 <template>
   <div :style="{'position':'relative'}" @input="update">
-    <span v-if="weight && isView" class="selector-weight"><t k="workload.scheduling.affinity.matchExpressions.weight" />: {{ weight }}</span>
+    <!-- <span v-if="weight && isView" class="selector-weight"><t k="workload.scheduling.affinity.matchExpressions.weight" />: {{ weight }}</span>
     <button v-if="showRemove && !isView" id="remove-btn" class="btn role-link" @click="$emit('remove')">
       <i class="icon icon-x" />
-    </button>
+    </button> -->
 
-    <div v-if="type===pod" class="row mt-20">
-      <div class="col span-12">
-        <t k="workload.scheduling.affinity.matchExpressions.inNamespaces" />
-        <ArrayList :value="namespaces" @input="e=>$emit('update:namespaces', e)">
-          <template #value="props">
-            <LabeledSelect v-model="props.row.value" :options="allNamespaces" label="Namespaces" :multiple="false" @input="props.queueUpdate" />
-          </template>
-        </ArrayList>
+    <template v-if="type===pod">
+      <div class="row mt-20">
+        <div class="col span-12">
+          <ArrayList :protip="false" :title="t('workload.scheduling.affinity.matchExpressions.inNamespaces')" :mode="mode" :value="namespaces" @input="e=>$emit('update:namespaces', e)">
+            <template #value="props">
+              <LabeledSelect
+                v-model="props.row.value"
+                :mode="mode"
+                :options="allNamespaces"
+                :label="!isView ? 'Namespaces' :''"
+                :multiple="false"
+                @input="props.queueUpdate"
+              />
+            </template>
+          </ArrayList>
+        </div>
       </div>
-    </div>
+
+      <div class="spacer" />
+
+      <LabeledInput
+        :mode="mode"
+        :value="topologyKey"
+        required
+        :label="t('workload.scheduling.affinity.topologyKey.label')"
+        :placeholder="t('workload.scheduling.affinity.topologyKey.placeholder')"
+        @input="e=>$emit('update:topologyKey', e)"
+      />
+    </template>
+
+    <div class="spacer" />
 
     <SortableTable
+      v-if="rules.length"
       class="match-expressions"
       :class="mode"
       :headers="tableHeaders"

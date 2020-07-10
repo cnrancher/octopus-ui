@@ -671,23 +671,23 @@ workload:
     affinity:
       specificNode: 在特定节点上运行Pod
       schedulingRules: 在符合这些调度规则的节点上运行Pod
-      requireAny: 'Require any of:'
-      preferAny: 'Prefer any of:'
+      requireAny: '必须:'
+      preferAny: '首选:'
       thisPodNamespace: This pod's namespace
       affinityTitle: Run pods on nodes with pods matching these selectors
       antiAffinityTitle: Run pods on nodes without pods matching these selectors
       nodeName: 节点名称
       matchExpressions:
-        in: '='
-        notIn: ≠
-        exists: Exists
-        doesNotExist: Does Not Exist
+        in: 在列表中
+        notIn: 不列表中
+        exists: 已设置
+        doesNotExist: 未设置
         greaterThan: '>'
         lessThan: <
-        key: Key
-        value: Value
-        operator: Operator
-        addRule: Add Rule
+        key: 键
+        value: 值
+        operator: 操作符
+        addRule: 添加规则
         weight: Weight
         inNamespaces: Pods in these namespaces
   detailTop:

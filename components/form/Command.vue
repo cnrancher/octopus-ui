@@ -236,7 +236,9 @@ export default {
 
     <el-divider></el-divider>
 
-    <h2 class="mb-10">附加资源</h2>
+    <h2 class="mb-10">
+      附加资源
+    </h2>
     <ValueFromResource
       v-for="(val,i) in referencedValues"
       ref="referenced"

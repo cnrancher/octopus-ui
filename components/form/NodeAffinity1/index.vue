@@ -30,6 +30,10 @@ export default {
         nodeSelectorTerms.push({ });
       }
 
+      if (!preferredDuringSchedulingIgnoredDuringExecution.length) {
+        preferredDuringSchedulingIgnoredDuringExecution.push({ matchExpressions: [], weight: 1 });
+      }
+
       return {
         nodeSelectorTerms,
         weightedNodeSelectorTerms: preferredDuringSchedulingIgnoredDuringExecution,
@@ -65,12 +69,12 @@ export default {
           </div>
         </div>
       </template>
-      <button v-if="multipleSelectors" type="button" class="btn btn-sm role-primary" @click="e=>nodeSelectorTerms.push({matchExpressions:[]})">
+      <!-- <button v-if="multipleSelectors" type="button" class="btn btn-sm role-primary" @click="e=>nodeSelectorTerms.push({matchExpressions:[]})">
         Add Node Selector
-      </button>
+      </button> -->
     </div>
 
-    <div v-if="hasWeighted" class="col span-6">
+    <div class="col span-6">
       <slot name="title-weighted" />
       <template v-for="(nodeSelector, i) in weightedNodeSelectorTerms">
         <div :key="i" class="row">
@@ -86,9 +90,9 @@ export default {
           </div>
         </div>
       </template>
-      <button type="button" class="btn btn-sm role-primary" @click="e=>weightedNodeSelectorTerms.push({matchExpressions:[], weight: 1})">
+      <!-- <button type="button" class="btn btn-sm role-primary" @click="e=>weightedNodeSelectorTerms.push({matchExpressions:[], weight: 1})">
         Add Node Selector
-      </button>
+      </button> -->
     </div>
   </div>
 </template>

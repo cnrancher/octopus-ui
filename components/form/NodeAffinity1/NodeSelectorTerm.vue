@@ -31,14 +31,15 @@ export default {
   },
 
   data() {
+    // this.t('workload.scheduling.affinity.matchExpressions.in')
     const ops = [
-      { label: '=', value: 'In' }, 
-      { label: '≠', value: 'NotIn' }, 
-      { label: '<', value: 'Lt' }, 
-      { label: '>', value: 'Gt' }, 
-      { label: 'is set', value: 'Exists' }, 
-      { label: 'is not set', value: 'DoesNotExist' }, 
-      { label: 'in list', value: 'In' }, 
+      { label: '=', value: 'In' },
+      { label: '≠', value: 'NotIn' },
+      { label: '<', value: 'Lt' },
+      { label: '>', value: 'Gt' },
+      { label: 'is set', value: 'Exists' },
+      { label: 'is not set', value: 'DoesNotExist' },
+      { label: 'in list', value: 'In' },
       { label: 'not in list', value: 'NotIn' }
     ];
 
@@ -80,7 +81,7 @@ export default {
     },
 
     addRule() {
-      this.rules.push({ values: '', operator: 'In' });
+      this.rules.push({ values: '' });
     },
 
     update() {
@@ -149,7 +150,7 @@ export default {
       </div>
     </div>
     <button v-if="!isView" type="button" class="btn role-tertiary add" @click="addRule">
-      Add Rule
+      {{ t('workload.scheduling.affinity.matchExpressions.addRule') }}
     </button>
   </div>
 </template>

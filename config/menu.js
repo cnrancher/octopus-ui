@@ -16,19 +16,23 @@ export const MENUS = [
     children: [
       {
         path: '/c/local/node',
-        meta: { title: '节点管理' }
+        meta: { title: '节点管理' },
+        name: 'node-manage'
       },
       {
         path: '/c/local/system.component',
-        meta: { title: '系统服务' }
+        meta: { title: '系统服务' },
+        name: 'system-service'
       },
       {
         path: '/c/local/namespace',
-        meta: { title: '命名空间' }
+        meta: { title: '命名空间' },
+        name: 'namespace'
       },
       {
         path: '/c/local/store',
-        meta: { title: '存储类别' }
+        meta: { title: '存储类别' },
+        name: 'storage-class'
       }
     ]
   },
@@ -42,19 +46,23 @@ export const MENUS = [
     children: [
       {
         path: '/c/local/workload',
-        meta: { title: '工作负载' }
+        meta: { title: '工作负载' },
+        name: 'workload'
       },
       {
         path: '/c/local/service',
-        meta: { title: '服务发现' }
+        meta: { title: '服务发现' },
+        name: 'service'
       },
       {
         path: '/c/local/secret',
-        meta: { title: '秘文管理' }
+        meta: { title: '秘文管理' },
+        name: 'secret-manage'
       },
       {
         path: '/c/local/configmap',
-        meta: { title: '配置映射' }
+        meta: { title: '配置映射' },
+        name: 'configmap'
       }
     ]
   },
@@ -68,14 +76,17 @@ export const MENUS = [
       {
         path: '/c/local/deviceprotocol',
         meta: { title: '设备协议' },
+        name: 'deviceprotocol'
       },
       {
         path: '/c/local/edge.cattle.io.devicelink',
-        meta: { title: '设备列表' }
+        meta: { title: '设备列表' },
+        name: 'devicelink'
       },
       {
         path: '/c/local/template',
-        meta: { title: '设备模板' }
+        meta: { title: '设备模板' },
+        name: 'device-template'
       },
     ]
   },

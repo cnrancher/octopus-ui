@@ -14,6 +14,17 @@ export default {
       type:     Boolean,
       required: false
     }
+  },
+  computed: {
+    isSubActive() {
+      if (!this.fisrtLayer) {
+        const pathReg = new RegExp(this.menu.path);
+
+        return pathReg.test(this.$route.path);
+      }
+
+      return false;
+    }
   }
 };
 </script>
@@ -21,7 +32,7 @@ export default {
   <div>
     <template v-if="!menu.children">
       <template>
-        <nuxt-link :key="menu.path" :to="menu.path">
+        <nuxt-link :key="menu.path" :to="menu.path" :class="{'sub-active': isSubActive}">
           <el-menu-item
             :index="menu.name"
           >
@@ -109,6 +120,13 @@ export default {
       }
       .text {
         color: var(--menu-text);
+      }
+    }
+    &.sub-active {
+      font-weight: var(--nav-font-weight);
+      color: var(--menu-action-text)!important;
+      li {
+        opacity: 1;
       }
     }
   }

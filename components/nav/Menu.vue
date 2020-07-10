@@ -15,7 +15,11 @@ export default {
 
       MENUS.forEach((menuItem) => {
         if (menuItem.children) {
-          const currentSubmenuItem = menuItem.children.filter(submenuItem => currentPath === submenuItem.path);
+          const currentSubmenuItem = menuItem.children.filter((submenuItem) => {
+            const pathReg = new RegExp(submenuItem.path);
+
+            return currentPath === submenuItem.path || pathReg.test(currentPath);
+          });
 
           if (currentSubmenuItem.length > 0) {
             out = menuItem.name;

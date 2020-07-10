@@ -142,6 +142,7 @@ export default {
       }
       if (neu) {
         if (neu.type === SECRET || neu.type === CONFIG_MAP) {
+          console.log('------data', neu)
           this.keys = Object.keys(neu.data);
         }
         this.refName = neu?.metadata?.name;
@@ -207,7 +208,7 @@ export default {
         v-model="type"
         :multiple="false"
         :options="typeOpts"
-        label="Type"
+        :label="t('workload.container.command.type')"
         :mode="mode"
         option-label="label"
         :hide-label="hideLabel"
@@ -220,7 +221,7 @@ export default {
           v-model="referenced"
           :options="sourceOptions"
           :multiple="false"
-          label="Source"
+          :label="t('workload.container.command.source')"
           option-label="metadata.name"
           option-key
           :mode="mode"
@@ -231,10 +232,11 @@ export default {
       <div class="col span-5-of-23">
         <LabeledSelect
           ref="typeSelect"
-          v-model="type"
+          v-model="key"
           :multiple="false"
-          :options="typeOpts"
+          :options="keys"
           :mode="mode"
+          :label="t('workload.container.command.key')"
           option-label="label"
           :hide-label="hideLabel"
           @input="updateRow"
@@ -243,22 +245,22 @@ export default {
     </template>
     <template v-else-if="type==='resourceFieldRef'">
       <div class="col span-5-of-23">
-        <LabeledInput v-model="refName" label="Source" placeholder="e.g. my-container" :mode="mode" :hide-label="hideLabel" />
+        <LabeledInput v-model="refName" :label="t('workload.container.command.source')" placeholder="e.g. my-container" :mode="mode" :hide-label="hideLabel" />
       </div>
 
       <div class="col span-5-of-23">
-        <LabeledInput v-model="key" label="Key" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
+        <LabeledInput v-model="key" :label="t('workload.container.command.key')" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
       </div>
     </template>
     <template v-else>
       <div class="col span-5-of-23">
-        <LabeledInput v-model="fieldPath" label="Source" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
+        <LabeledInput v-model="fieldPath" :label="t('workload.container.command.source')" placeholder="e.g. requests.cpu" :mode="mode" :hide-label="hideLabel" />
       </div>
 
       <div class="col span-5-of-23">
         <LabeledInput
           value="n/a"
-          label="Key"
+          :label="t('workload.container.command.key')"
           placeholder="e.g. requests.cpu"
           disabled
           :mode="mode"
@@ -273,7 +275,7 @@ export default {
       </div>
     </div>
     <div class="col span-5-of-23">
-      <LabeledInput v-model="name" label="Prefix or Alias" :mode="mode" :hide-label="hideLabel" />
+      <LabeledInput v-model="name" :label="t('workload.container.command.prefixOfAlias')" :mode="mode" :hide-label="hideLabel" />
     </div>
     <div class="col span-2-of-23">
       <button v-if="mode!=='view'" id="remove" type="button" class="btn btn-sm role-link" @click="$emit('input', { value:null })">

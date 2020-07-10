@@ -1,4 +1,5 @@
 <script>
+import ShellQuote from 'shell-quote';
 import LabeledInput from '@/components/form/LabeledInput';
 
 export default {
@@ -26,7 +27,19 @@ export default {
       let out = null;
 
       if ( userValue ) {
-        out = userValue.split(/ /);
+        out = ShellQuote.parse(userValue || '').map((piece) => {
+          if ( typeof piece === 'object' && piece ) {
+            if ( piece.pattern ) {
+              return piece.pattern;
+            } else if ( piece.op ) {
+              return piece.op;
+            } else {
+              return '';
+            }
+          }
+
+          return piece;
+        });
       }
 
       this.$emit('input', out);

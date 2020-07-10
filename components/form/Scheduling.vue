@@ -149,7 +149,7 @@ export default {
           </div>
         </div>
         <div v-if="mode!=='view' || !isEmpty(nodeSelector)" class="row">
-          <KeyValue title="Nodes with these labels" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" @input="updateNodeSelector" />
+          <KeyValue :readAllowed="false" :title="t('workload.scheduling.affinity.nodeLabel')" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" @input="updateNodeSelector" />
         </div>
       </template>
       <template v-else>

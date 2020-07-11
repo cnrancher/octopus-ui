@@ -30,9 +30,12 @@ export const MENUS = [
         name: 'namespace'
       },
       {
-        path: '/c/local/store',
+        path: '/c/local/storage.k8s.io.storageclass',
         meta: { title: '存储类别' },
-        name: 'storage-class'
+      },
+      {
+        path: '/c/local/persistentvolume',
+        meta: { title: '存储卷' },
       }
     ]
   },
@@ -84,7 +87,7 @@ export const MENUS = [
         name: 'devicelink'
       },
       {
-        path: '/c/local/template',
+        path: '/c/local/octopusapi.cattle.io.devicetemplate',
         meta: { title: '设备模板' },
         name: 'device-template'
       },

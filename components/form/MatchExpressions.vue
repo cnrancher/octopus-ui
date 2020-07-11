@@ -120,7 +120,7 @@ export default {
     });
 
     if (!rules.length && this.initialEmptyRow) {
-      rules.push({ values: '' });
+      rules.push({ values: '', operator: 'In' });
     }
 
     return {

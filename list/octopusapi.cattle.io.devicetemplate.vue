@@ -4,24 +4,18 @@ import {
   STATE, AGE, NAMESPACE, NAME, TYPE, WORKLOAD_ENDPOINTS
 } from '@/config/table-headers';
 import SortableTable from '@/components/SortableTable';
-import { DEVICE_TEMPLATE, SCHEMA } from '@/config/types';
+import { DEVICE_TEMPLATE } from '@/config/types';
 import { allHash } from '@/utils/promise';
-
-const schema = {
-  id:         'template',
-  type:       SCHEMA,
-  attributes: {
-    kind:       'Template',
-    namespaced: true
-  },
-  metadata: { name: 'template' },
-};
 
 export default {
   name:       'ListTemplate',
   components: { SortableTable },
 
   props: {
+    schema: {
+      type:     Object,
+      required: true,
+    },
     resources: {
       type:    Object,
       default: null,
@@ -38,10 +32,6 @@ export default {
   },
 
   computed: {
-    schema() {
-      return schema;
-    },
-
     headers() {
       return [
         STATE,
@@ -92,10 +82,6 @@ export default {
     groupBy() {
       return 'customId';
     },
-  },
-
-  typeDisplay({ store }) {
-    return store.getters['i18n/t'](`breadCrumbs.${ store.getters['type-map/pluralLabelFor'](schema).toLocaleLowerCase() }`);
   },
 };
 </script>

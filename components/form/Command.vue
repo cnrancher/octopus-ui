@@ -180,10 +180,10 @@ export default {
       <div class="col span-6">
         <div class="row">
           <div class="col span-6">
-            <LabeledSelect v-model="stdinSelect" :label="t('workload.container.command.stdin')" :options="[, 'No', 'Once', 'Yes']" :mode="mode" />
+            <LabeledSelect v-model="stdinSelect" :label="t('workload.container.command.stdin')" :options="[, 'No', 'Once', 'Yes']" :mode="mode" @input="update" />
           </div>
           <div class="col span-6">
-            <Checkbox v-model="tty" :mode="mode" :disabled="!stdin" label="TTY" />
+            <Checkbox v-model="tty" :mode="mode" :disabled="!stdin" label="TTY" @input="update" />
           </div>
         </div>
       </div>

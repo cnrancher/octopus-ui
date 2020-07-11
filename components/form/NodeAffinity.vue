@@ -42,11 +42,11 @@ export default {
         weightedSelectorMap[i] = term;
       });
 
-      if (!selectorMap.length) {
+      if (!Object.keys(selectorMap)) {
         this.$set(selectorMap, Math.random(), { matchExpressions: [] });
       }
 
-      if (!weightedSelectorMap.length) {
+      if (!Object.keys(weightedSelectorMap)) {
         this.$set(weightedSelectorMap, Math.random(), { preference: { matchExpressions: [] }, weight: defaultWeight });
       }
 

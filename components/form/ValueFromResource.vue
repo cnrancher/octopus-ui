@@ -142,7 +142,7 @@ export default {
       }
       if (neu) {
         if (neu.type === SECRET || neu.type === CONFIG_MAP) {
-          this.keys = Object.keys(neu.data);
+          this.keys = Object.keys(neu.data || {});
         }
         this.refName = neu?.metadata?.name;
       }

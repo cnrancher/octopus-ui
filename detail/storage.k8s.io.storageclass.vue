@@ -83,7 +83,10 @@ export default {
       name:       this.value.metadata.name,
       pvcHeaders: [
         STATE,
-        NAME,
+        {
+          ...NAME,
+          width: 320
+        },
         DISPLAY_PVC,
         DISPLAY_SOURCE
       ],

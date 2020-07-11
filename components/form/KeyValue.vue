@@ -114,7 +114,7 @@ export default {
 
     addLabel: {
       type:    String,
-      default: 'Add',
+      default: '添加',
     },
     addIcon: {
       type:    String,
@@ -148,7 +148,7 @@ export default {
 
     removeLabel: {
       type:    String,
-      default: 'Remove',
+      default: '删除',
     },
     removeIcon: {
       type:    String,

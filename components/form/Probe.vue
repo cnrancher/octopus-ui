@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex';
 import { _EDIT, _VIEW } from '@/config/query-params';
 import { clone } from '@/utils/object';
 import UnitInput from '@/components/form/UnitInput';
@@ -7,13 +8,13 @@ import LabeledSelect from '@/components/form/LabeledSelect';
 import ShellInput from '@/components/form/ShellInput';
 import KeyValue from '@/components/form/KeyValue';
 
-const KIND_LABELS = {
-  none:  'None',
-  HTTP:  'HTTP request returns a successful status (200-399)',
-  HTTPS: 'HTTPS request returns a successful status',
-  tcp:   'TCP connection opens successfully',
-  exec:  'Command run inside the container exits with status 0',
-};
+// const KIND_LABELS = {
+//   none:  this.t('workload.container.healthcheck.checkType.none'),
+//   HTTP:  this.t('workload.container.healthcheck.checkType.http'),
+//   HTTPS: this.t('workload.container.healthcheck.checkType.https'),
+//   tcp:   this.t('workload.container.healthcheck.checkType.tcp'),
+//   exec:  this.t('workload.container.healthcheck.checkType.command'),
+// };
 
 export default {
   components: {
@@ -93,15 +94,23 @@ export default {
       return this.kind === 'none';
     },
 
-    kindLabels() {
-      return KIND_LABELS;
+    KIND_LABELS() {
+      return {
+        none:  this.t('workload.container.healthcheck.checkType.none'),
+        HTTP:  this.t('workload.container.healthcheck.checkType.http'),
+        HTTPS: this.t('workload.container.healthcheck.checkType.https'),
+        tcp:   this.t('workload.container.healthcheck.checkType.tcp'),
+        exec:  this.t('workload.container.healthcheck.checkType.command'),
+      };
     },
 
     kindOptions() {
-      return Object.keys(KIND_LABELS).map((k) => {
-        return { label: KIND_LABELS[k], value: k };
+      return Object.keys(this.KIND_LABELS).map((k) => {
+        return { label: this.KIND_LABELS[k], value: k };
       });
-    }
+    },
+
+    ...mapGetters({ t: 'i18n/t' })
   },
 
   watch: {

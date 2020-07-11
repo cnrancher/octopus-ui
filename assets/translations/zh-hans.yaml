@@ -53,9 +53,15 @@ breadCrumbs:
   workloads: 工作负载
   deviceprotocol: 设备协议
   deviceprotocols: 设备协议
+  devicetemplate: 设备模版
+  devicetemplates: 设备模版
   template: 设备模板
   templates: 设备模板
   stores: 存储类别
+  storageclasses: 存储类别
+  persistentvolumes: 存储卷
+  devicelink: 设备列表
+  devicelinks: 设备列表
   deployments: Deployment
   system:
     service: 系统服务
@@ -455,6 +461,18 @@ tableHeaders:
   resource: Resource
   apiGroup: API Groups
   ingressTarget: Target
+  claim: PVC
+  accessModes: 访问模式
+  storageClass: 存储类别
+  allowVolumeExpansion: 支持扩展
+  provisioner: 提供者
+  reclaimPolicy: 回收策略
+  volumeBindingMode: 卷绑定模式
+  capacity: 容量
+  persistentvolumes: 存储卷
+  parameters: 参数
+  persistentVolumeClaim: 'Persistent Volume Claim (PVC)'
+  source: 存储源
   rbac:
     create: Create
     delete: Delete
@@ -563,16 +581,16 @@ cruStorageClass:
   provisioner:
     label: Provisioner
   pv:
-    title: Persistent Volumes
+    title: 存储卷
     detail: Persistent Volumes provisioned by the current storage class.
-  pvc: Persistent Volume Claim
+  pvc: Persistent Volume Claim (PVC)
   source:
     label: Volume Plugin
     title: Plugin Configuration
     detail: Configure options for the selected volume plugin
     prompt: Choose a volume plugin...
   parameters:
-    title: Parameters
+    title: 参数
     detail: Configure the provider-specific parameters for the storage class
     addActionLabel: Add Parameter
 persistentVolumePage:
@@ -581,7 +599,7 @@ persistentVolumePage:
   noData: There are no persistent volumes defined
   noMatch: No persistent volumes match the current search
   source:
-    label: Source
+    label: 存储源
 
 workload:
   container:
@@ -617,12 +635,12 @@ workload:
       readinessProbe: Readiness Probe
       livenessProbe: Liveness Probe
       startupProbe: Startup Probe
-      livenessTip: Containers will be restarted when this check is failing.  Not recommended for most uses.
-      readinessTip: Containers will be removed from service endpoints when this check is failing.  Recommended.
-      startupTip: Containers will wait until this check succeeds before attempting other health checks.
+      livenessTip: 此检查失败时，将重新启动容器(不建议用于大多数用途).
+      readinessTip: 此检查失败时，将从服务端点中删除容器(推荐的).
+      startupTip: 容器将等待此检查成功，然后再尝试其他运行状况检查.
       checkInterval: 检查周期
-      successThreshold: 健康阈值
-      failureThreshold: 不健康阈值
+      successThreshold: 健康阈值(成功)
+      failureThreshold: 不健康阈值(失败)
       initialDelay: 运行多少时间后开始检测
       timeout: 超时时间
       httpGet:
@@ -635,6 +653,12 @@ workload:
       livenessCheck: 存活状态检查
       startupCheck: 启动检查
       type: 类型
+      checkType:
+        none: 无
+        tcp: TCP端口检查
+        http: HTTP请求状态检查(2xx或3xx)
+        https: HTTPS请求状态检查(2xx或3xx)
+        command: 容器中进程退出状态码检查(0)
     security:
       privileged: 特权模式
       allowPrivilegeEscalation: 提升特权
@@ -695,8 +719,8 @@ workload:
       antiAffinityTitle: Run pods on nodes without pods matching these selectors
       nodeName: 节点名称
       matchExpressions:
-        in: 在列表中
-        notIn: 不列表中
+        in: '='
+        notIn: '≠'
         exists: 已设置
         doesNotExist: 未设置
         greaterThan: '>'

@@ -8,21 +8,15 @@ import {
 import { deviceDefaultInfo } from '@/config/map';
 import { allHash } from '@/utils/promise';
 
-const schema = {
-  id:         'helm.cattle.io.helmchart',
-  type:       SCHEMA,
-  attributes: {
-    kind:       'helm.cattle.io.helmchart',
-    namespaced: true
-  },
-  metadata: { name: 'helm.cattle.io.helmchart' },
-};
-
 export default {
   name:       'Application',
   components: { SortableTable },
 
   props: {
+    schema: {
+      type:     Object,
+      required: true,
+    },
     // The things out of asyncData come in as props
     resources: {
       type:    Object,
@@ -49,10 +43,6 @@ export default {
   },
 
   computed: {
-    schema() {
-      return schema;
-    },
-
     headers() {
       return [
         STATE,
@@ -138,10 +128,6 @@ export default {
 
       return false;
     }
-  },
-
-  typeDisplay({ store }) {
-    return store.getters['type-map/pluralLabelFor'](schema);
   },
 };
 </script>

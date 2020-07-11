@@ -1,5 +1,6 @@
 <script>
 /* eslint-disable */
+import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import RadioGroup from '@/components/form/RadioGroup';
 import LabeledSelect from '@/components/form/LabeledSelect';
@@ -61,7 +62,15 @@ export default {
     }
 
     return {
-      selectNode, nodeName, nodeAffinity, podAffinity, podAntiAffinity, nodeSelector, tolerations
+      selectNode, 
+      nodeName, 
+      nodeAffinity, 
+      podAffinity, 
+      podAntiAffinity, 
+      nodeSelector, 
+      tolerations,
+      userNodeName: true,
+      cleanData: true
     };
   },
 
@@ -106,13 +115,29 @@ export default {
         delete out.nodeName;
         delete out.nodeSelector;
       }
-      console.log('----cleanUp(out)', cleanUp(out))
+
+      if (this.userNodeName) {
+        const keys = Object.keys(this.nodeSelector);
+        keys.forEach( K => {
+          Vue.delete(this.nodeSelector, K)
+        })
+        delete out.nodeSelector;
+      } else {
+        this.nodeName = ''
+        delete out.nodeName;
+      }
+
       this.$emit('input', cleanUp(out));
     },
     updateNodeSelector(neu) {
-      console.log('----updateNodeSelector', neu)
-      this.nodeSelector = neu
+      Vue.delete(this.value, 'nodeName');
+      this.nodeSelector = neu;
+      this.userNodeName = false;
       this.update();
+    },
+    updateNodeName(neu) {
+      this.cleanData = !this.cleanData
+      this.userNodeName = true;
     },
     isEmpty
   },
@@ -123,7 +148,7 @@ export default {
 <template scoped>
   <div @input="update">
     <div>
-      <h3>{{ t('workload.scheduling.titles.nodeScheduling') }}</h3>
+      <h4>{{ t('workload.scheduling.titles.nodeScheduling') }}</h4>
       <h4 v-if="isView" class="mt-10 mb-10">
         {{ selectNode ? t('workload.scheduling.affinity.specificNode') : t('workload.scheduling.affinity.schedulingRules') }}
       </h4>
@@ -145,11 +170,16 @@ export default {
               :mode="mode"
               option-label="id"
               :reduce="opt=>opt.id"
+              @input="updateNodeName"
             />
           </div>
         </div>
+
+        <el-divider></el-divider>
+
+        <h4 class="mt-10 mb-10">{{t('workload.scheduling.affinity.nodeLabel')}}</h4>
         <div v-if="mode!=='view' || !isEmpty(nodeSelector)" class="row">
-          <KeyValue :readAllowed="false" :title="t('workload.scheduling.affinity.nodeLabel')" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" @input="updateNodeSelector" />
+          <KeyValue :key='cleanData' :readAllowed="false" :value="nodeSelector" :mode="mode" :initial-empty-row="true" :pro-tip="false" @input="updateNodeSelector" />
         </div>
       </template>
       <template v-else>

@@ -367,6 +367,14 @@ export const LAST_HEARTBEAT_TIME = {
   formatter: 'LiveDate',
   width:     175
 };
+
+export const PERSISTENT_VOLUME_CLAIM = {
+  name:      'persistentVolumeClaim',
+  labelKey:  'tableHeaders.persistentVolumeClaim',
+  value:     'persistentVolumeClaim',
+  sort:      ['persistentVolumeClaim'],
+};
+
 export const REASON = {
   name:     'reason',
   labelKey: 'tableHeaders.reason',
@@ -385,11 +393,68 @@ export const KEY = {
   value:    'key',
   sort:     ['key']
 };
+
 export const VALUE = {
   name:      'value',
   labelKey:  'tableHeaders.value',
   value:     'value',
   sort:      ['value'],
+};
+
+export const PROVISIONER = {
+  name:      'provisioner',
+  labelKey:  'tableHeaders.provisioner',
+  value:     'provisioner',
+  sort:      ['provisioner'],
+};
+
+export const CAPACITY = {
+  name:      'capacity',
+  labelKey:  'tableHeaders.capacity',
+  value:     'capacity',
+  sort:      ['capacity'],
+};
+
+export const CLAIM = {
+  name:      'claim',
+  labelKey:  'tableHeaders.claim',
+  value:     'claim',
+  sort:      ['claim'],
+};
+
+export const ACCESS_MODES = {
+  name:      'accessModes',
+  labelKey:  'tableHeaders.accessModes',
+  value:     'accessModes',
+  sort:      ['accessModes'],
+};
+
+export const STORAGE_CLASS = {
+  name:      'storageClass',
+  labelKey:  'tableHeaders.storageClass',
+  value:     'storageClass',
+  sort:      ['storageClass'],
+};
+
+export const ALLOW_VOLUM_EEXPANSION = {
+  name:      'allowVolumeExpansion',
+  labelKey:  'tableHeaders.allowVolumeExpansion',
+  value:     'allowVolumeExpansion',
+  sort:      ['allowVolumeExpansion'],
+};
+
+export const RECLAIM_POLICY = {
+  name:      'reclaimPolicy',
+  labelKey:  'tableHeaders.reclaimPolicy',
+  value:     'reclaimPolicy',
+  sort:      ['reclaimPolicy'],
+};
+
+export const VOLUME_BINDING_MODE = {
+  name:      'volumeBindingMode',
+  labelKey:  'tableHeaders.volumeBindingMode',
+  value:     'volumeBindingMode',
+  sort:      ['volumeBindingMode'],
 };
 
 export const BUILT_IN = {

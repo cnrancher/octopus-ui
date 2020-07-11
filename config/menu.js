@@ -20,7 +20,7 @@ export const MENUS = [
         name: 'node-manage'
       },
       {
-        path: '/c/local/system.component',
+        path: '/c/local/system.service',
         meta: { title: '系统服务' },
         name: 'system-service'
       },

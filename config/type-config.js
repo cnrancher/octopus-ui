@@ -230,14 +230,14 @@ export default function(store) {
   });
 
   virtualType({
-    label:      'system.component',
+    label:      'system.service',
     namespaced: true,
-    name:       'system.component',
+    name:       'system.service',
     group:      'Cluster',
     weight:     10,
     route:      {
       name:     'c-cluster-resource',
-      params:   { resource: 'system.component' }
+      params:   { resource: 'system.service' }
     },
   });
 

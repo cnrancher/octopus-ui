@@ -185,6 +185,7 @@ export default {
       ref="yamluploader"
       type="file"
       class="hide"
+      accept=".yaml"
       :multiple="false"
       @change="fileChange"
     />

@@ -77,7 +77,7 @@ export default {
   },
 
   typeDisplay({ store }) {
-    return store.getters['type-map/pluralLabelFor'](schema);
+    return store.getters['i18n/t'](`breadCrumbs.${ store.getters['type-map/pluralLabelFor'](schema).toLocaleLowerCase() }`);
   },
 };
 </script>

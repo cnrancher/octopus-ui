@@ -48,6 +48,22 @@ breadCrumbs:
   secrets: 秘文管理
   configmaps: 配置映射
   helmcharts: 应用市场
+  store: 存储类别
+  workload: 工作负载
+  workloads: 工作负载
+  deviceprotocol: 设备协议
+  deviceprotocols: 设备协议
+  template: 设备模板
+  templates: 设备模板
+  stores: 存储类别
+  deployments: Deployment
+  system:
+    service: 系统服务
+    components: 系统服务
+  edge:
+    cattle:
+      io:
+        devicelink: 设备列表
 
 
 formKeyValue:

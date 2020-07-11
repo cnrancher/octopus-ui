@@ -110,6 +110,9 @@ export default {
       .cm-number {
         color: #ae81ff;
       }
+      div.CodeMirror-cursor {
+        border-left: 1px solid #f8f8f2;
+      }
     }
     .cm-s-base16-light .CodeMirror-gutters {
       background-color: #272822!important;

@@ -50,7 +50,7 @@ export default {
     <div class="text-center">
       <slot name="left" />
       <slot name="cancel">
-        <button type="button" class="btn role-secondary" @click="done">
+        <button type="button" class="btn role-secondary" @click="done" @dblclick.stop.prevent>
           <t k="generic.cancel" />
         </button>
       </slot>

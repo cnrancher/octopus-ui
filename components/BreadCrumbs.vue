@@ -73,7 +73,7 @@ export default {
         if (schema) {
           return this.t(`breadCrumbs.${ this.$store.getters['type-map/pluralLabelFor'](schema).toLocaleLowerCase() }`);
         } else {
-          return resourceType;
+          return this.t(`breadCrumbs.${ resourceType.toLocaleLowerCase() }`);
         }
       } else if (lastPiece === 'cluster') {
         return this.t(`breadCrumbs.${ this.cluster.nameDisplay }`);

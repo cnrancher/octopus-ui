@@ -123,7 +123,6 @@ export default {
       width:60%;
       flex-grow: 1;
       border-radius: 0 calc(var(--border-radius) * 2) calc(var(--border-radius) * 2) 0;
-      border-left: 0;
       margin-left: -1px;
     }
 
@@ -136,8 +135,6 @@ export default {
         box-shadow: none;
         width: 40%;
         height: 100%;
-        background-color: var(--accent-btn);
-        border-color: var(--primary);
         border-right-width: 2px;
 
         .vs__selected {
@@ -191,7 +188,6 @@ export default {
         }
 
         .vs__open-indicator {
-          fill: var(--primary);
           transform: scale(0.75);
         }
 

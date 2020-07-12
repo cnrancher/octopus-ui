@@ -223,7 +223,7 @@ export default {
         {
           name:  'value',
           label: this.t('tableHeaders.value'),
-          value: this.valueName,
+          value: this.valueName
         }
       ];
 
@@ -372,6 +372,7 @@ export default {
       :table-actions="false"
       :row-actions="false"
       :show-no-rows="isView"
+      :events-table="isView"
       key-field="id"
     >
       <template #col:key="{row}">
@@ -411,7 +412,7 @@ export default {
             <span v-if="valueBinary || row.binary">
               {{ row[valueName].length }} byte<span v-if="row[valueName].length !== 1">s</span>
             </span>
-            <div v-else-if="isView" class="view">
+            <div v-else-if="isView" class="view" :class="{'conceal': valueConcealed}">
               {{ row[valueName] }}
             </div>
             <TextAreaAutoGrow
@@ -536,8 +537,10 @@ export default {
 
     .view {
       width: 100%;
-      max-height: 70px;
       overflow-y: auto;
+      &textarea {
+        max-height: 70px;
+      }
     }
 
     label {

@@ -146,7 +146,7 @@ $selected: rgba($primary, .5);
   --popover-border             : var(--border);
   --popover-text               : var(--body-text);
   --popover-border-radius      : var(--border-radius);
-  --tooltip-bg                 : #{$primary};
+  --tooltip-bg                 : rgba(69,69,69,.8);
   --tooltip-border             : var(--border);
   --tooltip-text               : #{$light};
 
@@ -179,14 +179,14 @@ $selected: rgba($primary, .5);
   --wm-border                  : var(--border);
   --wm-tab-height              : 25px;
 
-  --terminal-bg                : var(--body-bg);
+  --terminal-bg                : #{$darkest};
   --terminal-cursor            : var(--warning);
-  --terminal-text              : var(--body-text);
+  --terminal-text              : #{$lightest};
 
-  --logs-bg                    : var(--wm-body-bg);
-  --logs-highlight             : var(--wm-body-bg);
+  --logs-bg                    : #{$darkest};
+  --logs-highlight             : #{$darkest};
   --logs-highlight-bg          : var(--warning);
-  --logs-text                  : var(--body-text);
+  --logs-text                  : #{$lightest};
 
   --detail-top-label           : #{$darker};
 }

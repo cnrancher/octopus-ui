@@ -112,7 +112,14 @@ export default {
         return '?';
       }
 
-      return this.t(`breadCrumbs.${ this.$store.getters['type-map/pluralLabelFor'](this.schema).toLocaleLowerCase() }`);
+      const originName = this.$store.getters['type-map/pluralLabelFor'](this.schema);
+      const translatedName = this.t(`breadCrumbs.${ originName }`);
+
+      if (!translatedName.startsWith('%')) {
+        return translatedName;
+      } else {
+        return originName;
+      }
     },
 
     isCreatable() {
@@ -147,7 +154,7 @@ export default {
             type="button"
             class="btn bg-info"
           >
-            Create from YAML
+            <t k="resourceList.head.createFromYaml" />
           </nuxt-link>
 
           <nuxt-link
@@ -157,7 +164,7 @@ export default {
             type="button"
             class="btn bg-primary ml-10"
           >
-            Create
+            <t k="resourceList.head.create" />
           </nuxt-link>
         </template>
       </div>

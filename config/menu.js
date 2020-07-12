@@ -59,7 +59,7 @@ export const MENUS = [
       },
       {
         path: '/c/local/secret',
-        meta: { title: '秘文管理' },
+        meta: { title: '密文管理' },
         name: 'secret-manage'
       },
       {

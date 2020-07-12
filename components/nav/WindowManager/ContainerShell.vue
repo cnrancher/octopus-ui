@@ -1,21 +1,23 @@
 <script>
-import Window from './Window';
 import { allHash } from '@/utils/promise';
 import { addParams } from '@/utils/url';
 import { base64Decode, base64Encode } from '@/utils/crypto';
+import Select from '@/components/form/Select';
 
 import Socket, {
   EVENT_CONNECTED,
+  EVENT_CONNECTING,
   EVENT_DISCONNECTED,
   EVENT_MESSAGE,
   //  EVENT_FRAME_TIMEOUT,
-  EVENT_CONNECT_ERROR
+  EVENT_CONNECT_ERROR,
 } from '@/utils/socket';
+import Window from './Window';
 
 const DEFAULT_COMMAND = ['/bin/sh', '-c', 'TERM=xterm-256color; export TERM; [ -x /bin/bash ] && ([ -x /usr/bin/script ] && /usr/bin/script -q -c "/bin/bash" /dev/null || exec /bin/bash) || exec /bin/sh'];
 
 export default {
-  components: { Window },
+  components: { Window, Select },
 
   props:      {
     // The definition of the tab itself
@@ -51,12 +53,13 @@ export default {
 
   data() {
     return {
-      container:   this.initialContainer || this.pod.defaultContainerName,
+      container:   this.initialContainer || this.pod?.defaultContainerName,
       socket:      null,
       terminal:    null,
       fitAddon:    null,
       searchAddon: null,
       isOpen:      false,
+      isOpening:   false,
       backlog:     []
     };
   },
@@ -71,7 +74,7 @@ export default {
     },
 
     containerChoices() {
-      return this.pod.spec.containers.map(x => x.name);
+      return this.pod?.spec?.containers?.map(x => x.name);
     },
   },
 
@@ -82,8 +85,13 @@ export default {
   },
 
   beforeDestroy() {
-    this.socket.disconnect();
-    this.terminal.dispose();
+    if ( this.socket ) {
+      this.socket.disconnect();
+    }
+
+    if ( this.terminal ) {
+      this.terminal.dispose();
+    }
   },
 
   async mounted() {
@@ -94,13 +102,13 @@ export default {
   methods: {
     async setupTerminal() {
       const docStyle = getComputedStyle(document.querySelector('body'));
-      const xterm = await import('xterm');
+      const xterm = await import(/* webpackChunkName: "xterm" */ 'xterm');
 
       const addons = await allHash({
-        fit:      import('xterm-addon-fit'),
-        webgl:    import('xterm-addon-webgl'),
-        weblinks: import('xterm-addon-web-links'),
-        search:   import('xterm-addon-search'),
+        fit:      import(/* webpackChunkName: "xterm" */ 'xterm-addon-fit'),
+        webgl:    import(/* webpackChunkName: "xterm" */ 'xterm-addon-webgl'),
+        weblinks: import(/* webpackChunkName: "xterm" */ 'xterm-addon-web-links'),
+        search:   import(/* webpackChunkName: "xterm" */ 'xterm-addon-search'),
       });
 
       const terminal = new xterm.Terminal({
@@ -145,11 +153,9 @@ export default {
       this.terminal.clear();
     },
 
-    async connect() {
-      if ( this.socket ) {
-        await this.socket.disconnect();
-        this.socket = null;
-        this.terminal.reset();
+    getSocketUrl() {
+      if ( !this.pod?.links?.view ) {
+        return;
       }
 
       const url = addParams(`${ this.pod.links.view.replace(/^http/, 'ws') }/exec`, {
@@ -161,20 +167,46 @@ export default {
         command:   DEFAULT_COMMAND,
       });
 
+      return url;
+    },
+
+    async connect() {
+      if ( this.socket ) {
+        await this.socket.disconnect();
+        this.socket = null;
+        this.terminal.reset();
+      }
+
+      const url = this.getSocketUrl();
+
+      if ( !url ) {
+        return;
+      }
+
       this.socket = new Socket(url, false, 0, 'base64.channel.k8s.io');
+
+      this.socket.addEventListener(EVENT_CONNECTING, (e) => {
+        this.isOpen = false;
+        this.isOpening = true;
+      });
+
+      this.socket.addEventListener(EVENT_CONNECT_ERROR, (e) => {
+        this.isOpen = false;
+        this.isOpening = false;
+        console.error('Connect Error', e); // eslint-disable-line no-console
+      });
+
       this.socket.addEventListener(EVENT_CONNECTED, (e) => {
         this.isOpen = true;
+        this.isOpening = false;
         this.fit();
         this.flush();
       });
 
       this.socket.addEventListener(EVENT_DISCONNECTED, (e) => {
         this.isOpen = false;
-      });
-
-      this.socket.addEventListener(EVENT_CONNECT_ERROR, (e) => {
-        this.isOpen = false;
-        console.error('Connect Error', e); // eslint-disable-line no-console
+        this.isOpening = false;
+        this.$emit('close');
       });
 
       this.socket.addEventListener(EVENT_MESSAGE, (e) => {
@@ -230,7 +262,8 @@ export default {
 <template>
   <Window :active="active">
     <template #title>
-      <v-select
+      <Select
+        v-if="containerChoices"
         v-model="container"
         :disabled="containerChoices.length <= 1"
         class="auto-width inline mini"
@@ -242,12 +275,14 @@ export default {
         <template #selected-option="option">
           <t v-if="option" k="wm.containerShell.containerName" :label="option.label" />
         </template>
-      </v-select>
+      </Select>
       <button class="btn btn-sm bg-primary" @click="clear">
         <t k="wm.containerShell.clear" />
       </button>
-      <div class="pull-right">
-        <t :class="{'text-error': !isOpen}" :k="isOpen ? 'wm.connection.connected' : 'wm.connection.disconnected'" />
+      <div class="pull-right text-center ml-5" style="min-width: 80px">
+        <t v-if="isOpen" k="wm.connection.connected" />
+        <t v-else-if="isOpening" k="wm.connection.connecting" class="text-warning" :raw="true" />
+        <t v-else k="wm.connection.disconnected" class="text-error" />
       </div>
     </template>
     <template #body>

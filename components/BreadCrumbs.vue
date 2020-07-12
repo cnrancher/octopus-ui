@@ -65,20 +65,31 @@ export default {
     displayName(location, params = this.params) {
       const pieces = location.name.split('-');
       const lastPiece = pieces[pieces.length - 1];
+      let src = '';
+      let translatedName = '';
 
       if (lastPiece === 'resource') {
         const resourceType = params[lastPiece];
         const schema = this.$store.getters['cluster/schemaFor'](resourceType);
 
         if (schema) {
-          return this.t(`breadCrumbs.${ this.$store.getters['type-map/pluralLabelFor'](schema).toLocaleLowerCase() }`);
+          src = this.$store.getters['type-map/pluralLabelFor'](schema);
         } else {
-          return this.t(`breadCrumbs.${ resourceType.toLocaleLowerCase() }`);
+          src = resourceType;
         }
+        translatedName = this.t(`breadCrumbs.${ src.toLocaleLowerCase() }`);
       } else if (lastPiece === 'cluster') {
-        return this.t(`breadCrumbs.${ this.cluster.nameDisplay }`);
+        src = this.cluster.nameDisplay;
+        translatedName = this.t(`breadCrumbs.${ src }`);
       } else {
-        return params[lastPiece];
+        translatedName = params[lastPiece];
+      }
+
+      // makesure translate successfully
+      if (translatedName && !translatedName.startsWith('%')) {
+        return translatedName;
+      } else {
+        return src;
       }
     },
   }

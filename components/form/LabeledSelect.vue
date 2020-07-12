@@ -156,7 +156,7 @@ export default {
 </script>
 
 <template>
-  <div class="labeled-select labeled-input" :class="{disabled, focused, [mode]: true, 'hide-label': hideLabel}">
+  <div class="labeled-select labeled-input" :class="{disabled, focused, [mode]: true, 'hide-label': hideLabel}" :title="currentLabel">
     <div :class="{'labeled-container': true, raised, empty, [mode]: true}" :style="{border:'none'}">
       <label v-if="label && !hideLabel">
         {{ label }}
@@ -168,7 +168,7 @@ export default {
       <div v-if="isView" class="selected">
         {{ currentLabel }}&nbsp;
       </div>
-      <div v-else class="selected" :class="{'no-label':!label}" :style="{visibility:selectedVisibility}">
+      <div v-else class="selected clip" :class="{'no-label':!label}" :style="{visibility:selectedVisibility}">
         {{ currentLabel }}&nbsp;
       </div>
     </div>

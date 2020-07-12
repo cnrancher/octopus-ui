@@ -75,3 +75,9 @@ export const CUSTOMDeviceHeader = [
   description,
   value,
 ];
+
+export const MQTTDeviceHeader = [
+  name,
+  description,
+  value,
+];

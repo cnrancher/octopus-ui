@@ -6,7 +6,7 @@ export default {
       required: true
     },
     value: {
-      type:     [String, Number, null],
+      type:     [String, Number, null, Object],
       default:  ''
     }
   }

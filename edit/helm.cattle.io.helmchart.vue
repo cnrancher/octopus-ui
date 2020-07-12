@@ -63,6 +63,8 @@ export default {
         cloneValue.spec.valuesContent = 'replicaCount: 3\nimage:\n  pullPolicy: IfNotPresent\n  repository: emqx/emqx\nresources:\n  limits:\n    cpu: 500m\n    memory: 512Mi\n  requests:\n    cpu: 500m\n    memory: 512Mi\npersistence:\n  accessMode: ReadWriteOnce\n  enabled: false\n  size: 20Mi\nservice.type: ClusterIP\nemqxConfig:\n  EMQX_CLUSTER__K8S__ADDRESS_TYPE: hostname\n  EMQX_CLUSTER__K8S__APISERVER: https://kubernetes.default.svc:443\n  EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local\nemqxLicneseSecretName: null\ntolerations: []\nnodeSelector: {}\naffinity: {}\ningress:\n  annotations: {}\n  enabled: false\n  hosts:\n  - chart-example.local\n  path: /\n  tls: []'
       }
       cloneValue.metadata.annotations['octopusapi.cattle.io/catalogs'] = name;
+      cloneValue.metadata.annotations['octopusapi.cattle.io/catalogsNamespace'] = namespace;
+      console.log('----添加catal', cloneValue)
       this.$set(this.value, 'metadata', _.merge(cloneValue.metadata, this.value.metadata));
       this.$set(this.value, 'spec', _.merge(cloneValue.spec, this.value.spec));
       this.$set(this.value.spec, 'chart', app);
@@ -87,6 +89,7 @@ export default {
       return this.catalogs?.[this.app]?.[0].description;
     },
     versions() {
+      console.log('----this.catalogs', this.catalogs, this.app)
       const versions = _.sortBy(this.catalogs?.[this.app] || [], (C) => {
         return -C.version;
       });
@@ -120,13 +123,11 @@ export default {
     let name = this.$route.query.name || this.value.metadata?.annotations['octopusapi.cattle.io/catalogs'];
     let namespace = this.$route.query.namespace || this.value.metadata.namespace;
     const catalog = hash.catalogs.filter( (C) => {
-      return name === C.metadata.name && namespace === C.metadata.namespace;
+      return name === C.metadata.name;
     });
-
     const appArr = catalog[0].spec.indexFile?.entries;
 
     this.value.spec.repo = catalog[0].spec.url;
-
     this.catalogs = appArr;
   },
 

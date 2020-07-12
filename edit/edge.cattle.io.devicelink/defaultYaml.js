@@ -2,15 +2,8 @@ export const extension = {
   mqtt: {
     client: {
       server:          '',
-      protocolVersion: 4,
-      will:            {
-        topicName:      '',
-        payloadEncode:  'raw',
-        qos:            0,
-        payloadContent: '',
-        retained:       false
-      },
-      basicAuth: {
+      protocolVersion: 0,
+      basicAuth:       {
         name:      '',
         password: ''
       },
@@ -36,15 +29,12 @@ export const extension = {
       },
     },
     message: {
-      topic: {
-        name:   '',
-        prefix: '',
-        with:   'nn'
+      topic: '',
+      will:  {
+        topic:   '',
+        content:  ''
       },
-      topicName:     '',
-      payloadEncode: 'raw',
-      qos:           0,
-      retained:      true,
+      qos: 1,
     }
   }
 };
@@ -147,6 +137,62 @@ export const OPC_UA_DEVICE = {
         password:   '',
       },
       properties: []
+    }
+  }
+};
+
+export const MQTT_DEVICE = {
+  adaptor: {
+    node: '',
+    name: 'adaptors.edge.cattle.io/mqtt'
+  },
+  model: {
+    apiVersion: 'devices.edge.cattle.io/v1alpha1',
+    kind:       'MQTTDevice'
+  },
+  template:   {
+    metadata: { labels: { } },
+    spec:     {
+      properties: [],
+      protocol:   {
+        pattern:   'AttributedTopic',
+        client:    { server: 'tcp://test.mosquitto.org:1883' },
+        message:   { topic: 'cattle.io/octopus/home/status/:path/:operator' },
+        qos:       1,
+        retainted: true,
+        operator:  {
+          read:  'status',
+          write: 'set'
+        }
+      }
+    }
+  }
+};
+
+export const MQTT_DEVICE_MESSAGE = {
+  adaptor: {
+    node: '',
+    name: 'adaptors.edge.cattle.io/mqtt'
+  },
+  model: {
+    apiVersion: 'devices.edge.cattle.io/v1alpha1',
+    kind:       'MQTTDevice'
+  },
+  template:   {
+    metadata: { labels: { } },
+    spec:     {
+      properties: [],
+      protocol:   {
+        pattern:   'AttributedMessage',
+        client:    { server: 'AttributedMessage' },
+        message:   { topic: 'cattle.io/octopus/home/status/:path/:operator' },
+        qos:       1,
+        retainted: true,
+        operator:  {
+          read:  'status',
+          write: 'set'
+        }
+      }
     }
   }
 };

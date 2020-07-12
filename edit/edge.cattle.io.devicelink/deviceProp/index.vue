@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import OPCUADeviceModel from '@/edit/edge.cattle.io.devicelink/model/OpcUaModel';
 import ModbusDeviceModel from '@/edit/edge.cattle.io.devicelink/model/ModbusModel';
+import MQTTDeviceModel from '@/edit/edge.cattle.io.devicelink/model/MQTTModel';
 import CustomModel from '@/edit/edge.cattle.io.devicelink/custom/CustomModel';
 import BluetoothDeviceModel from '@/edit/edge.cattle.io.devicelink/model/BluetoothModel';
 import AddTable from '@/edit/edge.cattle.io.devicelink/deviceProp/AddTable';
@@ -9,6 +10,7 @@ import {
   BluetoothDeviceHeader,
   ModbusDeviceHeader,
   OPCUADeviceHeader,
+  MQTTDeviceHeader,
   CUSTOMDeviceHeader
 } from '@/edit/edge.cattle.io.devicelink/type-header';
 import { OFFICIAL_DEVICE } from '@/config/types';
@@ -22,7 +24,8 @@ export default {
     CustomModel,
     OPCUADeviceModel,
     ModbusDeviceModel,
-    BluetoothDeviceModel
+    BluetoothDeviceModel,
+    MQTTDeviceModel
   },
 
   props: {
@@ -47,7 +50,8 @@ export default {
       headers: {
         BluetoothDeviceHeader,
         ModbusDeviceHeader,
-        OPCUADeviceHeader
+        OPCUADeviceHeader,
+        MQTTDeviceHeader
       },
       devicesType,
       dialogVisible: false,

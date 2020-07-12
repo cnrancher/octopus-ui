@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import _ from 'lodash';
 import {
-  BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, customDevice
+  BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, MQTT_DEVICE, customDevice
 } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 import { allHash } from '@/utils/promise';
 import { sortBy } from '@/utils/sort';
@@ -24,6 +24,7 @@ import MqttConfig from '@/edit/edge.cattle.io.devicelink/mqtt/MqttConfig';
 import CustomConfig from '@/edit/edge.cattle.io.devicelink/configuration/custom';
 import OPCUADeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/opcUa';
 import ModbusDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/modbus';
+import MQTTDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/mqtt';
 import BluetoothDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/bluetooth';
 
 export default {
@@ -39,6 +40,7 @@ export default {
     NameNsDescription,
     OPCUADeviceConfig,
     ModbusDeviceConfig,
+    MQTTDeviceConfig,
     BluetoothDeviceConfig,
   },
 
@@ -141,6 +143,8 @@ export default {
         this.$set(this.value, 'spec', _.merge(_.cloneDeep(BLUE_THOOTH_DEVICE), this.value.spec));
       } else if (kind === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.merge(_.cloneDeep(OPC_UA_DEVICE), this.value.spec));
+      } else if (kind === 'MQTTDevice') {
+        this.$set(this.value, 'spec', _.merge(_.cloneDeep(MQTT_DEVICE), this.value.spec));
       } else {
         this.$set(this.value, 'spec', _.merge(_.cloneDeep(customDevice), this.value.spec));
       }
@@ -183,6 +187,8 @@ export default {
         this.$set(this.value, 'spec', _.cloneDeep(BLUE_THOOTH_DEVICE));
       } else if (kind === 'OPCUADevice') {
         this.$set(this.value, 'spec', _.cloneDeep(OPC_UA_DEVICE));
+      } else if (kind === 'MQTTDevice') {
+        this.$set(this.value, 'spec', _.cloneDeep(MQTT_DEVICE));
       } else {
         this.$set(this.value, 'spec', _.cloneDeep(customDevice));
 
@@ -272,7 +278,7 @@ export default {
         </div>
       </div>
 
-      <ResourceTabs v-model="value" :mode="mode" default-tab="config">
+      <ResourceTabs :key="kind" v-model="value" :mode="mode" default-tab="config">
         <template #before>
           <Tab label="访问配置" name="config">
             <ModbusDeviceConfig
@@ -288,6 +294,11 @@ export default {
 
             <OPCUADeviceConfig
               v-else-if="kind === 'OPCUADevice'"
+              :template-spec="value.spec.template.spec"
+            />
+
+            <MQTTDeviceConfig
+              v-else-if="kind === 'MQTTDevice'"
               :template-spec="value.spec.template.spec"
             />
 
@@ -308,7 +319,7 @@ export default {
             />
           </Tab>
 
-          <Tab label="MQTT" name="mqtt">
+          <Tab v-if="kind !== 'MQTTDevice'" label="MQTT" name="mqtt">
             <MqttConfig
               ref="mqttConfig"
               :template-spec="value.spec.template.spec"

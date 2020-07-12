@@ -2,7 +2,7 @@
   "name": "dashboard",
   "version": "master",
   "description": "Octopus Dashboard",
-  "repository": "https://github.com/rancherlabs/dashboard",
+  "repository": "https://github.com/cnrancher/octopus-ui/",
   "license": "Apache-2.0",
   "author": "Rancher Labs, Inc.",
   "private": true,

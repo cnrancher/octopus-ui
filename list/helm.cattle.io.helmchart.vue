@@ -146,7 +146,7 @@ export default {
       <tr class="group-row">
         <td :colspan="4">
           <div class="group-tab">
-            {{ group.ref }} <span class="version ml-20">{{ getVersion(group) ? '' : '有新版本可更新' }}</span>
+            {{ group.ref }} <span class="version ml-20" :class="{}">{{ getVersion(group) ? '' : '有新版本可更新' }}</span>
           </div>
         </td>
       </tr>
@@ -156,6 +156,8 @@ export default {
 
 <style lang="scss" scoped>
 .version {
+  padding: 2px 3px;
+  font-size: .65em;
   color: blue !important;
 }
 </style>

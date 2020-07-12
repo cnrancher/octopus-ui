@@ -3,6 +3,7 @@ import LabelValue from '@/components/LabelValue';
 import SortableTable from '@/components/SortableTable';
 import createEditView from '@/mixins/create-edit-view';
 import { EVENT, DEVICE_LINK } from '@/config/types';
+import { getObjectFlatterChainData } from '@/utils/object';
 import { POD_EVENT } from '@/config/table-headers';
 
 export default {
@@ -63,7 +64,19 @@ export default {
 
   computed: {
     deviceValue() {
-      return this.deviceList[0]?.status?.properties || [this.deviceList[0]?.status];
+      let out = [];
+      const deviceValue = this.deviceList[0]?.status?.properties || this.deviceList[0]?.status;
+
+      if (Array.isArray(deviceValue)) {
+        out = deviceValue.map( (O) => {
+          return { [O.name]: O.value };
+        });
+      } else if (typeof deviceValue === 'object') {
+        out = getObjectFlatterChainData(deviceValue, []);
+      }
+
+      return out;
+      // const arr = this.deviceList[0]?.status?.properties || [this.deviceList[0]?.status];
     },
     headers() {
       return POD_EVENT;

@@ -108,7 +108,7 @@ export default {
   computed:   {
     pods() {
       if (this.value.type === WORKLOAD_TYPES.DEPLOYMENT) {
-        const replicaset = this.filterResourcesByOwner(this.allReplicasets, this.name )[0];
+        const replicaset = this.filterRealReplicaset(this.filterResourcesByOwner(this.allReplicasets, this.name ), this.value.spec)[0];
 
         if (replicaset) {
           const replicaName = replicaset.id.slice(replicaset.id.indexOf('/') + 1);
@@ -225,10 +225,18 @@ export default {
         const { metadata:{ ownerReferences = [] } } = resource;
 
         return (ownerReferences.filter((owner) => {
-          return owner.name === ownerId;
+          return owner.controller && owner.name === ownerId;
         }).length);
       });
     },
+
+    filterRealReplicaset(replicasets, spec) {
+      return replicasets.filter((replicaset) => {
+        const { spec:{} } = replicaset;
+
+        return spec.replicas === spec.replicas;
+      })
+    }
   },
 };
 </script>

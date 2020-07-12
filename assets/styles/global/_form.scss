@@ -62,6 +62,11 @@ TEXTAREA,
     }
   }
 
+  &.focused {
+    background-color: var(--input-hover-bg);
+    border-color: var(--primary);
+  }
+
   LABEL {
     margin: $spacing 0 $spacing 0;
   }

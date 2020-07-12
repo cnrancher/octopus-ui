@@ -18,10 +18,11 @@ const LABEL = {
     error:   'Error',
   },
   edit: {
-    action:  'Save',
-    waiting: 'Saving&hellip;',
-    success: 'Saved',
-    error:   'Error',
+    action:   'Save',
+    waiting:  'Saving&hellip;',
+    success:  'Saved',
+    error:    'Error',
+    labelKey: 'generic.save'
   },
   delete: {
     action:  'Delete',
@@ -155,6 +156,10 @@ export default {
 
       if ( override ) {
         return override;
+      }
+
+      if (LABEL[this.mode].labelKey) {
+        return this.t(LABEL[this.mode].labelKey);
       }
 
       return LABEL[this.mode][this.phase];

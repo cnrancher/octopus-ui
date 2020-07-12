@@ -102,7 +102,7 @@ export default function(store) {
       label:     'Type',
       value:     'tableTypeDisplay',
       sort:      ['typeDisplay', 'nameSort'],
-      width:     100,
+      width:     150,
       formatter: 'SecretType'
     },
     KEYS,

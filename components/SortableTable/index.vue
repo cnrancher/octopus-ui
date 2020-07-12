@@ -571,12 +571,14 @@ $spacing: 10px;
     transition: none;
     word-wrap: break-word;
 
-    &:first-child {
-      padding-left: 10px;
-    }
-
     &:last-child {
       height: 0;
+    }
+  }
+  > THEAD > TR > TH,
+  > TBODY > TR:not(.group-row) > TD {
+    &:first-child {
+      padding-left: 10px;
     }
   }
   > THEAD > TR > TH {
@@ -776,7 +778,7 @@ $spacing: 10px;
 
   .no-rows {
     padding: $group-row-height;
-    color: var(--disabled-bg) !important;
+    color: #a0a0a0 !important;
     text-align: center;
   }
 

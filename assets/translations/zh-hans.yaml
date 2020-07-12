@@ -9,6 +9,7 @@ buttons:
 
 generic:
   cancel: 取消
+  save: 保存
   close: Close
   comingSoon: Coming Soon
   created: Created
@@ -45,7 +46,7 @@ breadCrumbs:
   local: 全局概览
   namespaces: 命名空间
   services: 服务发现
-  secrets: 秘文管理
+  secrets: 密文管理
   configmaps: 配置映射
   helmcharts: 应用市场
   store: 存储类别
@@ -565,12 +566,13 @@ serviceTypes:
 resourceYaml:
   buttons:
     continue: Continue Editing
-    diff: Show Diff
+    diff: 展示差异
 
 resourceList:
   head:
-    create: Create
-    createFromYaml: Create from YAML
+    create: 新建
+    createFromYaml: 导入YAML
+    readFromFile: 从文件读取
 
 resourceTabs:
   tabs:

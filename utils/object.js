@@ -128,8 +128,12 @@ export function getObjectFlatterChainData(data, list, keyName) {
     } else {
       str = key;
     }
-    if (typeof data[key] === 'object' && isNaN(data[key].length)) {
-      this.getObjectData(data[key], list, str);
+    if (Array.isArray(data[key])) {
+      data[key].forEach( (item, index) => {
+        list.push({ [index]: JSON.stringify(item) });
+      });
+    } else if (typeof data[key] === 'object' && isNaN(data[key].length)) {
+      getObjectFlatterChainData(data[key], list, str);
     } else {
       list.push({ [str]: data[key] });
     }

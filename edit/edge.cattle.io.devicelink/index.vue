@@ -150,7 +150,11 @@ export default {
       }
     },
     enable(buttonCb) {
-      const errors = this.$refs.mqttConfig.deleteUnuseProp();
+      let errors = [];
+
+      if (this.kind !== 'MQTTDevice') {
+        errors = this.$refs?.mqttConfig.deleteUnuseProp();
+      }
 
       if (this.kind === 'ModbusDevice') {
         this.$refs.modbus.deleteData();

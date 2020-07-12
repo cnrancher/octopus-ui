@@ -26,6 +26,11 @@ export default {
 
   .label {
     width: 130px;
+    word-break:normal;
+    display:block;
+    white-space:pre-wrap;
+    word-wrap : break-word ;
+    overflow: hidden ;
     color: #999;
   }
 }

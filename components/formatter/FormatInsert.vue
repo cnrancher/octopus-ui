@@ -39,7 +39,7 @@ export default {
         out = getObjectFlatterChainData(deviceValue, []);
       }
 
-      return out;
+      return out.slice(0, 5);
     }
   },
   watch: {

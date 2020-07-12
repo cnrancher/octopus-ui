@@ -123,10 +123,13 @@ export default {
       });
 
       if (version === versions?.[0]?.version) {
-        return true;
+        return { isOld: false };
       }
 
-      return false;
+      return {
+        isOld: true,
+        url:   `/c/local/helm.cattle.io.helmchart/${ helm.metadata.namespace }/${ helm.metadata.name }?mode=edit`
+      };
     }
   },
 };
@@ -146,7 +149,9 @@ export default {
       <tr class="group-row">
         <td :colspan="4">
           <div class="group-tab">
-            {{ group.ref }} <span class="version ml-20" :class="{}">{{ getVersion(group) ? '' : '有新版本可更新' }}</span>
+            {{ group.ref }} <nuxt-link v-if="getVersion(group).isOld" :to="getVersion(group).url" class="version">
+              有新版本可更新
+            </nuxt-link>
           </div>
         </td>
       </tr>
@@ -156,8 +161,19 @@ export default {
 
 <style lang="scss" scoped>
 .version {
+  margin-top: 0 !important;
+  background: #f1c40f;
+  color: #3d3d3d;
   padding: 2px 3px;
-  font-size: .65em;
-  color: blue !important;
+  line-height: 20px;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 0 solid transparent;
+  letter-spacing: .5px;
+  border-radius: 1.5px;
 }
 </style>

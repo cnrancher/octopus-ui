@@ -29,7 +29,10 @@ export default {
     headers() {
       const out = [
         STATE,
-        NAME,
+        {
+          ...NAME,
+          width: 300
+        },
         CAPACITY,
         ACCESS_MODES,
         RECLAIM_POLICY,

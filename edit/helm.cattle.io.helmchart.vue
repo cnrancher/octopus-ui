@@ -132,6 +132,12 @@ export default {
   },
 
   methods: {
+    done() {
+      this.$router.replace({
+        name:   'c-cluster-resource',
+        params: { resource: 'helm.cattle.io.helmchart' }
+      });
+    },
     enable(buttonCb) {
       const currentValue = jsyaml.safeLoad(this.currentValue);
 

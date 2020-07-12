@@ -76,7 +76,6 @@ export default {
       }
 
       return out;
-      // const arr = this.deviceList[0]?.status?.properties || [this.deviceList[0]?.status];
     },
     headers() {
       return POD_EVENT;

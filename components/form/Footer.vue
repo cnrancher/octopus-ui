@@ -47,6 +47,7 @@ export default {
         {{ err }}
       </div>
     </div>
+    <div class="spacer"></div>
     <div class="text-center">
       <slot name="left" />
       <slot name="cancel">
@@ -59,6 +60,7 @@ export default {
         <AsyncButton
           v-if="!isView"
           :mode="mode"
+          :delay="2000"
           @click="save"
         />
       </slot>

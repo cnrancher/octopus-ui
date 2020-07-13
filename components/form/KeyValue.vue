@@ -500,7 +500,7 @@ export default {
     margin-bottom: $spacing;
 
     TH, TD {
-      padding: 0 $spacing $spacing 0;
+      padding: $spacing $spacing $spacing 0;
     }
 
     TR:last-of-type TD {

@@ -23,7 +23,7 @@ import DeviceProp from '@/edit/edge.cattle.io.devicelink/deviceProp';
 import { DEVICE_TEMPLATE, SCHEMA, NAMESPACE, OFFICIAL_DEVICE } from '@/config/types';
 import KeyValue from '@/components/form/KeyValue';
 import { defaultAsyncData } from '@/components/ResourceDetail';
-import { _CREATE, _EDIT } from '../config/query-params';
+import { _CREATE, _EDIT } from '@/config/query-params';
 
 const templateValue = {
   apiVersion: 'octopusapi.cattle.io/v1alpha1',

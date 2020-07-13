@@ -87,9 +87,8 @@ export const MENUS = [
         name: 'devicelink'
       },
       {
-        path: '/c/local/octopusapi.cattle.io.devicetemplate',
+        path: '/c/local/octopusapi.cattle.io.devicetemplaterevision',
         meta: { title: '设备模板' },
-        name: 'device-template'
       },
     ]
   },

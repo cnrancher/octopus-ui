@@ -113,7 +113,7 @@ export default {
       }
 
       const originName = this.$store.getters['type-map/pluralLabelFor'](this.schema);
-      const translatedName = this.t(`breadCrumbs.${ originName }`);
+      const translatedName = this.t(`breadCrumbs.${ originName.toLocaleLowerCase() }`);
 
       if (!translatedName.startsWith('%')) {
         return translatedName;

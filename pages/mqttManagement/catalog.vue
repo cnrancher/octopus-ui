@@ -15,7 +15,6 @@ export default {
     const { store } = ctx;
 
     const catalogs = await store.dispatch('management/findAll', { type: CATALOG });
-    console.log('----catalogs', catalogs);
 
     return {
       catalogs,
@@ -75,9 +74,9 @@ export default {
       </template>
 
       <template v-slot:action>
-        <el-button class="refresh" type="primary" icon="el-icon-refresh-left" @click="handlerRefresh">
-          刷新
-        </el-button>
+        <button type="button" class="refresh btn btn-sm bg-primary mr-20" @click="handlerRefresh">
+          <i class="el-icon-refresh-left"></i> 刷新
+        </button>
         <el-input v-model="search" placeholder="搜索"></el-input>
       </template>
     </CatalogHeader>
@@ -127,8 +126,7 @@ export default {
 <style lang="scss" scoped>
 #mqtt {
   .refresh {
-    width: 80px;
-    margin-right: 20px;
+    display: inline-block !important;
   }
 
   .cardList {

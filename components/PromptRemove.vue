@@ -139,7 +139,7 @@ export default {
 
     remove() {
       if (this.needsConfirm && this.confirmName !== this.names[0]) {
-        this.error = 'Resource names do not match';
+        this.error = this.t('promptRemove.mismatch');
         // if doneLocation is defined, redirect after deleting
       } else if (this.doneLocation) {
         // doneLocation will recompute to undefined when delete request completes
@@ -177,7 +177,7 @@ export default {
     <Card :style="{border:'none'}">
       <div slot="title" class="prompt-delete-title">
         <h4 class="text-default-text">
-          Are you sure?
+          <t k="promptRemove.title" />
         </h4>
         <div class="title-delete-icon" @click="close">
           <i class="icon icon-x" />
@@ -190,19 +190,19 @@ export default {
               <a :key="resource" :href="selfLinks[i]">{{ resource }}</a><span v-if="i===names.length-1" :key="resource+2">{{ plusMore }}</span><span v-else :key="resource+1">{{ i === toRemove.length-2 ? ', and ' : ', ' }}</span>
             </template>
           </template>
-          <span v-if="needsConfirm" :key="resource">Re-enter its name below to confirm:</span>
+          <span v-if="needsConfirm" :key="resource">{{ t('promptRemove.confirm') }}</span>
         </div>
         <input v-if="needsConfirm" id="confirm" v-model="confirmName" type="text" />
         <span class="text-warning">{{ preventDeletionMessage }}</span>
         <span class="text-error">{{ error }}</span>
-        <span v-if="!needsConfirm" class="text-info mt-20">{{ protip }}</span>
+        <!-- <span v-if="!needsConfirm" class="text-info mt-20">{{ protip }}</span> -->
       </div>
       <template slot="actions">
         <button class="btn btn-sm bg-default role-secondary" @click="close">
-          Cancel
+          {{ t('generic.cancel') }}
         </button>
         <button class="btn btn-sm bg-error" :disabled="isDeleteDisabled" @click="remove">
-          Delete
+          {{ t('buttons.remove') }}
         </button>
       </template>
     </Card>
@@ -215,12 +215,12 @@ export default {
         margin-left: 3px;
     }
     .remove-modal {
-       border-radius: var(--border-radius);
-       overflow: scroll;
-       max-height: 100vh;
-       & ::-webkit-scrollbar-corner {
-         background: rgba(0,0,0,0);
-         }
+      border-radius: var(--border-radius);
+      overflow: scroll;
+      max-height: 100vh;
+      & ::-webkit-scrollbar-corner {
+        background: rgba(0,0,0,0);
+      }
       .prompt-delete-title {
         width: 100%;
         position: relative;
@@ -234,8 +234,15 @@ export default {
       .role-secondary:hover {
         box-shadow: 1px 1px 6px 0 var(--primary) !important;
       }
-      .prompt-delete-content {
-        // text-align: center;
+      .card-title {
+        padding-top: 1rem;
+      }
+      .text-info {
+        color: #213444;
+      }
+      .text-error {
+        display: inline-block;
+        margin-top: 5px;
       }
     }
 </style>

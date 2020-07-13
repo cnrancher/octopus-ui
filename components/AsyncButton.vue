@@ -6,10 +6,11 @@ const ERROR = 'error';
 
 const LABEL = {
   create: {
-    action:  'Create',
-    waiting: 'Creating&hellip;',
-    success: 'Created',
-    error:   'Error',
+    action:   'Create',
+    waiting:  'Creating&hellip;',
+    success:  'Created',
+    error:    'Error',
+    labelKey: 'generic.create'
   },
   apply: {
     action:  'Apply',

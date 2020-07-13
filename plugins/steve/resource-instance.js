@@ -474,34 +474,39 @@ export default {
   _standardActions() {
     const all = [
       {
-        action:  'goToEdit',
-        label:   'Edit as Form',
-        icon:    'icon icon-fw icon-edit',
+        action:   'goToEdit',
+        label:    'Edit as Form',
+        icon:     'icon icon-fw icon-edit',
+        labelKey: 'gatekeeperConstraint.parameters.editAsForm',
         enabled:  this.canUpdate && this.canCustomEdit,
       },
       {
-        action:  'goToClone',
-        label:   'Clone as Form',
-        icon:    'icon icon-fw icon-copy',
+        action:   'goToClone',
+        label:    'Clone as Form',
+        labelKey: 'generic.cloneAsForm',
+        icon:     'icon icon-fw icon-copy',
         enabled:  this.canCreate && this.canCustomEdit,
       },
       { divider: true },
       {
-        action:  'goToEditYaml',
-        label:   'Edit as YAML',
-        icon:    'icon icon-file',
-        enabled: this.canUpdate && this.canYaml,
+        action:   'goToEditYaml',
+        label:    'Edit as YAML',
+        icon:     'icon icon-file',
+        labelKey: 'gatekeeperConstraint.parameters.editAsYaml',
+        enabled:  this.canUpdate && this.canYaml,
       },
       {
-        action:  'goToViewYaml',
-        label:   'View as YAML',
-        icon:    'icon icon-file',
-        enabled: !this.canUpdate && this.canYaml
+        action:   'goToViewYaml',
+        label:    'View as YAML',
+        icon:     'icon icon-file',
+        labelKey: 'generic.viewAsYaml',
+        enabled:  !this.canUpdate && this.canYaml
       },
       {
-        action:  'cloneYaml',
-        label:   'Clone as YAML',
-        icon:    'icon icon-fw icon-copy',
+        action:   'cloneYaml',
+        label:    'Clone as YAML',
+        labelKey: 'generic.cloneAsYaml',
+        icon:     'icon icon-fw icon-copy',
         enabled:  this.canCreate && this.canYaml,
       },
       {
@@ -527,9 +532,10 @@ export default {
       },
       { divider: true },
       {
-        action:  'viewInApi',
-        label:   'View in API',
-        icon:    'icon icon-fw icon-external-link',
+        action:   'viewInApi',
+        label:    'View in API',
+        labelKey: 'generic.viewApi',
+        icon:     'icon icon-fw icon-external-link',
         enabled:  this.canViewInApi,
       }
     ];

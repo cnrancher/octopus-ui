@@ -79,6 +79,16 @@ export default {
     execute(action, args) {
       this.$store.dispatch('action-menu/execute', { action, args });
       this.hide();
+    },
+
+    displayLabel(item) {
+      if (item.translationKey) {
+        return this.t(item.translationKey);
+      } else if (item.labelKey) {
+        return this.t(item.labelKey);
+      } else {
+        return item.label;
+      }
     }
   },
 };
@@ -90,7 +100,7 @@ export default {
     <ul class="list-unstyled menu" :style="style">
       <li v-for="opt in options" :key="opt.action" :class="{divider: opt.divider}" @click="execute(opt)">
         <i v-if="opt.icon" :class="{icon: true, [opt.icon]: true}" />
-        {{ opt.label }}
+        {{ displayLabel(opt) }}
       </li>
     </ul>
   </div>

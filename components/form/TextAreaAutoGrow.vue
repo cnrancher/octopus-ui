@@ -39,7 +39,7 @@ export default {
     style() {
       // This sets the height to one-line for SSR pageload so that it's already right
       // (unless the input is long)
-      return `height: ${ this.curHeight }px; overflow: ${ this.overflow };`;
+      return `height: ${ this.curHeight }px;overflow-y: auto;`;
     },
   },
 
@@ -85,7 +85,6 @@ export default {
       const border = parseInt($el.css('borderTopWidth'), 10) || 0 + parseInt($el.css('borderBottomWidth'), 10) || 0;
       const neu = Math.max(this.minHeight, Math.min(el.scrollHeight + border, this.maxHeight));
 
-      $el.css('overflowY', (el.scrollHeight > neu ? 'auto' : 'hidden'));
       $el.css('height', `${ neu }px`);
 
       this.curHeight = neu;

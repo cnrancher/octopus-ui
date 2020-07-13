@@ -230,11 +230,11 @@ export default {
       });
     },
 
-    filterRealReplicaset(replicasets, spec) {
+    filterRealReplicaset(replicasets, originSpec) {
       return replicasets.filter((replicaset) => {
-        const { spec:{} } = replicaset;
+        const { spec = {} } = replicaset;
 
-        return spec.replicas === spec.replicas;
+        return spec.replicas === originSpec.replicas;
       })
     }
   },
@@ -262,6 +262,7 @@ export default {
             :table-actions="false"
             :schema="podSchema"
             :show-groups="false"
+            :ignore-namespace="true"
           />
         </div>
       </div>

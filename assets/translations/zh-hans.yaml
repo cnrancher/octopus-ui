@@ -12,12 +12,18 @@ generic:
   save: 保存
   close: Close
   comingSoon: Coming Soon
+  create: 创建
   created: Created
   customize: Customize
   na: "n/a"
   name: Name
   type: Type
   unknown: Unknown
+  viewAsForm: 查看表单
+  viewAsYaml: 查看YAML
+  viewApi: API查看
+  cloneAsForm: 复制表单
+  cloneAsYaml: 复制YAML
 
 suffix:
   ib: iB
@@ -141,19 +147,22 @@ cluster:
       shortLabel: Imported
 
 promptRemove:
-  attemptingToRemove: You are attemping to remove the {type}
+  attemptingToRemove: 您正在尝试删除 {type}
   andOthers: |
     {count, plural,
     =0 {.}
     =1 {, and one other.}
     other {, and {count} others.}
     }
-  protip: 'protip: Hold the {alternateLabel} key while clicking delete to bypass this confirmation'
+  protip: '高级技巧: 点击删除按钮时按住{alternateLabel}键以跳过确认操作。'
+  title: 您确定要删除吗？
+  confirm: '再次输入名称并确认:'
+  mismatch: 资源名称不匹配
 
 containerResourceLimit:
-  label: Container Default Resource Limit
-  helpText: Configure how much of the resources the container can consume by default.
-  helpTextDetail: The amount of resources the container can consume by default.
+  label: 容器默认限制
+  helpText: 配置默认情况下容器可以消耗多少资源。
+  helpTextDetail: 默认情况下容器可以消耗资源的量。
   requestsCpu: CPU预留
   requestsMemory: 内存预留
   limitsCpu: CPU限制
@@ -254,8 +263,8 @@ gatekeeperConstraint:
     title: Violations
   parameters:
     title: Parameters
-    editAsForm: Edit as Form
-    editAsYaml: Edit as YAML
+    editAsForm: 编辑表单
+    editAsYaml: 编辑YAML
     addParameter: Add Parameter
   enforcementAction:
     title: Enforcement Action

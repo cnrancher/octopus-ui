@@ -30,7 +30,7 @@ export default {
       type="button"
       class="btn bg-primary ml-10"
     >
-      Create as Yaml
+      {{ t('resourceList.head.createFromYaml') }}
     </nuxt-link>
 
     <nuxt-link
@@ -39,7 +39,7 @@ export default {
       type="button"
       class="btn bg-primary ml-10"
     >
-      create
+      {{ t('resourceList.head.create') }}
     </nuxt-link>
   </div>
 </template>

@@ -56,8 +56,8 @@ breadCrumbs:
   deviceprotocols: 设备协议
   devicetemplate: 设备模版
   devicetemplates: 设备模版
-  template: 设备模板
-  templates: 设备模板
+  devicetemplaterevision: 设备模板
+  devicetemplaterevisions: 设备模板
   stores: 存储类别
   storageclasses: 存储类别
   persistentvolumes: 存储卷

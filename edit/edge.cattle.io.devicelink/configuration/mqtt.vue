@@ -3,10 +3,7 @@ import LabeledInput from '@/components/form/LabeledInput';
 import LabeledSelect from '@/components/form/LabeledSelect';
 import Checkbox from '@/components/form/Checkbox';
 import ButtonGroup from '@/components/ButtonGroup';
-import {
-  MQTT_DEVICE,
-  MQTT_DEVICE_MESSAGE
-} from '@/edit/edge.cattle.io.devicelink/defaultYaml';
+import { MQTT_DEVICE } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 
 export default {
   components: {

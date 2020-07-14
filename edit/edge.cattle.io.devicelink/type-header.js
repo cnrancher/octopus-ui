@@ -28,10 +28,10 @@ const UUID = {
 };
 
 // modbus-header
-const dataType = {
-  name:      'dataType',
-  label:     'dataType',
-  value:     'dataType',
+const type = {
+  name:      'type',
+  label:     'type',
+  value:     'type',
   width:      220,
 };
 
@@ -59,13 +59,13 @@ export const BluetoothDeviceHeader = [
 
 export const ModbusDeviceHeader = [
   name,
-  dataType,
+  type,
   value
 ];
 
 export const OPCUADeviceHeader = [
   name,
-  dataType,
+  type,
   value,
   nodeID
 ];

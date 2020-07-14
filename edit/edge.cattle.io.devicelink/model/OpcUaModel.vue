@@ -7,9 +7,9 @@ import { opcTypeOption, register, booleanType, READ_ONLY } from '@/config/map';
 const properties = {
   name:        '',
   description: '',
-  value:       '',
-  dataType:    'boolean',
   readOnly:    false,
+  value:       '',
+  type:    'boolean',
   visitor:     {
     nodeID:     '',
     browseName: '',
@@ -144,7 +144,7 @@ export default {
     <div class="row">
       <div class="col span-6">
         <LabeledSelect
-          v-model="localDevice.properties[index].dataType"
+          v-model="localDevice.properties[index].type"
           label="类型"
           :options="opcTypeOption"
           @input="clearValue"
@@ -153,7 +153,7 @@ export default {
 
       <div v-if="localDevice.properties[index].readOnly === false" class="col span-6">
         <select
-          v-if="localDevice.properties[index].dataType === 'boolean'"
+          v-if="localDevice.properties[index].type === 'boolean'"
           key="selectDataType"
           v-model="localDevice.properties[index].value"
           class="bigInput"

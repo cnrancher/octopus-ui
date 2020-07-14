@@ -1,18 +1,7 @@
 <script>
-import SVGA from 'svgaplayerweb';
-
 export default {
   data: () => ({ loading: false }),
 
-  mounted() {
-    // const player = new SVGA.Player('#demoCanvas');
-    // const parser = new SVGA.Parser('#demoCanvas');
-
-    // parser.load('static/mutiMask.svga', (videoItem) => {
-    //   player.setVideoItem(videoItem);
-    //   player.startAnimation();
-    // });
-  },
   methods: {
     start() {
       this.loading = true;
@@ -29,8 +18,7 @@ export default {
   <div v-if="loading">
     <div class="overlay"></div>
     <div class="content">
-      <!-- <div id="demoCanvas" class="svga" ref="canvas"></div> -->
-      Loading...
+      <img class="loading" src="~/assets/images/loading.gif" />
     </div>
   </div>
 </template>
@@ -53,6 +41,11 @@ export default {
     right: 0;
     text-align: center;
     z-index: z-index('loadingContent');
+
+    .loading {
+      width: 80px;
+      height: 80px;
+    }
   }
 
   .svga {

@@ -155,8 +155,7 @@ export default {
     .landscape {
       background-image: url('~assets/images/login-landscape.svg');
       background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center center;
+      background-size:100% 125vh;
       height: 100vh;
     }
   }

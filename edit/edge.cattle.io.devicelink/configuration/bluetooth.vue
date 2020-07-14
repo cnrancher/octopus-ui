@@ -17,15 +17,8 @@ export default {
   <div class="row">
     <div class="col span-6">
       <LabeledInput
-        v-model="templateSpec.protocol.name"
-        label="蓝牙设备名称"
-        required
-      />
-    </div>
-    <div class="col span-6">
-      <LabeledInput
-        v-model="templateSpec.protocol.macAddress"
-        label="Mac Address"
+        v-model="templateSpec.protocol.endpoint"
+        label="蓝牙设备"
         required
       />
     </div>

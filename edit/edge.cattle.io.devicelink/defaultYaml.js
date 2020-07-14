@@ -4,7 +4,7 @@ export const extension = {
       server:          '',
       protocolVersion: 0,
       basicAuth:       {
-        name:      '',
+        username:      '',
         password: ''
       },
       tlsConfig: {
@@ -55,8 +55,7 @@ export const BLUE_THOOTH_DEVICE = {
       extension,
       properties: [],
       protocol:   {
-        name:       '',
-        macAddress: ''
+        endpoint:  '',
       }
     }
   }
@@ -78,8 +77,8 @@ export const MODBUS_DEVICE_RTU = {
       extension,
       protocol: {
         rtu: {
-          slaveID:    '',
-          serialPort: '',
+          workerID:    '',
+          endpoint:   '',
           baudRate:   '',
           dataBits:   8,
           parity:     'E',
@@ -107,9 +106,8 @@ export const MODBUS_DEVICE_TCP = {
       extension,
       protocol: {
         tcp: {
-          slaveID:    '',
-          ip:         '',
-          port:       ''
+          workerID:  '',
+          endpoint:  '',
         }
       },
       properties: []
@@ -133,8 +131,20 @@ export const OPC_UA_DEVICE = {
       extension,
       protocol: {
         url:      '',
-        username: '',
-        password:   '',
+        basicAuth: {
+          username: '',
+          password:   '',
+        },
+        tlsConfig: {
+          certFilePEMRef: {
+            name: '',
+            item: ''
+          },
+          keyFilePEMRef: {
+            name: '',
+            item: ''
+          }
+        }
       },
       properties: []
     }
@@ -156,13 +166,13 @@ export const MQTT_DEVICE = {
       properties: [],
       protocol:   {
         pattern:   'AttributedTopic',
-        client:    { server: 'tcp://test.mosquitto.org:1883' },
-        message:   { topic: 'cattle.io/octopus/home/status/:path/:operator' },
+        client:    { server: '' },
+        message:   { topic: '' },
         qos:       1,
         retainted: true,
         operator:  {
-          read:  'status',
-          write: 'set'
+          read:  '',
+          write: ''
         }
       }
     }
@@ -208,7 +218,7 @@ export const customDevice = {
   },
   references: [],
   template:   {
-    metadata: { labels: { wj: '' } },
+    metadata: { labels: { } },
     spec:     {
       extension,
       protocol:   {},

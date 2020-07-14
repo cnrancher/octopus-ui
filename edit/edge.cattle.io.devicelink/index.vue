@@ -298,6 +298,7 @@ export default {
 
             <OPCUADeviceConfig
               v-else-if="kind === 'OPCUADevice'"
+              :namespace="value.metadata.namespace"
               :template-spec="value.spec.template.spec"
             />
 

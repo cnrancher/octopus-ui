@@ -13,7 +13,7 @@ const properties = {
   visitor:     {
     characteristicUUID: '',
     defaultValue:       '',
-    dataConverter:      {
+    dataConverter:  {
       startIndex:        '',
       endIndex:          '',
       shiftRight:        '',
@@ -96,7 +96,7 @@ export default {
     },
     changedRef(row, val, which) {
       delete row.operationRef;
-      delete row.operationType;
+      delete row.Type;
       delete row.key;
       delete row.binary;
     },
@@ -185,10 +185,10 @@ export default {
     <template v-if="accessMode !== 'NotifyOnly'">
       <div class="row">
         <KeyValue
-          key="operationType"
+          key="Type"
           v-model="localDevice.properties[index].visitor.dataConverter.orderOfOperations"
-          key-name="operationType"
-          value-name="operationValue"
+          key-name="Type"
+          value-name="value"
           :pad-left="false"
           :as-map="false"
           :read-allowed="false"
@@ -198,7 +198,7 @@ export default {
             <span>
               <select
                 ref="operation"
-                v-model="row.operationType"
+                v-model="row.Type"
                 class="bigInput"
                 @input="changedRef(row, $event.target.value, 'operation')"
               >

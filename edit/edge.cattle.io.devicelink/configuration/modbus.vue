@@ -87,6 +87,10 @@ export default {
         Vue.delete(this.templateSpec.protocol.rtu, 'parity');
         Vue.delete(this.templateSpec.protocol.rtu, 'stopBits');
       }
+
+      if (this.isChoose && !this.templateSpec.protocol.rtu.baudRate) {
+        Vue.delete(this.templateSpec.protocol.rtu, 'baudRate');
+      }
     }
   }
 };
@@ -99,19 +103,20 @@ export default {
         <ButtonGroup :value="transferMode" :options="modeOption" @input="changeTransferMode" />
       </div>
 
-      <div class="col span-6">
-        <LabeledInput
-          v-model.number="templateSpec.protocol[transferMode].slaveID"
-          label="SlaveID"
-        />
-      </div>
     </div>
 
     <div class="row">
+      <div class="col span-6">
+        <LabeledInput
+          v-model.number="templateSpec.protocol[transferMode].workerID"
+          label="workerID"
+        />
+      </div>
+
       <template v-if="transferMode === 'rtu'">
         <div class="col span-6">
           <LabeledInput
-            v-model="templateSpec.protocol[transferMode].serialPort"
+            v-model="templateSpec.protocol[transferMode].endpoint"
             label="串口"
           />
         </div>
@@ -120,15 +125,8 @@ export default {
       <template v-else>
         <div class="col span-6">
           <LabeledInput
-            v-model="templateSpec.protocol[transferMode].ip"
-            label="IP"
-          />
-        </div>
-
-        <div class="col span-6">
-          <LabeledInput
-            v-model.number="templateSpec.protocol[transferMode].port"
-            label="Port"
+            v-model="templateSpec.protocol[transferMode].endpoint"
+            label="endpoint"
           />
         </div>
       </template>

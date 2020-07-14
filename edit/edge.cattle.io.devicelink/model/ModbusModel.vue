@@ -10,7 +10,7 @@ const properties = {
   name:        '',
   description: '',
   value:       '',
-  dataType:    'boolean',
+  type:        'boolean',
   readOnly:    true,
   visitor:     {
     register:          'DiscreteInputRegister',
@@ -85,7 +85,7 @@ export default {
   methods: {
     changedRef(row, val, which) {
       delete row.operationRef;
-      delete row.operationType;
+      delete row.Type;
       delete row.key;
       delete row.binary;
     },
@@ -152,12 +152,12 @@ export default {
 
     <div class="row">
       <div class="col span-6">
-        <LabeledSelect v-model="localDevice.properties[index].dataType" label="类型" :options="typeOption" />
+        <LabeledSelect v-model="localDevice.properties[index].type" label="类型" :options="typeOption" />
       </div>
 
       <div class="col span-6">
         <LabeledSelect
-          v-if="localDevice.properties[index].dataType === 'boolean'"
+          v-if="localDevice.properties[index].type === 'boolean'"
           v-model="localDevice.properties[index].value"
           label="类型"
           :options="booleanType"
@@ -213,10 +213,10 @@ export default {
     <el-divider>Property Operation</el-divider>
 
     <KeyValue
-      key="operationType"
+      key="Type"
       v-model="localDevice.properties[index].visitor.orderOfOperations"
-      key-name="operationType"
-      value-name="operationValue"
+      key-name="Type"
+      value-name="value"
       key-label="Operation"
       :pad-left="false"
       :as-map="false"
@@ -225,7 +225,7 @@ export default {
     >
       <template #key="{row}">
         <span>
-          <select ref="operation" v-model="row.operationType" class="bigInput" @input="changedRef(row, $event.target.value, 'operation')">
+          <select ref="operation" v-model="row.type" class="bigInput" @input="changedRef(row, $event.target.value, 'operation')">
             <option v-for="opt in operatorList" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>

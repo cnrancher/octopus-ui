@@ -182,7 +182,7 @@ export default {
         const { name, passsword } = this.saveExtension.mqtt.client.basicAuth;
 
         if (!name && !passsword) {
-          Vue.delete(this.saveExtension.mqtt.client.basicAuth, 'name');
+          Vue.delete(this.saveExtension.mqtt.client.basicAuth, 'username');
           Vue.delete(this.saveExtension.mqtt.client.basicAuth, 'passsword');
         } else if (!(name && passsword)) {
           errors.push('请输入name 或 password!');
@@ -315,7 +315,7 @@ export default {
     <div v-if="isEnableBasicAuth" class="row">
       <div class="col span-6">
         <LabeledInput
-          v-model.trim="extension.mqtt.client.basicAuth.name"
+          v-model.trim="extension.mqtt.client.basicAuth.username"
           label="username"
           required
         />

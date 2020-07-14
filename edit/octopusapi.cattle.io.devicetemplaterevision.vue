@@ -4,7 +4,7 @@ import Vue from 'vue';
 import LoadDeps from '@/mixins/load-deps';
 import { sortBy } from '@/utils/sort';
 import {
-  BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, customDevice, extension
+  BLUE_THOOTH_DEVICE, MODBUS_DEVICE_RTU, MODBUS_DEVICE_TCP, OPC_UA_DEVICE, MQTT_DEVICE, customDevice, extension
 } from '@/edit/edge.cattle.io.devicelink/defaultYaml';
 import Footer from '@/components/form/Footer';
 import Tabbed from '@/components/Tabbed';
@@ -17,6 +17,7 @@ import Tab from '@/components/Tabbed/Tab';
 import BluetoothDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/bluetooth';
 import ModbusDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/modbus';
 import OPCUADeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/opcUa';
+import MQTTDeviceConfig from '@/edit/edge.cattle.io.devicelink/configuration/mqtt';
 import CustomConfig from '@/edit/edge.cattle.io.devicelink/configuration/custom';
 import MqttConfig from '@/edit/edge.cattle.io.devicelink/mqtt/MqttConfig';
 import DeviceProp from '@/edit/edge.cattle.io.devicelink/deviceProp';
@@ -36,7 +37,7 @@ const templateValue = {
     deviceKind:          '',
     deviceVersion:       'v1alpha1',
     deviceGroup:         'devices.edge.cattle.io',
-    deviceResource:      'modbusdevices', // ModbusDevice
+    deviceResource:      '',
     labels:              {},
     description:         '',
     defaultRevisionName: ''
@@ -73,6 +74,7 @@ export default {
     BluetoothDeviceConfig,
     ModbusDeviceConfig,
     OPCUADeviceConfig,
+    MQTTDeviceConfig,
     MqttConfig,
     DeviceProp,
     CustomConfig,
@@ -171,7 +173,7 @@ export default {
         if (this.kind === 'ModbusDevice') {
           this.$refs.modbus.deleteData();
         }
-        // TODO need callback method
+
         this.errors = errors;
         if (!errors.length) {
           if (this.mode === _CREATE && mode !== 'clone') {
@@ -222,6 +224,8 @@ export default {
         this.$set(this.value.spec, 'templateSpec', _.cloneDeep(BLUE_THOOTH_DEVICE.template.spec));
       } else if (kind === 'OPCUADevice') {
         this.$set(this.value.spec, 'templateSpec', _.cloneDeep(OPC_UA_DEVICE.template.spec));
+      } else if (kind === 'MQTTDevice') {
+        this.$set(this.value.spec, 'templateSpec', _.cloneDeep(MQTT_DEVICE.template.spec));
       } else {
         this.$set(this.value.spec, 'templateSpec', _.cloneDeep(customDevice.template.spec));
 
@@ -313,6 +317,11 @@ export default {
             :template-spec="value.spec.templateSpec"
           />
 
+          <MQTTDeviceConfig
+            v-else-if="kind === 'MQTTDevice'"
+            :template-spec="value.spec.templateSpec"
+          />
+
           <CustomConfig
             v-else
             :mode="mode"
@@ -329,7 +338,7 @@ export default {
           />
         </Tab>
 
-        <Tab label="MQTT" name="mqtt">
+        <Tab v-if="kind !== 'MQTTDevice'" label="MQTT" name="mqtt">
           <MqttConfig
             ref="mqttConfig"
             :template-spec="value.spec.templateSpec"

@@ -9,7 +9,7 @@ const properties = {
   description: '',
   readOnly:    false,
   value:       '',
-  type:    'boolean',
+  type:        'boolean',
   visitor:     {
     nodeID:     '',
     browseName: '',

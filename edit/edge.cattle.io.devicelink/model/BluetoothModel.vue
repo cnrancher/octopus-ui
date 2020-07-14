@@ -13,7 +13,7 @@ const properties = {
   visitor:     {
     characteristicUUID: '',
     defaultValue:       '',
-    dataConverter:  {
+    dataConverter:      {
       startIndex:        '',
       endIndex:          '',
       shiftRight:        '',

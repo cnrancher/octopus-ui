@@ -387,13 +387,13 @@ export default {
     <slot :value="value" name="top">
       <NameNsDescription :value="value" :mode="mode" :extra-columns="['type']">
         <template v-slot:type>
-          <LabeledSelect v-model="type" label="Type" :disabled="isEdit" :options="workloadTypeOptions" />
+          <LabeledSelect v-model="type" :label="t('generic.type')" :disabled="isEdit" :options="workloadTypeOptions" />
         </template>
       </NameNsDescription>
 
       <div class="row">
         <div class="col span-4">
-          <LabeledInput v-model="containerImage" label="Container Image" placeholder="eg nginx:latest" />
+          <LabeledInput v-model="containerImage" :label="t('workload.container.image')" placeholder="eg nginx:latest" />
         </div>
         <div class="col span-4">
           <LabeledSelect

@@ -16,8 +16,12 @@ generic:
   created: Created
   customize: Customize
   na: "n/a"
-  name: Name
-  type: Type
+  name: 
+    label: 名称
+  description: 
+    label: 描述
+    placeholder: 描述
+  type: 类型
   unknown: Unknown
   viewAsForm: 查看表单
   viewAsYaml: 查看YAML
@@ -50,6 +54,7 @@ nav:
 breadCrumbs:
   nodes: 节点管理
   local: 全局概览
+  namespace: 命名空间
   namespaces: 命名空间
   services: 服务发现
   secrets: 密文管理
@@ -310,7 +315,7 @@ infoBoxCluster:
 resourceDetail:
   header:
     view: "{name}"
-    create: "Create {type}"
+    create: "添加{type}"
     edit: "Edit {type}: {name}"
     clone: "Clone from {type}: {name}"
     stage: "Stage from {type}: {name}"
@@ -351,6 +356,9 @@ servicePorts:
       placeholder: e.g. 80
 
 sortableTable:
+  actionAvailability:
+    some: Available for {actionable} of the {total} selected
+    selected: "已选中{actionable}个资源"
   noRows: "没有数据"
   noData: "没有符合条件的数据"
   searchFilter: 搜索
@@ -622,8 +630,8 @@ workload:
       environmentVariables: 环境变量
       requestHeaders: 请求头
     name: Container Name
-    image: Container Image
-    imagePullPolicy: Image Pull Policy
+    image: 容器镜像
+    imagePullPolicy: 镜像更新策略
     ports:
       containerPort: 容器端口
       hostPort: 主机监听端口

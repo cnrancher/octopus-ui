@@ -1,8 +1,8 @@
 import $ from 'jquery';
-import selectionStore from './selectionStore';
-import { isMore, isRange, suppressContextMenu } from '@/utils/platform';
+import { isMore, isRange, suppressContextMenu, isAlternate } from '@/utils/platform';
 import { get } from '@/utils/object';
 import { randomStr } from '@/utils/string';
+import selectionStore from './selectionStore';
 export const ALL = 'all';
 export const SOME = 'some';
 export const NONE = 'none';
@@ -349,8 +349,12 @@ export default {
       }
     },
 
-    applyTableAction(action, args) {
+    applyTableAction(action, args = {}, event) {
+      if (isAlternate(event)) {
+        args.alt = true;
+      }
       this.$store.dispatch(`${ this.storeName }/executeTable`, { action, args });
+      this.$store.commit(`${ this.storeName }/setBulkActionOfInterest`, null);
     }
   }
 };

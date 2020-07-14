@@ -225,3 +225,11 @@ export function coerceStringTypeToScalarType(val, type) {
 
   return val;
 }
+
+export function insureTranslation(str, originStr) {
+  if (!str || str.startsWith('%')) {
+    return originStr;
+  }
+
+  return str;
+}

@@ -1,4 +1,5 @@
 <script>
+import Vue from 'vue';
 import _ from 'lodash';
 import KeyValue from '@/components/form/KeyValue';
 import LabeledInput from '@/components/form/LabeledInput';
@@ -91,6 +92,12 @@ export default {
     },
     add(formName) {
       const properties = this.localDevice.properties;
+
+      // properties.forEach( (item, index) => {
+      //   if (item.value === '' || item.value === undefined) {
+      //     Vue.delete(properties[index], 'value');
+      //   }
+      // })
 
       this.$emit('addProperties', _.cloneDeep(properties));
       this.$nextTick(() => {

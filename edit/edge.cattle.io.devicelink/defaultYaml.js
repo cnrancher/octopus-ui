@@ -53,10 +53,12 @@ export const BLUE_THOOTH_DEVICE = {
     metadata: { labels: { } },
     spec:     {
       extension,
+      parameters: {
+        syncInterval: '15s',
+        timeout:      '10s'
+      },
       properties: [],
-      protocol:   {
-        endpoint:  '',
-      }
+      protocol:   { endpoint: '' }
     }
   }
 };
@@ -75,6 +77,10 @@ export const MODBUS_DEVICE_RTU = {
     metadata: { labels: {} },
     spec:     {
       extension,
+      parameters: {
+        syncInterval: '15s',
+        timeout:      '10s'
+      },
       protocol: {
         rtu: {
           workerID:    '',
@@ -103,6 +109,10 @@ export const MODBUS_DEVICE_TCP = {
   template:   {
     metadata: { labels: {} },
     spec:     {
+      parameters: {
+        syncInterval: '15s',
+        timeout:      '10s'
+      },
       extension,
       protocol: {
         tcp: {
@@ -129,8 +139,12 @@ export const OPC_UA_DEVICE = {
     metadata: { labels: {} },
     spec:     {
       extension,
+      parameters: {
+        syncInterval: '15s',
+        timeout:      '10s'
+      },
       protocol: {
-        url:      '',
+        url:       '',
         basicAuth: {
           username: '',
           password:   '',

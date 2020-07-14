@@ -88,7 +88,7 @@ export default {
         Vue.delete(this.templateSpec.protocol.rtu, 'stopBits');
       }
 
-      if (this.isChoose && !this.templateSpec.protocol.rtu.baudRate) {
+      if (this.isChoose && this.templateSpec.protocol.rtu && !this.templateSpec.protocol.rtu.baudRate.baudRate) {
         Vue.delete(this.templateSpec.protocol.rtu, 'baudRate');
       }
     }
@@ -102,14 +102,13 @@ export default {
       <div class="col span-6">
         <ButtonGroup :value="transferMode" :options="modeOption" @input="changeTransferMode" />
       </div>
-
     </div>
 
     <div class="row">
       <div class="col span-6">
         <LabeledInput
           v-model.number="templateSpec.protocol[transferMode].workerID"
-          label="workerID"
+          label="WorkerID"
         />
       </div>
 

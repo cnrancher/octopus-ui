@@ -43,14 +43,8 @@ export default {
     z-index: z-index('loadingContent');
 
     .loading {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
     }
-  }
-
-  .svga {
-    width: 200px;
-    height: 200px;
-    margin: 100px auto;
   }
 </style>

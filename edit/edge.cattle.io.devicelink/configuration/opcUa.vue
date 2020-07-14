@@ -11,13 +11,17 @@ export default {
       type:     Object,
       required: true,
     },
-    namespace:  { type: String, required: true },
+    namespace: { type: String, required: true },
   },
 
   async fetch() {
     const hash = await allHash({ secret: this.$store.dispatch('cluster/findAll', { type: 'secret' }) });
 
     this.secret = hash.secret;
+  },
+
+  data() {
+    return { secret: [] };
   },
 
   computed: {
@@ -56,12 +60,6 @@ export default {
 
       return data[0] || [];
     },
-  },
-
-  data() {
-    return { 
-      secret: [],
-    }
   }
 };
 </script>

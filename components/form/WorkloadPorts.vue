@@ -91,13 +91,6 @@ export default {
 
       const out = [...this.rows];
 
-      for ( const row of this.rows ) {
-        const value = clone(row);
-
-        if ( value.hostPort ) {
-          out.push(value);
-        }
-      }
       this.$emit('input', out);
     }
   },

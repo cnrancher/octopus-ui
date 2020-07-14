@@ -47,7 +47,7 @@ export default {
     },
     descriptionPlaceholder: {
       type:    String,
-      default: 'Any text you want that better describes this resource'
+      default: null
     },
   },
 
@@ -99,6 +99,14 @@ export default {
 
       return `span-${ span }`;
     },
+
+    descriptionPlaceholderTranslated() {
+      if (!this.descriptionPlaceholder) {
+        return this.t('generic.description.placeholder');
+      }
+
+      return this.descriptionPlaceholder;
+    }
   },
 
   watch: {
@@ -142,8 +150,8 @@ export default {
             v-if="namespaced"
             ref="name"
             :options="namespaces"
-            text-label="Name"
-            select-label="Namespace"
+            :text-label="t('generic.name.label')"
+            :select-label="t('breadCrumbs.namespace')"
             :text-value="name"
             :text-required="true"
             :select-value="namespace"
@@ -156,7 +164,7 @@ export default {
             ref="name"
             key="name"
             v-model="name"
-            label="Name"
+            :label="t('generic.name.label')"
             :disabled="nameDisabled"
             :mode="mode"
             :min-height="30"
@@ -167,9 +175,9 @@ export default {
         <LabeledInput
           key="description"
           v-model="description"
-          label="Description"
+          :label="t('generic.description.label')"
           :mode="mode"
-          :placeholder="descriptionPlaceholder"
+          :placeholder="descriptionPlaceholderTranslated"
           :min-height="30"
         />
       </div>

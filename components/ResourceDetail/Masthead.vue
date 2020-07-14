@@ -4,6 +4,7 @@ import BreadCrumbs from '@/components/BreadCrumbs';
 import { NAMESPACE, EXTERNAL } from '@/config/types';
 import ButtonGroup from '@/components/ButtonGroup';
 import BadgeState from '@/components/BadgeState';
+import { insureTranslation } from '@/utils/string';
 
 export default {
   components: {
@@ -49,8 +50,11 @@ export default {
     },
 
     h1() {
+      const sourceType = this.$store.getters['type-map/singularLabelFor'](this.schema);
+      const translatedType = insureTranslation(this.$store.getters['i18n/t'](`breadCrumbs.${ sourceType.toLocaleLowerCase() }`), sourceType);
+
       const out = this.$store.getters['i18n/t'](`resourceDetail.header.${ this.realMode }`, {
-        type: this.$store.getters['type-map/singularLabelFor'](this.schema),
+        type: translatedType,
         name: this.value.nameDisplay,
       });
 

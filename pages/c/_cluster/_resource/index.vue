@@ -3,6 +3,7 @@ import ResourceTable from '@/components/ResourceTable';
 import Favorite from '@/components/nav/Favorite';
 import { AS_YAML, _FLAGGED } from '@/config/query-params';
 import BreadCrumbs from '@/components/BreadCrumbs';
+import { insureTranslation } from '@/utils/string';
 
 export default {
   components: {
@@ -115,11 +116,7 @@ export default {
       const originName = this.$store.getters['type-map/pluralLabelFor'](this.schema);
       const translatedName = this.t(`breadCrumbs.${ originName.toLocaleLowerCase() }`);
 
-      if (!translatedName.startsWith('%')) {
-        return translatedName;
-      } else {
-        return originName;
-      }
+      return insureTranslation(translatedName, originName);
     },
 
     isCreatable() {

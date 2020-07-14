@@ -29,7 +29,7 @@ export default {
         nullable:       false,
         path:           'metadata.name',
         required:       true,
-        translationKey: 'generic.name',
+        translationKey: 'generic.name.label',
         type:           'dnsLabel',
       },
       {

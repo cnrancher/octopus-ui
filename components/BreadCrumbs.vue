@@ -1,5 +1,6 @@
 <script>
 import { MANAGEMENT } from '@/config/types';
+import { insureTranslation } from '@/utils/string';
 
 export default {
   data() {
@@ -85,12 +86,7 @@ export default {
         translatedName = params[lastPiece];
       }
 
-      // makesure translate successfully
-      if (translatedName && !translatedName.startsWith('%')) {
-        return translatedName;
-      } else {
-        return src;
-      }
+      return insureTranslation(translatedName, src);
     },
   }
 };

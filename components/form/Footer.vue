@@ -34,6 +34,14 @@ export default {
 
     done() {
       this.$emit('done');
+    },
+
+    formatErrorInfo(error) {
+      if (error && error.message) {
+        return error.message;
+      }
+
+      return error;
     }
   }
 };
@@ -44,7 +52,7 @@ export default {
 
     <div v-for="(err,idx) in errors" :key="idx">
       <div class="text-error">
-        {{ err }}
+        {{ formatErrorInfo(err) }}
       </div>
     </div>
     <div class="spacer"></div>

@@ -503,8 +503,13 @@ export default {
       padding: $spacing $spacing $spacing 0;
     }
 
-    TR:last-of-type TD {
-      padding-bottom: 0;
+    > THEAD > TR > TH:first-child {
+      padding-left: 10px;
+    }
+    > TBODY > TR:not(.group-row) > TD {
+      &:nth-child(2) {
+        padding-left: 10px;
+      }
     }
   }
 
@@ -592,10 +597,6 @@ export default {
           padding: $spacing 0;
         }
       }
-    }
-
-    TR:first-of-type TD {
-      padding-top: 0;
     }
 }
 

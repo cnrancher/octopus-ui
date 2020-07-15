@@ -256,25 +256,6 @@ export default {
 </template>
 
 <style lang='scss'>
-  .value-from {
-    margin-bottom:10px;
-    padding-bottom: 10px;
-
-    &.headers {
-      border-bottom: 1px solid var(--sortable-table-top-divider);
-      >* {
-        color: var(--input-label);
-      }
-    }
-
-    & .labeled-input.create INPUT[type='text']{
-      padding: 9px 0px 9px 0px !important
-    }
-
-    & BUTTON{
-      padding:0px;
-    }
-  }
   .tab-container {
     H2 {
       font-size: 16px;

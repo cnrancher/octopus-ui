@@ -277,8 +277,8 @@ export default {
           <div class="col span-4">
             <InputWithSelect
               :options="namespaces"
-              text-label="Name"
-              select-label="Namespace"
+              text-label="名称"
+              select-label="命名空间"
               :text-value="templateValue.metadata.name"
               :text-required="true"
               :select-value="templateValue.metadata.namespace"

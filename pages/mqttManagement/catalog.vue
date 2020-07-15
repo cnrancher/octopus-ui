@@ -49,16 +49,18 @@ export default {
     defaultImg() {
       return require(`static/generic-catalog.svg`);
     },
-    async handlerRefresh() {
+    handlerRefresh() {
       this.$nuxt.$loading.start();
 
-      await this.$store.dispatch('management/findAll', {
-        type: CATALOG,
-        opt:  {
-          url:   `${ CATALOG }s/kube-system/mqtt-library?action=refresh`,
-          force: true
-        }
-      });
+      this.catalogs.forEach( async O => {
+        await this.$store.dispatch('management/findAll', {
+          type: CATALOG,
+          opt:  {
+            url: O.actions.refresh,
+            force: true
+          }
+        });
+      })
 
       this.$nuxt.$loading.finish();
     },

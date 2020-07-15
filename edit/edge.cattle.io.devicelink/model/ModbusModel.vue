@@ -166,7 +166,7 @@ export default {
         <LabeledSelect
           v-if="localDevice.properties[index].type === 'boolean'"
           v-model="localDevice.properties[index].value"
-          label="类型"
+          label="值"
           :options="booleanType"
           :disabled="localDevice.properties[index].readOnly"
         />

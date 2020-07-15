@@ -54,25 +54,19 @@ nav:
 breadCrumbs:
   nodes: 节点管理
   local: 全局概览
-  namespace: 命名空间
   namespaces: 命名空间
   services: 服务发现
   secrets: 密文管理
   configmaps: 配置映射
   helmcharts: 应用市场
   store: 存储类别
-  workload: 工作负载
   workloads: 工作负载
-  deviceprotocol: 设备协议
   deviceprotocols: 设备协议
-  devicetemplate: 设备模版
   devicetemplates: 设备模版
-  devicetemplaterevision: 设备模板
   devicetemplaterevisions: 设备模板
   stores: 存储类别
-  storageclasses: 存储类别
-  persistentvolumes: 存储卷
-  devicelink: 设备列表
+  storageclasses: 存储类
+  persistentvolumes: 持久卷
   devicelinks: 设备列表
   deployments: Deployment
   system:
@@ -524,7 +518,7 @@ node:
       info: 系统信息
       address: 地址
       images: 镜像
-      taints: Taints
+      taints: 污点
 
 ingress:
   rules:

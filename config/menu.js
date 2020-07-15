@@ -31,11 +31,11 @@ export const MENUS = [
       },
       {
         path: '/c/local/storage.k8s.io.storageclass',
-        meta: { title: '存储类别' },
+        meta: { title: '存储类' },
       },
       {
         path: '/c/local/persistentvolume',
-        meta: { title: '存储卷' },
+        meta: { title: '持久卷' },
       }
     ]
   },

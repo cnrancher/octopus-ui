@@ -26,8 +26,8 @@ generic:
   viewAsForm: 查看表单
   viewAsYaml: 查看YAML
   viewApi: API查看
-  cloneAsForm: 复制表单
-  cloneAsYaml: 复制YAML
+  cloneAsForm: 克隆表单
+  cloneAsYaml: 克隆YAML
 
 suffix:
   ib: iB
@@ -86,6 +86,9 @@ breadCrumbs:
 formKeyValue:
   protip: '高级技巧: 在键(Key)输入栏中粘贴一行或多行的key=value键值对能够批量输入。'
 
+form:
+  select:
+    namespace: 命名空间
 cluster:
   nodeDriver:
     displayName:
@@ -267,7 +270,7 @@ gatekeeperConstraint:
     title: Violations
   parameters:
     title: Parameters
-    editAsForm: 编辑表单
+    editAsForm: 编辑
     editAsYaml: 编辑YAML
     addParameter: Add Parameter
   enforcementAction:
@@ -315,7 +318,7 @@ infoBoxCluster:
 resourceDetail:
   header:
     view: "{name}"
-    create: "添加{type}"
+    create: "Create {type}"
     edit: "Edit {type}: {name}"
     clone: "Clone from {type}: {name}"
     stage: "Stage from {type}: {name}"

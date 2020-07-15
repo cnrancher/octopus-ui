@@ -145,10 +145,15 @@ export default {
     // if this is a cronjob, grab pod spec from within job template spec
     podTemplateSpec: {
       get() {
-        return this.isCronJob ? this.spec.jobTemplate.spec.template.spec : this.spec.template.spec;
+        return this.isCronJob ? this.spec.jobTemplate?.spec.template.spec : this.spec.template.spec;
       },
       set(neu) {
         if (this.isJob) {
+          if (!this.spec.jobTemplate) {
+            const template = this.spec.template;
+
+            this.$set(this.spec, 'jobTemplate', { spec: { template } });
+          }
           this.$set(this.spec.jobTemplate.spec.template, 'spec', neu);
         } else {
           this.$set(this.spec.template, 'spec', neu);

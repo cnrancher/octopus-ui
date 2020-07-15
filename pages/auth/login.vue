@@ -92,13 +92,13 @@ export default {
           {{ vendor }} {{ product }}
         </h1>
         <h4 v-if="err" class="text-error text-center">
-          An error occurred logging in.  Please try again.
+          尝试登录时发生错误，请稍后重试。
         </h4>
         <h4 v-else-if="loggedOut" class="text-success text-center">
-          You have been logged out.
+          您已注销登录。
         </h4>
         <h4 v-else-if="timedOut" class="text-error text-center">
-          Log in again to continue.
+          请重新登录后再重试.
         </h4>
 
         <form class="mt-50">
@@ -107,7 +107,7 @@ export default {
               <LabeledInput
                 ref="username"
                 v-model="username"
-                label="Username"
+                label="用户名"
                 autocomplete="username"
               />
             </div>
@@ -118,7 +118,7 @@ export default {
                 ref="password"
                 v-model="password"
                 type="password"
-                label="Password"
+                label="密码"
                 autocomplete="password"
               />
             </div>
@@ -127,14 +127,14 @@ export default {
             <div class="col span-2 offset-5 text-center">
               <AsyncButton
                 type="submit"
-                action-label="Log In with Local User"
-                waiting-label="Logging In..."
-                success-label="Logged In"
-                error-label="Error"
+                action-label="登录"
+                waiting-label="登录中..."
+                success-label="登录成功"
+                error-label="发生错误"
                 @click="loginLocal"
               />
               <div>
-                <Checkbox v-model="remember" label="Remember Username" type="checkbox" />
+                <Checkbox v-model="remember" label="记住" type="checkbox" />
               </div>
             </div>
           </div>

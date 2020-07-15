@@ -211,7 +211,7 @@ export default {
           </td>
           <td v-if="showRemove" class="remove">
             <button type="button" class="btn bg-transparent role-link" @click="remove(idx)">
-              Remove
+              删除
             </button>
           </td>
         </tr>
@@ -219,7 +219,7 @@ export default {
     </table>
     <div v-if="showAdd" class="footer">
       <button type="button" class="btn role-tertiary add" @click="add()">
-        Add Port
+        添加端口
       </button>
     </div>
   </div>

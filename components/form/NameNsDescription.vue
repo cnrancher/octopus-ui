@@ -151,7 +151,7 @@ export default {
             ref="name"
             :options="namespaces"
             :text-label="t('generic.name.label')"
-            :select-label="t('breadCrumbs.namespace')"
+            :select-label="t('form.select.namespace')"
             :text-value="name"
             :text-required="true"
             :select-value="namespace"

@@ -115,7 +115,7 @@ export const mutations = {
   },
 
   setSelected(state, locale) {
-    state.selected = locale;
+    state.selected = 'zh-hans';
   },
 };
 

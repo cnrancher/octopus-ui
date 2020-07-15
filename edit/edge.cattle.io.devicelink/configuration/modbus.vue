@@ -27,9 +27,16 @@ export default {
   },
 
   data() {
+    let isDisableStopBits = false;
+
+    if (this.templateSpec.protocol?.rtu?.parity === 'N') {
+      isDisableStopBits = true;
+    }
+
     return {
       parity,
       dataBits,
+      isDisableStopBits,
       isChoose:    true,
       tempStorage: null,
     };
@@ -88,8 +95,16 @@ export default {
         Vue.delete(this.templateSpec.protocol.rtu, 'stopBits');
       }
 
-      if (this.isChoose && this.templateSpec.protocol.rtu && !this.templateSpec.protocol.rtu.baudRate.baudRate) {
+      if (this.isChoose && this.templateSpec.protocol.rtu && !this.templateSpec.protocol.rtu?.baudRate) {
         Vue.delete(this.templateSpec.protocol.rtu, 'baudRate');
+      }
+    },
+    updateParity(neu) {
+      if (neu === 'N' && this.transferMode === 'rtu') {
+        this.templateSpec.protocol.rtu.stopBits = 2;
+        this.isDisableStopBits = true;
+      } else {
+        this.isDisableStopBits = false;
       }
     }
   }
@@ -166,6 +181,7 @@ export default {
               label="parity"
               :options="parity"
               :clearable="true"
+              @input="updateParity"
             />
           </div>
 
@@ -173,8 +189,8 @@ export default {
             <LabeledSelect
               v-model.number="templateSpec.protocol[transferMode].stopBits"
               label="stopBits"
+              :disabled="isDisableStopBits"
               :options="stopBits"
-              :clearable="true"
             />
           </div>
         </div>

@@ -156,6 +156,10 @@ export default {
         errors = this.$refs?.mqttConfig.deleteUnuseProp();
       }
 
+      if (this.kind === 'OPCUADevice') {
+        this.$refs?.opcConfig.deleteUnuseProp(); // eslint-disable-line
+      }
+
       if (this.kind === 'ModbusDevice') {
         this.$refs.modbus.deleteData();
       }
@@ -224,6 +228,15 @@ export default {
         Vue.delete(this.value.spec.template.spec, 'extension');
       } else {
         this.$set(this.value.spec.template.spec, 'extension', extension);
+      }
+    },
+    updateOpcConfig(protocol, references) {
+      this.$set(this.value.spec.template.spec, 'protocol', protocol);
+
+      if (references.length) {
+        this.$set(this.value.spec, 'references', references);
+      } else {
+        Vue.delete(this.value.spec, 'references');
       }
     }
   }
@@ -298,8 +311,10 @@ export default {
 
             <OPCUADeviceConfig
               v-else-if="kind === 'OPCUADevice'"
+              ref="opcConfig"
               :namespace="value.metadata.namespace"
               :template-spec="value.spec.template.spec"
+              @update:opcConfig="updateOpcConfig"
             />
 
             <MQTTDeviceConfig

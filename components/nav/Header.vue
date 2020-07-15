@@ -85,10 +85,10 @@ export default {
               </div>
             </li>
             <nuxt-link tag="li" :to="{name: 'prefs'}" class="pt-5 pb-5 hand">
-              <a>Preferences <i class="icon icon-fw icon-gear" /></a>
+              <a>设置 <i class="icon icon-fw icon-gear" /></a>
             </nuxt-link>
             <nuxt-link tag="li" :to="{name: 'auth-logout'}" class="pt-5 pb-5 hand">
-              <a>Log Out <i class="icon icon-fw icon-close" /></a>
+              <a>注销 <i class="icon icon-fw icon-close" /></a>
             </nuxt-link>
           </ul>
         </template>

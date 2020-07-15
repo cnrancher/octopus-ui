@@ -179,7 +179,7 @@ export default {
     </template>
     <template v-else>
       <div class="mt-20 mb-20">
-        <KeyValue title="Data" :value="value.data" mode="view" />
+        <KeyValue :value-concealed="true" title="Data" :value="value.data" mode="view" />
       </div>
     </template>
     <ResourceTabs v-model="value" :mode="mode" />

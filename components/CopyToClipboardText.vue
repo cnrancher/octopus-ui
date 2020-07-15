@@ -15,6 +15,12 @@ export default {
     return { copied: false };
   },
 
+  computed: {
+    displayTips() {
+      return this.copied ? '已复制' : '复制到剪贴板';
+    }
+  },
+
   methods: {
     clicked($event) {
       $event.stopPropagation();
@@ -28,6 +34,9 @@ export default {
         }, 2000);
       });
     },
+    reset($event) {
+      this.copied = false;
+    }
   }
 };
 </script>
@@ -36,8 +45,9 @@ export default {
   <el-popover
     trigger="hover"
     placement="top"
-    :content="copied ? '已复制' : '复制到剪贴板'"
+    :content="displayTips"
     popper-class="copy-tooltip"
+    @hide="reset"
   >
     <a v-if="useIcon" slot="reference" href="#" class="copy-icon" @click="clicked">
       {{ text }} <i class="icon icon-copy" />

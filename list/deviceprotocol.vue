@@ -127,36 +127,45 @@ export default {
 </script>
 
 <template>
-  <SortableTable
-    v-bind="$attrs"
-    :headers="headers"
-    :rows="rows"
-    :group-by="groupBy"
-    :paging="true"
-    key-field="_key"
-    v-on="$listeners"
-  >
-    <template #group-by="{group}">
-      <tr class="group-row">
-        <td :colspan="4">
-          <div class="group-tab">
-            <template v-if="getDeviceInfo(group.rows).icon">
-              <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
-            </template>
-            <div v-else class="img">
-              <i class="icon icon-custom-iot-three" />
+  <div>
+    <h5 class="link">
+      Octopus具有内置的设备协议适配器，如BLE，Modbus，OPC-UA和MQTT，并且支持自定义设备适配器插件。 点击<a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/cn/adaptors/develop">开始构建</a>自定义适配器。
+    </h5>
+    <SortableTable
+      v-bind="$attrs"
+      :headers="headers"
+      :rows="rows"
+      :group-by="groupBy"
+      :paging="true"
+      key-field="_key"
+      v-on="$listeners"
+    >
+      <template #group-by="{group}">
+        <tr class="group-row">
+          <td :colspan="4">
+            <div class="group-tab">
+              <template v-if="getDeviceInfo(group.rows).icon">
+                <img :src="getDeviceInfo(group.rows).icon" alt="" class="deviceImg">
+              </template>
+              <div v-else class="img">
+                <i class="icon icon-custom-iot-three" />
+              </div>
+              <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">
+                {{ group.ref }} <i class="el-icon-info"></i>
+              </div>
             </div>
-            <div v-tooltip="{content: getDeviceInfo(group.rows).desc, classes: 'tooltipDevice'}" class="name">
-              {{ group.ref }} <i class="el-icon-info"></i>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </template>
-  </SortableTable>
+          </td>
+        </tr>
+      </template>
+    </SortableTable>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.link {
+  position: absolute;
+  margin-top: -52px;
+}
 .deviceImg {
   height: 20px;
 }

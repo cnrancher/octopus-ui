@@ -338,13 +338,15 @@ export default {
 
     <el-divider></el-divider>
 
-    <div>
+    <div class="topic">
       <Checkbox
         v-model="isUsePrefixTopic"
         class="checkbox"
         label="Use prefix topic"
         type="checkbox"
       />
+
+      <a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/en/adaptors/mqtt-extension#templated-topic"><i class="el-icon-question"></i></a>
     </div>
 
     <div class="row">
@@ -540,5 +542,16 @@ export default {
 }
 .add {
   display: inline-block;
+}
+.questionLink {
+  margin-left: 20px;
+}
+.topic {
+  display: flex;
+  align-items: center;
+
+  a {
+    margin-left: 0px;
+  }
 }
 </style>

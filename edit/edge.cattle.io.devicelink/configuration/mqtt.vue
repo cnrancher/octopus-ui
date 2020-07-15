@@ -81,11 +81,14 @@ export default {
       </div>
 
       <div class="col span-6">
-        <LabeledInput
-          v-model="templateSpec.protocol.message.topic"
-          label="topic"
-          required
-        />
+        <div class="topic">
+          <a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/en/adaptors/mqtt-extension#templated-topic"><i class="el-icon-question"></i></a>
+          <LabeledInput
+            v-model="templateSpec.protocol.message.topic"
+            label="topic"
+            required
+          />
+        </div>
       </div>
     </div>
 
@@ -125,3 +128,14 @@ export default {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.topic {
+  position: relative;
+}
+.questionLink {
+  position: absolute;
+  top: -16px;
+  right: 0;
+}
+</style>

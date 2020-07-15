@@ -168,9 +168,9 @@ export default {
       }
 
       const { isEnableBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
+      const Vadvance = this.validateAdvance();
       const Vauth = this.validateBasicAuth();
       const Vprefix = this.validatePrefix();
-      const Vadvance = this.validateAdvance();
       const error = [...Vauth, ...Vprefix, ...Vadvance];
 
       if (error.length) {
@@ -265,18 +265,18 @@ export default {
           Vue.delete(this.saveExtension.mqtt.client, 'tlsConfig');
         }
 
-        if (this.isSetLastWillTopic) { // delete will
-          if (!this.saveExtension.mqtt.message.will.topic) {
-            errors.push('请输入Topic Name!');
-          }
-        } else {
-          Vue.delete(this.saveExtension.mqtt.message, 'will');
-        }
-
         if (this.saveExtension.mqtt.message?.will?.content) {
           this.saveExtension.mqtt.message.will.content = btoa(this.extension.mqtt.message.will.content);
         } else {
           Vue.delete(this.saveExtension.mqtt.message.will, 'content');
+        }
+
+        if (this.isSetLastWillTopic) { // delete will
+          if (!this.saveExtension.mqtt.message?.will?.topic) {
+            errors.push('请输入Topic Name!');
+          }
+        } else {
+          Vue.delete(this.saveExtension.mqtt.message, 'will');
         }
       }
 

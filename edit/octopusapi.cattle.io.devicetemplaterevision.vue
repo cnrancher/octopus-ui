@@ -178,6 +178,10 @@ export default {
           this.$refs.modbus.deleteData();
         }
 
+        if (this.kind === 'OPCUADevice') {
+          this.$refs?.opcConfig.deleteUnuseProp(); // eslint-disable-line
+        }
+
         this.errors = errors;
         if (!errors.length) {
           if (this.mode === _CREATE && mode !== 'clone') {
@@ -249,6 +253,15 @@ export default {
       } else {
         this.$set(this.value.spec.templateSpec, 'extension', extension);
       }
+    },
+    updateOpcConfig(protocol, references) {
+      this.$set(this.value.spec.templateSpec, 'protocol', protocol);
+
+      if (references.length) {
+        this.$set(this.value.spec, 'references', references);
+      } else {
+        Vue.delete(this.value.spec, 'references');
+      }
     }
   },
 
@@ -318,7 +331,9 @@ export default {
 
           <OPCUADeviceConfig
             v-else-if="kind === 'OPCUADevice'"
+            ref="opcConfig"
             :template-spec="value.spec.templateSpec"
+            @update:opcConfig="updateOpcConfig"
           />
 
           <MQTTDeviceConfig

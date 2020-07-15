@@ -144,7 +144,6 @@ export const OPC_UA_DEVICE = {
         timeout:      '10s'
       },
       protocol: {
-        url:       '',
         basicAuth: {
           username: '',
           password:   '',

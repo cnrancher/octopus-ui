@@ -346,6 +346,10 @@ export default {
         template = this.spec.template;
       }
 
+      if (this.isJob) {
+        delete template.spec.containers[0].ports;
+      }
+
       if (!template.metadata && this.type !== WORKLOAD_TYPES.JOB) {
         template.metadata = { labels: this.workloadSelector };
       }

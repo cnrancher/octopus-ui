@@ -127,7 +127,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="device-protocol-wrapper">
     <h5 class="link">
       Octopus具有内置的设备协议适配器，如BLE，Modbus，OPC-UA和MQTT，并且支持自定义设备适配器插件。 点击<a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/cn/adaptors/develop">开始构建</a>自定义适配器。
     </h5>
@@ -162,9 +162,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.device-protocol-wrapper {
+  position: relative;
+}
 .link {
   position: absolute;
-  margin-top: -52px;
+  top: -52px;
+  left: 0;
 }
 .deviceImg {
   height: 20px;

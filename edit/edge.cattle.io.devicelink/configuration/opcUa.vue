@@ -148,16 +148,18 @@ export default {
           label="endpoint"
         />
       </div>
+    </div>
 
+    <el-divider>高级配置</el-divider>
+
+    <div class="row">
       <div class="col span-6">
         <LabeledInput
           v-model="value.protocol.basicAuth.username"
           label="username"
         />
       </div>
-    </div>
 
-    <div class="row">
       <div class="col span-6">
         <LabeledInput
           v-model="value.protocol.basicAuth.password"

@@ -166,7 +166,7 @@ export default {
         <LabeledSelect
           v-if="localDevice.properties[index].type === 'boolean'"
           v-model="localDevice.properties[index].value"
-          label="值"
+          label="写入值"
           :options="booleanType"
           :disabled="localDevice.properties[index].readOnly"
         />
@@ -174,7 +174,7 @@ export default {
         <LabeledInput
           v-else
           v-model="localDevice.properties[index].value"
-          label="值"
+          label="写入值"
           mode="create"
           :disabled="localDevice.properties[index].readOnly"
         />
@@ -217,7 +217,7 @@ export default {
       </div>
     </div>
 
-    <el-divider>Property Operation</el-divider>
+    <el-divider>读取运算操作</el-divider>
 
     <KeyValue
       key="Type"

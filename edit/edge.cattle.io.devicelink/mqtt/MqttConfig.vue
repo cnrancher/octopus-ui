@@ -44,7 +44,6 @@ export default {
 
     const isEnableBasicAuth = !!mqtt.client.basicAuth.name || false;
     let isEnableAdvanced = false;
-    let isUsePrefixTopic = true;
     let isSetLastWillTopic = false;
     let isEnableServerName = false;
 
@@ -56,42 +55,16 @@ export default {
       isSetLastWillTopic = true;
     }
 
-    let topicPrefix = '';
-    let topicName = '';
-
     const topic = mqtt.message.topic;
-
-    if (topic) {
-      if (topic.endsWith('/:namespace/:name')) {
-        topicPrefix = topic.match(/(\S*)\/:namespace\/:name$/)[1];
-        isUsePrefixTopic = true;
-      } else if (topic.endsWith('/:name/:namespace')) {
-        topicPrefix = topic.match(/(\S*)\/:name\/:namespace$/)[1];
-        isUsePrefixTopic = true;
-      } else if (topic.endsWith('/:uid')) {
-        topicPrefix = topic.match(/(\S*)\/:uid$/)[1];
-        isUsePrefixTopic = true;
-      } else {
-        isUsePrefixTopic = false;
-        topicName = topic;
-      }
-    }
-
-    if (mqtt.message.topic.name) {
-      isUsePrefixTopic = false;
-    } else if (mqtt.message.topic.prefix) {
-      isUsePrefixTopic = true;
-    }
+    const topicName = topic;
 
     if (mqtt.client.tlsConfig.serverName) {
       isEnableServerName = true;
     }
 
     return {
-      topicPrefix,
       topicName,
       isEnableBasicAuth,
-      isUsePrefixTopic,
       isEnableAdvanced,
       isSetLastWillTopic,
       isEnableServerName,
@@ -167,7 +140,7 @@ export default {
         return [];
       }
 
-      const { isEnableBasicAuth, isUsePrefixTopic, isSetLastWillTopic } = this;
+      const { isEnableBasicAuth, isSetLastWillTopic } = this;
       const Vadvance = this.validateAdvance();
       const Vauth = this.validateBasicAuth();
       const Vprefix = this.validatePrefix();
@@ -202,21 +175,10 @@ export default {
     validatePrefix() {
       const errors = [];
 
-      if (this.isUsePrefixTopic) {
-        if (!this.topicPrefix.trim()) {
-          errors.push('请输入Prefix Name!');
-        }
-        const originTopic = this.topicPrefix;
-        let topic = '';
-
-        topic = `${ originTopic }/:namespace/:name`;
-        this.saveExtension.mqtt.message.topic = topic;
-      } else {
-        if (!this.topicName.trim()) {
-          errors.push('请输入Topic Name!');
-        }
-        this.saveExtension.mqtt.message.topic = this.topicName;
+      if (!this.topicName.trim()) {
+        errors.push('请输入Topic Name!');
       }
+      this.saveExtension.mqtt.message.topic = this.topicName;
 
       return errors;
     },
@@ -339,25 +301,11 @@ export default {
     <el-divider></el-divider>
 
     <div class="topic">
-      <Checkbox
-        v-model="isUsePrefixTopic"
-        class="checkbox"
-        label="Use prefix topic"
-        type="checkbox"
-      />
-
-      <a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/en/adaptors/mqtt-extension#templated-topic"><i class="el-icon-question"></i></a>
+      Use prefix topic<a class="questionLink" target="_blank" href="https://cnrancher.github.io/docs-octopus/docs/en/adaptors/mqtt-extension#templated-topic"><i class="el-icon-question"></i></a>
     </div>
 
-    <div class="row">
-      <div v-if="isUsePrefixTopic" class="col span-6">
-        <LabeledInput
-          v-model="topicPrefix"
-          label="Prefix Name"
-        />
-      </div>
-
-      <div v-if="!isUsePrefixTopic" class="col span-6">
+    <div class="row mt-8" style="marginTop: 8px">
+      <div class="col span-6">
         <LabeledInput
           v-model="topicName"
           label="Topic Name"
